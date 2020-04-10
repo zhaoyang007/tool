@@ -1,0 +1,665 @@
+请你试着先不看我的代码，在自己的浏览器中计算出来 JavaScript 有多少固有对象。
+  var set = new Set()
+  var objects = [
+    eval,
+    isFinite,
+    isNaN,
+    parseFloat,
+    parseInt,
+    decodeURI,
+    decodeURIComponent,
+    encodeURI,
+    encodeURIComponent,
+    Array,
+    Date,
+    RegExp,
+    Promise,
+    Proxy,
+    Map,
+    WeakMap,
+    Set,
+    WeakSet,
+    Function,
+    Boolean,
+    String,
+    Number,
+    Symbol,
+    Object,
+    Error,
+    EvalError,
+    RangeError,
+    ReferenceError,
+    SyntaxError,
+    TypeError,
+    URIError,
+    ArrayBuffer,
+    SharedArrayBuffer,
+    DataView,
+    Float32Array,
+    Float64Array,
+    Int8Array,
+    Int16Array,
+    Int32Array,
+    Uint8Array,
+    Uint16Array,
+    Uint32Array,
+    Uint8ClampedArray,
+    Atomics,
+    JSON,
+    Math,
+    Reflect]
+  objects.forEach(o => set.add(o))
+
+  for(var i = 0; i < objects.length; i++) {
+    var o = objects[i]
+    for(var p of Object.getOwnPropertyNames(o)) {
+      var d = Object.getOwnPropertyDescriptor(o, p)
+      if( (d.value !== null && typeof d.value === "object") || (typeof d.value === "function"))
+        if(!set.has(d.value))
+          set.add(d.value), objects.push(d.value)
+      if( d.get )
+        if(!set.has(d.get))
+          set.add(d.get), objects.push(d.get)
+      if( d.set )
+        if(!set.has(d.set))
+          set.add(d.set), objects.push(d.set)
+    }
+  }
+JavaScript 所有固有对象
+  mac系统：Google Chrome：版本 79.0.3945.130（正式版本） （64 位）：总共989个JavaScript固有对象。
+  主要使用Object.getOwnPropertyNames, Object.getOwnPropertyDescriptor两种方法。
+  全部的JavaScript固有对象基本包含：
+    1.函数
+    2.函数中的prototype属性
+    3.构造器
+    4.构造器中的object和functions还有get set的属性，一般就是function属性和get set属性
+    5.构造器原型
+    6.构造器原型中的object和function还有get set的属性，一般就是function属性和get set属性
+    7.Atomics,JSON,Math,Reflect
+    8.Atomics,JSON,Math,Reflect中的object和function还有get set的属性，一般就是function属性和get set属性
+  1.三个值：（3）
+    Infinity、NaN、undefined
+  2.九个函数：（11）
+    eval
+    isFinite
+    isNaN
+    parseFloat
+      parseFloat.prototype: {constructor: ƒ parseFloat()}
+    parseInt
+      parseInt.prototype: {constructor: ƒ parseInt()}
+    decodeURI
+    decodeURIComponent
+    encodeURI
+    encodeURIComponent
+  3.一些构造器：（共880个）
+    Array: function Array() { [native code] }（共65个）
+      function isArray() { [native code] }
+      function from() { [native code] }
+      function of() { [native code] }
+      function () { [native code] } // pop
+      function () { [native code] } // reverse
+      function () { [native code] } // shift
+      function () { [native code] } // keys
+      function () { [native code] } // values
+      function () { [native code] } // entries
+      function () { [native code] } // indexOf
+      function () { [native code] } // every
+      function () { [native code] } // some
+      function () { [native code] } // forEach
+      function () { [native code] } // map
+      function () { [native code] } // filter
+      function () { [native code] } // find
+      function () { [native code] } // findIndex
+      function () { [native code] } // includes
+      function () { [native code] } // join
+      function () { [native code] } // slice
+      function () { [native code] } // concat
+      function () { [native code] } // push
+      function () { [native code] } // splice
+      function () { [native code] } // unshift
+      function () { [native code] } // sort
+      function () { [native code] } // lastIndexOf
+      function () { [native code] } // reduce
+      function () { [native code] } // reduceRight
+      function () { [native code] } // copyWithin
+      function () { [native code] } // fill
+      Array.prototype: Array(0)，是个数组
+        function concat() { [native code] }
+        function copyWithin() { [native code] }
+        function fill() { [native code] }
+        function find() { [native code] }
+        function findIndex() { [native code] }
+        function lastIndexOf() { [native code] }
+        function pop() { [native code] }
+        function push() { [native code] }
+        function reverse() { [native code] }
+        function shift() { [native code] }
+        function unshift() { [native code] }
+        function slice() { [native code] }
+        function sort() { [native code] }
+        function splice() { [native code] }
+        function includes() { [native code] }
+        function indexOf() { [native code] }
+        function join() { [native code] }
+        function keys() { [native code] }
+        function entries() { [native code] }
+        function values() { [native code] }
+        function forEach() { [native code] }
+        function filter() { [native code] }
+        function flat() { [native code] }
+        function flatMap() { [native code] }
+        function map() { [native code] }
+        function every() { [native code] }
+        function some() { [native code] }
+        function reduce() { [native code] }
+        function reduceRight() { [native code] }
+        function toLocaleString() { [native code] }
+        function toString() { [native code] }
+        function flatten() { [native code] }
+          flatten.prototype: {constructor: ƒ flatten()}
+    Date: function Date() { [native code] }（共50个）
+      function now() { [native code] }
+      function parse() { [native code] }
+      function UTC() { [native code] }
+      Date.prototype: Object
+        function toString() { [native code] }
+        function toDateString() { [native code] }
+        function toTimeString() { [native code] }
+        function toISOString() { [native code] }
+        function toUTCString() { [native code] }
+        function getDate() { [native code] }
+        function setDate() { [native code] }
+        function getDay() { [native code] }
+        function getFullYear() { [native code] }
+        function setFullYear() { [native code] }
+        function getHours() { [native code] }
+        function setHours() { [native code] }
+        function getMilliseconds() { [native code] }
+        function setMilliseconds() { [native code] }
+        function getMinutes() { [native code] }
+        function setMinutes() { [native code] }
+        function getMonth() { [native code] }
+        function setMonth() { [native code] }
+        function getSeconds() { [native code] }
+        function setSeconds() { [native code] }
+        function getTime() { [native code] }
+        function setTime() { [native code] }
+        function getTimezoneOffset() { [native code] }
+        function getUTCDate() { [native code] }
+        function setUTCDate() { [native code] }
+        function getUTCDay() { [native code] }
+        function getUTCFullYear() { [native code] }
+        function setUTCFullYear() { [native code] }
+        function getUTCHours() { [native code] }
+        function setUTCHours() { [native code] }
+        function getUTCMilliseconds() { [native code] }
+        function setUTCMilliseconds() { [native code] }
+        function getUTCMinutes() { [native code] }
+        function setUTCMinutes() { [native code] }
+        function getUTCMonth() { [native code] }
+        function setUTCMonth() { [native code] }
+        function getUTCSeconds() { [native code] }
+        function setUTCSeconds() { [native code] }
+        function valueOf() { [native code] }
+        function getYear() { [native code] }
+        function setYear() { [native code] }
+        function toJSON() { [native code] }
+        function toLocaleString() { [native code] }
+        function toLocaleDateString() { [native code] }
+        function toLocaleTimeString() { [native code] }
+    RegExp: function RegExp() { [native code] }（共54个）
+      function get input() { [native code] }
+      function set input() { [native code] }
+      function get $_() { [native code] }
+      function set $_() { [native code] }
+      function get lastMatch() { [native code] }
+      function set lastMatch() { [native code] }
+      function get $&() { [native code] }
+      function set $&() { [native code] }
+      function get lastParen() { [native code] }
+      function set lastParen() { [native code] }
+      function get $+() { [native code] }
+      function set $+() { [native code] }
+      function get leftContext() { [native code] }
+      function set leftContext() { [native code] }
+      function get $`() { [native code] }
+      function set $`() { [native code] }
+      function get rightContext() { [native code] }
+      function set rightContext() { [native code] }
+      function get $'() { [native code] }
+      function set $'() { [native code] }
+      function get $1() { [native code] }
+      function set $1() { [native code] }
+      function get $2() { [native code] }
+      function set $2() { [native code] }
+      function get $3() { [native code] }
+      function set $3() { [native code] }
+      function get $4() { [native code] }
+      function set $4() { [native code] }
+      function get $5() { [native code] }
+      function set $5() { [native code] }
+      function get $6() { [native code] }
+      function set $6() { [native code] }
+      function get $7() { [native code] }
+      function set $7() { [native code] }
+      function get $8() { [native code] }
+      function set $8() { [native code] }
+      function get $9() { [native code] }
+      function set $9() { [native code] }
+      function escape() { [native code] }
+        escape.prototype: {constructor: ƒ escape()}
+      RegExp.prototype: Object
+        function exec() { [native code] }
+        function get dotAll() { [native code] }
+        function get flags() { [native code] }
+        function get global() { [native code] }
+        function get ignoreCase() { [native code] }
+        function get multiline() { [native code] }
+        function get source() { [native code] }
+        function get sticky() { [native code] }
+        function get unicode() { [native code] }
+        function compile() { [native code] }
+        function toString() { [native code] }
+        function test() { [native code] }
+    Promise: function Promise() { [native code] }（共14个）
+      function all() { [native code] }
+      function race() { [native code] }
+      function resolve() { [native code] }
+      function reject() { [native code] }
+      function allSettled() { [native code] }
+      function(){return e.apply(o,arguments)} // finally
+        {constructor: ƒ ()}
+      function try() { [native code] }
+        try.prototype: {constructor: ƒ try()}
+      Promise.prototype: Promise
+        function then() { [native code] }
+        function catch() { [native code] }
+        function finally() { [native code] }
+    Proxy: function Proxy() { [native code] }（共2个）
+      function Proxy() { [native code] }
+      function revocable() { [native code] }
+    Map: function Map() { [native code] }（共20个）
+      function(){return e.apply(o,arguments)} // toJSON
+        {constructor: ƒ ()}
+      function of() { [native code] }
+        of.prototype: {constructor: ƒ of()}
+      function from() { [native code] }
+        from.prototype: {constructor: ƒ from()}
+      Map.prototype: Map
+        function get() { [native code] }
+        function set() { [native code] }
+        function has() { [native code] }
+        function delete() { [native code] }
+        function clear() { [native code] }
+        function entries() { [native code] }
+        function forEach() { [native code] }
+        function keys() { [native code] }
+        function get size() { [native code] }
+        function values() { [native code] }
+        function toJSON() { [native code] }
+          toJSON.prototype: {constructor: ƒ toJSON()}
+    WeakMap: function WeakMap() { [native code] }（共10个）
+      function of() { [native code] }
+        of.prototype: {constructor: ƒ of()}
+      function from() { [native code] }
+        from.prototype: {constructor: ƒ from()}
+      WeakMap.prototype: WeakMap
+        function delete() { [native code] }
+        function get() { [native code] }
+        function set() { [native code] }
+        function has() { [native code] }
+    Set: function Set() { [native code] }（共18个）
+      function(){return e.apply(o,arguments)} // toJSON
+        {constructor: ƒ ()}
+      function of() { [native code] }
+        of.prototype: {constructor: ƒ of()}
+      function from() { [native code] }
+        from.prototype: {constructor: ƒ from()}
+      Set.prototype: Set
+        function has() { [native code] }
+        function add() { [native code] }
+        function delete() { [native code] }
+        function clear() { [native code] }
+        function entries() { [native code] }
+        function forEach() { [native code] }
+        function get size() { [native code] }
+        function values() { [native code] }
+        function toJSON() { [native code] }
+          toJSON.prototype: {constructor: ƒ toJSON()}
+    WeakSet: function WeakSet() { [native code] }（共9个）
+      function of() { [native code] }
+        of.prototype: {constructor: ƒ of()}
+      function from() { [native code] }
+        from.prototype: {constructor: ƒ from()}
+      WeakSet.prototype: WeakSet
+        function delete() { [native code] }
+        function has() { [native code] }
+        function add() { [native code] }
+    Function: function Function() { [native code] }（共8个）
+      function () { [native code] } // 不明
+      Function.prototype: function () { [native code] }
+        function apply() { [native code] }
+        function bind() { [native code] }
+        function call() { [native code] }
+        function toString() { [native code] }
+          toString.prototype: {constructor: ƒ toString()}
+    Boolean: function Boolean() { [native code] }（共4个）
+      Boolean.prototype: Boolean
+        function toString() { [native code] }
+        function valueOf() { [native code] }
+    String: function String() { [native code] }（共54个）
+      function fromCharCode() { [native code] }
+      function fromCodePoint() { [native code] }
+      function raw() { [native code] }
+      String.prototype: String
+        function anchor() { [native code] }
+        function big() { [native code] }
+        function blink() { [native code] }
+        function bold() { [native code] }
+        function charAt() { [native code] }
+        function charCodeAt() { [native code] }
+        function codePointAt() { [native code] }
+        function concat() { [native code] }
+        function endsWith() { [native code] }
+        function fontcolor() { [native code] }
+        function fontsize() { [native code] }
+        function fixed() { [native code] }
+        function includes() { [native code] }
+        function indexOf() { [native code] }
+        function italics() { [native code] }
+        function lastIndexOf() { [native code] }
+        function link() { [native code] }
+        function localeCompare() { [native code] }
+        function match() { [native code] }
+        function matchAll() { [native code] }
+        function normalize() { [native code] }
+        function padEnd() { [native code] }
+        function padStart() { [native code] }
+        function repeat() { [native code] }
+        function replace() { [native code] }
+        function search() { [native code] }
+        function slice() { [native code] }
+        function small() { [native code] }
+        function split() { [native code] }
+        function strike() { [native code] }
+        function sub() { [native code] }
+        function substr() { [native code] }
+        function substring() { [native code] }
+        function sup() { [native code] }
+        function startsWith() { [native code] }
+        function toString() { [native code] }
+        function toLocaleLowerCase() { [native code] }
+        function toLocaleUpperCase() { [native code] }
+        function toLowerCase() { [native code] }
+        function toUpperCase() { [native code] }
+        function valueOf() { [native code] }
+        function trim() { [native code] }
+          trim.prototype: {constructor: ƒ trim()}
+        function at() { [native code] }
+          at.prototype: {constructor: ƒ at()}
+        function trimStart() { [native code] }
+          trimStart.prototype: {constructor: ƒ trimStart()}
+        function trimEnd() { [native code] }
+          trimEnd.prototype: {constructor: ƒ trimEnd()}
+    Number: function Number() { [native code] }（共16个）
+      function isFinite() { [native code] }
+      function isInteger() { [native code] }
+      function isNaN() { [native code] }
+      function isSafeInteger() { [native code] }
+      function parseFloat() { [native code] }
+        parseFloat.prototype: {constructor: ƒ parseFloat()}
+      function parseInt() { [native code] }
+        parseInt.prototype: {constructor: ƒ parseInt()}
+      Number.prototype: Number
+        function toExponential() { [native code] }
+        function toFixed() { [native code] }
+        function toPrecision() { [native code] }
+        function toString() { [native code] }
+        function valueOf() { [native code] }
+        function toLocaleString() { [native code] }
+    Symbol: function Symbol() { [native code] }（共11个）
+      "asyncIterator"
+      "hasInstance"
+      "isConcatSpreadable"
+      "iterator"
+      "match"
+      "matchAll"
+      "replace"
+      "search"
+      "species"
+      "split"
+      "toPrimitive"
+      "toStringTag"
+      "unscopables"
+      "observable"
+      function for() { [native code] }
+      function keyFor() { [native code] }
+      function useSetter() { [native code] }
+        useSetter.prototype: {constructor: ƒ useSetter()}
+      function useSimple() { [native code] }
+        useSimple.prototype: {constructor: ƒ useSimple()}
+      Symbol.prototype: Symbol
+        function toString() { [native code] }
+        function valueOf() { [native code] }
+        function get description() { [native code] }
+    Object: function Object() { [native code] }（共35个）
+      function assign() { [native code] }
+      function getOwnPropertyDescriptor() { [native code] }
+      function getOwnPropertyDescriptors() { [native code] }
+      function getOwnPropertyNames() { [native code] }
+      function getOwnPropertySymbols() { [native code] }
+      function is() { [native code] }
+      function preventExtensions() { [native code] }
+      function seal() { [native code] }
+      function create() { [native code] }
+      function defineProperties() { [native code] }
+      function defineProperty() { [native code] }
+      function freeze() { [native code] }
+      function getPrototypeOf() { [native code] }
+      function setPrototypeOf() { [native code] }
+      function isExtensible() { [native code] }
+      function isFrozen() { [native code] }
+      function isSealed() { [native code] }
+      function keys() { [native code] }
+      function entries() { [native code] }
+      function fromEntries() { [native code] }
+      function values() { [native code] }
+      Object.prototype: Object
+        function __defineGetter__() { [native code] }
+        function __defineSetter__() { [native code] }
+        function hasOwnProperty() { [native code] }
+        function __lookupGetter__() { [native code] }
+        function __lookupSetter__() { [native code] }
+        function isPrototypeOf() { [native code] }
+        function propertyIsEnumerable() { [native code] }
+        function toString() { [native code] }
+        function valueOf() { [native code] }
+        function get __proto__() { [native code] }
+        function set __proto__() { [native code] }
+        function toLocaleString() { [native code] }
+    Error: function Error() { [native code] }（共6个）
+      function captureStackTrace() { [native code] }
+      function isError() { [native code] }
+        isError.prototype: {constructor: ƒ isError()}
+      Error.prototype: Object
+        "message"
+        function toString() { [native code] }
+    EvalError: function EvalError() { [native code] }（共3个）
+      EvalError.prototype: Error
+        "message"
+        function toString() { [native code] }
+    RangeError: function RangeError() { [native code] }（共3个）
+      RangeError.prototype: Error
+        "message"
+        function toString() { [native code] }
+    ReferenceError: function ReferenceError() { [native code] }（共3个）
+      ReferenceError.prototype: Error
+        "message"
+        function toString() { [native code] }
+    SyntaxError: function SyntaxError() { [native code] }（共3个）
+      SyntaxError.prototype: Error
+        "message"
+        function toString() { [native code] }
+    TypeError: function TypeError() { [native code] }（共3个）
+      TypeError.prototype: Error
+        "message"
+        function toString() { [native code] }
+    URIError: function URIError() { [native code] }（共3个）
+      URIError.prototype: Error
+        "message"
+        function toString() { [native code] }
+    ArrayBuffer: function ArrayBuffer() { [native code] }（共7个）
+      function isView() { [native code] }
+      function(){return e.apply(o,arguments)} //
+        function.prototype: {constructor: ƒ useSimple()}
+      ArrayBuffer.prototype: ArrayBuffer
+        function get byteLength() { [native code] }
+        function slice() { [native code] }
+    SharedArrayBuffer: function SharedArrayBuffer() { [native code] }（共4个）
+      SharedArrayBuffer.prototype: SharedArrayBuffer
+        function get byteLength() { [native code] }
+        function slice() { [native code] }
+    DataView: function DataView() { [native code] }（共25个）
+      DataView.prototype: DataView
+        function get buffer() { [native code] }
+        function get byteLength() { [native code] }
+        function get byteOffset() { [native code] }
+        function getInt8() { [native code] }
+        function setInt8() { [native code] }
+        function getUint8() { [native code] }
+        function setUint8() { [native code] }
+        function getInt16() { [native code] }
+        function setInt16() { [native code] }
+        function getUint16() { [native code] }
+        function setUint16() { [native code] }
+        function getInt32() { [native code] }
+        function setInt32() { [native code] }
+        function getUint32() { [native code] }
+        function setUint32() { [native code] }
+        function getFloat32() { [native code] }
+        function setFloat32() { [native code] }
+        function getFloat64() { [native code] }
+        function setFloat64() { [native code] }
+        function getBigInt64() { [native code] }
+        function setBigInt64() { [native code] }
+        function getBigUint64() { [native code] }
+        function setBigUint64() { [native code] }
+    Typed Array
+    Float32Array: function Float32Array() { [native code] }（共50个）
+    Float64Array: function Float64Array() { [native code] }（共50个）
+    Int8Array: function Int8Array() { [native code] }（共50个）
+    Int16Array: function Int16Array() { [native code] }（共50个）
+    Int32Array: function Int32Array() { [native code] }（共50个）
+    Uint8Array: function Uint8Array() { [native code] }（共50个）
+    Uint16Array: function Uint16Array() { [native code] }（共50个）
+    Uint32Array: function Uint32Array() { [native code] }（共50个）
+    Uint8ClampedArray: function Uint8ClampedArray() { [native code] }（共50个）
+  4.四个用于当作命名空间的对象：（共108个）
+    Atomics: Atomics（共14个）
+      function load() { [native code] }
+      function store() { [native code] }
+      function add() { [native code] }
+      function sub() { [native code] }
+      function and() { [native code] }
+      function or() { [native code] }
+      function xor() { [native code] }
+      function exchange() { [native code] }
+      function compareExchange() { [native code] }
+      function isLockFree() { [native code] }
+      function wait() { [native code] }
+      function wake() { [native code] }
+      function notify() { [native code] }
+    JSON: JSON（共3个）
+      function parse() { [native code] }
+      function stringify() { [native code] }
+    Math: Math（共57个）
+      function abs() { [native code] }
+      function acos() { [native code] }
+      function acosh() { [native code] }
+      function asin() { [native code] }
+      function asinh() { [native code] }
+      function atan() { [native code] }
+      function atanh() { [native code] }
+      function atan2() { [native code] }
+      function ceil() { [native code] }
+      function cbrt() { [native code] }
+      function expm1() { [native code] }
+      function clz32() { [native code] }
+      function cos() { [native code] }
+      function cosh() { [native code] }
+      function exp() { [native code] }
+      function floor() { [native code] }
+      function fround() { [native code] }
+      function hypot() { [native code] }
+      function imul() { [native code] }
+      function log() { [native code] }
+      function log1p() { [native code] }
+      function log2() { [native code] }
+      function log10() { [native code] }
+      function max() { [native code] }
+      function min() { [native code] }
+      function pow() { [native code] }
+      function random() { [native code] }
+      function round() { [native code] }
+      function sign() { [native code] }
+      function sin() { [native code] }
+      function sqrt() { [native code] }
+      function tan() { [native code] }
+      function tanh() { [native code] }
+      function trunc() { [native code] }
+      function sinh() { [native code] }
+        sinh.prototype: {constructor: ƒ sinh()}
+      function clamp() { [native code] }
+        clamp.prototype: {constructor: ƒ clamp()}
+      function degrees() { [native code] }
+        degrees.prototype: {constructor: ƒ degrees()}
+      function fscale() { [native code] }
+        fscale.prototype: {constructor: ƒ fscale()}
+      function iaddh() { [native code] }
+        iaddh.prototype: {constructor: ƒ iaddh()}
+      function isubh() { [native code] }
+        isubh.prototype: {constructor: ƒ isubh()}
+      function imulh() { [native code] }
+        imulh.prototype: {constructor: ƒ imulh()}
+      function radians() { [native code] }
+        radians.prototype: {constructor: ƒ radians()}
+      function scale() { [native code] }
+        scale.prototype: {constructor: ƒ scale()}
+      function umulh() { [native code] }
+        umulh.prototype: {constructor: ƒ umulh()}
+      function signbit() { [native code] }
+        signbit.prototype: {constructor: ƒ signbit()}
+    Reflect: Object（共34个）
+      function defineProperty() { [native code] }
+      function deleteProperty() { [native code] }
+      function apply() { [native code] }
+      function construct() { [native code] }
+      function get() { [native code] }
+      function getOwnPropertyDescriptor() { [native code] }
+      function getPrototypeOf() { [native code] }
+      function has() { [native code] }
+      function isExtensible() { [native code] }
+      function ownKeys() { [native code] }
+      function preventExtensions() { [native code] }
+      function set() { [native code] }
+      function setPrototypeOf() { [native code] }
+      function enumerate() { [native code] }
+        enumerate.prototype: {constructor: ƒ enumerate()}
+      function defineMetadata() { [native code] }
+        defineMetadata.prototype: {constructor: ƒ defineMetadata()}
+      function deleteMetadata() { [native code] }
+        deleteMetadata.prototype: {constructor: ƒ deleteMetadata()}
+      function getMetadata() { [native code] }
+        getMetadata.prototype: {constructor: ƒ getMetadata()}
+      function getMetadataKeys() { [native code] }
+        getMetadataKeys.prototype: {constructor: ƒ getMetadataKeys()}
+      function getOwnMetadata() { [native code] }
+        getOwnMetadata.prototype: {constructor: ƒ getOwnMetadata()}
+      function getOwnMetadataKeys() { [native code] }
+        getOwnMetadataKeys.prototype: {constructor: ƒ getOwnMetadataKeys()}
+      function hasMetadata() { [native code] }
+        hasMetadata.prototype: {constructor: ƒ hasMetadata()}
+      function hasOwnMetadata() { [native code] }
+        hasOwnMetadata.prototype: {constructor: ƒ hasOwnMetadata()}
+      function metadata() { [native code] }
+        metadata.prototype: {constructor: ƒ metadata()}

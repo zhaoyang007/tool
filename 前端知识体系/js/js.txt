@@ -1,0 +1,3802 @@
+JavaScript
+  运行时
+    数据结构
+      类型
+        对象
+      实例
+        应用和机制
+    执行过程（算法）
+      事件循环
+      微任务的执行
+      函数的执行
+      语句级的执行
+  文法
+    词法
+    语法
+  语义
+
+运行时
+  数据结构
+    类型
+      JavaScript类型：关于类型，有哪些你不知道的细节？
+      1.你好，我是 winter。今天我们来讲讲 JavaScript 的内容，在这个部分，我首先想跟你聊一聊类型。
+      2.JavaScript 类型对每个前端程序员来说，几乎都是最为熟悉的概念了。但是你真的很了解它们吗？我们不妨来看看下面的几个问题。
+        1.为什么有的编程规范要求用 void 0 代替 undefined？
+        2.字符串有最大长度吗？
+        3.0.1 + 0.2 不是等于 0.3 么？为什么 JavaScript 里不是这样的？
+        4.ES6 新加入的 Symbol 是个什么东西？
+        5.为什么给对象添加的方法能用在基本类型上？
+      3.如果你答起来还有些犹豫的地方，这就说明你对这部分知识点，还是有些遗漏之处的。没关系，今天我来帮你一一补上。
+      4.我在前面提到过，我们的 JavaScript 模块会从运行时、文法和执行过程三个角度去剖析 JS 的知识体系，本篇我们就从运行时的角度
+        去看 JavaScript 的类型系统。
+          运行时类型是代码实际执行过程中我们用到的类型。所有的类型数据都会属于 7 个类型之一。从变量、参数、返回值到表达式中间结果，
+          任何 JavaScript 代码运行过程中产生的数据，都具有运行时类型。
+      5.类型
+        1.JavaScript 语言的每一个值都属于某一种数据类型。JavaScript 语言规定了 7 种语言类型。语言类型广泛用于变量、函数参数、
+          表达式、函数返回值等场合。根据最新的语言标准，这 7 种语言类型是：
+            1.Undefined；
+            2.Null；
+            3.Boolean；
+            4.String；
+            5.Number；
+            6.Symbol；
+            7.Object。
+        2.除了 ES6 中新加入的 Symbol 类型，剩下 6 种类型都是我们日常开发中的老朋友了，但是，要想回答文章一开始的问题，我们需要
+          重新认识一下这些老朋友，下面我们就来从简单到复杂，重新学习一下这些类型。
+      6.Undefined、Null
+        1.我们的第一个问题，为什么有的编程规范要求用 void 0 代替 undefined？现在我们就分别来看一下。
+        2.Undefined 类型表示未定义，它的类型只有一个值，就是 undefined。任何变量在赋值前是 Undefined 类型、值为
+          undefined，一般我们可以用全局变量 undefined（就是名为 undefined 的这个变量）来表达这个值，或者 void 运算来
+          把任意一个表达式变成 undefined 值。
+        3.但是呢，因为 JavaScript 的代码 undefined 是一个变量，而并非是一个关键字，这是 JavaScript 语言公认的设计失误
+          之一，所以，我们为了避免无意中被篡改，我建议使用 void 0 来获取 undefined 值。
+        4.Undefined 跟 Null 有一定的表意差别，Null 表示的是：“定义了但是为空”。所以，在实际编程时，我们一般不会把变量赋
+          值为undefined，这样可以保证所有值为 undefined 的变量，都是从未赋值的自然状态。
+        5.Null 类型也只有一个值，就是 null，它的语义表示空值，与 undefined 不同，null 是 JavaScript 关键字，所以在任
+          何代码中，你都可以放心用 null 关键字来获取 null 值。
+      7.Boolean
+        Boolean 类型有两个值， true 和 false，它用于表示逻辑意义上的真和假，同样有关键字 true 和 false 来表示两个值。
+        这个类型很简单，我就不做过多介绍了。
+      8.String
+        1.我们来看看字符串是否有最大长度。
+        2.String 用于表示文本数据。String 有最大长度是 2^53 - 1，这在一般开发中都是够用的，但是有趣的是，这个所谓最大长
+          度，并不完全是你理解中的字符数。
+        3.因为 String 的意义并非“字符串”，而是字符串的 UTF16 编码，我们字符串的操作 charAt、charCodeAt、length 等方
+          法针对的都是 UTF16 编码。所以，字符串的最大长度，实际上是受字符串的编码长度影响的。
+        4.Note：现行的字符集国际标准，字符是以 Unicode 的方式表示的，每一个 Unicode 的码点表示一个字符，理论上，Unicode
+          的范围是无限的。UTF 是 Unicode 的编码方式，规定了码点在计算机中的表示方法，常见的有 UTF16 和 UTF8。 Unicode 
+          的码点通常用 U+??? 来表示，其中 ??? 是十六进制的码点值。 0-65536（U+0000 - U+FFFF）的码点被称为基本字符区域
+          （BMP）。
+        5.JavaScript 中的字符串是永远无法变更的，一旦字符串构造出来，无法用任何方式改变字符串的内容，所以字符串具有值类型
+          的特征。
+        6.JavaScript 字符串把每个 UTF16 单元当作一个字符来处理，所以处理非 BMP（超出 U+0000 - U+FFFF 范围）的字符时，
+          你应该格外小心。
+        7.JavaScript 这个设计继承自 Java，最新标准中是这样解释的，这样设计是为了“性能和尽可能实现起来简单”。因为现实中很
+          少用到 BMP 之外的字符。
+      9.Number
+        1.下面，我们来说说 Number 类型。Number 类型表示我们通常意义上的“数字”。这个数字大致对应数学中的有理数，当然，在计
+          算机中，我们有一定的精度限制。
+        2.JavaScript 中的 Number 类型有 18437736874454810627(即 2^64-2^53+3) 个值。
+        3.JavaScript 中的 Number 类型基本符合 IEEE 754-2008 规定的双精度浮点数规则，但是 JavaScript 为了表达几个额外
+          的语言场景（比如不让除以 0 出错，而引入了无穷大的概念），规定了几个例外情况：
+            NaN，占用了 9007199254740990，这原本是符合 IEEE 规则的数字；
+            Infinity，无穷大；
+            -Infinity，负无穷大。
+        4.另外，值得注意的是，JavaScript 中有 +0 和 -0，在加法类运算中它们没有区别，但是除法的场合则需要特别留意区分，“忘
+          记检测除以 -0，而得到负无穷大”的情况经常会导致错误，而区分 +0 和 -0 的方式，正是检测 1/x 是 Infinity 还是 
+          -Infinity。
+        5.根据双精度浮点数的定义，Number 类型中有效的整数范围是 -0x1fffffffffffff 至 0x1fffffffffffff，所以 Number 
+          无法精确表示此范围外的整数。
+        6.同样根据浮点数的定义，非整数的 Number 类型无法用 ==（=== 也不行） 来比较，一段著名的代码，这也正是我们第三题的问
+          题，为什么在 JavaScript 中，0.1+0.2 不能 =0.3：
+          console.log( 0.1 + 0.2 == 0.3);
+          这里输出的结果是 false，说明两边不相等的，这是浮点运算的特点，也是很多同学疑惑的来源，浮点数运算的精度问题导致等式
+          左右的结果并不是严格相等，而是相差了个微小的值。
+        7.所以实际上，这里错误的不是结论，而是比较的方法，正确的比较方法是使用 JavaScript 提供的最小精度值：
+          console.log( Math.abs(0.1 + 0.2 - 0.3) <= Number.EPSILON);
+          检查等式左右两边差的绝对值是否小于最小精度，才是正确的比较浮点数的方法。这段代码结果就是 true 了。
+      10.Symbol
+        1.Symbol 是 ES6 中引入的新类型，它是一切非字符串的对象 key 的集合，在 ES6 规范中，整个对象系统被用 Symbol 重塑。
+        2.在后面的文章中，我会详细叙述 Symbol 跟对象系统。这里我们只介绍 Symbol 类型本身：它有哪些部分，它表示什么意思，以
+          及如何创建 Symbol 类型。
+        3.Symbol 可以具有字符串类型的描述，但是即使描述相同，Symbol 也不相等。
+        4.我们创建 Symbol 的方式是使用全局的 Symbol 函数。例如：
+          var mySymbol = Symbol("my symbol");
+        5.一些标准中提到的 Symbol，可以在全局的 Symbol 函数的属性中找到。例如，我们可以使用 Symbol.iterator 来自定义 
+          for…of 在对象上的行为：
+            var o = new Object 
+            o[Symbol.iterator] = function () { 
+              var v = 0 
+              return { 
+                next: function () { 
+                  return { 
+                    value: v++, 
+                    done: v > 10 
+                  } 
+                } 
+              } 
+            }; 
+            for(var v of o) 
+              console.log(v); // 0 1 2 3 ... 9
+        6.代码中我们定义了 iterator 之后，用 for(var v of o) 就可以调用这个函数，然后我们可以根据函数的行为，产生一个 
+          for…of 的行为。
+        7.这里我们给对象 o 添加了 Symbol.iterator 属性，并且按照迭代器的要求定义了一个 0 到 10 的迭代器，之后我们就可以
+          在 for of 中愉快地使用这个 o 对象啦。
+        8.这些标准中被称为“众所周知”的 Symbol，也构成了语言的一类接口形式。它们允许编写与语言结合更紧密的 API。
+      11.Object
+        1.Object 是 JavaScript 中最复杂的类型，也是 JavaScript 的核心机制之一。Object 表示对象的意思，它是一切有形和无
+          形物体的总称。
+        2.下面我们来看一看，为什么给对象添加的方法能用在基本类型上？
+        3.在 JavaScript 中，对象的定义是“属性的集合”。属性分为数据属性和访问器属性，二者都是 key-value 结构，key 可以是
+          字符串或者 Symbol 类型。
+        4.关于对象的机制，后面会有单独的一篇来讲述，这里我重点从类型的角度来介绍对象类型。
+        5.提到对象，我们必须要提到一个概念：类。
+        6.因为 C++ 和 Java 的成功，在这两门语言中，每个类都是一个类型，二者几乎等同，以至于很多人常常会把 JavaScript 的
+          “类”与类型混淆。
+        7.事实上，JavaScript 中的“类”仅仅是运行时对象的一个私有属性，而 JavaScript 中是无法自定义类型的。
+        8.JavaScript 中的几个基本类型，都在对象类型中有一个“亲戚”。它们是：
+          Number；
+          String；
+          Boolean；
+          Symbol。
+        9.所以，我们必须认识到 3 与 new Number(3) 是完全不同的值，它们一个是 Number 类型， 一个是对象类型。
+        10.Number、String 和 Boolean，三个构造器是两用的，当跟 new 搭配时，它们产生对象，当直接调用时，它们表示强制类型
+          转换。
+        11.Symbol 函数比较特殊，直接用 new 调用它会抛出错误，但它仍然是 Symbol 对象的构造器。
+        12.JavaScript 语言设计上试图模糊对象和基本类型之间的关系，我们日常代码可以把对象的方法在基本类型上使用，比如：
+            console.log("abc".charAt(0)); //a
+        13.甚至我们在原型上添加方法，都可以应用于基本类型，比如以下代码，在 Symbol 原型上添加了 hello 方法，在任何 Symbol 
+          类型变量都可以调用。
+            Symbol.prototype.hello = () => console.log("hello"); 
+            var a = Symbol("a"); 
+            console.log(typeof a); //symbol，a并非对象 
+            a.hello(); //hello，有效
+        14.所以我们文章开头的问题，答案就是. 运算符提供了装箱操作，它会根据基础类型构造一个临时对象，使得我们能在基础类型上调
+          用对应对象的方法。
+      12.类型转换
+        1.讲完了基本类型，我们来介绍一个现象：类型转换。
+        2.因为 JS 是弱类型语言，所以类型转换发生非常频繁，大部分我们熟悉的运算都会先进行类型转换。大部分类型转换符合人类的
+          直觉，但是如果我们不去理解类型转换的严格定义，很容易造成一些代码中的判断失误。
+        3.其中最为臭名昭著的是 JavaScript 中的“ == ”运算，因为试图实现跨类型的比较，它的规则复杂到几乎没人可以记住。
+        4.这里我们当然也不打算讲解 == 的规则，它属于设计失误，并非语言中有价值的部分，很多实践中推荐禁止使用“ ==”，而要求
+          程序员进行显式地类型转换后，用 === 比较。
+        5.其它运算，如加减乘除大于小于，也都会涉及类型转换。幸好的是，实际上大部分类型转换规则是非常简单的，如下表所示：
+          类型转换规则.jpg
+        6.在这个里面，较为复杂的部分是 Number 和 String 之间的转换，以及对象跟基本类型之间的转换。我们分别来看一看这几种
+          转换的规则。
+      13.StringToNumber
+        1.字符串到数字的类型转换，存在一个语法结构，类型转换支持十进制、二进制、八进制和十六进制，比如：
+          30；
+          0b111；
+          0o13；
+          0xFF。
+        2.此外，JavaScript 支持的字符串语法还包括正负号科学计数法，可以使用大写或者小写的 e 来表示：
+          1e3；
+          -1e-2。
+        3.需要注意的是，parseInt 和 parseFloat 并不使用这个转换，所以支持的语法跟这里不尽相同。
+        4.在不传入第二个参数的情况下，parseInt 只支持 16 进制前缀“0x”，而且会忽略非数字字符，也不支持科学计数法。
+        5.在一些古老的浏览器环境中，parseInt 还支持 0 开头的数字作为 8 进制前缀，这是很多错误的来源。所以在任何环境
+          下，都建议传入 parseInt 的第二个参数，而 parseFloat 则直接把原字符串作为十进制来解析，它不会引入任何的其
+          他进制。
+        6.多数情况下，Number 是比 parseInt 和 parseFloat 更好的选择。
+      14.NumberToString
+        1.在较小的范围内，数字到字符串的转换是完全符合你直觉的十进制表示。当 Number 绝对值较大或者较小时，字符串表示
+          则是使用科学计数法表示的。这个算法细节繁多，我们从感性的角度认识，它其实就是保证了产生的字符串不会过长。
+        2.具体的算法，你可以去参考 JavaScript 的语言标准。由于这个部分内容，我觉得在日常开发中很少用到，所以这里我就
+          不去详细地讲解了。
+      15.装箱转换
+        1.每一种基本类型 Number、String、Boolean、Symbol 在对象中都有对应的类，所谓装箱转换，正是把基本类型转换为
+          对应的对象，它是类型转换中一种相当重要的种类。
+        2.前文提到，全局的 Symbol 函数无法使用 new 来调用，但我们仍可以利用装箱机制来得到一个 Symbol 对象，我们可
+          以利用一个函数的 call 方法来强迫产生装箱。
+        3.我们定义一个函数，函数里面只有 return this，然后我们调用函数的 call 方法到一个 Symbol 类型的值上，这样
+          就会产生一个 symbolObject。
+        4.我们可以用 console.log 看一下这个东西的 type of，它的值是 object，我们使用 symbolObject instanceof 
+          可以看到，它是 Symbol 这个类的实例，我们找它的 constructor 也是等于 Symbol 的，所以我们无论从哪个角度看，
+          它都是 Symbol 装箱过的对象：
+            var symbolObject = (function(){ return this; }).call(Symbol("a"));
+            console.log(typeof symbolObject); //object
+            console.log(symbolObject instanceof Symbol); //true
+            console.log(symbolObject.constructor == Symbol); //true
+        5.装箱机制会频繁产生临时对象，在一些对性能要求较高的场景下，我们应该尽量避免对基本类型做装箱转换。
+        6.使用内置的 Object 函数，我们可以在 JavaScript 代码中显式调用装箱能力。
+          var symbolObject = Object(Symbol("a"));
+          console.log(typeof symbolObject); //object
+          console.log(symbolObject instanceof Symbol); //true
+          console.log(symbolObject.constructor == Symbol); //true
+        7.每一类装箱对象皆有私有的 Class 属性，这些属性可以用 Object.prototype.toString 获取：
+          var symbolObject = Object(Symbol("a"));
+          console.log(Object.prototype.toString.call(symbolObject)); //[object Symbol]
+        8.在 JavaScript 中，没有任何方法可以更改私有的 Class 属性，因此 Object.prototype.toString 是可以准确
+          识别对象对应的基本类型的方法，它比 instanceof 更加准确。
+        9.但需要注意的是，call 本身会产生装箱操作，所以需要配合 typeof 来区分基本类型还是对象类型。
+      16.拆箱转换
+        1.在 JavaScript 标准中，规定了 ToPrimitive 函数，它是对象类型到基本类型的转换（即，拆箱转换）。
+        2.对象到 String 和 Number 的转换都遵循“先拆箱再转换”的规则。通过拆箱转换，把对象变成基本类型，再从基本类型
+          转换为对应的 String 或者 Number。
+        3.拆箱转换会尝试调用 valueOf 和 toString 来获得拆箱后的基本类型。如果 valueOf 和 toString 都不存在，或
+          者没有返回基本类型，则会产生类型错误 TypeError。 
+          var o = {
+              valueOf : () => {console.log("valueOf"); return {}},
+              toString : () => {console.log("toString"); return {}}
+          }
+          o * 2
+          // valueOf
+          // toString
+          // TypeError
+        4.我们定义了一个对象 o，o 有 valueOf 和 toString 两个方法，这两个方法都返回一个对象，然后我们进行 o*2 这
+          个运算的时候，你会看见先执行了 valueOf，接下来是 toString，最后抛出了一个 TypeError，这就说明了这个拆箱
+          转换失败了。
+        5.到 String 的拆箱转换会优先调用 toString。我们把刚才的运算从 o*2 换成 String(o)，那么你会看到调用顺序就
+          变了。        
+          var o = {
+              valueOf : () => {console.log("valueOf"); return {}},
+              toString : () => {console.log("toString"); return {}}
+          }
+          String(o)
+            // toString
+            // valueOf
+            // TypeError
+        6.在 ES6 之后，还允许对象通过显式指定 @@toPrimitive Symbol 来覆盖原有的行为。
+          var o = {
+              valueOf : () => {console.log("valueOf"); return {}},
+              toString : () => {console.log("toString"); return {}}
+          }
+          o[Symbol.toPrimitive] = () => {console.log("toPrimitive"); return "hello"}
+          console.log(o + "")
+          // toPrimitive
+          // hello
+      17.结语
+        1.在本篇文章中，我们介绍了 JavaScript 运行时的类型系统。这里回顾一下今天讲解的知识点。
+        2.除了这七种语言类型，还有一些语言的实现者更关心的规范类型。
+          List 和 Record： 用于描述函数传参过程。
+          Set：主要用于解释字符集等。
+          Completion Record：用于描述异常、跳出等语句执行过程。
+          Reference：用于描述对象属性访问、delete 等。
+          Property Descriptor：用于描述对象的属性。
+          Lexical Environment 和 Environment Record：用于描述变量和作用域。
+          Data Block：用于描述二进制数据。
+        3.有一个说法是：程序 = 算法 + 数据结构，运行时类型包含了所有 JavaScript 执行时所需要的数据结构的定义，所以我们
+          要对它格外重视。
+        4.最后我们留一个实践问题，如果我们不用原生的 Number 和 parseInt，用 JavaScript 代码实现 String 到 Number 
+          的转换，该怎么做呢？请你把自己的代码留言给我吧！
+      18.补充阅读
+        1.事实上，“类型”在 JavaScript 中是一个有争议的概念。一方面，标准中规定了运行时数据类型； 另一方面，JavaScript 
+          语言中提供了 typeof 这样的运算，用来返回操作数的类型，但 typeof 的运算结果，与运行时类型的规定有很多不一致的
+          地方。我们可以看下表来对照一下。
+            数据类型.png
+        2.在表格中，多数项是对应的，但是请注意 object——Null 和 function——Object 是特例，我们理解类型的时候需要特别注
+          意这个区别。
+        3.从一般语言使用者的角度来看，毫无疑问，我们应该按照 typeof 的结果去理解语言的类型系统。但 JavaScript 之父本人
+          也在多个场合表示过，typeof 的设计是有缺陷的，只是现在已经错过了修正它的时机。
+      其他总结
+      1.值类型，引用类型，栈堆的内存存储形式
+        我们在计算机变量存储的时候，栈和堆是同时存在的。在内存存储中，栈是从上往下累加，堆是从下往上累加。它们两个之间会不会重合呢，异
+        常情况下可能会重合，但是我们的操作系统一般分配的内存是够我们的程序使用的。值类型是在栈中存储的，我们的堆就不一样了，比如说我们
+        把a赋值成一个对象，它会在堆中申请一个内存地址，然后把这个对象放到这个堆里，然后这个变量a指向这个内存地址。也就是说变量a里面存
+        储的并不是这个对象，而是存的这个内存地址，这个内存地址指向这个对象。这就是从js引擎去解析或定义变量的这个内存模型或堆栈模型。
+      2.为什么值类型和引用类型是这样的存储方式
+        原因还是考虑到性能或者存储的问题。因为值类型它的占用空间是比较少的。引用类型可能存储占用的空间太大，不好管理。再一个就是我们在
+        复制的时候直接复制值会导致复制过程非常的慢。所以说计算机所有的程序，代码，语言都是采用这种方式。就是值类型和引用类型严格的分离
+        出来。它们的存储机制，它们的赋值机制，它们的拷贝机制也是严格的分离出来。它是基于这个内存的空间和cpu的计算的耗时来去做的这么一
+        个区分，它并不是故意这么做，故意为难你，它是不得以而为之的。
+      3.typeof
+        undefined, number, string, boolean, symbol, function, object
+        if( typeof str === undefined )
+      4.类型转换
+        1.字符串拼接
+        2.==
+          ==会发生隐式类型转换，除了==null之外，其他一律用===
+          // 判断对象中有没有这个属性
+          const obj = {x: 100}
+          if (obj.a == null) {}
+          // 相当于：
+          if (obj.a === null || obj.a === undefined) {}
+          ==null这种规则是jquery和zipto等源码都在使用的，而且eslint检测也是支持这种规则的。
+        3.if语句和逻辑运算
+          truly变量和falsely变量这两个概念对我们的if语句和逻辑运算是非常有用的，它们判断的就是truly变量和falsely变量，
+          它不是必须要判断true和false
+          truly变量：!!a === true的变量，就是经过两步非运算如果得出true那就是truly变量
+          flasely变量：!!a === flase的变量，就是经过两步非运算如果得出flase那就是flasely变量
+          // 以下是falsely变量。除此之外都是truly变量
+          !!0 === false
+          !!NaN === false
+          !!'' === false
+          !!null === false
+          !!undefined === false
+          !!false === false
+          // 逻辑运算与或非
+          console.log(10 && 0) // 0
+          console.log('' || 'abc') // 'abc'
+          console.log(!window.abc) // true
+        4.Number类型和String类型相互转换
+          1.StringToNumber
+            1.parseInt
+              1.parseInt()函数：它是全局函数，不从属于任何类的方法，且只解析整数。如果字符串前缀是"0x"或者"0X"，则parseInt()将
+                其解释为十六进制数。它解析时会跳过任意数量的前导空格，尽可能解析更多数值字符，并忽略后面的内容，如果第一个非空格字符
+                是非数字字符，则返回NaN。
+              2.parseInt()还可以接收第二个可选参数，这个参数指定数字转换的基数，合法的取值范围是2~36
+            2.parseFloat
+              parseFloat()函数：它也是全局函数，不从属于任何类的方法，它可以解析整数和浮点数。它不能识别十六进制前缀"0x"或"0X"。
+              它解析时也会跳过任意数量的前导空格，尽可能解析更多数值字符，并忽略后面的内容，如果第一个非空格字符是非数字字符，则返
+              回NaN。
+            3.Number  
+              通过Number()转换函数传入一个字符串，它会试图将其转换为一个整数或浮点数直接量，这个方法只能基于十进制进行转换，并且字
+              符串中不能出现非数字的字符，否则将返回NaN。
+          2.NumberToString
+            1.Number类定义的toString()方法：这个方法可以接收表示转换基数（radix，范围在2~36之间）的可选参数，如果不指定此参数，
+              转换规则将是基于十进制。
+            2.Number类定义的toFixed()方法：这个方法可以指定小数点后的位数。
+            3.Number类定义的toExponential()方法：这个方法使用指数记数法将数字转换为指数形式的字符串，其中小数点前只有一位，小数
+              点后的位数则由参数指定。
+            4.Number类定义的toPrecision()方法：这个方法根据指定的有效数字位数将数字转换成字符串。如果有效数字的位数少于数字整数
+              部分的位数，则转换成指数形式。
+      对象
+        JavaScript对象：面向对象还是基于对象？
+        1.与其它的语言相比，JavaScript 中的“对象”总是显得不那么合群。
+        2.一些新人在学习 JavaScript 面向对象时，往往也会有疑惑：
+          为什么 JavaScript（直到 ES6）有对象的概念，但是却没有像其他的语言那样，有类的概念呢；
+          为什么在 JavaScript 对象里可以自由添加属性，而其他的语言却不能呢？
+        3.甚至，在一些争论中，有人强调：JavaScript 并非“面向对象的语言”，而是“基于对象的语言”。这个说法一度流传甚广，而事实上，我
+          至今遇到的持有这一说法的人中，无一能够回答“如何定义面向对象和基于对象”这个问题。
+        4.实际上，基于对象和面向对象两个形容词都出现在了 JavaScript 标准的各个版本当中。
+        5.我们可以先看看 JavaScript 标准对基于对象的定义，这个定义的具体内容是：“语言和宿主的基础设施由对象来提供，并且 
+          JavaScript 程序即是一系列互相通讯的对象集合”。
+        6.这里的意思根本不是表达弱化的面向对象的意思，反而是表达对象对于语言的重要性。
+        7.那么，在本篇文章中，我会尝试让你去理解面向对象和 JavaScript 中的面向对象究竟是什么。
+        8.什么是面向对象？
+          1.我们先来说说什么是对象，因为翻译的原因，中文语境下我们很难理解“对象”的真正含义。事实上，Object（对象）在英文中，是一切
+            事物的总称，这和面向对象编程的抽象思维有互通之处。
+          2.中文的“对象”却没有这样的普适性，我们在学习编程的过程中，更多是把它当作一个专业名词来理解。
+          3.但不论如何，我们应该认识到，对象并不是计算机领域凭空造出来的概念，它是顺着人类思维模式产生的一种抽象（于是面向对象编程也
+            被认为是：更接近人类思维模式的一种编程范式）。
+          4.那么，我们先来看看在人类思维模式下，对象究竟是什么。
+            对象这一概念在人类的幼儿期形成，这远远早于我们编程逻辑中常用的值、过程等概念。
+            在幼年期，我们总是先认识到某一个苹果能吃（这里的某一个苹果就是一个对象），继而认识到所有的苹果都可以吃（这里的所有苹果，
+            就是一个类），再到后来我们才能意识到三个苹果和三个梨之间的联系，进而产生数字“3”（值）的概念。
+          5.在《面向对象分析与设计》这本书中，Grady Booch 替我们做了总结，他认为，从人类的认知角度来说，对象应该是下列事物之一：
+            1.一个可以触摸或者可以看见的东西；
+            2.人的智力可以理解的东西；
+            3.可以指导思考或行动（进行想象或施加动作）的东西。
+          6.有了对象的自然定义后，我们就可以描述编程语言中的对象了。在不同的编程语言中，设计者也利用各种不同的语言特性来抽象描述对象，
+            最为成功的流派是使用“类”的方式来描述对象，这诞生了诸如 C++、Java 等流行的编程语言。
+          7.而 JavaScript 早年却选择了一个更为冷门的方式：原型（关于原型，我在下一篇文章会重点介绍，这里你留个印象就可以了）。这是
+            我在前面说它不合群的原因之一。
+          8.然而很不幸，因为一些公司政治原因，JavaScript 推出之时受管理层之命被要求模仿 Java，所以，JavaScript 创始人 Brendan 
+            Eich 在“原型运行时”的基础上引入了 new、this 等语言特性，使之“看起来更像 Java”。
+          9.在 ES6 出现之前，大量的 JavaScript 程序员试图在原型体系的基础上，把 JavaScript 变得更像是基于类的编程，进而产生了很
+            多所谓的“框架”，比如 PrototypeJS、Dojo。
+          10.事实上，它们成为了某种 JavaScript 的古怪方言，甚至产生了一系列互不相容的社群，显然这样做的收益是远远小于损失的。
+          11.如果我们从运行时角度来谈论对象，就是在讨论 JavaScript 实际运行中的模型，这是由于任何代码执行都必定绕不开运行时的对象
+            模型。
+          12.不过，幸运的是，从运行时的角度看，可以不必受到这些“基于类的设施”的困扰，这是因为任何语言运行时类的概念都是被弱化的。
+          13.首先我们来了解一下 JavaScript 是如何设计对象模型的。
+        9.JavaScript 对象的特征
+          1.在我看来，不论我们使用什么样的编程语言，我们都先应该去理解对象的本质特征（参考 Grandy Booch《面向对象分析与设计》）。
+            总结来看，对象有如下几个特点。
+            对象具有唯一标识性：即使完全相同的两个对象，也并非同一个对象。
+            对象有状态：对象具有状态，同一对象可能处于不同状态之下。
+            对象具有行为：即对象的状态，可能因为它的行为产生变迁。
+          2.我们先来看第一个特征，对象具有唯一标识性。一般而言，各种语言的对象唯一标识性都是用内存地址来体现的， 对象具有唯一标识的
+            内存地址，所以具有唯一的标识。
+          3.所以，JavaScript 程序员都知道，任何不同的 JavaScript 对象其实是互不相等的，我们可以看下面的代码，o1 和 o2 初看是两
+            个一模一样的对象，但是打印出来的结果却是 false。
+              var o1 = { a: 1 };
+              var o2 = { a: 1 };
+              console.log(o1 == o2); // false
+          4.关于对象的第二个和第三个特征“状态和行为”，不同语言会使用不同的术语来抽象描述它们，比如 C++ 中称它们为“成员变量”和
+            “成员函数”，Java 中则称它们为“属性”和“方法”。
+          5.在 JavaScript 中，将状态和行为统一抽象为“属性”，考虑到 JavaScript 中将函数设计成一种特殊对象（关于这点，我会在后面
+            的文章中详细讲解，此处先不用细究），所以 JavaScript 中的行为和状态都能用属性来抽象。
+          6.下面这段代码其实就展示了普通属性和函数作为属性的一个例子，其中 o 是对象，d 是一个属性，而函数 f 也是一个属性，尽管写法
+            不太相同，但是对 JavaScript 来说，d 和 f 就是两个普通属性。
+              var o = { 
+                  d: 1,
+                  f() {
+                      console.log(this.d);
+                  }    
+              };
+          7.所以，总结一句话来看，在 JavaScript 中，对象的状态和行为其实都被抽象为了属性。如果你用过 Java，一定不要觉得奇怪，尽管
+            设计思路有一定差别，但是二者都很好地表现了对象的基本特征：标识性、状态和行为。
+          8.在实现了对象基本特征的基础上, 我认为，JavaScript 中对象独有的特色是：对象具有高度的动态性，这是因为 JavaScript 赋予
+            了使用者在运行时为对象添改状态和行为的能力。
+          9.我来举个例子，比如，JavaScript 允许运行时向对象添加属性，这就跟绝大多数基于类的、静态的对象设计完全不同。如果你用过 
+            Java 或者其它别的语言，肯定会产生跟我一样的感受。
+          10.下面这段代码就展示了运行时如何向一个对象添加属性，一开始我定义了一个对象 o，定义完成之后，再添加它的属性 b，这样操作是
+            完全没问题的。
+              var o = { a: 1 };
+              o.b = 2;
+              console.log(o.a, o.b); //1 2
+          11.为了提高抽象能力，JavaScript 的属性被设计成比别的语言更加复杂的形式，它提供了数据属性和访问器属性（getter/setter）
+            两类。
+        10.JavaScript 对象的两类属性
+          1.对 JavaScript 来说，属性并非只是简单的名称和值，JavaScript 用一组特征（attribute）来描述属性（property）。
+          2.先来说第一类属性，数据属性。它比较接近于其它语言的属性概念。数据属性具有四个特征。
+            value：就是属性的值。
+            writable：决定属性能否被赋值。
+            enumerable：决定 for in 能否枚举该属性。
+            configurable：决定该属性能否被删除或者改变特征值。
+          3.在大多数情况下，我们只关心数据属性的值即可。
+          4.第二类属性是访问器（getter/setter）属性，它也有四个特征。
+            getter：函数或 undefined，在取属性值时被调用。
+            setter：函数或 undefined，在设置属性值时被调用。
+            enumerable：决定 for in 能否枚举该属性。
+            configurable：决定该属性能否被删除或者改变特征值。
+          5.访问器属性使得属性在读和写时执行代码，它允许使用者在写和读属性时，得到完全不同的值，它可以视为一种函数的语法糖。
+          6.我们通常用于定义属性的代码会产生数据属性，其中的 writable、enumerable、configurable 都默认为 true。我们可以使用
+            内置函数 Object.getOwnPropertyDescripter 来查看，如以下代码所示：
+              var o = { a: 1 };
+              o.b = 2;
+              //a和b皆为数据属性
+              Object.getOwnPropertyDescriptor(o,"a") // {value: 1, writable: true, enumerable: true, configurable: true}
+              Object.getOwnPropertyDescriptor(o,"b") // {value: 2, writable: true, enumerable: true, configurable: true}
+          7.我们在这里使用了两种语法来定义属性，定义完属性后，我们用 JavaScript 的 API 来查看这个属性，我们可以发现，这样定义出来
+            的属性都是数据属性，writeable、enumerable、configurable 都是默认值为 true。
+          8.如果我们要想改变属性的特征，或者定义访问器属性，我们可以使用 Object.defineProperty，示例如下：
+            var o = { a: 1 };
+            Object.defineProperty(o, "b", {value: 2, writable: false, enumerable: false, configurable: true});
+            //a和b都是数据属性，但特征值变化了
+            Object.getOwnPropertyDescriptor(o,"a"); // {value: 1, writable: true, enumerable: true, configurable: true}
+            Object.getOwnPropertyDescriptor(o,"b"); // {value: 2, writable: false, enumerable: false, configurable: true}
+            o.b = 3;
+            console.log(o.b); // 2
+          9.这里我们使用了 Object.defineProperty 来定义属性，这样定义属性可以改变属性的 writable 和 enumerable。
+          10.我们同样用 Object.getOwnPropertyDescriptor 来查看，发现确实改变了 writable 和 enumerable 特征。因为
+            writable 特征为 false，所以我们重新对 b 赋值，b 的值不会发生变化。
+          11.在创建对象时，也可以使用 get 和 set 关键字来创建访问器属性，代码如下所示：
+              var o = { get a() { return 1 } };
+              console.log(o.a); // 1
+          12.访问器属性跟数据属性不同，每次访问属性都会执行 getter 或者 setter 函数。这里我们的 getter 函数返回了 1，所以 o.a 
+            每次都得到 1。
+          13.这样，我们就理解了，实际上 JavaScript 对象的运行时是一个“属性的集合”，属性以字符串或者 Symbol 为 key，以数据属性特
+            征值或者访问器属性特征值为 value。
+          14.对象是一个属性的索引结构（索引结构是一类常见的数据结构，我们可以把它理解为一个能够以比较快的速度用 key 来查找 value 
+            的字典）。我们以上面的对象 o 为例，你可以想象一下“a”是 key。
+            {writable:true,value:1,configurable:true,enumerable:true}是 value。我们在前面的类型课程中，已经介绍了
+            Symbol 类型，能够以 Symbol 为属性名，这是 JavaScript 对象的一个特色。
+          15.讲到了这里，如果你理解了对象的特征，也就不难理解我开篇提出来的问题。
+          16.你甚至可以理解为什么会有“JavaScript 不是面向对象”这样的说法了。这是由于 JavaScript 的对象设计跟目前主流基于类的面向对
+            象差异非常大。
+          17.可事实上，这样的对象系统设计虽然特别，但是 JavaScript 提供了完全运行时的对象系统，这使得它可以模仿多数面向对象编程范式
+            （下一节课我们会给你介绍 JavaScript 中两种面向对象编程的范式：基于类和基于原型），所以它也是正统的面向对象语言。
+          18.JavaScript 语言标准也已经明确说明，JavaScript 是一门面向对象的语言，我想标准中能这样说，正是因为 JavaScript 的高度
+            动态性的对象系统。
+          19.所以，我们应该在理解其设计思想的基础上充分挖掘它的能力，而不是机械地模仿其它语言。
+        11.结语
+          1.要想理解 JavaScript 对象，必须清空我们脑子里“基于类的面向对象”相关的知识，回到人类对对象的朴素认知和面向对象的语言无
+            关基础理论，我们就能够理解 JavaScript 面向对象设计的思路。
+          2.在这篇文章中，我从对象的基本理论出发，和你理清了关于对象的一些基本概念，分析了 JavaScript 对象的设计思路。接下来又从
+            运行时的角度，介绍了 JavaScript 对象的具体设计：具有高度动态性的属性集合。
+          3.很多人在思考 JavaScript 对象时，会带着已有的“对象”观来看问题，最后的结果当然就是“剪不断理还乱”了。
+          4.在后面的文章中，我会继续带你探索 JavaScript 对象的一些机制，看 JavaScript 如何基于这样的动态对象模型设计自己的原型
+            系统，以及你熟悉的函数、类等基础设施。
+          5.你还知道哪些面向对象语言，它们的面向对象系统是怎样的？请留言告诉我吧！
+    实例
+      应用和机制
+        JavaScript对象：我们真的需要模拟类吗？
+        1.早期的 JavaScript 程序员一般都有过使用 JavaScript“模拟面向对象”的经历。
+        2.在上一篇文章我们已经讲到，JavaScript 本身就是面向对象的，它并不需要模拟，只是它实现面向对象的方式和主流的流派不太一样，
+          所以才让很多人产生了误会。
+        3.那么，随着我们理解的思路继续深入，这些“模拟面向对象”，实际上做的事情就是“模拟基于类的面向对象”。
+        4.尽管我认为，“类”并非面向对象的全部，但我们不应该责备社区出现这样的方案，事实上，因为一些公司的政治原因，JavaScript 推出
+          之时，管理层就要求它去模仿 Java。
+        5.所以，JavaScript 创始人 Brendan Eich 在“原型运行时”的基础上引入了 new、this 等语言特性，使之“看起来语法更像 Java”，
+          而 Java 正是基于类的面向对象的代表语言之一。
+        6.但是 JavaScript 这样的半吊子模拟，缺少了继承等关键特性，导致大家试图对它进行修补，进而产生了种种互不相容的解决方案。
+        7.庆幸的是，从 ES6 开始，JavaScript 提供了 class 关键字来定义类，尽管，这样的方案仍然是基于原型运行时系统的模拟，但是它
+          修正了之前的一些常见的“坑”，统一了社区的方案，这对语言的发展有着非常大的好处。
+        8.实际上，我认为“基于类”并非面向对象的唯一形态，如果我们把视线从“类”移开，Brendan 当年选择的原型系统，就是一个非常优秀的
+          抽象对象的形式。
+        9.我们从头讲起。
+        10.什么是原型？ 
+          1.原型是顺应人类自然思维的产物。中文中有个成语叫做“照猫画虎”，这里的猫看起来就是虎的原型，所以，由此我们可以看出，用原型来
+            描述对象的方法可以说是古已有之。
+          2.我们在上一节讲解面向对象的时候提到了：在不同的编程语言中，设计者也利用各种不同的语言特性来抽象描述对象。
+          3.最为成功的流派是使用“类”的方式来描述对象，这诞生了诸如 C++、Java 等流行的编程语言。这个流派叫做基于类的编程语言。
+          4.还有一种就是基于原型的编程语言，它们利用原型来描述对象。我们的 JavaScript 就是其中代表。
+          5.“基于类”的编程提倡使用一个关注分类和类之间关系开发模型。在这类语言中，总是先有类，再从类去实例化一个对象。类与类之间又可
+            能会形成继承、组合等关系。类又往往与语言的类型系统整合，形成一定编译时的能力。
+          6.与此相对，“基于原型”的编程看起来更为提倡程序员去关注一系列对象实例的行为，而后才去关心如何将这些对象，划分到最近的使用方
+            式相似的原型对象，而不是将它们分成类。
+          7.基于原型的面向对象系统通过“复制”的方式来创建新对象。一些语言的实现中，还允许复制一个空对象。这实际上就是创建一个全新的对
+            象。
+          8.基于原型和基于类都能够满足基本的复用和抽象需求，但是适用的场景不太相同。
+          9.这就像专业人士可能喜欢在看到老虎的时候，喜欢用猫科豹属豹亚种来描述它，但是对一些不那么正式的场合，“大猫”可能更为接近直观
+            的感受一些（插播一个冷知识：比起老虎来，美洲狮在历史上相当长时间都被划分为猫科猫属，所以性格也跟猫更相似，比较亲人）。
+          10.我们的 JavaScript 并非第一个使用原型的语言，在它之前，self、kevo 等语言已经开始使用原型来描述对象了。
+          11.事实上，Brendan 更是曾透露过，他最初的构想是一个拥有基于原型的面向对象能力的 scheme 语言（但是函数式的部分是另外的故
+            事，这篇文章里，我暂时不做详细讲述）。
+          12.在 JavaScript 之前，原型系统就更多与高动态性语言配合，并且多数基于原型的语言提倡运行时的原型修改，我想，这应该是 
+            Brendan 选择原型系统很重要的理由。
+          13.原型系统的“复制操作”有两种实现思路：
+            一个是并不真的去复制一个原型对象，而是使得新对象持有一个原型的引用；
+            另一个是切实地复制对象，从此两个对象再无关联。
+          14.历史上的基于原型语言因此产生了两个流派，显然，JavaScript 显然选择了前一种方式。
+        11.JavaScript 的原型
+          1.如果我们抛开 JavaScript 用于模拟 Java 类的复杂语法设施（如 new、Function Object、函数的 prototype 属性等），原
+            型系统可以说相当简单，我可以用两条概括：
+              如果所有对象都有私有字段[[prototype]]，就是对象的原型；
+              读一个属性，如果对象本身没有，则会继续访问对象的原型，直到原型为空或者找到为止。
+          2.这个模型在 ES 的各个历史版本中并没有很大改变，但从 ES6 以来，JavaScript 提供了一系列内置函数，以便更为直接地访问操纵
+            原型。三个方法分别为：
+              Object.create 根据指定的原型创建新对象，原型可以是 null；
+              Object.getPrototypeOf 获得一个对象的原型；
+              Object.setPrototypeOf 设置一个对象的原型。
+          3.利用这三个方法，我们可以完全抛开类的思维，利用原型来实现抽象和复用。我用下面的代码展示了用原型来抽象猫和虎的例子。
+            var cat = { 
+              say (){ 
+                console.log("meow~"); 
+              }, 
+              jump (){ 
+                console.log("jump"); 
+              }
+            }
+            var tiger = Object.create(cat, { 
+              say:{ 
+                writable:true, 
+                configurable:true, 
+                enumerable:true, 
+                value: function (){ 
+                  console.log("roar!"); 
+                } 
+              }
+            })
+            var anotherCat = Object.create(cat);
+            anotherCat.say();
+            var anotherTiger = Object.create(tiger);
+            anotherTiger.say();
+          4.这段代码创建了一个“猫”对象，又根据猫做了一些修改创建了虎，之后我们完全可以用 Object.create 来创建另外的猫和虎对象，我
+            们可以通过“原始猫对象”和“原始虎对象”来控制所有猫和虎的行为。
+          5.但是，在更早的版本中，程序员只能通过 Java 风格的类接口来操纵原型运行时，可以说非常别扭。
+          6.考虑到 new 和 prototype 属性等基础设施今天仍然有效，而且被很多代码使用，学习这些知识也有助于我们理解运行时的原型工作原
+            理，下面我们试着回到过去，追溯一下早年的 JavaScript 中的原型和类。
+        12.早期版本中的类与原型
+          1.在早期版本的 JavaScript 中，“类”的定义是一个私有属性 [[class]]，语言标准为内置类型诸如 Number、String、Date 等指
+            定了[[class]]属性，以表示它们的类。语言使用者唯一可以访问[[class]]属性的方式是 Object.prototype.toString。
+          2.以下代码展示了所有具有内置 class 属性的对象：
+            var o = new Object; 
+            var n = new Number; 
+            var s = new String; 
+            var b = new Boolean; 
+            var d = new Date; 
+            var arg = function (){ return arguments }(); 
+            var r = new RegExp; 
+            var f = new Function; 
+            var arr = new Array; 
+            var e = new Error;
+            console.log([o, n, s, b, d, arg, r, f, arr, e].map(v => Object.prototype.toString.call(v)));
+          3.因此，在 ES3 和之前的版本，JS 中类的概念是相当弱的，它仅仅是运行时的一个字符串属性。
+          4.在 ES5 开始，[[class]] 私有属性被 Symbol.toStringTag 代替，Object.prototype.toString 的意义从命名上不再跟 
+            class 相关。我们甚至可以自定义 Object.prototype.toString 的行为，以下代码展示了使用 Symbol.toStringTag 来自定义
+            Object.prototype.toString 的行为：
+              var o = { [Symbol.toStringTag]: "MyObject" } 
+              console.log(o + "");
+          5.这里创建了一个新对象，并且给它唯一的一个属性 Symbol.toStringTag，我们用字符串加法触发了 Object.prototype.toString 
+            的调用，发现这个属性最终对 Object.prototype.toString 的结果产生了影响。
+          6.但是，考虑到 JavaScript 语法中跟 Java 相似的部分，我们对类的讨论不能用“new 运算是针对构造器对象，而不是类”来试图回避。
+          7.所以，我们仍然要把 new 理解成 JavaScript 面向对象的一部分，下面我就来讲一下 new 操作具体做了哪些事情。
+          8.new 运算接受一个构造器和一组调用参数，实际上做了几件事：
+            以构造器的 prototype 属性（注意与私有字段[[prototype]]的区分）为原型，创建新对象；
+            将 this 和调用参数传给构造器，执行；
+            如果构造器返回的是对象，则返回，否则返回第一步创建的对象。
+          9.new 这样的行为，试图让函数对象在语法上跟类变得相似，但是，它客观上提供了两种方式，一是在构造器中添加属性，二是在构造器的
+            prototype 属性上添加属性。
+          10.下面代码展示了用构造器模拟类的两种方法:
+            function c1 () { 
+              this.p1 = 1; 
+              this.p2 = function (){ 
+                console.log(this.p1); 
+              }
+            } 
+            var o1 = new c1;
+            o1.p2();
+            function c2 () {}
+            c2.prototype.p1 = 1;
+            c2.prototype.p2 = function (){ 
+              console.log(this.p1);
+            }
+            var o2 = new c2;
+            o2.p2();
+          11.第一种方法是直接在构造器中修改 this，给 this 添加属性。
+          12.第二种方法是修改构造器的 prototype 属性指向的对象，它是从这个构造器构造出来的所有对象的原型。
+          13.没有 Object.create、Object.setPrototypeOf 的早期版本中，new 运算是唯一一个可以指定[[prototype]]的方法（当时
+            的 mozilla 提供了私有属性 __proto__，但是多数环境并不支持），所以，当时已经有人试图用它来代替后来的 Object.create，
+            我们甚至可以用它来实现一个 Object.create 的不完整的 polyfill，见以下代码：
+              Object.create = function (prototype){ 
+                var cls = function(){} 
+                cls.prototype = prototype; 
+                return new cls;
+              }
+          14.这段代码创建了一个空函数作为类，并把传入的原型挂在了它的 prototype，最后创建了一个它的实例，根据 new 的行为，这将产生
+            一个以传入的第一个参数为原型的对象。
+          15.这个函数无法做到与原生的 Object.create 一致，一个是不支持第二个参数，另一个是不支持 null 作为原型，所以放到今天意义
+            已经不大了。
+        13.ES6 中的类
+          1.好在 ES6 中加入了新特性 class，new 跟 function 搭配的怪异行为终于可以退休了（虽然运行时没有改变），在任何场景，我都推
+            荐使用 ES6 的语法来定义类，而令 function 回归原本的函数语义。下面我们就来看一下 ES6 中的类。
+          2.ES6 中引入了 class 关键字，并且在标准中删除了所有[[class]]相关的私有属性描述，类的概念正式从属性升级成语言的基础设施，
+            从此，基于类的编程方式成为了 JavaScript 的官方编程范式。
+          3.我们先看下类的基本写法：
+            class Rectangle { 
+              constructor (height, width) { 
+                this.height = height; 
+                this.width = width; 
+              } 
+              // Getter 
+              get area () { 
+                return this.calcArea(); 
+              } 
+              // Method calcArea () { 
+                return this.height * this.width; 
+              }
+            }
+          4.在现有的类语法中，getter/setter 和 method 是兼容性最好的。
+          5.我们通过 get/set 关键字来创建 getter，通过括号和大括号来创建方法，数据型成员最好写在构造器里面。
+          6.类的写法实际上也是由原型运行时来承载的，逻辑上 JavaScript 认为每个类是有共同原型的一组对象，类中定义的方法和属性则会被
+            写在原型对象之上。
+          7.此外，最重要的是，类提供了继承能力。我们来看一下下面的代码。
+            class Animal { 
+              constructor (name) {
+                this.name = name; 
+              } 
+              speak () { 
+                console.log(this.name + ' makes a noise.'); 
+              }
+            }
+            class Dog extends Animal { 
+              constructor(name) { 
+                super(name); 
+                // call the super class constructor and pass in the name parameter 
+              } 
+              speak () { 
+                console.log(this.name + ' barks.'); 
+              }
+            }
+            let d = new Dog('Mitzie');
+            d.speak(); // Mitzie barks.
+          8.以上代码创造了 Animal 类，并且通过 extends 关键字让 Dog 继承了它，展示了最终调用子类的 speak 方法获取了父类的 name。
+          9.比起早期的原型模拟方式，使用 extends 关键字自动设置了 constructor，并且会自动调用父类的构造函数，这是一种更少坑的设计。
+          10.所以当我们使用类的思想来设计代码时，应该尽量使用 class 来声明类，而不是用旧语法，拿函数来模拟对象。
+          11.一些激进的观点认为，class 关键字和箭头运算符可以完全替代旧的 function 关键字，它更明确地区分了定义函数和定义类两种意
+            图，我认为这是有一定道理的。
+        14.总结
+          1.在新的 ES 版本中，我们不再需要模拟类了：我们有了光明正大的新语法。而原型体系同时作为一种编程范式和运行时机制存在。
+          2.我们可以自由选择原型或者类作为代码的抽象风格，但是无论我们选择哪种，理解运行时的原型系统都是很有必要的一件事。
+          3.在你的工作中，是使用 class 还是仍然在用 function 来定义“类”？为什么这么做？如何把使用 function 定义类的代码改造到   
+            class 的新语法？
+        JavaScript对象：你知道全部的对象分类吗？
+        1.在前面的课程中，我已经讲解了 JavaScript 对象的一些基础知识。但是，我们所讲解的对象，只是特定的一部分，并不能涵盖全部的 
+          JavaScript 对象。
+        2.比如说，我们不论怎样编写代码，都没法绕开 Array，实现一个跟原生的数组行为一模一样的对象，这是由于原生数组的底层实现了一个自
+          动随着下标变化的 length 属性。
+        3.并且，在浏览器环境中，我们也无法单纯依靠 JavaScript 代码实现 div 对象，只能靠 document.createElement 来创建。这也说
+          明了 JavaScript 的对象机制并非简单的属性集合 + 原型。
+        4.我们日常工作中，接触到的主要 API，几乎都是由今天所讲解的这些对象提供的。理解这些对象的性质，我们才能真正理解我们使用的 API
+          的一些特性。
+        5.JavaScript 中的对象分类
+          1.我们可以把对象分成几类。
+            宿主对象（host Objects）：由 JavaScript 宿主环境提供的对象，它们的行为完全由宿主环境决定。
+            内置对象（Built-in Objects）：由 JavaScript 语言提供的对象。
+              固有对象（Intrinsic Objects ）：由标准规定，随着 JavaScript 运行时创建而自动创建的对象实例。
+              原生对象（Native Objects）：可以由用户通过 Array、RegExp 等内置构造器或者特殊语法创建的对象。
+              普通对象（Ordinary Objects）：由{}语法、Object 构造器或者 class 关键字定义类创建的对象，它能够被原型继承。
+          2.下面我会为你一一讲解普通对象之外的对象类型。
+        6.宿主对象
+          1.首先我们来看看宿主对象。
+          2.JavaScript 宿主对象千奇百怪，但是前端最熟悉的无疑是浏览器环境中的宿主了。
+          3.在浏览器环境中，我们都知道全局对象是 window，window 上又有很多属性，如 document。
+          4.实际上，这个全局对象 window 上的属性，一部分来自 JavaScript 语言，一部分来自浏览器环境。
+          5.JavaScript 标准中规定了全局对象属性，W3C 的各种标准中规定了 Window 对象的其它属性。
+          6.宿主对象也分为固有的和用户可创建的两种，比如 document.createElement 就可以创建一些 DOM 对象。
+          7.宿主也会提供一些构造器，比如我们可以使用 new Image 来创建 img 元素，这些我们会在浏览器的 API 部分详细讲解。
+        7.内置对象·固有对象
+          1.我们在前面说过，固有对象是由标准规定，随着 JavaScript 运行时创建而自动创建的对象实例。
+          2.固有对象在任何 JavaScript 代码执行前就已经被创建出来了，它们通常扮演者类似基础库的角色。我们前面提到的“类”其实就
+            是固有对象的一种。
+          3.ECMA 标准为我们提供了一份固有对象表，里面含有 150+ 个固有对象。你可以通过这个链接查看。
+          4.但是遗憾的是，这个表格并不完整。所以在本篇的末尾，我设计了一个小实验（小实验：获取全部 JavaScript 固有对象），你可
+            以自己尝试一下，数一数一共有多少个固有对象。
+        8.内置对象·原生对象
+          1.我们把 JavaScript 中，能够通过语言本身的构造器创建的对象称作原生对象。在 JavaScript 标准中，提供了 30 多个构造
+            器。按照我的理解，按照不同应用场景，我把原生对象分成了以下几个种类。
+              原生对象种类.png
+          2.通过这些构造器，我们可以用 new 运算创建新的对象，所以我们把这些对象称作原生对象。
+          3.几乎所有这些构造器的能力都是无法用纯 JavaScript 代码实现的，它们也无法用 class/extend 语法来继承。
+          4.这些构造器创建的对象多数使用了私有字段, 例如：
+            Error: [[ErrorData]]
+            Boolean: [[BooleanData]]
+            Number: [[NumberData]]
+            Date: [[DateValue]]
+            RegExp: [[RegExpMatcher]]
+            Symbol: [[SymbolData]]
+            Map: [[MapData]]
+          5.这些字段使得原型继承方法无法正常工作，所以，我们可以认为，所有这些原生对象都是为了特定能力或者性能，而设计出来的
+            “特权对象”。
+        9.用对象来模拟函数与构造器：函数对象与构造器对象
+          1.我在前面介绍了对象的一般分类，在 JavaScript 中，还有一个看待对象的不同视角，这就是用对象来模拟函数和构造器。
+          2.事实上，JavaScript 为这一类对象预留了私有字段机制，并规定了抽象的函数对象与构造器对象的概念。
+          3.函数对象的定义是：具有[[call]]私有字段的对象，构造器对象的定义是：具有私有字段[[construct]]的对象。
+          4.JavaScript 用对象模拟函数的设计代替了一般编程语言中的函数，它们可以像其它语言的函数一样被调用、传参。任何宿主只要提
+            供了“具有[[call]]私有字段的对象”，就可以被 JavaScript 函数调用语法支持。
+              [[call]]私有字段必须是一个引擎中定义的函数，需要接受 this 值和调用参数，并且会产生域的切换，这些内容，我将会在属
+              性访问和执行过程两个章节详细讲述。
+          5.我们可以这样说，任何对象只需要实现[[call]]，它就是一个函数对象，可以去作为函数被调用。而如果它能实现[[construct]]，
+            它就是一个构造器对象，可以作为构造器被调用。
+          6.对于为 JavaScript 提供运行环境的程序员来说，只要字段符合，我们在上文中提到的宿主对象和内置对象（如 Symbol 函数）可
+            以模拟函数和构造器。
+          7.当然了，用户用 function 关键字创建的函数必定同时是函数和构造器。不过，它们表现出来的行为效果却并不相同。
+          8.对于宿主和内置对象来说，它们实现[[call]]（作为函数被调用）和[[construct]]（作为构造器被调用）不总是一致的。比如内
+            置对象 Date 在作为构造器调用时产生新的对象，作为函数时，则产生字符串，见以下代码：
+              console.log(new Date); // 1 
+              console.log(Date())
+          9.而浏览器宿主环境中，提供的 Image 构造器，则根本不允许被作为函数调用。
+            console.log(new Image); 
+            console.log(Image());//抛出错误
+          10.再比如基本类型（String、Number、Boolean），它们的构造器被当作函数调用，则产生类型转换的效果。
+          11.值得一提的是，在 ES6 之后 => 语法创建的函数仅仅是函数，它们无法被当作构造器使用，见以下代码：
+            new (a => 0) // error
+          12.对于用户使用 function 语法或者 Function 构造器创建的对象来说，[[call]]和[[construct]]行为总是相似的，它们执行
+            同一段代码。
+          13.我们看一下示例。
+            function f (){ 
+              return 1;
+            }
+            var v = f(); //把f作为函数调用
+            var o = new f(); //把f作为构造器调用
+          14.我们大致可以认为，它们[[construct]]的执行过程如下：
+            以 Object.protoype 为原型创建一个新对象；
+            以新对象为 this，执行函数的[[call]]；
+            如果[[call]]的返回值是对象，那么，返回这个对象，否则返回第一步创建的新对象。
+          15.这样的规则造成了个有趣的现象，如果我们的构造器返回了一个新的对象，那么 new 创建的新对象就变成了一个构造函数之外完全
+            无法访问的对象，这一定程度上可以实现“私有”。
+            function cls () { 
+              this.a = 100; 
+              return { 
+                getValue:() => this.a 
+              }
+            }
+            var o = new cls;
+            o.getValue(); //100
+            //a在外面永远无法访问到
+        10.特殊行为的对象
+          1.除了上面介绍的对象之外，在固有对象和原生对象中，有一些对象的行为跟正常对象有很大区别。
+          2.它们常见的下标运算（就是使用中括号或者点来做属性访问）或者设置原型跟普通对象不同，这里我简单总结一下。
+            Array：Array 的 length 属性根据最大的下标自动发生变化。
+            Object.prototype：作为所有正常对象的默认原型，不能再给它设置原型了。
+            String：为了支持下标运算，String 的正整数属性访问会去字符串里查找。
+            Arguments：arguments 的非负整数型下标属性跟对应的变量联动。
+            模块的 namespace 对象：特殊的地方非常多，跟一般对象完全不一样，尽量只用于 import 吧。
+            类型数组和数组缓冲区：跟内存块相关联，下标运算比较特殊。
+            bind 后的 function：跟原来的函数相关联。
+        11.结语
+          1.在这篇文章中，我们介绍了一些不那么常规的对象，并且我还介绍了 JavaScript 中用对象来模拟函数和构造器的机制。
+          2.这是一些不那么有规律、不那么优雅的知识，而 JavaScript 正是通过这些对象，提供了很多基础的能力。
+          3.我们这次课程留一个挑战任务：不使用 new 运算符，尽可能找到获得对象的方法。
+          4.例子：
+            var o = {}
+            var o = function(){}
+          5.请把自己的答案留言给我，我们来比比看谁找到的多。
+        12.小实验：获取全部 JavaScript 固有对象
+          1.我们从 JavaScript 标准中可以找到全部的 JavaScript 对象定义。JavaScript 语言规定了全局对象的属性。
+          2.三个值：
+            Infinity、NaN、undefined。
+          3.九个函数：
+            eval
+            isFinite
+            isNaN
+            parseFloat
+            parseInt
+            decodeURI
+            decodeURIComponent
+            encodeURI
+            encodeURIComponent
+          4.一些构造器：
+            Array、Date、RegExp、Promise、Proxy、Map、WeakMap、Set、WeakSet、Function、Boolean、String、Number、
+            Symbol、Object、Error、EvalError、RangeError、ReferenceError、SyntaxError、TypeError、URIError、
+            ArrayBuffer、SharedArrayBuffer、DataView、Typed Array、Float32Array、Float64Array、Int8Array、
+            Int16Array、Int32Array、UInt8Array、UInt16Array、UInt32Array、UInt8ClampedArray。
+          5.四个用于当作命名空间的对象：
+            Atomics
+            JSON
+            Math
+            Reflect
+          6.我们使用广度优先搜索，查找这些对象所有的属性和 Getter/Setter，就可以获得 JavaScript 中所有的固有对象。
+          7.请你试着先不看我的代码，在自己的浏览器中计算出来 JavaScript 有多少固有对象。
+            var set = new Set()
+            var objects = [
+              eval,
+              isFinite,
+              isNaN,
+              parseFloat,
+              parseInt,
+              decodeURI,
+              decodeURIComponent,
+              encodeURI,
+              encodeURIComponent,
+              Array,
+              Date,
+              RegExp,
+              Promise,
+              Proxy,
+              Map,
+              WeakMap,
+              Set,
+              WeakSet,
+              Function,
+              Boolean,
+              String,
+              Number,
+              Symbol,
+              Object,
+              Error,
+              EvalError,
+              RangeError,
+              ReferenceError,
+              SyntaxError,
+              TypeError,
+              URIError,
+              ArrayBuffer,
+              SharedArrayBuffer,
+              DataView,
+              Float32Array,
+              Float64Array,
+              Int8Array,
+              Int16Array,
+              Int32Array,
+              Uint8Array,
+              Uint16Array,
+              Uint32Array,
+              Uint8ClampedArray,
+              Atomics,
+              JSON,
+              Math,
+              Reflect]
+            objects.forEach(o => set.add(o))
+
+            for(var i = 0; i < objects.length; i++) {
+              var o = objects[i]
+              for(var p of Object.getOwnPropertyNames(o)) {
+                var d = Object.getOwnPropertyDescriptor(o, p)
+                if( (d.value !== null && typeof d.value === "object") || (typeof d.value === "function"))
+                  if(!set.has(d.value))
+                    set.add(d.value), objects.push(d.value)
+                if( d.get )
+                  if(!set.has(d.get))
+                    set.add(d.get), objects.push(d.get)
+                if( d.set )
+                  if(!set.has(d.set))
+                    set.add(d.set), objects.push(d.set)
+              }
+            }
+            // JavaScript固有对象详细请查阅js-JavaScript固有对象API.txt
+        其他总结
+        1.原型
+          1.原型
+            1.每个class都有显示原型prototype
+            2.每个实例都有隐式原型__proto__
+            3.实例的隐式原型__proto__指向对应class的显示原型prototype
+            4.prototype中有一个constructor属性，用来引用它的构造函数。这是一种循环引用
+              Person.prototype.constructor === Person
+          2.原型链
+            1.我们把这个由__proto__串起来的直到Object.prototype.__proto__为null的链叫做原型链。
+            2.对象在获取属性或方法的时候，先在自身的属性和方法中寻找，如果找不到则顺着隐式原型__proto__指向的原型链中一直向上去查找。
+            3.原型链关系
+              var zjh = new Person()
+              zjh.__proto__ === Person.prototype 
+              Person.prototype.__proto__ === Object.prototype 
+              Object.prototype.__proto__ === null 
+              
+              Object.__proto__ === Function.prototype 
+              Function.__proto__ === Function.prototype 
+              Function.prototype.__proto__ === Object.prototype 
+              Object.prototype.__proto__ === null 
+
+              class People {}
+              class Student extends People {}
+              // Student的显示原型的隐式原型它正好等于People的显示原型
+              console.log(Student.prototype.__proto__ === People.prototype) // true
+              console.log(People.prototype.__proto__ === Object.prototype) // true
+              console.log(Object.prototype.__proto__ === null) // true 原型链顶端
+          3.instanceof
+            instanceof是判断这个对象属于哪个class，或者哪个构造函数。因为父类也是参与了构建实例的一部分，所以 instanceof 父类 
+            得到的也是true。Object是所有类的父类，因为所有对象都是继承自Object，原型链的末端就是Object。instanceof也是顺着原
+            型链往上找的。
+          4.继承
+            1.对象冒充继承
+              1.就是修改函数中的this值，就达到了用继承函数中的属性和方法。
+              2.this值是通过函数调用的时候确定的，所以就用继承的对象来调用函数。这个对象就变成了要继承的函数的this。也就继承了函数
+                的属性和方法
+              3.对象冒充内部实现原理
+                因为构造函数也是一个函数，所以可以使函数ClassA成为函数ClassB的方法，然后调用它。ClassB就会收到ClassA 
+                构造函数中定义的属性和方法。
+                  function ClassA(sColor) {
+                    this.color = sColor
+                    this.sayColor = function () {
+                      alert(this.color)
+                    }
+                  }
+                  function ClassB(sColor) {
+                    this.newMethod = ClassA
+                    this.newMethod(sColor)
+                    delete this.newMethod 
+                    // 以上三步就是call和apply内部实现的核心步骤
+                  }
+              4.call,apply,bind
+                1.call和apply可以用来重新定义函数的this指向。
+                2.call和apply可以实现多重继承，就是一个子类能够继承多个父类。F1可以同时从F2,F3...等继承。
+                3.call apply bind方法的内部实现
+                  https://www.cnblogs.com/echolun/p/12144344.html
+                  https://www.cnblogs.com/guaidianqiao/p/7762205.html
+                  https://www.cnblogs.com/echolun/p/12178655.html
+                  call和apply改变了函数的this,并且执行了该函数，而bind是改变了函数的this，但bind并不会立即执行函数，而是返回
+                  一个绑定了this的新函数。
+                  1.call
+                    Function.prototype.call_ = function (obj) {
+                      //判断是否为null或者undefined,同时考虑传递参数不是对象情况
+                      obj = obj ? Object(obj) : window
+                      var args = []
+                      // 注意i从1开始
+                      for (var i = 1, len = arguments.length; i < len; i++) {
+                        args.push("arguments[" + i + "]")
+                      };
+                      obj.fn = this // 此时this就是函数fn
+                      var result = eval("obj.fn(" + args + ")") // 执行fn
+                      delete obj.fn // 删除fn
+                      return result
+                    }
+                    // es6
+                    Function.prototype.call_ = function (obj) {
+                      obj = obj ? Object(obj) : window
+                      obj.fn = this
+                      // 利用拓展运算符直接将arguments转为数组
+                      let args = [...arguments].slice(1)
+                      let result = obj.fn(...args)
+                      delete obj.fn
+                      return result
+                    }
+                  2.apply
+                    Function.prototype.apply_ = function (obj, arr) {
+                      obj = obj ? Object(obj) : window
+                      obj.fn = this
+                      var result
+                      if (!arr) {
+                        result = obj.fn()
+                      } else {
+                        var args = []
+                        // 注意这里的i从0开始
+                        for (var i = 0, len = arr.length; i < len; i++) {
+                          args.push("arr[" + i + "]")
+                        }
+                        result = eval("obj.fn(" + args + ")") // 执行fn
+                      }
+                      delete obj.fn //删除fn
+                      return result
+                    }
+                    // es6
+                    Function.prototype.apply_ = function (obj, arr) {
+                      obj = obj ? Object(obj) : window
+                      obj.fn = this
+                      let result
+                      if (!arr) {
+                        result = obj.fn()
+                      } else {
+                        result = obj.fn(...arr)
+                      }
+                      delete obj.fn
+                      return result
+                    }
+                  3.bind
+                    Function.prototype.bind_ = function (obj) {
+                      if (typeof this !== "function") {
+                        throw new Error("Function.prototype.bind - what is trying to be bound is not callable");
+                      };
+                      var args = Array.prototype.slice.call(arguments, 1);
+                      var fn = this;
+                      //创建中介函数
+                      var fn_ = function () {};
+                      var bound = function () {
+                        var params = Array.prototype.slice.call(arguments);
+                        //通过constructor判断调用方式，为true this指向实例，否则为obj
+                        fn.apply(this.constructor === fn ? this : obj, args.concat(params));
+                        console.log(this);
+                      };
+                      fn_.prototype = fn.prototype;
+                      bound.prototype = new fn_();
+                      return bound;
+                    }
+                    // es6
+                    Function.prototype.bind = function(thisArg) {
+                      if(typeof this !== 'function'){
+                        throw new TypeError(this + 'must be a function')
+                      }
+                      // 存储函数本身
+                      const _this  = this
+                      // 去除thisArg的其他参数 转成数组
+                      const args = [...arguments].slice(1)
+                      // 返回一个函数
+                      const bound = function() {
+                        // 可能返回了一个构造函数，我们可以 new F()，所以需要判断
+                        if (this instanceof bound) {
+                          return new _this(...args, ...arguments)
+                        }
+                        // apply修改this指向，把两个函数的参数合并传给thisArg函数，并执行thisArg函数，返回执行结果
+                        return _this.apply(thisArg, args.concat(...arguments))
+                      }
+                      return bound
+                    }
+                4.call,apply应用场景
+                  1.检验数据类型：
+                    function type(obj) {
+                        var regexp = /\s(\w+)\]/
+                        var result =  regexp.exec(Object.prototype.toString.call(obj))[1]
+                        return result
+                    }
+                    console.log(type([123]))      // Array
+                    console.log(type('123'))      // String
+                    console.log(type(123))        // Number
+                    console.log(type(null))       // Null
+                    console.log(type(undefined))  // Undefined
+                  2.数组取最大/小值：
+                    var arr = [11, 1, 0, 2, 3, 5];
+                    // 取最大
+                    var max1 = Math.max.call(null, ...arr)
+                    var max2 = Math.max.apply(null, arr)
+                    // 取最小
+                    var min1 = Math.min.call(null, ...arr)
+                    var min2 = Math.min.apply(null, arr)
+                  3.伪数组转数组：
+                    var fn = function () {
+                        var arr = Array.prototype.slice.call(arguments)
+                        console.log(arr) // [1, 2, 3, 4]
+                    };
+                    fn(1, 2, 3, 4);
+            2.原型链继承
+              1. o.__proto__ = F.prototype  对象继承类
+              2. F1.prototype.__proto__ = F2.prototype  类继承类
+            3.混合方式继承
+              对象冒充可以传参数和继承构造函数内部属性，但是不能继承到原型，原型链可以继承原型，但是不能传参数也不能继承构造函数内部，
+              所以要使用混合模式。
+              // ClassA
+              function ClassA(sColor) {
+                this.color = sColor
+              }
+              ClassA.prototype.sayColor = function () {
+                alert(this.color)
+              }
+              // ClassB继承ClassA
+              function ClassB(sColor, sName) {
+                ClassA.call(this, sColor)
+                this.name = sName
+              }
+              ClassB.prototype.__proto__ = ClassA.prototype
+              new和es6的extends实现的继承就是上面的这两个方式的结合。
+          5.new操作符的作用
+            new F(arguments)的时候js内部就会调用下面这个New函数
+            function New (F,arguments) {
+              var o = {}
+              o.__proto__ = F.prototype	 // 以构造器的 prototype 属性（注意与私有字段[[prototype]]的区分）为原型，创建新对象；
+              F.apply(o, arguments)		   // 将 this 和调用参数传给构造器，执行；      
+              return o                   // 如果构造器返回的是对象，则返回，否则返回第一步创建的对象。
+            }   
+            new继承
+              构造函数创建实例的过程本身就是一种继承，new的内部其实是做了继承里面的合体工作
+              ClassB.prototype = new ClassA()
+          6.原型应用
+            1.手写一个简易的jquery，考虑插件和扩展性
+              jquery现在可能用的不多了，但是我们通过jquery的结构的学习，是学习class或学习原型的特别好的一种方式。
+              1.jquery的基本结构
+                // jquery是做dom查询的，所以首先constructor里面要传入一个selector
+                class jQuery {
+                  constructor (selector) {
+                    const result = document.querySelectorAll(selector)
+                    const length = result.length
+                    for (let i = 0; i < length; i++) {
+                      this[i] = result[i]
+                    }
+                    this.length = length
+                    this.selector = selector
+                  }
+                  get (index) {
+                    return this[index]
+                  }
+                  each (fn) {
+                    for (let i = 0; i < this.length; i++) {
+                      const elem = this[i]
+                      fn(elem)
+                    }
+                  }
+                  on (type, fn) {
+                    return this.each(elem => {
+                      elem.addEventListener(type, fn, false)
+                    })
+                  }
+                  // 可以扩展很多dom 操作 api
+                }
+                // 关注这里面this是怎么使用的
+              2.使用
+                const $p = new jQuery('p')
+                $p.get(1)
+                $p.each(elem => console.log(elem.nodeName))
+                $p.on('click', elem => console.log('clicked'))
+            2.jquery和zepto
+              1.jquery和zepto的简单使用
+                var $p = $('p')
+                $p.css('font-size', '40px')
+                alert($p.html())
+                var $div1 = $('#div1')
+                $div1.css('color', 'blue')
+                alert($div1.html())
+                $p和$div1都有css和html等方法。当多个实例都可以共用一套方法的时候，就说明这些方法都是来自于一个构造函数的原型中的。
+              2.zepto是如何使用原型的
+                // 定义一个自执行的函数，避免全局变量的污染。
+                (function (window) {
+                  // 空对象
+                  var zepto = {}
+                  zepto.init = function (selector) {
+                    var slice = Array.prototype.slice
+                    var dom = slice.call(document.querySelectorAll(selector))
+                    return zepto.Z(dom, selector)
+                  }
+                  // 即使用zepto时候的$
+                  var $ = function (selector) {
+                    return zepto.init(selector)
+                  }
+                  window.$ = $ // 把这个$函数给它开放到window这个全局的变量中，就可以$('p')这样用了
+                  // 这就是构造函数
+                  function Z (dom, selector) {
+                    // 这些初始化操作就是给自己本身复制一些属性
+                    var i, len = dom ? dom.length : 0
+                    for (i = 0; i < len; i++) this[i] = dom[i] // 把dom的每个元素复制成它本身自己的属性
+                    this.length = len                          // 把dom的length复制成自己的length
+                    this.selector = selector || ''             // 把selector给它传到自己的selector上
+                  }
+                  zepto.Z = function (dom, selector) {
+                    // 注意，出现了new关键字
+                    return new Z(dom, selector)
+                  }
+                  // 如果选择这么用的话$p = $('p')，它返回的就是Z这个构造函数new出来的一个实例。
+                  // css html这些方法在什么地方呢，Z是构造函数，构造函数得有原型啊，原型是$.fn，$.fn赋值成了一个对象，这个对象中
+                  // 就有css和html这些方法。
+                  $.fn = {
+                    constructor: zepto.Z,
+                    css: function (key, value) {
+
+                    },
+                    html: function (value) {
+
+                    }
+                  }
+                  zepto.Z.prototype = Z.prototype = $.fn
+                })(window)
+              3.jquery是如何使用原型的
+                (function (window) {
+                  // jquery里面这个$，和jquery源码中的这个jQuery函数是一回事是一个。
+                  var jQuery = function (selector) {
+                    // 注意new关键字，第一步就找到了构造函数
+                    return new jQuery.fn.init(selector)
+                  }
+                  window.$ = jQuery
+                  jQuery.fn = {}
+                  // 定义构造函数
+                  var init = jQuery.fn.init = function (selector) {
+                    // 构造函数体的内容跟zepto的逻辑基本一样
+                    var slice = Array.prototype.slice
+                    var dom = slice.call(document.querySelectorAll(selector))
+                    var i, len = dom ? dom.length : 0
+                    for (i = 0; i < len; i++) this[i] = dom[i] 
+                    this.length = len                         
+                    this.selector = selector || ''             
+                  }
+                  // 初始化jQuery.fn
+                  jQuery.fn = jQuery.prototype = {
+                    constructor: jQuery,
+                    css: function (key, value) {
+
+                    },
+                    html (value) {
+
+                    }
+                  }
+                  // 定义原型
+                  init.prototype = jQuery.fn
+                })(window)
+        2.宿主环境，js引擎
+          1.js引擎的执行过程，分为三个阶段
+              1、语法分析
+              2、预编译期
+                预编译首先是全局预编译，函数体在未调用时不进行预编译
+                只有var和function声明会提升
+                注意是在所在作用域内提升，不会扩展到其他作用域
+                预编译后顺序执行
+              3、执行阶段期
+          2.JavaScript 是一种轻量级的脚本语言。所谓“脚本语言”（script language），指的是它不具备开发操作系统的能力，而是只用来编写控制其他大型应用程序（比如浏览器）的“脚本”。
+            JavaScript 也是一种嵌入式（embedded）语言。它本身提供的核心语法不算很多，只能用来做一些数学和逻辑运算。JavaScript 本身不提供任何与 I/O（输入/输出）相关的 API，都要靠宿主环境（host）提供，所以 JavaScript 只合适嵌入更大型的应用程序环境，去调用宿主环境提供的底层 API。
+            目前，已经嵌入 JavaScript 的宿主环境有多种，最常见的环境就是浏览器，另外还有服务器环境，也就是 Node 项目。
+            JavaScript 的核心语法部分相当精简，只包括两个部分：基本的语法构造和标准库。除此之外，各种宿主环境提供额外的 API，以便 JavaScript 调用。
+
+            脚本语言，需要借助引擎（解释器）来运行，所以需要封装了引擎的环境.
+            封装了js引擎的环境分为两类，浏览器环境，非浏览器环境（nodejs, mongoDB）
+            浏览器环境下js有三部分组成，分别是ECMAScript，DOM，BOM
+            非浏览器环境，比如node，也是以ECMAScript为基础，扩展出了I/O操作，文件操作，数据库操作等等
+          3.脚本语言，需要借助引擎（解释器）来运行，所以需要封装了引擎的环境.
+            封装了js引擎的环境分为两类，浏览器环境，非浏览器环境（nodejs, mongoDB）
+            浏览器环境下js有三部分组成，分别是ECMAScript，DOM，BOM
+            非浏览器环境，比如node，也是以ECMAScript为基础，扩展出了I/O操作，文件操作，数据库操作等等
+          4.javascript是一门编程语言，运行的环境是虚拟机（chrome是v8，别的浏览器也有），这个虚拟机在标准内称作javascript的运行时，
+            这个运行时本身就是javascript的宿主环境了，不过在浏览器端，也把浏览器称作它的宿主环境（虚拟机寄宿在浏览器内）
+          5.浏览器、宿主环境、执行期环境
+            javascript只能寄生在某个具体的环境才能够工作
+            javascript运行环境一般都由宿主环境和执行期环境构成，其中宿主环境是由外壳程序生成的，如浏览器就是一个外壳程序，它提供了一个可控制浏览器窗口的宿主环境。执行期环境则有嵌入到外壳程序中的javascript引擎生成，在这个环境中javascript能够生成内置静态对象和初始化执行环境等。　　
+            javascript是一种脚本语音，它本身不提供I/O（输入和输出）接口，也没有与系统和外界通信的能力，更不能操作外围设备、管理内存、修改注册表等行为，这些功能全部交给宿主环境完成的，例如，在客户端浏览器（外壳程序）的宿主环境中，Javascript通过window对象的alert()方法及document对象的write()和writeIn()方法输出信息，而借助window的prompt()方法接收信息。当然，在其他宿主环境中可能会使用不同的宿主对象来完成以上功能。例如，在windows环境中，微软公司开发的WSH就是一种脚本语言的宿主环境，它就定义了类似window对象的wscript对象来表示全局对象。
+            不仅web浏览器是外壳程序，只要能提供javascript引擎执行的环境都可以做外壳程序。比如，服务器，桌面应用系统也都能够允许JavaScript引擎执行的运行环境，这些运行环境也是宿主环境。　　
+            web浏览器允许javascript引擎对其进行控制，并通过DOM组件实现对HTML和XML文档的操作。
+            执行期环境是由宿主环境通过脚本引擎创建的，实际上就是由Javascript引擎创建的一个代码解析初始化环境，内容主要包括：
+              1、一套与宿主环境想联系的规则
+              2、javascript引擎内核（基本语法和规范、逻辑、命令和算法）　　
+              3、一组内置对象的API
+              4、其他约定
+            当然，不同的javascript引擎定义的初始化环境是不同的，这就形成了所谓的浏览器兼容性问题，因为不同的浏览器使用的是不同的浏览器引擎。      
+  执行过程（算法）
+    事件循环 & 2.微任务的执行
+      JavaScript执行（一）：Promise里的代码为什么比setTimeout先执行？
+      1.你好，我是 winter。这一部分我们来讲一讲 JavaScript 的执行。
+      2.首先我们考虑一下，如果我们是浏览器或者 Node 的开发者，我们该如何使用 JavaScript 引擎。
+      3.当拿到一段 JavaScript 代码时，浏览器或者 Node 环境首先要做的就是；传递给 JavaScript 引擎，并且要求它去执行。
+      4.然而，执行 JavaScript 并非一锤子买卖，宿主环境当遇到一些事件时，会继续把一段代码传递给 JavaScript 引擎去执行，此外，
+        我们可能还会提供 API 给 JavaScript 引擎，比如 setTimeout 这样的 API，它会允许 JavaScript 在特定的时机执行。
+      5.所以，我们首先应该形成一个感性的认知：一个 JavaScript 引擎会常驻于内存中，它等待着我们（宿主）把 JavaScript 代码或者
+        函数传递给它执行。
+      6.在 ES3 和更早的版本中，JavaScript 本身还没有异步执行代码的能力，这也就意味着，宿主环境传递给 JavaScript 引擎一段代码，
+        引擎就把代码直接顺次执行了，这个任务也就是宿主发起的任务。
+      7.但是，在 ES5 之后，JavaScript 引入了 Promise，这样，不需要浏览器的安排，JavaScript 引擎本身也可以发起任务了。
+      8.由于我们这里主要讲 JavaScript 语言，那么采纳 JSC 引擎的术语，我们把宿主发起的任务称为宏观任务，把 JavaScript 引擎发起
+        的任务称为微观任务。
+      9.宏观和微观任务
+        1.JavaScript 引擎等待宿主环境分配宏观任务，在操作系统中，通常等待的行为都是一个事件循环，所以在 Node 术语中，也会把这个
+          部分称为事件循环。
+        2.不过，术语本身并非我们需要重点讨论的内容，我们在这里把重点放在事件循环的原理上。在底层的 C/C++ 代码中，这个事件循环是一
+          个跑在独立线程中的循环，我们用伪代码来表示，大概是这样的：
+            while (TRUE) { 
+              r = wait(); execute(r);
+            }
+        3.我们可以看到，整个循环做的事情基本上就是反复“等待 - 执行”。当然，实际的代码中并没有这么简单，还有要判断循环是否结束、宏
+          观任务队列等逻辑，这里为了方便你理解，我就把这些都省略掉了。
+        4.这里每次的执行过程，其实都是一个宏观任务。我们可以大概理解：宏观任务的队列就相当于事件循环。
+        5.在宏观任务中，JavaScript 的 Promise 还会产生异步代码，JavaScript 必须保证这些异步代码在一个宏观任务中完成，因此，
+          每个宏观任务中又包含了一个微观任务队列：
+            宏任务微任务.jpg
+        6.有了宏观任务和微观任务机制，我们就可以实现 JavaScript 引擎级和宿主级的任务了，例如：Promise 永远在队列尾部添加微观任
+          务。setTimeout 等宿主 API，则会添加宏观任务。
+        7.接下来，我们来详细介绍一下 Promise。
+      10.Promise
+        1.Promise 是 JavaScript 语言提供的一种标准化的异步管理方式，它的总体思想是，需要进行 io、等待或者其它异步操作的函数，
+          不返回真实结果，而返回一个“承诺”，函数的调用方可以在合适的时机，选择等待这个承诺兑现（通过 Promise 的 then 方法的回调）。
+        2.Promise 的基本用法示例如下：
+          function sleep (duration) { 
+            return new Promise(function (resolve, reject) { 
+              setTimeout(resolve, duration); 
+            }) 
+          } 
+          sleep(1000).then( () => console.log("finished"));
+        3.这段代码定义了一个函数 sleep，它的作用是等候传入参数指定的时长。
+        4.Promise 的 then 回调是一个异步的执行过程，下面我们就来研究一下 Promise 函数中的执行顺序，我们来看一段代码示例：
+          var r = new Promise(function(resolve, reject){
+              console.log("a");
+              resolve()
+          });
+          r.then(() => console.log("c"));
+          console.log("b")
+        5.我们执行这段代码后，注意输出的顺序是 a b c。在进入 console.log(“b”) 之前，毫无疑问 r 已经得到了 resolve，但是 
+          Promise 的 resolve 始终是异步操作，所以 c 无法出现在 b 之前。
+        6.接下来我们试试跟 setTimeout 混用的 Promise。
+        7.在这段代码中，我设置了两段互不相干的异步操作：通过 setTimeout 执行 console.log(“d”)，通过 Promise 执行 
+          console.log(“c”)。
+            var r = new Promise(function(resolve, reject){
+                console.log("a");
+                resolve()
+            });
+            setTimeout(()=>console.log("d"), 0)
+            r.then(() => console.log("c"));
+            console.log("b")
+        8.我们发现，不论代码顺序如何，d 必定发生在 c 之后，因为 Promise 产生的是 JavaScript 引擎内部的微任务，而 setTimeout 
+          是浏览器 API，它产生宏任务。
+        9.为了理解微任务始终先于宏任务，我们设计一个实验：执行一个耗时 1 秒的 Promise。
+            setTimeout(()=>console.log("d"), 0)
+            var r = new Promise(function(resolve, reject){
+                resolve()
+            });
+            r.then(() => { 
+                var begin = Date.now();
+                while(Date.now() - begin < 1000);
+                console.log("c1") 
+                new Promise(function(resolve, reject){
+                    resolve()
+                }).then(() => console.log("c2"))
+            });
+        10.这里我们强制了 1 秒的执行耗时，这样，我们可以确保任务 c2 是在 d 之后被添加到任务队列。
+        11.我们可以看到，即使耗时一秒的 c1 执行完毕，再 enque 的 c2，仍然先于 d 执行了，这很好地解释了微任务优先的原理。
+        12.通过一系列的实验，我们可以总结一下如何分析异步执行的顺序：
+          首先我们分析有多少个宏任务；
+          在每个宏任务中，分析有多少个微任务；
+          根据调用次序，确定宏任务中的微任务执行次序；
+          根据宏任务的触发规则和调用次序，确定宏任务的执行次序；
+          确定整个顺序。
+        13.我们再来看一个稍微复杂的例子：
+            function sleep(duration) {
+                return new Promise(function(resolve, reject) {
+                    console.log("b");
+                    setTimeout(resolve,duration);
+                })
+            }
+            console.log("a");
+            sleep(5000).then(()=>console.log("c"));
+        14.这是一段非常常用的封装方法，利用 Promise 把 setTimeout 封装成可以用于异步的函数。
+        15.我们首先来看，setTimeout 把整个代码分割成了 2 个宏观任务，这里不论是 5 秒还是 0 秒，都是一样的。
+        16.第一个宏观任务中，包含了先后同步执行的 console.log(“a”); 和 console.log(“b”);。
+        17.setTimeout 后，第二个宏观任务执行调用了 resolve，然后 then 中的代码异步得到执行，所以调用了 console.log(“c”)，
+          最终输出的顺序才是： a b c。
+        18.Promise 是 JavaScript 中的一个定义，但是实际编写代码时，我们可以发现，它似乎并不比回调的方式书写更简单，但是从 ES6 
+          开始，我们有了 async/await，这个语法改进跟 Promise 配合，能够有效地改善代码结构。
+/* todo   
+  promise
+*/
+      11.新特性：async/await
+        1.async/await 是 ES2016 新加入的特性，它提供了用 for、if 等代码结构来编写异步的方式。它的运行时基础是 Promise，面对
+          这种比较新的特性，我们先来看一下基本用法。
+        2.async 函数必定返回 Promise，我们把所有返回 Promise 的函数都可以认为是异步函数。
+        3.async 函数是一种特殊语法，特征是在 function 关键字之前加上 async 关键字，这样，就定义了一个 async 函数，我们可以在
+          其中使用 await 来等待一个 Promise。
+            function sleep(duration) {
+                return new Promise(function(resolve, reject) {
+                    setTimeout(resolve,duration);
+                })
+            }
+            async function foo(){
+                console.log("a")
+                await sleep(2000)
+                console.log("b")
+            }
+        4.这段代码利用了我们之前定义的 sleep 函数。在异步函数 foo 中，我们调用 sleep。
+        5.async 函数强大之处在于，它是可以嵌套的。我们在定义了一批原子操作的情况下，可以利用 async 函数组合出新的 async 函数。
+          function sleep(duration) {
+              return new Promise(function(resolve, reject) {
+                  setTimeout(resolve,duration);
+              })
+          }
+          async function foo(name){
+              await sleep(2000)
+              console.log(name)
+          }
+          async function foo2(){
+              await foo("a");
+              await foo("b");
+          }
+        6.这里 foo2 用 await 调用了两次异步函数 foo，可以看到，如果我们把 sleep 这样的异步操作放入某一个框架或者库中，使用者
+          几乎不需要了解 Promise 的概念即可进行异步编程了。
+        7.此外，generator/iterator 也常常被跟异步一起来讲，我们必须说明 generator/iterator 并非异步代码，只是在缺少
+          async/await 的时候，一些框架（最著名的要数 co）使用这样的特性来模拟 async/await。
+        8.但是 generator 并非被设计成实现异步，所以有了 async/await 之后，generator/iterator 来模拟异步的方法应该被废弃。
+      12.结语
+        1.在今天的文章里，我们学习了 JavaScript 执行部分的知识，首先我们学习了 JavaScript 的宏观任务和微观任务相关的知识。我们把
+          宿主发起的任务称为宏观任务，把 JavaScript 引擎发起的任务称为微观任务。许多的微观任务的队列组成了宏观任务。
+        2.除此之外，我们还展开介绍了用 Promise 来添加微观任务的方式，并且介绍了 async/await 这个语法的改进。
+        3.最后，留给你一个小练习：我们现在要实现一个红绿灯，把一个圆形 div 按照绿色 3 秒，黄色 1 秒，红色 2 秒循环改变背景色，你会
+          怎样编写这个代码呢？欢迎你留言讨论。
+      其他总结  
+      1.单线程 - 只有一个线程，同一时间只能做一件事情
+      2.原因 - 避免dom渲染的冲突
+        1.浏览器需要渲染dom
+        2.js可以修改dom结构
+        所以说js在浏览器中应用必须是单线程的。而且呢还要和浏览器的渲染的线程共用一个线程。
+      3.解决方案 - 异步
+        针对js单线程的机制。我们的解决方案是异步。因为遇到一些需要等待的事情我们不可能等地它做完我们再往下走，不然这个等待的时
+        间里页面就是卡死的状态，这显然是不合理的。所以我们将这些需要等待的事情让它们成为异步，就是遇到这样的事我们先不管它，先
+        让其他的js代码运行。不要让这个等待影响我们后面的事情。然后等这个异步等待结束后我们再处理这个异步。就是我们先把该执行
+        的执行完了，异步最后再说。这是异步的一个核心逻辑。
+      4.异步解决方案的问题
+        异步是js单线程的一个唯一解决方案，现在来看也是一个非常合适非常高效的解决方案，但是呢它还是有一些问题的。
+          1.没有按照书写的顺序来执行，可读性差
+          2.callback中不容易模块化
+        因为异步它要回过头来执行这么一个模式，所以它要传一个callback函数。callback中不容易模块化，callback是传一个函数过
+        去的，你不可能把这个函数写的特别复杂，因为它本来就没有按照书写顺序来执行，你又把callback写的特别复杂，就容易出现耦
+        合度不高的问题，以后有问题就不好排查。所以之后的Promise, async/await就是为了解决这两个问题来服务的。
+      5.event loop - 异步的实现方式
+        1.事件轮询，js实现异步的具体解决方案。js的异步就是通过这种方式来实现的。
+        2.实例分析
+          setTimeout(function () {
+            console.log(1)
+          }, 100)
+          setTimeout(function () {
+            console.log(2)
+          })
+          console.log(3)
+          // 主进程
+          console.log(3)
+          // 异步队列
+          // 立刻被放入
+          function () {
+            console.log(2)
+          }
+          // 100ms之后被放入
+          function () {
+            console.log(1)
+          }
+          第一步同步代码直接扔进主进程中执行，第二步异步函数要放在异步队列中，第三步等着同步代码执行完成之后，再去异步队列中看，有
+          的话就拿到主进程中来执行。只要主进程的代码都执行完后，就去监视异步队列中有没有异步函数，有的话就立刻拿到主进程中去执行。
+          这就是事件轮询的机制。事件轮询机制就是异步的实现原理和本质。
+      6.宏任务 微任务
+        1.在同步代码执行完成后才回去检查是否有异步任务完成，并执行对应的回调，而微任务又会在宏任务之前执行。
+        2.一个宏任务在执行的过程中，是可以添加一些微任务的。
+        3.在当前的微任务没有执行完成时，是不会执行下一个宏任务的。
+        4.所有会进入的异步都是指的事件回调中的那部分代码也就是说new Promise在实例化的过程中所执行的代码都是同步进行的，而then中
+          注册的回调才是异步执行的。
+        5.任务分类
+          宏任务：同步代码 I/O setTimeout setInterval requestAnimationFrame
+          微任务：Promise MutationObserver
+        6.任务的优先级
+          1.执行一个宏任务(先执行同步代码) --> 执行所有微任务 --> UI render --> 执行下一个宏任务 --> 执行所有微任务 --> 
+            UI render --> ......
+          2.根据HTML Standard，一轮事件循环执行结束之后，下轮事件循环执行之前开始进行UI render。即：macro-task任务执行完毕，
+            接着执行完所有的micro-task任务后，此时本轮循环结束，开始执行UI render。UI render完毕之后接着下一轮循环。但是
+            UI render不一定会执行，因为需要考虑ui渲染消耗的性能已经有没有ui变动。
+          3.微任务比宏任务执行的更早，每一次 call stack 结束，都会触发 DOM 渲染
+            宏任务：DOM 渲染后再触发
+            微任务：DOM 渲染前会触发
+        7.async/await函数
+          因为，async/await本质上还是基于Promise的一些封装，而Promise是属于微任务的一种。所以在使用await关键字与
+          Promise.then效果类似：
+            setTimeout(_ => console.log(4))
+            async function main() {
+              console.log(1)
+              await Promise.resolve()
+              console.log(3)
+            }
+            main()
+            console.log(2)
+          async函数在await之前的代码都是同步执行的，可以理解为await之前的代码属于new Promise时传入的代码，await之后的所有代
+          码都是在Promise.then中的回调。
+      7.Promise
+        1.基本语法
+        2.异常捕获
+          异常捕获不光是js开发，在各个语言开发中都需要注意的项，因为你不能保证你的程序没有异常，当出现异常之后，你该怎么捕获它
+          来保证这个程序正常的运行，而不是一出现异常，一出现错误就崩溃了，每一个程序都需要有一定的健壮性。
+          then这个函数接收两个参数，第一个参数是成功之后的回调函数，第二个参数是失败之后的回调函数。那我们要进行异常捕获的时候
+          呢，我们就不能传入两个参数了。我们让then只接收一个参数，就是每个then只接收一个成功的回调函数，失败的回调函数我们不管
+          ，这样的话，不管有多少个then，我们可以在后面统一加一个catch，catch里面可以接收一个函数，函数的参数就是那个异常。也
+          就是说我们.then.then，不管多少个.then，只接收一个参数，就是成功的回调函数，失败的或者说报异常的，我们统一用catch
+          去管。
+          会被catch捕获到的情况：
+            1.第一种是在程序执行中的逻辑之外的一些东西的报错，比如语法的报错或一些其他的bug。并不是我们逻辑之内的，并不是我们
+              自己要生成的错误。
+            2.第二种是我们逻辑之内的，是在我们逻辑之内的自己通过rejec()生成的错误。
+            这两种情况都可以通过catch来进行捕获。所以说，我们以后在写promise的时候，这个.then里面我们就只传一个参数就可以了，
+            就只传这个成功的回调就可以了，这会让我们更加的关注到业务逻辑的开发中，而把这个业务逻辑之外的一些错误的一些捕获，我
+            们可以通过统一的catch方法去收敛起来，就是让这个异常捕获更加的统一一些。
+          catch里面一般做的事情：
+            1.做异常处理，例如显示一个 message。异常业务逻辑处理。
+            2.做错误日志统计和上报
+        3.多个串联
+          then参数的函数如果返回了promise实例，那then函数返回就是这个promise实例；如果返回的不是promise实例，那then函数
+          会返回一个全新的promise实例并resolve这个返回的数据；如果什么都没返回，那then函数也是会返回一个全新的promise实例
+          并resolve undefined。
+        4.Promise.all和Promise.race
+        5.总结一些Promise的标准
+          2.状态变化
+            1.三种状态：pending fulfilled rejected
+            2.初始状态就是pending
+            3.pending可以变为fulfilled，或者pending变为rejected
+            4.状态变化不可逆
+          3.then
+            1.Promise实例必须实现then这个方法，如果没有.then它就不是promise了
+            2.then()必须可以接收两个函数作为参数，成功之后的回调和失败之后的回调
+            3.then()返回的必须是一个Promise实例
+        6.总结
+          1.无法改变js异步和单线程的本质
+            不光jquery无法改变，现在所有的解决方案都无法改变这个本质，因为js只要在浏览器中运行，异步和单线程肯定就要存在，
+            肯定永远都没不了。我们改变异步的写法，只是从一些写法上，从一些易读性上改变它。
+          2.只能从写法上杜绝callback这种形式
+            之前的这种在callback函数里面写三千行代码，和你用三个.then，每个.then里面写1000行代码那是完全不一样的。有利
+            于模块化。
+          3.它是一种语法糖形式，但是解偶了代码
+            之前是所有业务逻辑代码在callback中一下子全写完。现在是我们把它分到好多个函数中，而且这个函数还是按顺序执行的，
+            它不会乱。这个解偶非常重要。
+          4.很好的体现了，开放封闭原则
+            编程界有著名的23种设计模式，其实在学习23中设计模式之前应该先学5个设计原则。其中最最关键的设计原则就是开放封闭
+            原则。就是对扩展开放，对修改封闭。对比上面jquery1.5前后的代码，如果我想加一个success4，对于1.5之前的代码，
+            我们要修改success函数的代码，这样的话就是对修改开放，对扩展封闭，因为我没地方可扩展啊，我就只能修改success
+            代码了。1.5之后呢，我直接加一个.done就好了，这种情况就是对扩展开放，对修改封闭。就是你不用改之前的打印的函数
+            逻辑。你只需要再加一个函数就行了。这两种方式就有质的区别，特别是在实际工作中，在多人开发中。首先我们多人开发，
+            我们一个人负责一个函数，大家都各干各的，你不要改我的，我也不改你的，我需要新增功能呢，我就扩展，我不要修改别人
+            的而是我扩展。如果是之前那种情况，你三个人维护一坨代码，改着改着不就乱了吗。还有一种情况是你原有的代码改完之后
+            ，之前所有的功能都要再测试一遍啊。每个模块都需要测试人员回归一遍。因为一旦改代码就有可能出问题。而1.5之后的这
+            中写法，之前的代码没改啊，我只是扩展了一个方法而已啊。只需要测试我扩展的方法就行了。这样就大大减少了回归测试的
+            成本。其实还有很多的好处。代码的解偶减少，模块化划分，代码的管理，维护都是有好处的，检查派发bug，调试，联调，
+            定位问题都是有好处的。所以说我们极力推崇这种写法。
+      8.介绍一下async/await（和Promise的区别、联系）
+        async/await这种写法跟Promise其实完全不冲突，它是用了Promise的一些特性，然后又做了一些改进，所以也可以作为Promise
+        的一个扩展。
+        1.then只是将callback拆分了
+          它的写法还是一个异步的写法，它的本质上还是callback，因为then里面传的是一个函数，所以说它这个写法还是callback的写
+          法，只不过比以前的callback写法更加可以拆分了，更加可以模块化了，更加可以这种链式的串行了，不像之前那种嵌套很多层那
+          样了。
+        2.async/await可以直接用同步的写法来写，最直接的同步写法
+          其我们之前也说过，我们无法改变js单线程，异步这种本质。但是单线程，异步的这个本质呢导致的问题就是我们编写代码的顺序和执
+          行的顺序不一致。所以我们一直在解决那种callback所带来的问题，现在有了终极解决方案，就是这个async/await，它看上去就是
+          一个特别直接的同步代码写法。
+          const load = async function () {
+            const result1 = await loadImg(src1)
+            console.log(result1)
+            const result2 = await loadImg(src2)
+            console.log(result2)
+          }
+          load()
+          这个写法完全是同步的写法，使用上没有一个回调函数，可能回调函数的事情封装起来了，我们使用的时候就完全不需要使用回调函数。
+          这种写法就比我们使用promise.then.then的写法要好很多，因为.then里面还要传回调函数。
+        3.语法
+          1.使用await，函数必须用async标识
+            你想要在函数体里面用await，你函数体这个function前面必须加一个async，然后这个函数还可以作为一个普通的函数来执行。 
+          2.await后面必须跟一个promise实例
+            await的返回值就是这个promise实例resolve或reject传出来的结果。
+          3.需要用babel-polyfill做编译
+        4.总结
+          1.基本语法的使用
+          2.async/await使用了Promise，并没有和Promise冲突
+          3.完全是同步的写法，再也没有回调函数了
+            Promise是对异步回调的一个封装，Promise标准中如果是要使用的话，就是封装完了再使用的，是要有一个.then.then.catch
+            这种写法的。但是async/await使用了Promise的封装，又对Promise的写法进行了封装，它还能使用完全同步的写法。就再也没
+            有回调函数了。这是一个进步。但它并不是取代了Promise，而是和Promise进行了一个完美的兼容。也算是Promise再封装以后在
+            使用中的一个扩展。
+          4.任何的写法的改变都改变不了js单线程和异步的本质
+            这个是永远变不了的，除非js的执行引擎发生了变化，否则它是永远变不了的。变的只是做异步的事情的越来越趋向于同步的写法。
+      9.总结一下当前js解决异步的方案
+        1.jquery deferred
+        2.Promise
+        3.async/await
+        4.generator
+          1.原理比较复杂
+          2.不是异步的直接解决方案
+            它提出来并不是直接为了解决异步的问题，通过复杂的封装可以解决异步的问题，它能解决异步类似于曲线救国那种感觉。能解决但
+            不是为了解决异步。
+          3.主要的原因是我们有更好更简洁的解决方案async/await
+          4.koa也是放弃了generator而使用async/await来解决异步
+    函数的执行
+      JavaScript执行（二）：闭包和执行上下文到底是怎么回事？
+      1.在上一课，我们了解了 JavaScript 执行中最粗粒度的任务：传给引擎执行的代码段。并且，我们还根据“由 JavaScript 引擎发起
+        ”还是“由宿主发起”，分成了宏观任务和微观任务，接下来我们继续去看一看更细的执行粒度。
+      2.一段 JavaScript 代码可能会包含函数调用的相关内容，从今天开始，我们就用两节课的时间来了解一下函数的执行。
+      3.我们今天要讲的知识在网上有不同的名字，比较常见的可能有：
+        闭包；
+        作用域链；
+        执行上下文；
+        this 值。
+      4.实际上，尽管它们是表示不同的意思的术语，所指向的几乎是同一部分知识，那就是函数执行过程相关的知识。我们可以简单看一下图。
+        函数执行过程.png
+      5.看着也许会有点晕，别着急，我会和你共同理一下它们之间的关系。
+      6.当然，除了让你理解函数执行过程的知识，理清这些概念也非常重要。所以我们先来讲讲这个有点复杂的概念：闭包。
+      7.闭包
+        1.闭包翻译自英文单词 closure，这是个不太好翻译的词，在计算机领域，它就有三个完全不相同的意义：编译原理中，它是处理语法产
+          生式的一个步骤；计算几何中，它表示包裹平面点集的凸多边形（翻译作凸包）；而在编程语言领域，它表示一种函数。
+        2.闭包这个概念第一次出现在 1964 年的《The Computer Journal》上，由 P. J. Landin 在
+          《The mechanical evaluation of expressions》一文中提出了 applicative expression 和 closure 的概念。
+          闭包概念第一次出现.png
+        3.在上世纪 60 年代，主流的编程语言是基于 lambda 演算的函数式编程语言，所以这个最初的闭包定义，使用了大量的函数式术语。
+          一个不太精确的描述是“带有一系列信息的λ表达式”。对函数式语言而言，λ表达式其实就是函数。
+        4.我们可以这样简单理解一下，闭包其实只是一个绑定了执行环境的函数，这个函数并不是印在书本里的一条简单的表达式，闭包与普通函
+          数的区别是，它携带了执行的环境，就像人在外星中需要自带吸氧的装备一样，这个函数也带有在程序中生存的环境。
+        5.这个古典的闭包定义中，闭包包含两个部分。
+          环境部分
+            环境
+            标识符列表
+          表达式部分
+        6.当我们把视角放在 JavaScript 的标准中，我们发现，标准中并没有出现过 closure 这个术语，但是，我们却不难根据古典定义，
+          在 JavaScript 中找到对应的闭包组成部分。
+          环境部分
+            环境：函数的词法环境（执行上下文的一部分）
+            标识符列表：函数中用到的未声明的变量
+          表达式部分：函数体
+        7.至此，我们可以认为，JavaScript 中的函数完全符合闭包的定义。它的环境部分是函数词法环境部分组成，它的标识符列表是函数中
+          用到的未声明变量，它的表达式部分就是函数体。
+        8.这里我们容易产生一个常见的概念误区，有些人会把 JavaScript 执行上下文，或者作用域（Scope，ES3 中规定的执行上下文的一
+          部分）这个概念当作闭包。
+        9.实际上 JavaScript 中跟闭包对应的概念就是“函数”，可能是这个概念太过于普通，跟闭包看起来又没什么联系，所以大家才不自觉
+          地把这个概念对应到了看起来更特别的“作用域”吧（其实我早年也是这么理解闭包，直到后来被朋友纠正，查了资料才改正过来）。
+      8.执行上下文：执行的基础设施
+        1.相比普通函数，JavaScript 函数的主要复杂性来自于它携带的“环境部分”。当然，发展到今天的 JavaScript，它所定义的环境部
+          分，已经比当初经典的定义复杂了很多。
+        2.JavaScript 中与闭包“环境部分”相对应的术语是“词法环境”，但是 JavaScript 函数比λ函数要复杂得多，我们还要处理 this、
+          变量声明、with 等等一系列的复杂语法，λ函数中可没有这些东西，所以，在 JavaScript 的设计中，词法环境只是 JavaScript 
+          执行上下文的一部分。
+        3.JavaScript 标准把一段代码（包括函数），执行所需的所有信息定义为：“执行上下文”。
+        4.因为这部分术语经历了比较多的版本和社区的演绎，所以定义比较混乱，这里我们先来理一下 JavaScript 中的概念。
+        5.执行上下文在 ES3 中，包含三个部分。
+          scope：作用域，也常常被叫做作用域链。
+          variable object：变量对象，用于存储变量的对象。
+          this value：this 值。
+        6.在 ES5 中，我们改进了命名方式，把执行上下文最初的三个部分改为下面这个样子。
+          lexical environment：词法环境，当获取变量时使用。
+          variable environment：变量环境，当声明变量时使用。
+          this value：this 值。
+        7.在 ES2018 中，执行上下文又变成了这个样子，this 值被归入 lexical environment，但是增加了不少内容。
+          lexical environment：词法环境，当获取变量或者 this 值时使用。
+          variable environment：变量环境，当声明变量时使用。
+          code evaluation state：用于恢复代码执行位置。
+          Function：执行的任务是函数时使用，表示正在被执行的函数。
+          ScriptOrModule：执行的任务是脚本或者模块时使用，表示正在被执行的代码。
+          Realm：使用的基础库和内置对象实例。
+          Generator：仅生成器上下文有这个属性，表示当前生成器。
+        8.我们在这里介绍执行上下文的各个版本定义，是考虑到你可能会从各种网上的文章中接触这些概念，如果不把它们理清楚，我们就很难分
+          辨对错。如果是我们自己使用，我建议统一使用最新的 ES2018 中规定的术语定义。
+        9.尽管我们介绍了这些定义，但我并不打算按照 JavaScript 标准的思路，从实现的角度去介绍函数的执行过程，这是不容易被理解的。
+        10.我想试着从代码实例出发，跟你一起推导函数执行过程中需要哪些信息，它们又对应着执行上下文中的哪些部分。
+        11.比如，我们看以下的这段 JavaScript 代码：
+          var b = {}
+          let c = 1
+          this.a = 2;
+        12.要想正确执行它，我们需要知道以下信息：
+          1.var 把 b 声明到哪里；
+          2.b 表示哪个变量；
+          3.b 的原型是哪个对象；
+          4.let 把 c 声明到哪里；
+          5.this 指向哪个对象。
+        13.这些信息就需要执行上下文来给出了，这段代码出现在不同的位置，甚至在每次执行中，会关联到不同的执行上下文，所以，同样的代
+          码会产生不一样的行为。
+        14.在这两篇文章中，我会基本覆盖执行上下文的组成部分，本篇我们先讲 var 声明与赋值，let，realm 三个特性来分析上下文提供的
+          信息，分析执行上下文中提供的信息。
+      9.var 声明与赋值
+        1.我们来分析一段代码：
+          var b = 1
+        2.通常我们认为它声明了 b，并且为它赋值为 1，var 声明作用域函数执行的作用域。也就是说，var 会穿透 for 、if 等语句。
+        3.在只有 var，没有 let 的旧 JavaScript 时代，诞生了一个技巧，叫做：立即执行的函数表达式（IIFE），通过创建一个函数，并
+          且立即执行，来构造一个新的域，从而控制 var 的范围。
+        4.由于语法规定了 function 关键字开头是函数声明，所以要想让函数变成函数表达式，我们必须得加点东西，最常见的做法是加括号。
+            (function(){
+                var a;
+                //code
+            }());
+            (function(){
+                var a;
+                //code
+            })();
+        5.但是，括号有个缺点，那就是如果上一行代码不写分号，括号会被解释为上一行代码最末的函数调用，产生完全不符合预期，并且难以调
+          试的行为，加号等运算符也有类似的问题。所以一些推荐不加分号的代码风格规范，会要求在括号前面加上分号。
+            ;(function(){
+                var a;
+                //code
+            }())
+            ;(function(){
+                var a;
+                //code
+            })()
+        6.我比较推荐的写法是使用 void 关键字。也就是下面的这种形式。
+            void function(){
+                var a;
+                //code
+            }();
+        7.这有效避免了语法问题，同时，语义上 void 运算表示忽略后面表达式的值，变成 undefined，我们确实不关心 IIFE 的返回值，
+          所以语义也更为合理。
+        8.值得特别注意的是，有时候 var 的特性会导致声明的变量和被赋值的变量是两个 b，JavaScript 中有特例，那就是使用 with 的
+          时候：
+            var b;
+            void function(){
+                var env = {b:1};
+                b = 2;
+                console.log("In function b:", b);
+                with(env) {
+                    var b = 3;
+                    console.log("In with b:", b);
+                }
+            }();
+            console.log("Global b:", b);
+        9.在这个例子中，我们利用立即执行的函数表达式（IIFE）构造了一个函数的执行环境，并且在里面使用了我们一开头的代码。
+        10.可以看到，在 Global function with 三个环境中，b 的值都不一样，而在 function 环境中，并没有出现 var b，这说明
+          with 内的 var b 作用到了 function 这个环境当中。
+        11.var b = {} 这样一句对两个域产生了作用，从语言的角度是个非常糟糕的设计，这也是一些人坚定地反对在任何场景下使用 with 
+          的原因之一。
+      10.let
+        1.let 是 ES6 开始引入的新的变量声明模式，比起 var 的诸多弊病，let 做了非常明确的梳理和规定。
+        2.为了实现 let，JavaScript 在运行时引入了块级作用域。也就是说，在 let 出现之前，JavaScript 的 if for 等语句皆不产
+          生作用域。
+        3.我简单统计了下，以下语句会产生 let 使用的作用域：
+          for；
+          if；
+          switch；
+          try/catch/finally。
+      11.Realm
+        1.在最新的标准（9.0）中，JavaScript 引入了一个新概念 Realm，它的中文意思是“国度”“领域”“范围”。这个英文的用法就有点比
+          喻的意思，几个翻译都不太适合 JavaScript 语境，所以这里就不翻译啦。
+        2.我们继续来看这段代码：
+          var b = {}
+        3.在 ES2016 之前的版本中，标准中甚少提及{}的原型问题。但在实际的前端开发中，通过 iframe 等方式创建多 window 环境并非罕
+          见的操作，所以，这才促成了新概念 Realm 的引入。
+        4.Realm 中包含一组完整的内置对象，而且是复制关系。
+        5.对不同 Realm 中的对象操作，会有一些需要格外注意的问题，比如 instanceOf 几乎是失效的。
+        6.以下代码展示了在浏览器环境中获取来自两个 Realm 的对象，它们跟本土的 Object 做 instanceOf 时会产生差异：
+            var iframe = document.createElement('iframe')
+            document.documentElement.appendChild(iframe)
+            iframe.src="javascript:var b = {};"
+            var b1 = iframe.contentWindow.b;
+            var b2 = {};
+            console.log(typeof b1, typeof b2); //object object
+            console.log(b1 instanceof Object, b2 instanceof Object); //false true
+        7.可以看到，由于 b1、 b2 由同样的代码“ {} ”在不同的 Realm 中执行，所以表现出了不同的行为。
+      12.结语
+        1.在今天的课程中，我帮你梳理了一些概念：有编程语言的概念闭包，也有各个版本中的 JavaScript 标准中的概念：执行上下文、作
+          用域、this 值等等。
+        2.之后我们又从代码的角度，分析了一些执行上下文中所需要的信息，并从var、let、对象字面量等语法中，推导出了词法作用域、变量
+          作用域、Realm的设计。
+        3.最后留给你一个问题：你喜欢使用 let 还是 var？听过今天的课程，你的想法是否有改变呢？为什么？
+      JavaScript执行（三）：你知道现在有多少种函数吗？
+      1.在前一篇文章中，我们大致了解了执行上下文是什么，也知道了任何语句的执行都会依赖特定的上下文。
+      2.一旦上下文被切换，整个语句的效果可能都会发生改变。那么，切换上下文的时机就显得非常重要了。
+      3.在 JavaScript，切换上下文最主要的场景是函数调用。在这一课，我们就来讲讲函数调用切换上下文的事情。我们在讲函数调用之前，
+        首先来认识一下函数家族。
+      4.函数
+        1.在 ES2018 中，函数已经是一个很复杂的体系了，我在这里整理了一下。
+        2.第一种，普通函数：用 function 关键字定义的函数。
+          示例：
+            function foo (){ 
+              // code
+            }
+        3.第二种，箭头函数：用 => 运算符定义的函数。
+          示例:
+            const foo = () => { 
+              // code
+            }
+        4.第三种，方法：在 class 中定义的函数。
+          示例：
+            class C {
+                foo(){
+                    //code
+                }
+            }
+        5.第四种，生成器函数：用 function * 定义的函数。
+          示例：
+            function* foo(){
+                // code
+            }
+        6.第五种，类：用 class 定义的类，实际上也是函数。
+          示例：
+            class Foo {
+                constructor(){
+                    //code
+                }
+            }
+        7.第六 / 七 / 八种，异步函数：普通函数、箭头函数和生成器函数加上 async 关键字。
+          示例：
+            async function foo(){
+                // code
+            }
+            const foo = async () => {
+                // code
+            }
+            async function foo*(){
+                // code
+            }
+        8.ES6 以来，大量加入的新语法极大地方便了我们编程的同时，也增加了很多我们理解的心智负担。要想认识这些函数的执行上下文切换，
+          我们必须要对它们行为上的区别有所了解。
+        9.对普通变量而言，这些函数并没有本质区别，都是遵循了“继承定义时环境”的规则，它们的一个行为差异在于 this 关键字。
+        10.那么，this 关键字是什么呢，我们一起来看一看。
+      5.this 关键字的行为
+        1.this 是 JavaScript 中的一个关键字，它的使用方法类似于一个变量（但是 this 跟变量的行为有很多不同，上一节课我们讲了一
+          些普通变量的行为和机制，也就是 var 声明和赋值、let 的内容）。
+        2.this 是执行上下文中很重要的一个组成部分。同一个函数调用方式不同，得到的 this 值也不同，我们看一个例子：
+            function showThis(){
+                console.log(this);
+            }
+            var o = {
+                showThis: showThis
+            }
+            showThis(); // global
+            o.showThis(); // o
+        3.在这个例子中，我们定义了函数 showThis，我们把它赋值给一个对象 o 的属性，然后尝试分别使用两个引用来调用同一个函数，结果
+          得到了不同的 this 值。
+        4.普通函数的 this 值由“调用它所使用的引用”决定，其中奥秘就在于：我们获取函数的表达式，它实际上返回的并非函数本身，而是一个
+          Reference 类型（记得我们在类型一章讲过七种标准类型吗，正是其中之一）。
+        5.Reference 类型由两部分组成：一个对象和一个属性值。不难理解 o.showThis 产生的 Reference 类型，即由对象 o 和属性
+          “showThis”构成。
+        6.当做一些算术运算（或者其他运算时），Reference 类型会被解引用，即获取真正的值（被引用的内容）来参与运算，而类似函数调用、
+          delete 等操作，都需要用到 Reference 类型中的对象。
+        7.在这个例子中，Reference 类型中的对象被当作 this 值，传入了执行函数时的上下文当中。
+        8.至此，我们对 this 的解释已经非常清晰了：调用函数时使用的引用，决定了函数执行时刻的 this 值。
+        9.实际上从运行时的角度来看，this 跟面向对象毫无关联，它是与函数调用时使用的表达式相关。
+        10.这个设计来自 JavaScript 早年，通过这样的方式，巧妙地模仿了 Java 的语法，但是仍然保持了纯粹的“无类”运行时设施。
+        11.如果，我们把这个例子稍作修改，换成箭头函数，结果就不一样了：
+            const showThis = () => {
+                console.log(this);
+            }
+            var o = {
+                showThis: showThis
+            }
+            showThis(); // global
+            o.showThis(); // global
+        12.我们看到，改为箭头函数后，不论用什么引用来调用它，都不影响它的 this 值。
+        13.接下来我们看看“方法”，它的行为又不一样了：
+            class C {
+                showThis() {
+                    console.log(this);
+                }
+            }
+            var o = new C();
+            var showThis = o.showThis;
+            showThis(); // undefined
+            o.showThis(); // o
+        14.这里我们创建了一个类 C，并且实例化出对象 o，再把 o 的方法赋值给了变量 showThis。
+        15.这时候，我们使用 showThis 这个引用去调用方法时，得到了 undefined。
+        16.所以，在方法中，我们看到 this 的行为也不太一样，它得到了 undefined 的结果。
+        17.按照我们上面的方法，不难验证出：生成器函数、异步生成器函数和异步普通函数跟普通函数行为是一致的，异步箭头函数与箭头函数
+          行为是一致的。
+      6.this 关键字的机制
+        1.说完了 this 行为，我们再来简单谈谈在 JavaScript 内部，实现 this 这些行为的机制，让你对这部分知识有一个大概的认知。
+        2.函数能够引用定义时的变量，如上文分析，函数也能记住定义时的 this，因此，函数内部必定有一个机制来保存这些信息。
+        3.在 JavaScript 标准中，为函数规定了用来保存定义时上下文的私有属性[[Environment]]。
+        4.当一个函数执行时，会创建一条新的执行环境记录，记录的外层词法环境（outer lexical environment）会被设置成函数的
+          [[Environment]]。
+        5.这个动作就是切换上下文了，我们假设有这样的代码：
+            var a = 1;
+            foo();
+            // 在别处定义了foo：
+            var b = 2;
+            function foo(){
+                console.log(b); // 2
+                console.log(a); // error
+            }
+        6.这里的 foo 能够访问 b（定义时词法环境），却不能访问 a（执行时的词法环境），这就是执行上下文的切换机制了。
+        7.JavaScript 用一个栈来管理执行上下文，这个栈中的每一项又包含一个链表。如下图所示：
+          执行上下文栈.jpg
+        8.当函数调用时，会入栈一个新的执行上下文，函数调用结束时，执行上下文被出栈。
+        9.而 this 则是一个更为复杂的机制，JavaScript 标准定义了 [[thisMode]] 私有属性。
+        10.[[thisMode]] 私有属性有三个取值。
+          lexical：表示从上下文中找 this，这对应了箭头函数。
+          global：表示当 this 为 undefined 时，取全局对象，对应了普通函数。
+          strict：当严格模式时使用，this 严格按照调用时传入的值，可能为 null 或者 undefined。
+        11.非常有意思的是，方法的行为跟普通函数有差异，恰恰是因为 class 设计成了默认按 strict 模式执行。
+        12.我们可以用 strict 达成与上一节中方法的例子一样的效果:
+            "use strict"
+            function showThis(){
+                console.log(this);
+            }
+            var o = {
+                showThis: showThis
+            }
+            showThis(); // undefined
+            o.showThis(); // o
+        13.函数创建新的执行上下文中的词法环境记录时，会根据[[thisMode]]来标记新纪录的[[ThisBindingStatus]]私有属性。
+        14.代码执行遇到 this 时，会逐层检查当前词法环境记录中的[[ThisBindingStatus]]，当找到有 this 的环境记录时获取 
+          this 的值。
+        15.这样的规则的实际效果是，嵌套的箭头函数中的代码都指向外层 this，例如：
+            var o = {}
+            o.foo = function foo(){
+                console.log(this);
+                return () => {
+                    console.log(this);
+                    return () => console.log(this);
+                }
+            }
+            o.foo()()(); // o, o, o
+        16.这个例子中，我们定义了三层嵌套的函数，最外层为普通函数，两层都是箭头函数。
+        17.这里调用三个函数，获得的 this 值是一致的，都是对象 o。
+        18.JavaScript 还提供了一系列函数的内置方法来操纵 this 值，下面我们来了解一下。
+      7.操作 this 的内置函数
+        1.Function.prototype.call 和 Function.prototype.apply 可以指定函数调用时传入的 this 值，示例如下：
+            function foo(a, b, c){
+                console.log(this);
+                console.log(a, b, c);
+            }
+            foo.call({}, 1, 2, 3);
+            foo.apply({}, [1, 2, 3]);
+        2.这里 call 和 apply 作用是一样的，只是传参方式有区别。
+        3.此外，还有 Function.prototype.bind 它可以生成一个绑定过的函数，这个函数的 this 值固定了参数：
+            function foo(a, b, c){
+                console.log(this);
+                console.log(a, b, c);
+            }
+            foo.bind({}, 1, 2, 3)();
+        4.有趣的是，call、bind 和 apply 用于不接受 this 的函数类型如箭头、class 都不会报错。
+        5.这时候，它们无法实现改变 this 的能力，但是可以实现传参。
+      8.结语
+        1.在这一节课程中，我们认识了 ES2018 中规定的各种函数，我一共简单介绍了 8 种函数。
+        2.我们围绕 this 这个中心，介绍了函数的执行上下文切换机制。同时我们还讲解了 this 中的一些相关知识。包括了操作 this 的内
+          置函数。
+        3.最后，留给你一个问题，你在日常开发中用过哪些函数类型呢？欢迎给我留言，我们一起讨论。
+      9.补充阅读：new 与 this
+        1.我们在之前的对象部分已经讲过 new 的执行过程，我们再来看一下：
+          以构造器的 prototype 属性（注意与私有字段[[prototype]]的区分）为原型，创建新对象；
+          将 this 和调用参数传给构造器，执行；
+          如果构造器返回的是对象，则返回，否则返回第一步创建的对象。
+        2.显然，通过 new 调用函数，跟直接调用的 this 取值有明显区别。那么我们今天讲的这些函数跟 new 搭配又会产生什么效果呢？
+        3.这里我整理了一张表：
+          new调用不同函数.png
+        4.我们可以看到，仅普通函数和类能够跟 new 搭配使用，这倒是给我们省去了不少麻烦。
+      其他总结
+      1.作用域，自由变量，变量的生命周期
+        1.作用域：作用域就是查找变量，对象，函数的的地方，代表了它们合法的使用范围
+        2.作用域链：自由变量查找的顺序
+        3.自由变量：当前作用域没有定义，但是使用了的变量
+        4.变量的生命周期
+          在javascript中声明一个变量是使用var来声明的。一个变量的声明意味着就是我们在内存当中申请了一个空间用来存储。这个内存也就是
+          我们电脑的运行内存，如果我们一直的声明变量，不释放的话。会占用很大的内存。在c/c++当中是需要程序员在合适的地方手动的去释放变
+          量内存，而javascript和java拥有垃圾回收机制，他们会自己回收。但有的时候我们需要让局部变量的生命周期长一点，这个时候在js当
+          中就有了闭包，他能够很好的解决这个问题。
+          JavaScript执行过程中内存分配：
+            1.为变量对象分配需要的内存
+            2.在分配到的内存中进行读/写操作
+            3.不再使用时将其销毁，释放内存
+          内存管理不善，会出现内存泄露，造成浏览器内存占用过多，页面卡顿等问题。
+          垃圾回收机制：
+            JavaScript中有自动垃圾回收机制，会通过标记清除的算法识别哪些变量对象不再使用，对其进行销毁，释放其内存。也就是说，执行环
+            境会负责管理代码执行过程中使用的内存。开发者也可在代码中手动设置变量值为null（a = null）进行标记清除，让其失去引用，以便
+            下一次垃圾回收时进行有效回收。
+            局部环境中，函数执行完成后，函数局部环境声明的变量不再需要时，就会被垃圾回收销毁（理想的情况下，闭包会阻止这一过程）。
+            全局环境只有页面退出时才会出栈，解除变量引用。所以开发者应尽量避免在全局环境中创建全局变量，如需使用，也要在不需要时手动标
+            记清除，将其内存释放掉。
+      2.一般情况下引起闭包的形式有两种
+        总之它函数定义的地方和函数执行的地方它是不一样的。自由变量的查找，是在函数定义的地方，向上级作用域查找。不是在函数执行的地方。
+        1.函数作为参数被传递
+          也就是函数在这个地方定义好之后，传递到另一个地方去执行。
+          function print (fn) {
+            let a = 200
+            fn()
+          }
+          let a = 100
+          function fn () {
+            console.log(a)
+          }
+          print(fn) // 100
+        2.函数做为返回值被返回
+          函数在这个地方定义好之后，它会被返回到另一个地方去执行。
+          function create () {
+            let a = 100
+            return function () {
+              console.log(a)
+            }
+          }
+          let fn = create()
+          let a = 200
+          fn() // 100
+      3.闭包应用
+        1.由于js作用域链的存在，只能内部环境访问外部环境，不能从外部访问内部
+          function a() {
+            var i=0;
+            function b() {
+              alert(++i)
+            }
+            return b
+          }
+          var c = a()
+          c()
+        2.由于js变量生命周期的存在，变量无法常驻内存
+          创建10个'<a>'标签，点击的时候弹出对应的序号
+          let i, a
+          for (i = 0; i < 10; i++) {
+            a = document.createElement('a')
+            a.innerHTML = i + '<br>'
+            a.addEventListener('click', function (e) {
+              e.preventDefault()
+              alert(i)
+            })
+            document.body.appendChild(a)
+          }
+          // 上面的写法，点击每个a标签弹出来的都是10
+          // 因为事件绑定的函数定义时里面的i是找的全局作用域i，当遍历结束后，这个全局i已经变成10了。这时点击触发函数里面的i就会
+            向上找到全局变量i，所以都会弹出10。
+          let a
+          for (let i = 0; i < 10; i++) {
+            a = document.createElement('a')
+            a.innerHTML = i + '<br>'
+            a.addEventListener('click', function (e) {
+              e.preventDefault()
+              alert(i)
+            })
+            document.body.appendChild(a)
+          }
+          // 上面的写法，i就变成了块级作用域中的变量，每次for循环执行的时候都会形成一个新的块，这时配合事件绑定的函数就形成了一
+            个闭包，所以每次循环的变量i都会保存下来。这时点击触发函数里面的i就会向上找到块级作用域里的变量i，所以就会弹出对应的i。
+          let i, a
+          for (i = 0; i < 10; i++) {
+            a = document.createElement('a')
+            a.innerHTML = i + '<br>'
+            a.addEventListener('click', (function (i) {
+              return function (e) {
+                e.preventDefault()
+                alert(i)
+              }
+            })(i))
+            document.body.appendChild(a)
+          }
+          // 第三种写法跟第二种的目的和解释是一样的，只是写法不同。
+          这种情况是针对不会立即执行的函数中存在自由变量的取值的情况可能会被外面作用域里面的数据的改变所影响。解决的办法就是让这个
+          自由变量存在在闭包中，这时它就能常驻内存了。
+        3.闭包内的局部变量不会影响到闭包外的同名变量，即可用闭包形成一个块级作用域
+          可以通过立即执行函数，来达到隐藏细节的目的
+          var myModule = (function () {
+            var var1 = 1
+            var var2 = 2
+            function fn1 () {
+
+            }
+            function fn2 () {
+
+            }
+            return {
+                fn1: fn1,
+                fn2: fn2
+            }
+          })()
+          这样在模块外部无法修改我们没有暴露出来的变量、函数，来做js模块化。
+        4.隐藏数据
+          我们通过闭包把一些数据隐藏起来，然后不让外边去改变。比如我们做一个简单的缓存工具。
+          // 闭包隐藏数据，只提供api。缓存的小插件，小工具
+          function createCache () {
+            const data = {} // 闭包中的数据，被隐藏，不被外界访问
+            return {
+              get (key) {
+                return data[key]
+              },
+              set (key, value) {
+                data[key] = value
+              }
+            }
+          }
+          const c = createCache()
+          c.set('a', 100)
+          console.log(c.get('a'))
+          为什么说它可以隐藏数据呢，比如我们现在想去不通过set,get直接去改data值怎么改呢，没有办法改。因为这个data是在这个
+          createCache的这个作用域里面的。它不会被外界所访问到。也就是它的合法作用域只是createCache这个函数里面，如果你在
+          这个函数外界直接去data.a赋值成200，这个是会报错的。data在这个作用域里没有定义，作用域的自由变量的查找顺序它不会
+          找到createCache函数里面来。这样我们通过return get set返回函数的闭包的一种形式，执行这个函数的时候，因为这个函
+          数是在这个createCache作用域里面的，所以说它能找到这个data，对它做一些修改。所以说这种方式是非常常见的，不管是缓
+          存也好，还是其他的数据也好。比如说jquery的事件绑定和自定义事件，它都是通过这种方式来去隐藏的，就是一个函数里面，我
+          们去把这个数据隐藏，然后只提供一些api在外面，然后去用api，然后这个数据我自己去管理着。所以说这是闭包的一个非常常见
+          和常用的一种方。
+    语句级的执行
+      JavaScript执行（四）：try里面放return，finally还会执行吗？
+      1.在前面几篇文章中，我们已经了解了关于执行上下文、作用域、闭包之间的关系。
+      2.今天，我们则要说一说更为细节的部分：语句。
+      3.语句是任何编程语言的基础结构，与 JavaScript 对象一样，JavaScript 语句同样具有“看起来很像其它语言，但是其实一点都不一样”
+        的特点。
+      4.我们比较常见的语句包括变量声明、表达式、条件、循环等，这些都是大家非常熟悉的东西，对于它们的行为，我在这里就不赘述了。
+      5.为了了解 JavaScript 语句有哪些特别之处，首先我们要看一个不太常见的例子，我会通过这个例子，来向你介绍 JavaScript 语句执
+        行机制涉及的一种基础类型：Completion 类型。
+      6.Completion 类型
+        1.我们来看一个例子。在函数 foo 中，使用了一组 try 语句。我们可以先来做一个小实验，在 try 中有 return 语句，finally 
+          中的内容还会执行吗？我们来看一段代码。
+            function foo(){
+              try{
+                return 0;
+              } catch(err) {
+
+              } finally {
+                console.log("a")
+              }
+            }
+            console.log(foo());
+        2.通过实际试验，我们可以看到，finally 确实执行了，而且 return 语句也生效了，foo() 返回了结果 0。
+        3.虽然 return 执行了，但是函数并没有立即返回，又执行了 finally 里面的内容，这样的行为违背了很多人的直觉。
+        4.如果在这个例子中，我们在 finally 中加入 return 语句，会发生什么呢？
+            function foo(){
+              try{
+                return 0;
+              } catch(err) {
+
+              } finally {
+                return 1;
+              }
+            }
+            console.log(foo());
+        5.通过实际执行，我们看到，finally 中的 return “覆盖”了 try 中的 return。在一个函数中执行了两次 return，这已经超出
+          了很多人的常识，也是其它语言中不会出现的一种行为。
+        6.面对如此怪异的行为，我们当然可以把它作为一个孤立的知识去记忆，但是实际上，这背后有一套机制在运作。
+        7.这一机制的基础正是 JavaScript 语句执行的完成状态，我们用一个标准类型来表示：Completion Record（我在类型一节提到过，
+          Completion Record 用于描述异常、跳出等语句执行过程）。
+        8.Completion Record 表示一个语句执行完之后的结果，它有三个字段：
+          [[type]] 表示完成的类型，有 break continue return throw 和 normal 几种类型；
+          [[value]] 表示语句的返回值，如果语句没有，则是 empty；
+          [[target]] 表示语句的目标，通常是一个 JavaScript 标签（标签在后文会有介绍）。
+        9.JavaScript 正是依靠语句的 Completion Record 类型，方才可以在语句的复杂嵌套结构中，实现各种控制。接下来我们要来了解
+          一下 JavaScript 使用 Completion Record 类型，控制语句执行的过程。
+      7.首先我们来看看语句有几种分类。
+        语句分类.jpg
+        1.普通的语句
+          1.在 JavaScript 中，我们把不带控制能力的语句称为普通语句。普通语句有下面几种。
+            声明类语句
+              var 声明
+              const 声明
+              let 声明
+              函数声明
+              类声明
+            表达式语句
+            空语句
+            debugger 语句
+          2.这些语句在执行时，从前到后顺次执行（我们这里先忽略 var 和函数声明的预处理机制），没有任何分支或者重复执行逻辑。
+          3.普通语句执行后，会得到 [[type]] 为 normal 的 Completion Record，JavaScript 引擎遇到这样的 
+            Completion Record，会继续执行下一条语句。
+          4.这些语句中，只有表达式语句会产生 [[value]]，当然，从引擎控制的角度，这个 value 并没有什么用处。
+          5.如果你经常使用 Chrome 自带的调试工具，可以知道，输入一个表达式，在控制台可以得到结果，但是在前面加上 var，就变成了
+            undefined。
+              控制台结果.png
+          6.Chrome 控制台显示的正是语句的 Completion Record 的[[value]]。
+        2.语句块
+          1.介绍完了普通语句，我们再来介绍一个比较特殊的语句：语句块。
+          2.语句块就是拿大括号括起来的一组语句，它是一种语句的复合结构，可以嵌套。
+          3.语句块本身并不复杂，我们需要注意的是语句块内部的语句的 Completion Record 的[[type]] 如果不为 normal，会打断语句
+            块后续的语句执行。
+          4.比如我们考虑，一个[[type]]为 return 的语句，出现在一个语句块中的情况。
+          5.从语句的这个 type 中，我们大概可以猜到它由哪些特定语句产生，我们就来说说最开始的例子中的 return。
+          6.return 语句可能产生 return 或者 throw 类型的 Completion Record。我们来看一个例子。
+          7.先给出一个内部为普通语句的语句块：
+            {
+              var i = 1; // normal, empty, empty
+              i ++; // normal, 1, empty
+              console.log(i) //normal, undefined, empty
+            } // normal, undefined, empty
+          8.在每一行的注释中，我给出了语句的 Completion Record。
+          9.我们看到，在一个 block 中，如果每一个语句都是 normal 类型，那么它会顺次执行。接下来我们加入 return 试试看。
+            {
+              var i = 1; // normal, empty, empty
+              return i; // return, 1, empty
+              i ++; 
+              console.log(i)
+            } // return, 1, empty
+          10.但是假如我们在 block 中插入了一条 return 语句，产生了一个非 normal 记录，那么整个 block 会成为非 normal。这个
+            结构就保证了非 normal 的完成类型可以穿透复杂的语句嵌套结构，产生控制效果。
+          11.接下来我们就具体讲讲控制类语句。
+        3.控制型语句
+          1.控制型语句带有 if、switch 关键字，它们会对不同类型的 Completion Record 产生反应。
+          2.控制类语句分成两部分，一类是对其内部造成影响，如 if、switch、while/for、try。
+          3.另一类是对外部造成影响如 break、continue、return、throw，这两类语句的配合，会产生控制代码执行顺序和执行逻辑的效
+            果，这也是我们编程的主要工作。
+          4.一般来说， for/while - break/continue 和 try - throw 这样比较符合逻辑的组合，是大家比较熟悉的，但是，实际上，
+            我们需要控制语句跟 break 、continue 、return 、throw 四种类型与控制语句两两组合产生的效果。
+              控制语句跟中断类型结合效果.png
+          5.通过这个表，我们不难发现知识的盲点，也就是我们最初的的 case 中的 try 和 return 的组合了。
+          6.因为 finally 中的内容必须保证执行，所以 try/catch 执行完毕，即使得到的结果是非 normal 型的完成记录，也必须要执
+            行 finally。
+          7.而当 finally 执行也得到了非 normal 记录，则会使 finally 中的记录作为整个 try 结构的结果。
+        4.带标签的语句
+          1.前文我重点讲了 type 在语句控制中的作用，接下来我们重点来讲一下最后一个字段：target，这涉及了 JavaScript 中的一个
+            语法，带标签的语句。
+          2.实际上，任何 JavaScript 语句是可以加标签的，在语句前加冒号即可：
+            firstStatement: var i = 1;
+          3.大部分时候，这个东西类似于注释，没有任何用处。唯一有作用的时候是：与完成记录类型中的 target 相配合，用于跳出多层循环。
+              outer: while(true) {
+                inner: while(true) {
+                    break outer;
+                }
+              }
+              console.log("finished")
+          4.break/continue 语句如果后跟了关键字，会产生带 target 的完成记录。一旦完成记录带了 target，那么只有拥有对应 
+            label 的循环语句会消费它。
+      8.结语
+        1.我们以 Completion Record 类型为线索，为你讲解了 JavaScript 语句执行的原理。
+        2.因为 JavaScript 语句存在着嵌套关系，所以执行过程实际上主要在一个树形结构上进行， 树形结构的每一个节点执行后产生 
+          Completion Record，根据语句的结构和 Completion Record，JavaScript 实现了各种分支和跳出逻辑。
+        3.你遇到哪些语句中的执行的实际效果，是跟你想象的有所出入呢，你可以给我留言，我们一起讨论。
+文法
+  词法
+    JavaScript词法：为什么12.toString会报错？
+    1.在前面的文章中，我们已经从运行时的角度了解过 JavaScript 的知识内容，在接下来的几节课，我们来了解一下 JavaScript 的文
+      法部分。
+    2.文法是编译原理中对语言的写法的一种规定，一般来说，文法分成词法和语法两种。
+    3.词法规定了语言的最小语义单元：token，可以翻译成“标记”或者“词”，在我的专栏文章中，我统一把 token 翻译成词。
+    4.从字符到词的整个过程是没有结构的，只要符合词的规则，就构成词，一般来说，词法设计不会包含冲突。词法分析技术上可以使用状态机
+      或者正则表达式来进行，我们的课程主要是学习词法，关于它们实现的细节就不多谈了。
+    5.概述
+      1.我们先来看一看 JavaScript 的词法定义。JavaScript 源代码中的输入可以这样分类：
+        WhiteSpace 空白字符
+        LineTerminator 换行符
+        Comment 注释
+        Token 词
+          IdentifierName 标识符名称，典型案例是我们使用的变量名，注意这里关键字也包含在内了。
+          Punctuator 符号，我们使用的运算符和大括号等符号。
+          NumericLiteral 数字直接量，就是我们写的数字。
+          StringLiteral 字符串直接量，就是我们用单引号或者双引号引起来的直接量。
+          Template 字符串模板，用反引号` 括起来的直接量。
+      2.这个设计符合比较通用的编程语言设计方式，不过，JavaScript 中有一些特别之处，我下面就来讲讲特别在哪里。
+      3.首先是除法和正则表达式冲突问题。我们都知道，JavaScript 不但支持除法运算符“ / ”和“ /= ”，还支持用斜杠括起来的正则表
+        达式“ /abc/ ”。
+      4.但是，这时候对词法分析来说，其实是没有办法处理的，所以 JavaScript 的解决方案是定义两组词法，然后靠语法分析传一个标志
+        给词法分析器，让它来决定使用哪一套词法。
+      5.JavaScript 词法的另一个特别设计是字符串模板，模板语法大概是这样的：
+        `Hello, ${name}`
+      6.理论上，“ ${ } ”内部可以放任何 JavaScript 表达式代码，而这些代码是以“ } ” 结尾的，也就是说，这部分词法不允许出现
+        “ } ”运算符。
+      7.是否允许“ } ”的两种情况，与除法和正则表达式的两种情况相乘就是四种词法定义，所以你在 JavaScript 标准中，可以看到四种
+        定义：
+          InputElementDiv；
+          InputElementRegExp；
+          InputElementRegExpOrTemplateTail；
+          InputElementTemplateTail。
+      8.为了解决这两个问题，标准中还不得不把除法、正则表达式直接量和“ } ”从 token 中单独抽出来，用词上，也把原本的 Token 改
+        为 CommonToken。
+      9.但是我认为，从理解的角度上出发，我们不应该受到影响，所以在本课，我们依然把它们归类到 token 来理解。
+      10.对一般的语言的词法分析过程来说，都会丢弃除了 token 之外的输入，但是对 JavaScript 来说，不太一样，换行符和注释还会影
+        响语法分析过程，这个我们将会在语法部分给你详细讲解（所以要实现 JavaScript 的解释器，词法分析和语法分析非常麻烦，需要来
+        回传递信息）。
+      11.接下来我来给你详细介绍一下。
+    6.空白符号 Whitespace
+      1.说起空白符号，想必给大家留下的印象就是空格，但是实际上，JavaScript 可以支持更多空白符号。
+        1.<HT>(或称<TAB>)是 U+0009，是缩进 TAB 符，也就是字符串中写的 \t 。
+        2.是<VT> U+000B，也就是垂直方向的 TAB 符 \v，这个字符在键盘上很难打出来，所以很少用到。
+        3.<FF>是 U+000C，Form Feed，分页符，字符串直接量中写作 \f ，现代已经很少有打印源程序的事情发生了，所以这个字符在 
+          JavaScript 源代码中很少用到。
+        4.<SP>是 U+0020，就是最普通的空格了。
+        5.<NBSP>是 U+00A0，非断行空格，它是 SP 的一个变体，在文字排版中，可以避免因为空格在此处发生断行，其它方面和普通空格
+          完全一样。多数的 JavaScript 编辑环境都会把它当做普通空格（因为一般源代码编辑环境根本就不会自动折行……）。HTML 中，
+          很多人喜欢用的 &nbsp; 最后生成的就是它了。
+        6.<ZWNBSP>(旧称<BOM>) 是 U+FEFF，这是 ES5 新加入的空白符，是 Unicode 中的零宽非断行空格，在以 UTF 格式编码的文
+          件中，常常在文件首插入一个额外的 U+FEFF，解析 UTF 文件的程序可以根据 U+FEFF 的表示方法猜测文件采用哪种 UTF 编码
+          方式。这个字符也叫做“bit order mark”。
+      2.此外，JavaScript 支持所有的 Unicode 中的空格分类下的空格，我们可以看下表： 
+        空格字符分类.png
+      3.很多公司的编码规范要求 JavaScript 源代码控制在 ASCII 范围内，那么，就只有<TAB><VT><FF><SP><NBSP>五种空白可用了。
+    7.换行符 LineTerminator
+      1.接下来我们来看看换行符，JavaScript 中只提供了 4 种字符作为换行符。
+        <LF>
+        <CR>
+        <LS>
+        <PS>
+      2.其中，<LF> 是 U+000A，就是最正常换行符，在字符串中的\n。
+      3. <CR> 是 U+000D，这个字符真正意义上的“回车”，在字符串中是\r，在一部分 Windows 风格文本编辑器中，换行是两个字符\r\n。
+      4. <LS> 是 U+2028，是 Unicode 中的行分隔符。是 U+2029，是 Unicode 中的段落分隔符。
+      5.大部分 LineTerminator 在被词法分析器扫描出之后，会被语法分析器丢弃，但是换行符会影响 JavaScript 的两个重要语法特性：
+        自动插入分号和“no line terminator”规则。
+    8.注释 Comment
+      1.JavaScript 的注释分为单行注释和多行注释两种：
+        /* MultiLineCommentChars */ 
+        // SingleLineCommentChars
+      2.多行注释中允许自由地出现MultiLineNotAsteriskChar，也就是除了*之外的所有字符。而每一个*之后，不能出现正斜杠符/。
+      3.除了四种 LineTerminator 之外，所有字符都可以作为单行注释。
+      4.我们需要注意，多行注释中是否包含换行符号，会对 JavaScript 语法产生影响，对于“no line terminator”规则来说，带换行的
+        多行注释与换行符是等效的。
+    9.标识符名称 IdentifierName
+      1.IdentifierName可以以美元符“$”、下划线“_”或者 Unicode 字母开始，除了开始字符以外，IdentifierName中还可以使用
+        Unicode 中的连接标记、数字、以及连接符号。
+      2.IdentifierName的任意字符可以使用 JavaScript 的 Unicode 转义写法，使用 Unicode 转义写法时，没有任何字符限制。
+      3.IdentifierName可以是Identifier、NullLiteral、BooleanLiteral或者keyword，在ObjectLiteral中，IdentifierName
+        还可以被直接当做属性名称使用。
+      4.仅当不是保留字的时候，IdentifierName会被解析为Identifier。
+      5.注意 <ZWNJ> 和 <ZWJ> 是 ES5 新加入的两个格式控制字符，它们都是 0 宽的。
+      6.我在前面提到了，关键字也属于这个部分，在 JavaScript 中，关键字有:
+        await break case catch class const continue debugger default delete do else export extends finally 
+        for function if import ininstance of new return super switch this throw try typeof var void while 
+        with yield
+      7.除了上述的内容之外，还有 1 个为了未来使用而保留的关键字:
+        enum
+      8.在严格模式下, 有一些额外的为未来使用而保留的关键字:
+        implements package protected interface private public
+      9.除了这些之外，NullLiteral（null）和BooleanLiteral（true false）也是保留字，不能用于Identifier。
+    10.符号 Punctuator
+      1.因为前面提到的除法和正则问题, / 和 /= 两个运算符被拆分为 DivPunctuator，因为前面提到的字符串模板问题，}也被独立拆
+        分。加在一起，所有符号为：
+          { ( ) [ ] . ... ; , < > <= >= == != === !== + - * % ** ++ -- << >> >>> & | ^ ! ~ && || ? : = += 
+          -= *= %= **= <<= >>= >>>= &= |= ^= => / /= }
+    11.数字直接量 NumericLiteral
+      1.我们来看看今天标题提出的问题，JavaScript 规范中规定的数字直接量可以支持四种写法：十进制数、二进制整数、八进制整数和十
+        六进制整数。
+      2.十进制的 Number 可以带小数，小数点前后部分都可以省略，但是不能同时省略，我们看几个例子：
+        .01
+        12.
+        12.01
+      3.这都是合法的数字直接量。这里就有一个问题，也是我们标题提出的问题，我们看一段代码：
+        12.toString()
+      4.这时候12. 会被当做省略了小数点后面部分的数字而看成一个整体，所以我们要想让点单独成为一个 token，就要加入空格，这样写：
+        12 .toString()
+      5.数字直接量还支持科学计数法，例如：
+        10.24E+2
+        10.24e-2
+        10.24e2
+      6.这里 e 后面的部分，只允许使用整数。当以0x 0b 或者0o 开头时，表示特定进制的整数：
+        0xFA
+        0o73
+        0b10000
+      7.上面这几种进制都不支持小数，也不支持科学计数法。
+    12.字符串直接量 StringLiteral
+      1.JavaScript 中的 StringLiteral 支持单引号和双引号两种写法。
+        " DoubleStringCharacters "
+        ' SingleStringCharacters '
+      2.单双引号的区别仅仅在于写法，在双引号字符串直接量中，双引号必须转义，在单引号字符串直接量中，单引号必须转义。字符串中其他
+        必须转义的字符是\和所有换行符。
+      3.JavaScript 中支持四种转义形式，还有一种虽然标准没有定义，但是大部分实现都支持的八进制转义。
+      4.第一种是单字符转义。 即一个反斜杠\后面跟一个字符这种形式。
+      5.有特别意义的字符包括有SingleEscapeCharacter所定义的 9 种，见下表：
+          有特别意义的字符.png
+      6.除了这 9 种字符、数字、x 和 u 以及所有的换行符之外，其它字符经过\转义后都是自身。
+    13.正则表达式直接量 RegularExpressionLiteral
+      1.正则表达式由 Body 和 Flags 两部分组成，例如：
+        /RegularExpressionBody/g
+      2.其中 Body 部分至少有一个字符，第一个字符不能是 *（因为 /* 跟多行注释有词法冲突）。
+      3.正则表达式有自己的语法规则，在词法阶段，仅会对它做简单解析。
+      4.正则表达式并非机械地见到/就停止，在正则表达式[ ]中的/就会被认为是普通字符。我们可以看一个例子：
+        /[/]/.test("/");
+      5.除了\、/ 和[ 三个字符之外，JavaScript 正则表达式中的字符都是普通字符。
+      6.用\和一个非换行符可以组成一个转义，[ ]中也支持转义。正则表达式中的 flag 在词法阶段不会限制字符。
+      7.虽然只有 ig 几个是有效的，但是任何 IdentifierPart（Identifier 中合法的字符）序列在词法阶段都会被认为是合法的。
+    14.字符串模板 Template
+      1.从语法结构上，Template 是个整体，其中的 ${ } 是并列关系。
+      2.但是实际上，在 JavaScript 词法中，包含 ${ } 的 Template，是被拆开分析的，如：
+        `a${b}c${d}e`
+      3.它在 JavaScript 中被认为是：
+        `a${
+        b
+        }c${
+        d
+        }e`
+      4.它被拆成了五个部分：
+        `a${ 这个被称为模板头
+        }c${ 被称为模板中段
+        }e` 被称为模板尾
+        b 和 d 都是普通标识符
+      5.实际上，这里的词法分析过程已经跟语法分析深度耦合了。
+      6.不过我们学习的时候，大可不必按照标准和引擎工程师这样去理解，可以认为模板就是一个由反引号括起来的、可以在中间插入代码的字
+        符串。
+      7.模板支持添加处理函数的写法，这时模板的各段会被拆开，传递给函数当参数：
+        function f(){
+            console.log(arguments);
+        }
+        var a = "world"
+        f`Hello ${a}!`; // [["Hello", "!"], world]
+      8.模板字符串不需要关心大多数字符的转义，但是至少 ${ 和 ` 还是需要处理的。
+      9.模板中的转义跟字符串几乎完全一样，都是使用 \。
+    15.总结
+      1.今天我们一起学习 JavaScript 的词法部分，这部分的内容包括了空白符号、换行符、注释、标识符名称、符号、数字直接量、字符
+        串直接量、正则表达式直接量、字符串模板。掌握词法对我们平时调试代码至关重要。
+      2.最后，给你留一个问题：用零宽空格和零宽连接符、零宽非连接符，写一段好玩的代码。你可以给我留言，我们一起讨论。
+    （小实验）理解编译原理：一个四则运算的解释器
+    1.在前面的课程中，我在 JavaScript 和 CSS 的部分，多次提到了编译原理相关的知识。这一部分的知识，如果我们从编译原理“龙书”
+      等正规的资料中学习，就会耗费掉不少的时间，所以我在这里设计了一个小实验，帮助你快速理解编译原理相关的知识。
+    2.今天的内容比较特殊，我们来做一段详细的代码实验，详细的代码我放在了文章里，如果你正在收听音频，可以点击文章查看详情。
+    3.分析
+      1.按照编译原理相关的知识，我们来设计一下工作，这里我们分成几个步骤。
+        定义四则运算：产出四则运算的词法定义和语法定义。
+        词法分析：把输入的字符串流变成 token。
+        语法分析：把 token 变成抽象语法树 AST。
+        解释执行：后序遍历 AST，执行得出结果。
+    4.定义四则运算
+      1.四则运算就是加减乘除四种运算，例如：
+        1 + 2 * 3
+      2.首先我们来定义词法，四则运算里面只有数字和运算符，所以定义很简单，但是我们还要注意空格和换行符，所以词法定义大概是下面
+        这样的。  
+        Token
+          Number: 1 2 3 4 5 6 7 8 9 0 的组合
+          Operator: + 、-、 *、 / 之一
+        Whitespace: <SP>
+        LineTerminator：<LF> <CR>
+      3.这里我们对空白和换行符没有任何的处理，所以词法分析阶段会直接丢弃。
+      4.接下来我们来定义语法，语法定义多数采用 BNF，但是其实大家写起来都是乱写的，比如 JavaScript 标准里面就是一种跟 BNF 类
+        似的自创语法。
+      5.不过语法定义的核心思想不会变，都是几种结构的组合产生一个新的结构，所以语法定义也叫语法产生式。
+      6.因为加减乘除有优先级，所以我们可以认为加法是由若干个乘法再由加号或者减号连接成的：
+        <Expression> ::= 
+            <AdditiveExpression><EOF>
+        <AdditiveExpression> ::= 
+            <MultiplicativeExpression>
+            |<AdditiveExpression><+><MultiplicativeExpression>
+            |<AdditiveExpression><-><MultiplicativeExpression>
+      7.这种 BNF 的写法类似递归的原理，你可以理解一下，它表示一个列表。为了方便，我们把普通数字也得当成乘法的一种特例了。
+        <MultiplicativeExpression> ::= 
+            <Number>
+            |<MultiplicativeExpression><*><Number>
+            |<MultiplicativeExpression></><Number>
+      8.好了，这就是四则运算的定义了。
+    5.词法分析：状态机
+      1.词法分析部分，我们把字符流变成 token 流。词法分析有两种方案，一种是状态机，一种是正则表达式，它们是等效的，选择你喜欢
+        的就好，这里我都会你介绍一下状态机。
+      2.根据分析，我们可能产生四种输入元素，其中只有两种 token，我们状态机的第一个状态就是根据第一个输入字符来判断进入了哪种状
+        态：
+          var token = [];
+          const start = char => {
+              if(char === '1' 
+                  || char === '2'
+                  || char === '3'
+                  || char === '4'
+                  || char === '5'
+                  || char === '6'
+                  || char === '7'
+                  || char === '8'
+                  || char === '9'
+                  || char === '0'
+              ) {
+                  token.push(char);
+                  return inNumber;   
+              }
+              if(char === '+' 
+                  || char === '-'
+                  || char === '*'
+                  || char === '/'
+              ) {
+                  emmitToken(char, char);
+                  return start
+              }
+              if(char === ' ') {
+                  return start;
+              }
+              if(char === '\r' 
+                  || char === '\n'
+              ) {
+                  return start;
+              }
+          }
+          const inNumber = char => {
+              if(char === '1' 
+                  || char === '2'
+                  || char === '3'
+                  || char === '4'
+                  || char === '5'
+                  || char === '6'
+                  || char === '7'
+                  || char === '8'
+                  || char === '9'
+                  || char === '0'
+              ) {
+                  token.push(char);
+                  return inNumber;
+              } else {
+                  emmitToken("Number", token.join(""));
+                  token = [];
+                  return start(char); // put back char
+              }
+          }
+      3.这个状态机非常简单，它只有两个状态，因为我们只有 Number 不是单字符的 token。
+      4.这里我的状态机实现是非常经典的方式：用函数表示状态，用 if 表示状态的迁移关系，用 return 值表示下一个状态。
+      5.下面我们来运行一下这个状态机试试看：
+        function emmitToken(type, value) {
+            console.log(value);
+        }
+        var input = "1024 + 2 * 256"
+        var state = start;
+        for(var c of input.split(''))
+            state = state(c);
+        state(Symbol('EOF'))
+      6.运行后我们发现输出如下：
+        1024
+        +
+        2
+        *
+        256
+      7.这是我们想要的答案。
+    6.语法分析：LL
+      1.做完了词法分析，我们开始进行语法分析，LL 语法分析根据每一个产生式来写一个函数，首先我们来写好函数名：
+        function AdditiveExpression( ){
+
+        }
+        function MultiplicativeExpression(){
+            
+        }
+      2.为了便于理解，我们就不做流式处理了，实际上一般编译代码都应该支持流式处理。
+      3.所以我们假设 token 已经都拿到了：
+          var tokens = [{
+              type:"Number",
+              value: "1024"
+          }, {
+              type:"+"
+              value: "+"
+          }, {
+              type:"Number",
+              value: "2"
+          }, {
+              type:"*"
+              value: "*"
+          }, {
+              type:"Number",
+              value: "256"
+          }, {
+              type:"EOF"
+          }];
+      4.每个产生式对应着一个函数，例如：根据产生式，我们的 AdditiveExpression 需要处理三种情况：
+        <AdditiveExpression> ::= 
+          <MultiplicativeExpression>
+          |<AdditiveExpression><+><MultiplicativeExpression>
+          |<AdditiveExpression><-><MultiplicativeExpression>
+      5.那么 AddititveExpression 中就要写三个 if 分支，来处理三种情况。
+      6.AdditiveExpression 的写法是根传入的节点，利用产生式合成新的节点
+          function AdditiveExpression(source){
+              if(source[0].type === "MultiplicativeExpression") {
+                  let node = {
+                      type:"AdditiveExpression",
+                      children:[source[0]]
+                  }
+                  source[0] = node;
+                  return node;
+              } 
+              if(source[0].type === "AdditiveExpression" && source[1].type === "+") {
+                  let node = {
+                      type:"AdditiveExpression",
+                      operator:"+",
+                      children:[source.shift(), source.shift(), MultiplicativeExpression(source)]
+                  }
+                  source.unshift(node);
+              }
+              if(source[0].type === "AdditiveExpression" && source[1].type === "-") {
+                  let node = {
+                      type:"AdditiveExpression",
+                      operator:"-",
+                      children:[source.shift(), source.shift(), MultiplicativeExpression(source)]
+                  }
+                  source.unshift(node);
+              }
+          }
+      7.那么下一步我们就把解析好的 token 传给我们的顶层处理函数 Expression。
+        Expression(tokens);
+      8.接下来，我们看 Expression 该怎么处理它。
+      9.我们 Expression 收到第一个 token，是个 Number，这个时候，Expression 就傻了，这是因为产生式只告诉我们，收到了 
+        AdditiveExpression 怎么办。
+      10.这个时候，我们就需要对产生式的首项层层展开，根据所有可能性调用相应的处理函数，这个过程在编译原理中称为求“closure”。
+        function Expression(source){
+            if(source[0].type === "AdditiveExpression" && source[1] && source[1].type === "EOF" ) {
+                let node = {
+                    type:"Expression",
+                    children:[source.shift(), source.shift()]
+                }
+                source.unshift(node);
+                return node;
+            }
+            AdditiveExpression(source);
+            return Expression(source);
+        }
+        function AdditiveExpression(source){
+            if(source[0].type === "MultiplicativeExpression") {
+                let node = {
+                    type:"AdditiveExpression",
+                    children:[source[0]]
+                }
+                source[0] = node;
+                return AdditiveExpression(source);
+            } 
+            if(source[0].type === "AdditiveExpression" && source[1] && source[1].type === "+") {
+                let node = {
+                    type:"AdditiveExpression",
+                    operator:"+",
+                    children:[]
+                }
+                node.children.push(source.shift());
+                node.children.push(source.shift());
+                MultiplicativeExpression(source);
+                node.children.push(source.shift());
+                source.unshift(node);
+                return AdditiveExpression(source);
+            }
+            if(source[0].type === "AdditiveExpression" && source[1] && source[1].type === "-") {
+                let node = {
+                    type:"AdditiveExpression",
+                    operator:"-",
+                    children:[]
+                }
+                node.children.push(source.shift());
+                node.children.push(source.shift());
+                MultiplicativeExpression(source);
+                node.children.push(source.shift());
+                source.unshift(node);
+                return AdditiveExpression(source);
+            }
+            if(source[0].type === "AdditiveExpression")
+                return source[0];
+            MultiplicativeExpression(source);
+            return AdditiveExpression(source);
+        }
+        function MultiplicativeExpression(source){
+            if(source[0].type === "Number") {
+                let node = {
+                    type:"MultiplicativeExpression",
+                    children:[source[0]]
+                }
+                source[0] = node;
+                return MultiplicativeExpression(source);
+            } 
+            if(source[0].type === "MultiplicativeExpression" && source[1] && source[1].type === "*") {
+                let node = {
+                    type:"MultiplicativeExpression",
+                    operator:"*",
+                    children:[]
+                }
+                node.children.push(source.shift());
+                node.children.push(source.shift());
+                node.children.push(source.shift());
+                source.unshift(node);
+                return MultiplicativeExpression(source);
+            }
+            if(source[0].type === "MultiplicativeExpression"&& source[1] && source[1].type === "/") {
+                let node = {
+                    type:"MultiplicativeExpression",
+                    operator:"/",
+                    children:[]
+                }
+                node.children.push(source.shift());
+                node.children.push(source.shift());
+                node.children.push(source.shift());
+                source.unshift(node);
+                return MultiplicativeExpression(source);
+            }
+            if(source[0].type === "MultiplicativeExpression")
+                return source[0];
+
+            return MultiplicativeExpression(source);
+        };
+
+        var source = [{
+            type:"Number",
+            value: "3"
+        }, {
+            type:"*",
+            value: "*"
+        }, {
+            type:"Number",
+            value: "300"
+        }, {
+            type:"+",
+            value: "+"
+        }, {
+            type:"Number",
+            value: "2"
+        }, {
+            type:"*",
+            value: "*"
+        }, {
+            type:"Number",
+            value: "256"
+        }, {
+            type:"EOF"
+        }];
+        var ast = Expression(source);
+
+        console.log(ast);
+    7.解释执行
+      1.得到了 AST 之后，最困难的一步我们已经解决了。这里我们就不对这颗树做任何的优化和精简了，那么接下来，直接进入执行阶段。
+        我们只需要对这个树做遍历操作执行即可。
+      2.我们根据不同的节点类型和其它信息，写 if 分别处理即可：
+          function evaluate(node) {
+              if(node.type === "Expression") {
+                  return evaluate(node.children[0])
+              }
+              if(node.type === "AdditiveExpression") {
+                  if(node.operator === '-') {
+                      return evaluate(node.children[0]) - evaluate(node.children[2]);
+                  }
+                  if(node.operator === '+') {
+                      return evaluate(node.children[0]) + evaluate(node.children[2]);
+                  }
+                  return evaluate(node.children[0])
+              }
+              if(node.type === "MultiplicativeExpression") {
+                  if(node.operator === '*') {
+                      return evaluate(node.children[0]) * evaluate(node.children[2]);
+                  }
+                  if(node.operator === '/') {
+                      return evaluate(node.children[0]) / evaluate(node.children[2]);
+                  }
+                  return evaluate(node.children[0])
+              }
+              if(node.type === "Number") {
+                  return Number(node.value);
+              }
+          }
+    8.总结
+      1.在这个小实验中，我们通过一个小实验学习了编译原理的基本知识，小实验的目的是帮助你理解 JavaScript 课程中涉及到的编译原
+        理基本概念，它离真正的编译原理学习还有很大的差距。
+      2.通过实验，我们了解了产生式、词法分析、语法分析和解释执行的过程。
+      3.最后留给你一些挑战，你可以根据自己的水平选择：
+        补全 emmitToken，使得我们的代码能完整工作起来。
+        为四则运算加入小数。
+        引入负数。
+        添加括号功能。
+      4.欢迎写好的同学留言给我。
+  语法
+    JavaScript语法（预备篇）：到底要不要写分号呢？ 
+    1.在我们介绍 JavaScript 语法的全局结构之前，我们先要探讨一个语言风格问题：究竟要不要写分号。
+    2.这是一个非常经典的口水问题，“加分号”党和“不写分号”党之间的战争，可谓是经久不息。
+    3.实际上，行尾使用分号的风格来自于 Java，也来自于 C 语言和 C++，这一设计最初是为了降低编译器的工作负担。
+    4.但是，从今天的角度来看，行尾使用分号其实是一种语法噪音，恰好 JavaScript 语言又提供了相对可用的分号自动补全规则，所以，
+      很多 JavaScript 的程序员都是倾向于不写分号。
+    5.这里要特意说一点，在今天的文章中，我并不希望去售卖自己的观点（其实我是属于“加分号”党），而是希望比较中立地给你讲清楚相关
+      的知识，让你具备足够的判断力。
+    6.我们首先来了解一下自动插入分号的规则。
+    7.自动插入分号规则
+      1.自动插入分号规则其实独立于所有的语法产生式定义，它的规则说起来非常简单，只有三条。
+        要有换行符，且下一个符号是不符合语法的，那么就尝试插入分号。
+        有换行符，且语法中规定此处不能有换行符，那么就自动插入分号。
+        源代码结束处，不能形成完整的脚本或者模块结构，那么就自动插入分号。
+      2.这样描述是比较难以理解的，我们一起看一些实际的例子进行分析：
+        let a = 1
+        void function(a){
+            console.log(a);
+        }(a);
+      3.在这个例子中，第一行的结尾处有换行符，接下来 void 关键字接在 1 之后是不合法的，这命中了我们的第一条规则，因此会在 
+        void 前插入换行符。
+        var a = 1, b = 1, c = 1;
+        a
+        ++
+        b
+        ++
+        c
+      4.这也是个著名的例子，我们看第二行的 a 之后，有换行符，后面遇到了 ++ 运算符，a 后面跟 ++ 是合法的语法，但是我们看看 
+        JavaScript 标准定义中，有[no LineTerminator here]这个字样，这是一个语法定义中的规则，你可以感受一下这个规则的内
+        容（下一小节，我会给你详细介绍 no LineTerminator here ）：
+          UpdateExpression[Yield, Await]:
+              LeftHandSideExpression[?Yield, ?Await]
+              LeftHandSideExpression[?Yield, ?Await][no LineTerminator here]++
+              LeftHandSideExpression[?Yield, ?Await][no LineTerminator here]--
+              ++UnaryExpression[?Yield, ?Await]
+              --UnaryExpression[?Yield, ?Await]
+      5.于是，这里 a 的后面就要插入一个分号了。所以这段代码最终的结果，b 和 c 都变成了 2，而 a 还是 1。
+          (function(a){
+              console.log(a);
+          })()
+          (function(a){
+              console.log(a);
+          })()
+      6.这个例子是比较有实际价值的例子，这里两个 function 调用的写法被称作 IIFE（立即执行的函数表达式），是个常见技巧。
+      7.这段代码意图上显然是形成两个 IIFE。
+      8.我们来看第三行结束的位置，JavaScript 引擎会认为函数返回的可能是个函数，那么，在后面再跟括号形成函数调用就是合理的，因
+        此这里不会自动插入分号。
+      9.这是一些鼓励不写分号的编码风格会要求大家写 IIFE 时必须在行首加分号的原因。
+        function f(){
+            return/*
+                This is a return value.
+            */1;
+        }
+        f();
+      10.在这个例子中，return 和 1 被用注释分隔开了。
+      11.根据 JavaScript 自动插入分号规则，带换行符的注释也被认为是有换行符，而恰好的是，return 也有
+        [no LineTerminator here]规则的要求。所以这里会自动插入分号，f 执行的返回值是 undefined。
+    8.no LineTerminator here 规则
+      1.好了，到这里我们已经讲清楚了分号自动插入的规则，但是我们要想彻底掌握分号的奥秘，就必须要对 JavaScript 的语法定义做一
+        些数据挖掘工作。
+      2.no LineTerminator here 规则表示它所在的结构中的这一位置不能插入换行符。
+      3.自动插入分号规则的第二条：有换行符，且语法中规定此处不能有换行符，那么就自动插入分号。跟 no LineTerminator here 规
+        则强相关，那么我们就找出 JavaScript 语法定义中的这些规则。
+          自动插入分号规则.jpg
+      4.为了方便你理解，我把产生式换成了实际的代码。
+      5.下面一段代码展示了，带标签的 continue 语句，不能在 continue 后插入换行。
+        outer:for(var j = 0; j < 10; j++)
+            for(var i = 0; i < j; i++)
+                continue /*no LineTerminator here*/ outter
+      6.break 跟 continue 是一样的，break 后也不能插入换行：
+        outer:for(var j = 0; j < 10; j++)
+            for(var i = 0; i < j; i++)
+                break /*no LineTerminator here*/ outter
+      7.我们前面已经提到过 return 和后自增、后自减运算符。
+        function f(){
+            return /*no LineTerminator here*/1;
+        }
+
+        i/*no LineTerminator here*/++
+        i/*no LineTerminator here*/--
+      8.以及，throw 和 Exception 之间也不能插入换行符：
+        throw/*no LineTerminator here*/new Exception("error")
+      9.凡是 async 关键字，后面都不能插入换行符：
+        async/*no LineTerminator here*/function f(){
+
+        }
+        const f = async/*no LineTerminator here*/x => x*x
+      10.箭头函数的箭头前，也不能插入换行：
+        const f = x/*no LineTerminator here*/=> x*x
+      11.yield 之后，不能插入换行：
+        function *g(){
+            var i = 0;
+            while(true)
+                yield/*no LineTerminator here*/i++;
+        }
+      12.到这里，我已经整理了所有标准中的 no LineTerminator here 规则，实际上，no LineTerminator here 规则的存在，多数
+        情况是为了保证自动插入分号行为是符合预期的，但是令人遗憾的是，JavaScript 在设计的最初，遗漏了一些重要的情况，所以有一
+        些不符合预期的情况出现，需要我们格外注意。
+    9.不写分号需要注意的情况
+      1.下面我们来看几种不写分号容易造成错误的情况，你可以稍微注意一下，避免发生同样的问题。
+    10.以括号开头的语句
+      1.我们在前面的案例中，已经展示了一种情况，那就是以括号开头的语句：
+        (function(a){
+            console.log(a);
+        })()/*这里没有被自动插入分号*/
+        (function(a){
+            console.log(a);
+        })()
+      2.这段代码看似两个独立执行的函数表达式，但是其实第三组括号被理解为传参，导致抛出错误。
+    11.以数组开头的语句
+      1.除了括号，以数组开头的语句也十分危险：
+        var a = [[]]/*这里没有被自动插入分号*/
+        [3, 2, 1, 0].forEach(e => console.log(e))
+      2.这段代码本意是一个变量 a 赋值，然后对一个数组执行 forEach，但是因为没有自动插入分号，被理解为下标运算符和逗号表达式，
+        我这个例子展示的情况，甚至不会抛出错误，这对于代码排查问题是个噩梦。
+    12.以正则表达式开头的语句
+      1.正则表达式开头的语句也值得你去多注意一下。我们来看这个例子。
+        var x = 1, g = {test:()=>0}, b = 1/*这里没有被自动插入分号*/
+        /(a)/g.test("abc")
+        console.log(RegExp.$1)
+      2.这段代码本意是声明三个变量，然后测试一个字符串中是否含有字母 a，但是因为没有自动插入分号，正则的第一个斜杠被理解成了除
+        号，后面的意思就都变了。
+      3.注意，我构造的这个例子跟上面的例子一样，同样不会抛错，凡是这一类情况，都非常致命。
+    13.以 Template 开头的语句
+      1.以 Template 开头的语句比较少见，但是跟正则配合时，仍然不是不可能出现：
+        var f = function(){
+          return "";
+        }
+        var g = f/*这里没有被自动插入分号*/
+        `Template`.match(/(a)/);
+        console.log(RegExp.$1)
+      2.这段代码本意是声明函数 f，然后赋值给 g，再测试 Template 中是否含有字母 a。但是因为没有自动插入分号，函数 f 被认为跟
+        Template 一体的，进而被莫名其妙地执行了一次。
+    14.总结
+      1.这一节课，我们讨论了要不要加分号的问题。
+      2.首先我们介绍了自动插入分号机制，又对 JavaScript 语法中的 no line terminator 规则做了个整理，最后，我挑选了几种情
+        况，为你介绍了不写分号需要注意的一些常见的错误。
+      3.最后留给你一个问题，请找一些开源项目，看看它们的编码规范是否要求加分号，欢迎留言讨论。
+    JavaScript语法（一）：在script标签写export为什么会抛错？
+    1.你好，我是 winter，今天我们进入到语法部分的学习。在讲解具体的语法结构之前，这一堂课我首先要给你介绍一下 JavaScript 语
+      法的一些基本规则。
+    2.脚本和模块
+      1.首先，JavaScript 有两种源文件，一种叫做脚本，一种叫做模块。这个区分是在 ES6 引入了模块机制开始的，在 ES5 和之前的版
+        本中，就只有一种源文件类型（就只有脚本）。
+      2.脚本是可以由浏览器或者 node 环境引入执行的，而模块只能由 JavaScript 代码用 import 引入执行。
+      3.从概念上，我们可以认为脚本具有主动性的 JavaScript 代码段，是控制宿主完成一定任务的代码；而模块是被动性的 JavaScript 
+        代码段，是等待被调用的库。
+      4.我们对标准中的语法产生式做一些对比，不难发现，实际上模块和脚本之间的区别仅仅在于是否包含 import 和 export。
+      5.脚本是一种兼容之前的版本的定义，在这个模式下，没有 import 就不需要处理加载“.js”文件问题。
+      6.现代浏览器可以支持用 script 标签引入模块或者脚本，如果要引入模块，必须给 script 标签添加 type=“module”。如果引入脚
+        本，则不需要 type。
+          <script type="module" src="xxxxx.js"></script>
+      7.这样，就回答了我们标题中的问题，script 标签如果不加type=“module”，默认认为我们加载的文件是脚本而非模块，如果我们在脚
+        本中写了 export，当然会抛错。
+      8.脚本中可以包含语句。模块中可以包含三种内容：import 声明，export 声明和语句。普通语句我们会在下一课专门给你讲解，下面
+        我们就来讲讲 import 声明和 export 声明。
+          脚本和模块.jpg
+    3.import 声明
+      1.我们首先来介绍一下 import 声明，import 声明有两种用法，一个是直接 import 一个模块，另一个是带 from 的 import，它
+        能引入模块里的一些信息。
+          import "mod"; //引入一个模块
+          import v from "mod";  //把模块默认的导出值放入变量v
+      2.直接 import 一个模块，只是保证了这个模块代码被执行，引用它的模块是无法获得它的任何信息的。
+      3.带 from 的 import 意思是引入模块中的一部分信息，可以把它们变成本地的变量。
+      4.带 from 的 import 细分又有三种用法，我们可以分别看下例子：
+        import x from "./a.js" 引入模块中导出的默认值。
+        import {a as x, modify} from "./a.js"; 引入模块中的变量。
+        import * as x from "./a.js" 把模块中所有的变量以类似对象属性的方式引入。
+      5.第一种方式还可以跟后两种组合使用。
+        import d, {a as x, modify} from "./a.js"
+        import d, * as x from "./a.js"
+      6.语法要求不带 as 的默认值永远在最前。注意，这里的变量实际上仍然可以受到原来模块的控制。
+      7.我们看一个例子，假设有两个模块 a 和 b。我们在模块 a 中声明了变量和一个修改变量的函数，并且把它们导出。我们用 b 模块导
+        入了变量和修改变量的函数。
+      8.模块 a：
+        export var a = 1;
+        export function modify(){
+            a = 2;
+        }
+      9.模块 b：
+        import {a, modify} from "./a.js";
+        console.log(a);
+        modify();
+        console.log(a);
+      10.当我们调用修改变量的函数后，b 模块变量也跟着发生了改变。这说明导入与一般的赋值不同，导入后的变量只是改变了名字，它仍然
+        与原来的变量是同一个。
+    4.export 声明
+      1.我们再来说说 export 声明。与 import 相对，export 声明承担的是导出的任务。
+      2.模块中导出变量的方式有两种，一种是独立使用 export 声明，另一种是直接在声明型语句前添加 export 关键字。
+      3.独立使用 export 声明就是一个 export 关键字加上变量名列表，例如：
+        export {a, b, c};
+      4.我们也可以直接在声明型语句前添加 export 关键字，这里的 export 可以加在任何声明性质的语句之前，整理如下：
+        var
+        function (含 async 和 generator)
+        class
+        let
+        const
+      5.export 还有一种特殊的用法，就是跟 default 联合使用。export default 表示导出一个默认变量值，它可以用于 function 
+        和 class。这里导出的变量是没有名称的，可以使用import x from "./a.js"这样的语法，在模块中引入。
+      6.export default 还支持一种语法，后面跟一个表达式，例如：
+        var a = {};
+        export default a;
+      7.但是，这里的行为跟导出变量是不一致的，这里导出的是值，导出的就是普通变量 a 的值，以后 a 的变化与导出的值就无关了，修改
+        变量 a，不会使得其他模块中引入的 default 值发生改变。
+      8.在 import 语句前无法加入 export，但是我们可以直接使用 export from 语法。
+        export a from "a.js"
+      9.JavaScript 引擎除了执行脚本和模块之外，还可以执行函数。而函数体跟脚本和模块有一定的相似之处，所以接下来，给你讲讲函数
+        体的相关知识。
+    5.函数体
+      1.执行函数的行为通常是在 JavaScript 代码执行时，注册宿主环境的某些事件触发的，而执行的过程，就是执行函数体（函数的花括
+        号中间的部分）。
+      2.我们先看一个例子，感性地理解一下：
+        setTimeout(function(){
+            console.log("go go go");
+        }, 10000)
+      3.这段代码通过 setTimeout 函数注册了一个函数给宿主，当一定时间之后，宿主就会执行这个函数。
+      4.你还记得吗，我们前面已经在运行时这部分讲过，宿主会为这样的函数创建宏任务。
+      5.当我们学习了语法之后，我们可以认为，宏任务中可能会执行的代码包括“脚本 (script)”“模块（module）”和“函数体
+        （function body）”。正因为这样的相似性，我们把函数体也放到本课来讲解。
+      6.函数体其实也是一个语句的列表。跟脚本和模块比起来，函数体中的语句列表中多了 return 语句可以用。
+      7.函数体实际上有四种，下面，我来分别介绍一下。
+      8.普通函数体，例如：
+        function foo(){
+            //Function body
+        }
+      9.异步函数体，例如：
+        async function foo(){
+            //Function body
+        }
+      10.生成器函数体，例如：
+        function *foo(){
+            //Function body
+        }
+      11.异步生成器函数体，例如：
+        async function *foo(){
+            //Function body
+        }
+      12.上面四种函数体的区别在于：能否使用 await 或者 yield 语句。
+      13.关于函数体、模块和脚本能使用的语句，我整理了一个表格，你可以参考一下：
+        函数体模块脚本能使用的语句.jpg
+      14.讲完了三种语法结构，我再来介绍两个 JavaScript 语法的全局机制：预处理和指令序言。
+      15.这两个机制对于我们解释一些 JavaScript 的语法现象非常重要。不理解预处理机制我们就无法理解 var 等声明类语句的行为，而
+        不理解指令序言，我们就无法解释严格模式。
+    6.预处理
+      1.JavaScript 执行前，会对脚本、模块和函数体中的语句进行预处理。预处理过程将会提前处理 var、函数声明、class、const 和 
+        let 这些语句，以确定其中变量的意义。
+      2.因为一些历史包袱，这一部分内容非常复杂，首先我们看一下 var 声明。
+    7.var 声明
+      1.var 声明永远作用于脚本、模块和函数体这个级别，在预处理阶段，不关心赋值的部分，只管在当前作用域声明这个变量。
+      2.我们还是从实例来进行学习。
+        var a = 1;
+        function foo() {
+            console.log(a);
+            var a = 2;
+        }
+        foo();
+      3.这段代码声明了一个脚本级别的 a，又声明了 foo 函数体级别的 a，我们注意到，函数体级的var出现在 console.log 语句之后。
+      4.但是预处理过程在执行之前，所以有函数体级的变量 a，就不会去访问外层作用域中的变量 a 了，而函数体级的变量 a 此时还没有赋
+        值，所以是 undefined。我们再看一个情况：
+          var a = 1;
+          function foo() {
+              console.log(a);
+              if(false) {
+                  var a = 2;
+              }
+          }
+          foo();
+      5.这段代码比上一段代码在var a = 2之外多了一段 if，我们知道 if(false) 中的代码永远不会被执行，但是预处理阶段并不管这个，
+        var 的作用能够穿透一切语句结构，它只认脚本、模块和函数体三种语法结构。所以这里结果跟前一段代码完全一样，我们会得到
+        undefined。
+      6.我们看下一个例子，我们在运行时部分讲过类似的例子。
+        var a = 1;
+        function foo() {
+            var o= {a:3}
+            with(o) {
+                var a = 2;
+            }
+            console.log(o.a);
+            console.log(a);
+        }
+        foo();
+      7.在这个例子中，我们引入了 with 语句，我们用 with(o) 创建了一个作用域，并把 o 对象加入词法环境，在其中使用了var a = 2;
+        语句。
+      8.在预处理阶段，只认var中声明的变量，所以同样为 foo 的作用域创建了 a 这个变量，但是没有赋值。
+      9.在执行阶段，当执行到var a = 2时，作用域变成了 with 语句内，这时候的 a 被认为访问到了对象 o 的属性 a，所以最终执行的
+        结果，我们得到了 2 和 undefined。
+      10.这个行为是 JavaScript 公认的设计失误之一，一个语句中的 a 在预处理阶段和执行阶段被当做两个不同的变量，严重违背了直觉，
+        但是今天，在 JavaScript 设计原则“don’t break the web”之下，已经无法修正了，所以你需要特别注意。
+      11.因为早年 JavaScript 没有 let 和 const，只能用 var，又因为 var 除了脚本和函数体都会穿透，人民群众发明了“立即执行的
+        函数表达式（IIFE）”这一用法，用来产生作用域，例如：
+          for(var i = 0; i < 20; i ++) {
+              void function(i){
+                  var div = document.createElement("div");
+                  div.innerHTML = i;
+                  div.onclick = function(){
+                      console.log(i);
+                  }
+                  document.body.appendChild(div);
+              }(i);
+          }
+      12.这段代码非常经典，常常在实际开发中见到，也经常被用作面试题，为文档添加了 20 个 div 元素，并且绑定了点击事件，打印它们
+        的序号。
+      13.我们通过 IIFE 在循环内构造了作用域，每次循环都产生一个新的环境记录，这样，每个 div 都能访问到环境中的 i。
+      14.如果我们不用 IIFE：
+        for(var i = 0; i < 20; i ++) {
+            var div = document.createElement("div");
+            div.innerHTML = i;
+            div.onclick = function(){
+                console.log(i);
+            }
+            document.body.appendChild(div);
+        }
+      15.这段代码的结果将会是点每个 div 都打印 20，因为全局只有一个 i，执行完循环后，i 变成了 20。
+    8.function 声明
+      1.function 声明的行为原本跟 var 非常相似，但是在最新的 JavaScript 标准中，对它进行了一定的修改，这让情况变得更加复杂了。
+      2.在全局（脚本、模块和函数体），function 声明表现跟 var 相似，不同之处在于，function 声明不但在作用域中加入变量，还会
+        给它赋值。
+      3.我们看一下 function 声明的例子：
+        console.log(foo);
+        function foo(){
+
+        }
+      4.这里声明了函数 foo，在声明之前，我们用 console.log 打印函数 foo，我们可以发现，已经是函数 foo 的值了。
+      5.function 声明出现在 if 等语句中的情况有点复杂，它仍然作用于脚本、模块和函数体级别，在预处理阶段，仍然会产生变量，它不
+        再被提前赋值：
+        console.log(foo);
+        if(true) {
+            function foo(){
+
+            }
+        }
+      6.这段代码得到 undefined。如果没有函数声明，则会抛出错误。
+      7.这说明 function 在预处理阶段仍然发生了作用，在作用域中产生了变量，没有产生赋值，赋值行为发生在了执行阶段。
+      8.出现在 if 等语句中的 function，在 if 创建的作用域中仍然会被提前，产生赋值效果，我们会在下一节课继续讨论。
+    9.class 声明
+      1.class 声明在全局的行为跟 function 和 var 都不一样。
+      2.在 class 声明之前使用 class 名，会抛错：
+        console.log(c);
+        class c{
+
+        }
+      3.这段代码我们试图在 class 前打印变量 c，我们得到了个错误，这个行为很像是 class 没有预处理，但是实际上并非如此。
+      4.我们看个复杂一点的例子：
+        var c = 1;
+        function foo(){
+            console.log(c);
+            class c {}
+        }
+        foo();
+      5.这个例子中，我们把 class 放进了一个函数体中，在外层作用域中有变量 c。然后试图在 class 之前打印 c。
+      6.执行后，我们看到，仍然抛出了错误，如果去掉 class 声明，则会正常打印出 1，也就是说，出现在后面的 class 声明影响了前面
+        语句的结果。
+      7.这说明，class 声明也是会被预处理的，它会在作用域中创建变量，并且要求访问它时抛出错误。
+      8.class 的声明作用不会穿透 if 等语句结构，所以只有写在全局环境才会有声明作用，这部分我们将会在下一节课讲解。
+      9.这样的 class 设计比 function 和 var 更符合直觉，而且在遇到一些比较奇怪的用法时，倾向于抛出错误。
+      10.按照现代语言设计的评价标准，及早抛错是好事，它能够帮助我们尽量在开发阶段就发现代码的可能问题。
+    10.指令序言机制
+      1.脚本和模块都支持一种特别的语法，叫做指令序言（Directive Prologs）。
+      2.这里的指令序言最早是为了 use strict 设计的，它规定了一种给 JavaScript 代码添加元信息的方式。
+        "use strict";
+        function f(){
+            console.log(this);
+        };
+        f.call(null);
+      3.这段代码展示了严格模式的用法，我这里定义了函数 f，f 中打印 this 值，然后用 call 的方法调用 f，传入 null 作为 this 
+        值，我们可以看到最终结果是 null 原封不动地被当做 this 值打印了出来，这是严格模式的特征。
+      4.如果我们去掉严格模式的指令需要，打印的结果将会变成 global。
+      5."use strict"是 JavaScript 标准中规定的唯一一种指令序言，但是设计指令序言的目的是，留给 JavaScript 的引擎和实现者
+        一些统一的表达方式，在静态扫描时指定 JavaScript 代码的一些特性。
+      6.例如，假设我们要设计一种声明本文件不需要进行 lint 检查的指令，我们可以这样设计：
+        "no lint";
+        "use strict";
+        function doSth(){
+            //......
+        }
+        //......
+      7.JavaScript 的指令序言是只有一个字符串直接量的表达式语句，它只能出现在脚本、模块和函数体的最前面。
+      8.我们看两个例子：
+        function doSth(){
+            //......
+        }
+        "use strict";
+        var a = 1;
+        //......
+      9.这个例子中，"use strict"没有出现在最前，所以不是指令序言。
+        'use strict';
+        function doSth(){
+            //......
+        }
+        var a = 1;
+        //......
+      10.这个例子中，'use strict'是单引号，这不妨碍它仍然是指令序言。
+    11.结语
+      1.今天，我们一起进入了 JavaScript 的语法部分，在开始学习之前，我先介绍了一部分语法的基本规则。
+      2.我们首先介绍了 JavaScript 语法的全局结构，JavaScript 有两种源文件，一种叫做脚本，一种叫做模块。介绍完脚本和模块的基
+        础概念，我们再来把它们往下分，脚本中可以包含语句。模块中可以包含三种内容：import 声明，export 声明和语句。
+      3.最后，我介绍了两个 JavaScript 语法的全局机制：预处理和指令序言。
+      4.最后，给你留一个小任务，我们试着用 babel，分析一段 JavaScript 的模块代码，并且找出它中间的所有 export 的变量。
+    JavaScript语法（二）：你知道哪些JavaScript语句？
+    1.我们在上一节课中已经讲过了 JavaScript 语法的顶层设计，接下来我们进入到更具体的内容。
+    2.JavaScript 遵循了一般编程语言的“语句 - 表达式”结构，多数编程语言都是这样设计的。我们在上节课讲的脚本，或者模块都是由语句
+      列表构成的，这一节课，我们就来一起了解一下语句。
+    3.在 JavaScript 标准中，把语句分成了两种：声明和语句，不过，这里的区分逻辑比较奇怪，所以，这里我还是按照自己的思路给你整理
+      一下。
+    4.普通语句：
+      普通语句.png
+    5.声明型语句：
+      声明型语句.jpg
+    6.我们根据上面的分类，来遍历学习一下这些语句。
+    7.语句块
+      1.我们可以这样去简单理解，语句块就是一对大括号。
+        {
+            var x, y;
+            x = 10;
+            y = 20;
+        }
+      2.语句块的意义和好处在于：让我们可以把多行语句视为同一行语句，这样，if、for 等语句定义起来就比较简单了。不过，我们需要注
+        意的是，语句块会产生作用域，我们看一个例子：
+        {
+            let x = 1;
+        }
+        console.log(x); // 报错
+      3.这里我们的 let 声明，仅仅对语句块作用域生效，于是我们在语句块外试图访问语句块内的变量 x 就会报错。
+    8.空语句
+      1.空语句就是一个独立的分号，实际上没什么大用。我们来看一下：   
+        ;
+      2.空语句的存在仅仅是从语言设计完备性的角度考虑，允许插入多个分号而不抛出错误。
+    9.if 语句
+      1.if 语句是条件语句。我想，对多数人来说，if 语句都是熟悉的老朋友了，也没有什么特别需要注意的用法，但是为了我们课程的完备
+        性，这里还是要讲一下。
+      2.if 语句示例如下：
+        if(a < b)
+            console.log(a);
+      3.if 语句的作用是，在满足条件时执行它的内容语句，这个语句可以是一个语句块，这样就可以实现有条件地执行多个语句了。
+      4.if 语句还有 else 结构，用于不满足条件时执行，一种常见的用法是，利用语句的嵌套能力，把 if 和 else 连写成多分支条件判断：
+        if(a < 10) {
+            //...
+        } else if(a < 20) {
+            //...
+        } else if(a < 30) {
+            //...
+        } else {
+            //...
+        }
+      5.这段代码表示四个互斥的分支，分别在满足 a<10、a<20、a<30 和其它情况时执行。
+    10.switch 语句
+      1.switch 语句继承自 Java，Java 中的 switch 语句继承自 C 和 C++，原本 switch 语句是跳转的变形，所以我们如果要用它来
+        实现分支，必须要加上 break。
+      2.其实 switch 原本的设计是类似 goto 的思维。我们看一个例子：
+        switch(num) {
+        case 1:
+            print(1);
+        case 2:
+            print 2;
+        case 3:
+            print 3;
+        }
+      3.这段代码当 num 为 1 时输出 1 2 3，当 num 为 2 时输出 2 3，当 num 为 3 时输出 3。如果我们要把它变成分支型，则需要
+        在每个 case 后加上 break。
+        switch(num) {
+        case 1:
+            print 1;
+            break;
+        case 2:
+            print 2;
+            break;
+        case 3:
+            print 3;
+            break;
+        }
+      4.在 C 时代，switch 生成的汇编代码性能是略优于 if else 的，但是对 JavaScript 来说，则无本质区别。我个人的看法是，现
+        在 switch 已经完全没有必要使用了，应该用 if else 结构代替。
+    11.循环语句
+      1.循环语句应该也是你所熟悉的语句了，这里我们把重点放在一些新用法上。
+    12.while 循环和 do while 循环
+      1.这两个都是历史悠久的 JavaScript 语法了，示例大概如下：
+        let a = 100
+        while(a--) {
+            console.log("*");
+        }
+
+        let a = 101;
+        do {
+            console.log(a);
+        } while(a < 100)
+      2.注意，这里 do while 循环无论如何至少会执行一次。
+    13.普通 for 循环
+      1.首先我们来看看普通的 for 循环。
+        for(i = 0; i < 100; i++)
+            console.log(i);
+
+        for(var i = 0; i < 100; i++)
+            console.log(i);
+
+        for(let i = 0; i < 100; i++)
+            console.log(i);
+
+        var j = 0;
+        for(const i = 0; j < 100; j++)
+            console.log(i);
+      2.这里为了配合新语法，加入了允许 let 和 const，实际上，const 在这里是非常奇葩的东西，因为这里声明和初始化的变量，按惯
+        例是用于控制循环的，但是它如果是 const 就没法改了。
+      3.我想，这一点可能是从保持 let 和 const 一致性的角度考虑的吧。
+    14.for in 循环
+      1.for in 循环枚举对象的属性，这里体现了属性的 enumerable 特征。
+        let o = { a: 10, b: 20}
+        Object.defineProperty(o, "c", {enumerable:false, value:30})
+
+        for(let p in o)
+            console.log(p);
+      2.这段代码中，我们定义了一个对象 o，给它添加了不可枚举的属性 c，之后我们用 for in 循环枚举它的属性，我们会发现，输出时
+        得到的只有 a 和 b。
+      3.如果我们定义 c 这个属性时，enumerable 为 true，则 for in 循环中也能枚举到它。
+    15.for of 循环和 for await of 循环
+      1.for of 循环是非常棒的语法特性。
+      2.我们先看下基本用法，它可以用于数组：
+        for(let e of [1, 2, 3, 4, 5])
+            console.log(e);
+      3.但是实际上，它背后的机制是 iterator 机制。
+      4.我们可以给任何一个对象添加 iterator，使它可以用于 for of 语句，看下示例：
+        let o = {  
+            [Symbol.iterator]:() => ({
+                _value: 0,
+                next(){
+                    if(this._value == 10)
+                        return {
+                            done: true
+                        }
+                    else return {
+                        value: this._value++,
+                        done: false
+                    };
+                }
+            })
+        }
+        for(let e of o)
+            console.log(e);
+      5.这段代码展示了如何为一个对象添加 iterator。但是，在实际操作中，我们一般不需要这样定义 iterator，我们可以使用 
+        generator function。
+        function* foo(){
+            yield 0;
+            yield 1;
+            yield 2;
+            yield 3;
+        }
+        for(let e of foo())
+            console.log(e);
+      6.这段代码展示了 generator function 和 foo 的配合。
+      7.此外，JavaScript 还为异步生成器函数配备了异步的 for of，我们来看一个例子：
+        function sleep(duration) {
+            return new Promise(function(resolve, reject) {
+                setTimeout(resolve,duration);
+            })
+        }
+        async function* foo(){
+            i = 0;
+            while(true) {
+                await sleep(1000);
+                yield i++;
+            }
+                
+        }
+        for await(let e of foo())
+            console.log(e);
+      8.这段代码定义了一个异步生成器函数，异步生成器函数每隔一秒生成一个数字，这是一个无限的生成器。
+      9.接下来，我们使用 for await of 来访问这个异步生成器函数的结果，我们可以看到，这形成了一个每隔一秒打印一个数字的无限循环。
+      10.但是因为我们这个循环是异步的，并且有时间延迟，所以，这个无限循环的代码可以用于显示时钟等有意义的操作。
+    16.return
+      1.return 语句用于函数中，它终止函数的执行，并且指定函数的返回值，这是大家非常熟悉语句了，也没有什么特殊之处。
+        function squre(x){
+            return x * x;
+        }
+      2.这段代码展示了 return 的基本用法。它后面可以跟一个表达式，计算结果就是函数返回值。
+    17.break 语句和 continue 语句
+      1.break 语句用于跳出循环语句或者 switch 语句，continue 语句用于结束本次循环并继续循环。
+      2.这两个语句都属于控制型语句，用法也比较相似，所以我们就一起讲了。需要注意的是，它们都有带标签的用法。
+        outer:for(let i = 0; i < 100; i++)
+            inner:for(let j = 0; j < 100; j++)
+                if( i == 50 && j == 50)
+                    break outer;
+        outer:for(let i = 0; i < 100; i++)
+            inner:for(let j = 0; j < 100; j++)
+                if( i >= 50 && j == 50)
+                    continue outer;
+      3.带标签的 break 和 continue 可以控制自己被外层的哪个语句结构消费，这可以跳出复杂的语句结构。
+    18.with 语句
+      1.with 语句是个非常巧妙的设计，但它把 JavaScript 的变量引用关系变得不可分析，所以一般都认为这种语句都属于糟粕。
+      2.但是历史无法改写，现在已经无法去除 with 了。我们来了解一下它的基本用法即可。
+        let o = {a:1, b:2}
+        with(o){
+            console.log(a, b);
+        }
+      3.with 语句把对象的属性在它内部的作用域内变成变量。
+    19.try 语句和 throw 语句
+      1.try 语句和 throw 语句用于处理异常。它们是配合使用的，所以我们就放在一起讲了。在大型应用中，异常机制非常重要。
+        try {
+            throw new Error("error");
+        } catch(e) {
+            console.log(e);
+        } finally {
+            console.log("finally");
+        }
+      2.一般来说，throw 用于抛出异常，但是单纯从语言的角度，我们可以抛出任何值，也不一定是异常逻辑，但是为了保证语义清晰，不建
+        议用 throw 表达任何非异常逻辑。
+      3.try 语句用于捕获异常，用 throw 抛出的异常，可以在 try 语句的结构中被处理掉：try 部分用于标识捕获异常的代码段，catch 
+        部分则用于捕获异常后做一些处理，而 finally 则是用于执行后做一些必须执行的清理工作。
+      4.catch 结构会创建一个局部的作用域，并且把一个变量写入其中，需要注意，在这个作用域，不能再声明变量 e 了，否则会出错。
+      5.在 catch 中重新抛出错误的情况非常常见，在设计比较底层的函数时，常常会这样做，保证抛出的错误能被理解。
+      6.finally 语句一般用于释放资源，它一定会被执行，我们在前面的课程中已经讨论过一些 finally 的特征，即使在 try 中出现了
+        return，finally 中的语句也一定要被执行。
+    20.debugger 语句
+      1.debugger 语句的作用是：通知调试器在此断点。在没有调试器挂载时，它不产生任何效果。
+      2.介绍完普通语句，我们再来看看声明型语句。声明型语句跟普通语句最大区别就是声明型语句响应预处理过程，普通语句只有执行过程。
+    21.var
+      1.var 声明语句是古典的 JavaScript 中声明变量的方式。而现在，在绝大多数情况下，let 和 const 都是更好的选择。
+      2.我们在上一节课已经讲解了 var 声明对全局作用域的影响，它是一种预处理机制。
+      3.如果我们仍然想要使用 var，我的个人建议是，把它当做一种“保障变量是局部”的逻辑，遵循以下三条规则：
+        声明同时必定初始化；
+        尽可能在离使用的位置近处声明；
+        不要在意重复声明。
+      4.例如：
+        var x = 1, y = 2;
+        doSth(x, y);
+
+        for(var x = 0; x < 10; x++)
+            doSth2(x);
+      5.这个例子中，两次声明了变量 x，完成了两段逻辑，这两个 x 意义上可能不一定相关，这样，不论我们把代码复制粘贴在哪里，都不
+        会出错。
+      6.当然，更好的办法是使用 let 改造，我们看看如何改造：
+        {
+            let x = 1, y = 2;
+            doSth(x, y);
+        }
+
+        for(let x = 0; x < 10; x++)
+            doSth2(x);
+      7.这里我用代码块限制了第一个 x 的作用域，这样就更难发生变量命名冲突引起的错误了。
+    22.let 和 const
+      1.et 和 const 是都是变量的声明，它们的特性非常相似，所以我们放在一起讲了。let 和 const 是新设计的语法，所以没有什么硬
+        伤，非常地符合直觉。let 和 const 的作用范围是 if、for 等结构型语句。
+      2.我们看下基本用法：
+        const a = 2;
+        if(true){
+            const a = 1;
+            console.log(a);
+        }
+        console.log(a);
+      3.这里的代码先在全局声明了变量 a，接下来又在 if 内声明了 a，if 内构成了一个独立的作用域。
+      4.const 和 let 语句在重复声明时会抛错，这能够有效地避免变量名无意中冲突：
+        let a = 2
+        const a = 1;
+      5.这段代码中，先用 let 声明了 a，接下来又试图使用 const 声明变量 a，这时，就会产生错误。
+      6.let 和 const 声明虽然看上去是执行到了才会生效，但是实际上，它们还是会被预处理。如果当前作用域内有声明，就无法访问到外
+        部的变量。我们来看这段代码：
+        const a = 2;
+        if(true){
+            console.log(a); //抛错
+            const a = 1;   
+        }
+      7.这里在 if 的作用域中，变量 a 声明执行到之前，我们访问了变量 a，这时会抛出一个错误，这说明 const 声明仍然是有预处理机
+        制的。
+      8.在执行到 const 语句前，我们的 JavaScript 引擎就已经知道后面的代码将会声明变量 a，从而不允许我们访问外层作用域中的 a。
+    23.class 声明
+      1.我们在之前的课程中，已经了解过 class 相关的用法。这里我们再从语法的角度来看一遍：
+        class a {
+
+        }
+      2.class 最基本的用法只需要 class 关键字、名称和一对大括号。它的声明特征跟 const 和 let 类似，都是作用于块级作用域，预
+        处理阶段则会屏蔽外部变量。
+        const a = 2;
+        if(true){
+            console.log(a); //抛错
+            class a {
+
+            }
+        }
+      3.class 内部，可以使用 constructor 关键字来定义构造函数。还能定义 getter/setter 和方法。
+        class Rectangle {
+          constructor(height, width) {
+            this.height = height;
+            this.width = width;
+          }
+          // Getter
+          get area() {
+            return this.calcArea();
+          }
+          // Method
+          calcArea() {
+            return this.height * this.width;
+          }
+        }
+      4.这个例子来自 MDN，它展示了构造函数、getter 和方法的定义。
+      5.以目前的兼容性，class 中的属性只能写在构造函数中，相关标准正在 TC39 讨论。
+      6.需要注意，class 默认内部的函数定义都是 strict 模式的。
+    24.函数声明
+      1.函数声明使用 function 关键字。
+      2.在上一节课中，我们已经讨论过函数声明对全局作用域的影响了。这一节课，我们来看看函数声明具体的内容，我们先看一下函数声明的
+        几种类型。
+        function foo(){
+
+        }
+        function* foo(){
+            yield 1;
+            yield 2;
+            yield 3;
+        }
+        async function foo(){
+            await sleep(3000);
+            
+        }
+        async function* foo(){
+            await sleep(3000);
+            yield 1;
+        }
+      3.带 * 的函数是 generator，我们在前面的部分已经见过它了。生成器函数可以理解为返回一个序列的函数，它的底层是 iterator
+        机制。
+      4.async 函数是可以暂停执行，等待异步操作的函数，它的底层是 Promise 机制。异步生成器函数则是二者的结合。
+      5.函数的参数，可以只写形参名，现在还可以写默认参数和指定多个参数，看下例子：
+        function foo(a = 1, ...other) { 
+          console.log(a, other)
+        }
+      6.这个形式可以代替一些对参数的处理代码，表意会更加清楚。
+    25.结语
+      1.今天我们一起学习了语句家族，语句分成了普通语句和声明型语句。
+      2.普通语句部分，建议你把重点放在循环语句上面。声明型语句我觉得都很重要，尤其是它们的行为。熟练掌握了它们，我们就可以在工作
+        中去综合运用它们，从而减少代码中的错误。新特性大多可以帮助我们发现代码中的错误。
+      3.最后留一个小作业，请你找出所有具有 Symbol.iterator 的原生对象，并且看看它们的 for of 遍历行为。
+    JavaScript语法（三）：什么是表达式语句？
+    1.不知道你有没有注意到，我们在语句部分，讲到了很多种语句类型，但是，其实最终产生执行效果的语句不多。
+    2.事实上，真正能干活的就只有表达式语句，其它语句的作用都是产生各种结构，来控制表达式语句执行，或者改变表达式语句的意义。
+    3.今天的课程，我们就深入到表达式语句中来学习一下。
+    4.什么是表达式语句
+      1.表达式语句实际上就是一个表达式，它是由运算符连接变量或者直接量构成的（关于直接量我们在下一节详细讲解）。
+      2.一般来说，我们的表达式语句要么是函数调用，要么是赋值，要么是自增、自减，否则表达式计算的结果没有任何意义。
+      3.但是从语法上，并没有这样的限制，任何合法的表达式都可以当做表达式语句使用。比如我们看下面的例子。
+        a + b;
+      4.这句代码计算了 a 和 b 相加的值，但是不会显示出来，也不会产生任何执行效果（除非 a 和 b 是 getter），但是不妨碍它符合
+        语法也能够被执行。
+      5.下面我们就一起来了解下都有哪些表达式，我们从粒度最小到粒度最大了解一下。
+    5.PrimaryExpression 主要表达式
+      1.首先我们来给你讲解一下表达式的原子项：Primary Expression。它是表达式的最小单位，它所涉及的语法结构也是优先级最高的。
+      2.Primary Expression 包含了各种“直接量”，直接量就是直接用某种语法写出来的具有特定类型的值。我们已经知道，在运行时有各
+        种值，比如数字 123，字符串 Hello world，所以通俗地讲，直接量就是在代码中把它们写出来的语法。
+      3.我们在类型部分，已经介绍过一些基本类型的直接量。比如，我们当时用 null 关键字获取 null 值，这个用法就是 null 直接量，
+        这里我们仅仅把它们简单回顾一下：
+        "abc";
+        123;
+        null;
+        true;
+        false;
+      4.除这些之外，JavaScript 还能够直接量的形式定义对象，针对函数、类、数组、正则表达式等特殊对象类型，JavaScript 提供了
+        语法层面的支持。
+        ({});
+        (function(){});
+        (class{ });
+        [];
+        /abc/g;
+      5.需要注意，在语法层面，function、{ 和 class 开头的表达式语句与声明语句有语法冲突，所以，我们要想使用这样的表达式，必
+        须加上括号来回避语法冲突。
+      6.在 JavaScript 标准中，这些结构有的被称作直接量（Literal），有的被称作表达式（**Expression），在我看来，把它们都理
+        解成直接量比较合适。
+      7.Primary Expression 还可以是 this 或者变量，在语法上，把变量称作“标识符引用”。
+        this;
+        myVar;
+      8.任何表达式加上圆括号，都被认为是 Primary Expression，这个机制使得圆括号成为改变运算优先顺序的手段。
+        (a + b);  
+      9.这就是 Primary Expression 的几种形式了，接下来，我们讲讲由 Primary Expression 构成的更复杂的表达式：
+        Member Expression。
+    6.MemberExpression 成员表达式
+      1.Member Expression 通常是用于访问对象成员的。它有几种形式：
+        a.b;
+        a["b"];
+        new.target;
+        super.b;
+      2.前面两种用法都很好理解，就是用标识符的属性访问和用字符串的属性访问。而 new.target 是个新加入的语法，用于判断函数是否
+        是被 new 调用，super 则是构造函数中，用于访问父类的属性的语法。
+      3.从名字就可以看出，Member Expression 最初设计是为了属性访问的，不过从语法结构需要，以下两种在 JavaScript 标准中当做 
+        Member Expression：
+        f`a${b}c`;
+      4.这是一个是带函数的模板，这个带函数名的模板表示把模板的各个部分算好后传递给一个函数。
+        new Cls();
+      5.另一个是带参数列表的 new 运算，注意，不带参数列表的 new 运算优先级更低，不属于 Member Expression。
+      6.实际上，这两种被放入 Member Expression，仅仅意味着它们跟属性运算属于同一优先级，没有任何语义上的关联。接下来我们看看 
+        Member Expression 能组成什么。
+    7.NewExpression NEW 表达式
+      1.这种非常简单，Member Expression 加上 new 就是 New Expression（当然，不加 new 也可以构成 New Expression，
+        JavaScript 中默认独立的高优先级表达式都可以构成低优先级表达式）。
+      2.注意，这里的 New Expression 特指没有参数列表的表达式。我们看个稍微复杂的例子：
+        new new Cls(1);
+      3.直观看上去，它可能有两种意思：
+        new (new Cls(1));
+
+        new (new Cls)(1);
+      4.实际上，它等价于第一种。我们可以用以下代码来验证：
+        class Cls{
+          constructor(n){
+            console.log("cls", n);
+            return class {
+              constructor(n) {
+                console.log("returned", n);
+              }
+            }
+          }
+        }
+        new (new Cls(1));
+      5.这段代码最后得到了下面这样的结果。
+        cls 1
+        returned undefined
+      6.这里就说明了，1 被当做调用 Cls 时的参数传入了。
+    8.CallExpression 函数调用表达式
+      1.除了 New Expression，Member Expression 还能构成 Call Expression。它的基本形式是 Member Expression 后加一
+        个括号里的参数列表，或者我们可以用上 super 关键字代替 Member Expression。
+        a.b(c);
+        super();
+      2.这看起来很简单，但是它有一些变体。比如：
+        a.b(c)(d)(e);
+        a.b(c)[3];
+        a.b(c).d;
+        a.b(c)`xyz`;
+      3.这些变体的形态，跟 Member Expression 几乎是一一对应的。实际上，我们可以理解为，Member Expression 中的某一子结构
+        具有函数调用，那么整个表达式就成为了一个 Call Expression。
+      4.而 Call Expression 就失去了比 New Expression 优先级高的特性，这是一个主要的区分。
+    9.LeftHandSideExpression 左值表达式
+      1.接下来，我们需要理解一个概念：New Expression 和 Call Expression 统称 LeftHandSideExpression，左值表达式。
+      2.我们直观地讲，左值表达式就是可以放到等号左边的表达式。JavaScript 语法则是下面这样。
+        a() = b;
+      3.这样的用法其实是符合语法的，只是，原生的 JavaScript 函数，返回的值都不能被赋值。因此多数时候，我们看到的赋值将会是 
+        Call Expression 的其它形式，如：
+        a().c = b;
+      4.另外，根据 JavaScript 运行时的设计，不排除某些宿主会提供返回引用类型的函数，这时候，赋值就是有效的了。
+      5.左值表达式最经典的用法是用于构成赋值表达式，但是其实如果你翻一翻 JavaScript 标准，你会发现它出现在各种场合，凡是需要
+        “可以被修改的变量”的位置，都能见到它的身影。
+      6.那么接下来我们就讲讲 AssignmentExpression 赋值表达式。
+    10.AssignmentExpression 赋值表达式
+      1.AssignmentExpression 赋值表达式也有多种形态，最基本的当然是使用等号赋值：
+        a = b
+      2.这里需要理解的一个稍微复杂的概念是，这个等号是可以嵌套的：
+        a = b = c = d
+      3.这样的连续赋值，是右结合的，它等价于下面这种：
+        a = (b = (c = d))
+      4.也就是说，先把 d 的结果赋值给 c，再把整个表达式的结果赋值给 b，再赋值给 a。
+      5.当然，这并非一个很好的代码风格，我们讲解语法是为了让你理解这样的用法，而不是推荐你这样写代码。
+      6.赋值表达式的使用，还可以结合一些运算符，例如：
+        a += b;
+      7.相当于
+        a = a + b;
+      8.能有这样用的运算符有下面这几种：
+        *=、/=、%=、+=、-=、<<=、>>=、>>>=、&=、^=、|=、**=
+      9.我想你已经注意到了，赋值表达式的等号左边和右边能用的表达式类型不一样，在这一课，我们已经关注完了表达式的左边部分
+        （左值表达式）的语法结构，下一节课，我们将会给你重点讲解表达式的右边部分。
+    11.Expression 表达式
+      1.赋值表达式可以构成 Expression 表达式的一部分。在 JavaScript 中，表达式就是用逗号运算符连接的赋值表达式。
+      2.在 JavaScript 中，比赋值运算优先级更低的就是逗号运算符了。我们可以把逗号可以理解为一种小型的分号。
+        a = b, b = 1, null;
+      3.逗号分隔的表达式会顺次执行，就像不同的表达式语句一样。“整个表达式的结果”就是“最后一个逗号后的表达式结果”。比如我们文中
+        的例子，整个“a = b, b = 1, null;”表达式的结果就是“，”后面的null。
+      4.在很多场合，都不允许使用带逗号的表达式，比如我们在前面课程中提到，export 后只能跟赋值表达式，意思就是表达式中不能含有
+        逗号。
+    12.结语
+      1.这节课我们开始讲解了运算符和表达式的一些相关知识，这节课上，我们已经学习了赋值表达式和赋值表达式的左边部分。下节课，我
+        们将会讲一讲赋值表达式的右边部分。
+      2.最后给你留一个作业，把今天讲到的所有运算符按优先级排列成一个表格，下节课我们会补完剩下的部分。
+    JavaScript语法（四）：新加入的**运算符，哪里有些不一样呢？
+    1.上一节课我们已经给你介绍了表达式的一些结构，其中关于赋值表达式，我们讲完了它的左边部分，而留下了它右边部分，那么，我们这节
+      课一起来详细讲解。
+    2.在一些通用的计算机语言设计理论中，能够出现在赋值表达式右边的叫做：右值表达式（RightHandSideExpression），而在 
+      JavaScript 标准中，规定了在等号右边表达式叫做条件表达式（ConditionalExpression），不过，在 JavaScript 标准中，从
+      未出现过右值表达式字样。
+    3.JavaScript 标准也规定了左值表达式同时都是条件表达式（也就是右值表达式），此外，左值表达式也可以通过跟一定的运算符组合，
+      逐级构成更复杂的结构，直到成为右值表达式。
+    4.关于这块的知识，我们有时会看到按照运算符来组织的讲解形式。
+    5.这样讲解形式是因为：对运算符来说的“优先级”，如果从我们语法的角度来看，那就是“表达式的结构”。讲“乘法运算的优先级高于加法”，
+      从语法的角度看就是“乘法表达式和加号运算符构成加法表达式”。
+    6.对于右值表达式来说，我们可以理解为以左值表达式为最小单位开始构成的，接下来我们就来看看左值表达式是如何一步步构成更为复杂的
+      语法结构。
+    7.更新表达式 UpdateExpression
+      1.左值表达式搭配 ++ -- 运算符，可以形成更新表达式。
+        -- a;
+        ++ a;
+        a --
+        a ++
+      2.更新表达式会改变一个左值表达式的值。分为前后自增，前后自减一共四种。
+      3.我们要注意一下，这里在 ES2018 中，跟早期版本有所不同，前后自增自减运算被放到了同一优先级。
+    8.一元运算表达式 UnaryExpression
+      1.更新表达式搭配一元运算符，可以形成一元运算表达式，我们看下例子：
+        delete a.b;
+        void a;
+        typeof a;
+        - a;
+        ~ a;
+        ! a;
+        await a;
+      2.它的特点就是一个更新表达式搭配了一个一元运算符。
+    9.乘方表达式 ExponentiationExpression
+      1.乘方表达式也是由更新表达式构成的。它使用**号。
+        ++i ** 30
+        2 ** 30 //正确
+        -2 ** 30 //报错
+      2.我们看一下例子，-2 这样的一元运算表达式，是不可以放入乘方表达式的，如果需要表达类似的逻辑，必须加括号。
+      3.这里我们需要注意一下结合性，** 运算是右结合的，这跟其它正常的运算符（也就是左结合运算符）都不一样。
+      4.我们来看一个例子。
+        4 ** 3 ** 2
+      5.事实上，它是这样被运算的：
+        4 ** (3 ** 2)
+      6.而不是这样被运算的：
+        (4 ** 3) ** 2
+      7.我们来实际在代码中执行一下试试。最终结果是 262144， 而不是 4096。
+    10.乘法表达式 MultiplicativeExpression
+      1.到这里，我们进入了比较熟悉的表达式类型，乘方表达式可以构成乘法表达式，用乘号或者除号、取余符号连接就可以了，我们看看例
+        子：
+        x * 2;
+      2.乘法表达式有三种运算符：
+        *
+        /
+        %
+      3.它们分别表示乘、除和取余。它们的优先级是一样的，所以统一放在乘法运算表达式中。
+    11.加法表达式 AdditiveExpression
+      1.加法表达式是由乘法表达式用加号或者减号连接构成的。我们看下例子:
+        a + b * c
+      2.加法表达式有加号和减号两种运算符。
+        + 
+        -
+      3.这就是我们小学学的加法和减法的意思了。不过要注意，加号还能表示字符串连接，这也比较符合一般的直觉。
+    12.移位表达式 ShiftExpression
+      1.移位表达式由加法表达式构成，移位是一种位运算，分成三种：
+        << 向左移位
+        >> 向右移位
+        >>> 无符号向右移位
+      2.移位运算把操作数看做二进制表示的整数，然后移动特定位数。所以左移 n 位相当于乘以 2 的 n 次方，右移 n 位相当于除以 2 
+        取整 n 次。
+      3.普通移位会保持正负数。无符号移位会把减号视为符号位 1，同时参与移位：
+        -1 >>> 1
+      4.这个会得到 2147483647，也就是 2 的 31 次方，跟负数的二进制表示法相关，这里就不详细讲解了。
+      5.在 JavaScript 中，二进制操作整数并不能提高性能，移位运算这里也仅仅作为一种数学运算存在，这些运算存在的意义也仅仅是照
+        顾 C 系语言用户的习惯了。
+    13.关系表达式 RelationalExpression
+      1.移位表达式可以构成关系表达式，这里的关系表达式就是大于、小于、大于等于、小于等于等运算符号连接，统称为关系运算。
+        <=
+        >=
+        <
+        >
+        instanceof 
+        in
+      2.需要注意，这里的 <= 和 >= 关系运算，完全是针对数字的，所以 <= 并不等价于 < 或 ==。例如：
+        null <= undefined
+        //false
+        null == undefined
+        //true
+      3.请你务必不要用数学上的定义去理解这些运算符。
+    14.相等表达式 EqualityExpression
+      1.在语法上，相等表达式是由关系表达式用相等比较运算符（如 ==）连接构成的。所以我们可以像下面这段代码一样使用，而不需要加
+        括号。
+        a instanceof "object" == true
+      2.相等表达式由四种运算符和关系表达式构成，我们来看一下运算符：
+        ==
+        !=
+        ===
+        !==
+      3.相等表达式又包含一个 JavaScript 中著名的设计失误，那就是 == 的行为。
+      4.一些编程规范甚至要求完全避免使用 == 运算，我觉得这样规定是比较合理的，但是这里我还是尽量解释一下 == 的行为。
+      5.虽然标准中写的==十分复杂，但是归根结底，类型不同的变量比较时==运算只有三条规则：
+        undefined 与 null 相等；
+        字符串和 bool 都转为数字再比较；
+        对象转换成 primitive 类型再比较。
+      6.这样我们就可以理解一些不太符合直觉的例子了，比如：
+        false == '0' true
+        true == 'true' false
+        [] == 0 true
+        [] == false true
+        new Boolean('false') == false false
+      7.这里不太符合直觉的有两点：
+        一个是即使字符串与 boolean 比较，也都要转换成数字；
+        另一个是对象如果转换成了 primitive 类型跟等号另一边类型恰好相同，则不需要转换成数字。
+      8.此外，== 的行为也经常跟 if 的行为（转换为 boolean）混淆。总之，我建议，仅在确认 == 发生在 Number 和 String 类型
+        之间时使用，比如：
+        document.getElementsByTagName('input')[0].value == 100
+      9.在这个例子中，等号左边必然是 string，右边的直接量必然是 number，这样使用 == 就没有问题了。
+    15.位运算表达式
+      1.位运算表达式含有三种：
+        按位与表达式 BitwiseANDExpression
+        按位异或表达式 BitwiseANDExpression
+        按位或表达式 BitwiseORExpression。
+      2.位运算表达式关系比较紧密，我们这里放到一起来讲。
+      3.按位与表达式由按位与运算符（&）连接按位异或表达式构成，按位与表达式把操作数视为二进制整数，然后把两个操作数按位做与运算。
+      4.按位异或表达式由按位异或运算符（^）连接按位与表达式构成，按位异或表达式把操作数视为二进制整数，然后把两个操作数按位做异
+        或运算。异或两位相同时得 0，两位不同时得 1。
+      5.异或运算有个特征，那就是两次异或运算相当于取消。所以有一个异或运算的小技巧，就是用异或运算来交换两个整数的值。
+        let a = 102, b = 324;
+        a = a ^ b;
+        b = a ^ b;
+        a = a ^ b;
+        console.log(a, b);
+      6.按位或表达式由按位或运算符（|）连接相等表达式构成，按位或表达式把操作数视为二进制整数，然后把两个操作数按位做或运算。
+      7.按位或运算常常被用在一种叫做 Bitmask 的技术上。Bitmask 相当于使用一个整数来当做多个布尔型变量，现在已经不太提倡了。
+        不过一些比较老的 API 还是会这样设计，比如我们在 DOM 课程中，提到过的 Iterator API，我们看下例子：
+        var iterator = document.createNodeIterator(document.body, NodeFilter.SHOW_TEXT | NodeFilter.SHOW_COMMENT, null, false);
+        var node;
+        while(node = iterator.nextNode())
+        {
+            console.log(node);
+        }
+      8.这里的第二个参数就是使用了 Bitmask 技术，所以必须配合位运算表达式才能方便地传参。
+    16.逻辑与表达式和逻辑或表达式
+      1.逻辑与表达式由按位或表达式经过逻辑与运算符连接构成，逻辑或表达式则由逻辑与表达式经逻辑或运算符连接构成。
+      2.这里需要注意的是，这两种表达式都不会做类型转换，所以尽管是逻辑运算，但是最终的结果可能是其它类型。
+      3.比如：
+        false || 1;
+      4.这句将会得到结果 1。
+        false && undefined;
+      5.这句将会得到 undefined。
+      6.另外还有一点，就是逻辑表达式具有短路的特性，例如：
+        true || foo();
+      7.这里的 foo 将不会被执行，这种中断后面表达式执行的特性就叫做短路。
+    17.条件表达式 ConditionalExpression
+      1.条件表达式由逻辑或表达式和条件运算符构成，条件运算符又称三目运算符，它有三个部分，由两个运算符?和:配合使用。
+        condition ? branch1 : branch2
+      2.这里需要注意，条件表达式也像逻辑表达式一样，可能忽略后面表达式的计算。这一点跟 C 语言的条件表达式是不一样的。
+      3.条件表达式实际上就是 JavaScript 中的右值表达式了 RightHandSideExpression，是可以放到赋值运算后面的表达式。
+    18.总结
+      1.今天我们讲解了表达式的右边部分，讲到了包括更新表达式、一元运算表达式、乘方表达式、乘法表达式、移位表达式等 14 种表达式。
+        至此为止，我们已经讲全了表达式。你如果有不熟悉的地方，可以随时回头查阅。
+      2.留一个小任务，我们试着总结下 JavaScript 中所有的运算符优先级和结合性。例如：
+        运算符优先级和结合性.jpg
+    其他总结
+    1.js模块化
+      模块就是独立的，实现某种特定功能的文件。想要什么功能，就加载什么模块。
+      1.前端发展模块化背景
+        在JavaScript发展初期就是为了实现简单的页面交互逻辑，寥寥数语即可；如今CPU、浏览器性能得到了极大的提升，很多页面逻辑
+        迁移到了客户端（表单验证等），随着web2.0时代的到来，Ajax技术得到广泛应用，jQuery等前端库层出不穷，前端代码日益膨胀。
+        这时候JavaScript作为嵌入式的脚本语言的定位动摇了，JavaScript却没有为组织代码提供任何明显帮助，甚至没有类的概念，
+        更不用说模块（module）了，JavaScript极其简单的代码组织规范不足以驾驭如此庞大规模的代码。既然JavaScript不能handle
+        如此大规模的代码，我们可以借鉴一下其它语言是怎么处理大规模程序设计的，在Java中有一个重要的概念——package，逻辑上相关
+        的代码组织到同一个包内，包内是一个相对独立的王国，不用担心命名冲突什么的，那么外部如果使用呢？直接import对应的package
+        即可，import java.util.ArrayList。遗憾的是JavaScript在设计时定位原因，没有提供类似的功能，开发者需要模拟出类似的
+        功能，来隔离、组织复杂的JavaScript代码，我们称为模块化。一个模块就是实现特定功能的文件，有了模块，我们就可以更方便地
+        使用别人的代码，想要什么功能，就加载什么模块。模块开发需要遵循一定的规范，各行其是就都乱套了，规范形成的过程是痛苦的，
+        前端的先驱在刀耕火种、茹毛饮血的阶段开始，发展到现在初具规模，简单了解一下这段不凡的历程。
+      2.前端发展模块化历程及js模块化原理
+        以下做法就是我们模块化的基础
+        1.函数封装
+          我们在讲函数的时候提到，函数一个功能就是实现特定逻辑的一组语句打包，而且JavaScript的作用域就是基于函数的，
+          所以把函数作为模块化的第一步是很自然的事情，在一个文件里面编写几个相关函数就是最开始的模块了
+          function fn1 () {
+            statement
+          }
+          function fn2 () {
+            statement
+          }
+          这样在需要的时候加载函数所在文件，调用函数就可以了
+          这种做法的缺点很明显：污染了全局变量，无法保证不与其他模块发生变量名冲突，而且模块成员之间没什么关系。
+        2.对象
+          为了解决上面问题，对象的写法应运而生，可以把所有的模块成员封装在一个对象中
+          var myModule = {
+            var1: 1,
+            var2: 2,
+            fn1: function () {
+
+            },
+            fn2: function () {
+
+            }
+          }
+          这样我们在希望调用模块的时候引用对应文件，然后
+          myModule.fn2();
+          这样避免了变量污染，只要保证模块名唯一即可，同时同一模块内的成员也有了关系
+          看似不错的解决方案，但是也有缺陷，外部可以随意修改内部成员
+          myModel.var1 = 100;
+          这样就会产生意外的安全问题
+        3.立即执行函数
+          可以通过立即执行函数，来达到隐藏细节的目的
+          var myModule = (function () {
+            var var1 = 1;
+            var var2 = 2;
+            function fn1 () {
+
+            }
+            function fn2 () {
+
+            }
+            return {
+                fn1: fn1,
+                fn2: fn2
+            }
+          })()
+          这样在模块外部无法修改我们没有暴露出来的变量、函数
+        4.放大模式(扩展模块本身)
+          如果一个模块很大，必须分成几个部分
+          var module1 = (function (mod){
+    　　　　  mod.m3 = function () {
+    　　　　　　 //...
+    　　　　  };
+    　　　　  return mod;
+      　　 })(module1 || {});
+          上面的代码为module1模块添加了一个新方法m3()，然后返回新的module1模块。
+        5.输入全局变量(依赖其他模块)
+          独立性是模块的重要特点，模块内部最好不与程序的其他部分直接交互。
+          为了在模块内部调用全局变量，必须显式地将其他变量输入模块。
+      　  var module1 = (function ($, YAHOO) {
+    　　　　 //...
+        　})(jQuery, YAHOO);
+          上面的module1模块需要使用jQuery库和YUI库，就把这两个库（其实是两个模块）当作参数输入module1。
+          这样做除了保证模块的独立性，还使得模块之间的依赖关系变得明显。
+      3.Javascript模块规范：CommonJS，AMD，CMD
+        require.js实现AMD规范
+        sea.js实现CMD规范
+        定义模块(利用的就是模块化的原理，使用自执行函数)，导出模块；引入模块，使用模块
+      4.Javascript模块化编程（一）：模块的写法      
+		      http://www.ruanyifeng.com/blog/2012/10/javascript_module.html  
+        Javascript模块化编程（二）：AMD规范
+  	      http://www.ruanyifeng.com/blog/2012/10/asynchronous_module_definition.html
+        Javascript模块化编程（三）：require.js的用法
+  	      http://www.ruanyifeng.com/blog/2012/11/require_js.htmls
+    2.关于js众多模块化标准
+      1.没有模块化的时代
+      2.AMD成为标准，require.js
+      3.前端打包工具，使得nodejs的commonjs模块化可以被使用了
+      4.es6出现，想统一现在所有模块化的标准
+        标准这么多不就很乱嘛。我们希望标准是越统一越好，越简单越好，越被大家认可越好。所以说es6就想统一这个标准。这个是很
+        好的。没有问题。现在的现状是nodejs积极支持，浏览器尚未统一。
+语义

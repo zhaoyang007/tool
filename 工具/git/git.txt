@@ -1,0 +1,144 @@
+
+
+安装git
+
+
+配置用户信息
+$ git config --global user.name "username"
+$ git config --global user.email "email"
+$ git config --global color.ui true  让Git显示颜色
+查看本机 Git 配置信息
+$ git config --list
+
+
+ssh key
+创建SSH Key
+ssh-keygen -t rsa -C "zhaoy@jryghq.cn"
+将公钥放到远程库中
+
+
+当你从远程仓库克隆时，实际上Git自动把本地的master分支和远程的master分支对应起来了，并且，远程仓库的默认名称是origin。
+要查看远程库的信息，用git remote，或者，用git remote -v显示更详细的信息
+
+
+1.从远程仓库克隆
+git clone url
+2.已有本地文件夹或本地库，本地关联远程库
+git init
+本地关联远程库：git remote add origin git@code.aliyun.com:jryg/jryg-api.git
+第一次推送master分支的所有内容：git push -u origin master
+
+
+常用命令
+git status  查看状态
+git diff  查看改动
+git add .  add所有
+git commit -m ""  提交到本地库
+git pull 相当于从远程获取最新版本并merge到本地
+git fetch origin  拉取所在分支代码
+git rebase origin/master  合并远程和本地代码
+git merge origin/master  合并远程和本地代码
+git push origin master  推送到远程库
+手动解决冲突，然后再次add,commit,push就可以了
+
+
+分支管理
+git branch  查看本地分支
+git branch -r  查看远程分支
+git branch -a  查看所有分支（有时别人新加的远程分支要先git pull一下才能看到）  
+git branch <name>  创建分支
+git checkout <name>  切换分支
+git checkout -b <name>  创建并切换分支
+git merge <name>  合并某分支到当前分支
+git branch -d <name>  删除本地分支
+git push origin local_branchname:remote_branchname  把本地分支推送到远程
+git push origin :local_branchname  把本地分支推送到远程
+git push origin local_branchname  把本地分支推送到远程
+git checkout -b local_branchname origin/remote_branchname  将远程分支拉取到本地
+git fetch origin remote_branchname:local_branchname  将远程分支拉取到本地
+git checkout remote_branchname  将远程分支拉取到本地
+
+git push origin :remote_branchname  删除远程分支
+
+git stash 储藏工作现场
+git stash pop 恢复工作现场，并删除之前储藏的内容
+
+
+
+时光机穿梭
+    git log 查看提交历史
+    git reflog 查看命令历史
+    工作区 暂存取(add后的) 分支(commit后的)
+    版本回退
+        1.撤回工作区的内容，也就是还没add和commit
+            git checkout -- readme.txt 让这个文件回到最近一次git commit或git add时的状态
+        2.撤回暂存区的内容，也就是已经add了
+            git reset HEAD readme.txt
+        3.撤回分支上的版本，也就是已经commit
+            git reset --hard HEAD^ 退回到上一个提交的版本
+            git reset --hard 1094adb 回退到指定版本
+
+标签
+    tag就是一个让人容易记住的有意义的名字，它跟某个commit绑在一起
+    git tag tagname  用于新建一个标签，默认为HEAD，
+    git tag tagname f52c633  为指定的commit打标签
+    git tag -a tagname -m "blablabla"  指定标签信息
+    git show tagname  可以看到标签信息
+    git tag  查看所有标签
+    git push origin tagname  推送本地标签到远程
+    git push origin --tags  推送全部未推送过的本地标签到远程
+    git tag -d tagname  删除本地标签
+    git push origin :refs/tags/tagname  删除远程标签。
+    
+
+待研究
+git原理（rebase,merge区别等）
+
+
+Command line instructions
+
+Git global setup
+
+git config --global user.name "赵阳matt"
+git config --global user.email "zhaoy@jryghq.com"
+
+Create a new repository
+
+git clone git@code.aliyun.com:jryg/small-exten.git
+cd small-exten
+touch README.md
+git add README.md
+git commit -m "add README"
+git push -u origin master
+
+Existing folder or Git repository
+
+cd existing_folder
+git init
+git remote add origin git@code.aliyun.com:jryg/jryg-api.git
+git add .
+git commit
+git push -u origin master
+
+
+坑
+1.每次pull和push的时候都要输入密码
+    方法一：git config --global credential.helper store
+    方法二：https://stackoverflow.com/questions/21095054/ssh-key-still-asking-for-password-and-passphrase
+           将私钥添加到钥匙串：ssh-add -K ~/.ssh/id_rsa
+
+git svn 对比
+svn
+本地工作区--svn服务器
+git
+本地工作区--本地版本库--远程库
+都是拉取合并提交
+git只是多了个本地版本库，所以要先处理本地版本库和两边的关系，所以多出来两步
+
+
+git或svn操作失败原因
+svn git 服务器有可能做网段或ip限制，防火墙，不允许部分ip或网段进行访问
+svn代码库在现在公司自己的服务器，有限制
+git代码库在aliyun上没进行限制
+
+

@@ -1,0 +1,740 @@
+
+vue如何实现数据的reactive的
+就是在js数据劫持的api里面做了一些逻辑操作来实现我们想要的结果，get是数据被访问时的劫持，set是数据被赋值时的劫持。
+1.js中支持的数据劫持
+Object.defineProperty(data, key, {
+	enumerable: false,
+	configurable: true,
+	get: function () {
+
+	},
+	set: function () {
+
+	}
+})
+get, set里面都可以做一些事情
+get: 是一个变量被读取的时候触发的，里面return的值即为读取到的值
+set: 是一个变量被赋值的时候触发的，会接收到一个参数，这个参数就是当前被赋值时的值
+2.observer
+在拿到传进来的data之后，使用数据劫持，在get中维护一个观察者列表，是在complie时生成watcher后，在watcher中触发的；set
+时遍历观察者列表，调用观察者列表中每一个成员也就是watcher，而调用watcher中的update函数中的在compile时传过来的回调来
+实现更新view中的值的。
+3.compile
+进行模版编译，将指令事件和文本分别进行处理，将data中的值赋到view中去后，添加一个watcher，每个watcher上传入一个事件监听
+的回调以供未来在data中的值发生变化时调用这个回调，这个回调再调用compile中的更行view的操作。
+4.watcher
+在compile时，遇到的指令或者文本中的值，会自动生成一个watcher，这个watcher会读取data中的值，这时会触发观察者中的get将这
+个watcher放到观察者列表中。并提供data中的值更新时的一个update函数来调用compile时传过来的回调并将vulue值传过去实现data
+变化view也跟着变化的reactive功能。
+
+
+
+
+vue,react的数据绑定的核心都是通过render方法
+	一个组件里面有任何数据变化的时候，它都会重新调用render方法，让后产生新的html，以这种方式来更新我们html的内容
+vue
+	1.render方法
+		理解vue的重点不是它的api和指令，而是它整个应用渲染的过程，其实从理解整个vue开发的方式来讲，我们学习jsx会更好的帮助
+		我们去理解它。学习jsx的时候会知道它有一个render方法，每次我们调用这个render方法才能得到真正想要的结果，其实.vue文件
+		的template部分最终也是用vue-loader去解析成一个render方法然后放到我们这个对象里面去，而每次vue里面有数据更新的时候，
+		它都会去重新调用这个render方法生成一个新的html结构然后最终插到dom里面去，最终显示出来这样一个结果。所以你理解了整个
+		vue渲染的过程之后，自然而然会了解它的api是什么作用。它的指令里面做了哪些操作。
+		vue2之后它的核心实现也变成了虚拟dom，它也提供了render方法，render方法是什么概念呢，一个组件里面有任何数据
+		变化的时候，它都会重新调用render方法，让后产生新的html，以这种方式来更新我们html的内容。.vue文件的template
+		最终都会转化成javascript里面的一个render方法。
+		render方法里面通过vue的createElement()一层一层的去遍历我们写的html的标签上面的属性以及内部的值，以这样的
+		方式去创建一个一个的节点，最终得到我们整个组件所有节点的一个树，真正的理解vue的开发模式，我们要理解它的render
+		方法，深入理解vue需要掌握的知识。
+		render () { 
+			createElement()
+		}
+	2.生命周期方法：
+		因为它是一个组件，这个组件它什么时候开始被编译，它什么时候开始加载到真正的dom里面，它什么时候被销毁，都是有
+		对应的生命周期方法的。这个也是跟react学习的，react组件就有这些生命周期方法。生命周期方法能很好的帮我们处理
+		一些事情，比如我们的组件即将要挂载到dom上之前，我们发起一个api请求，去获取一部分我们想要显示的数据。所以生命
+		周期方法对于我们去写一个组件的理解是有非常大的好处的。 
+	3.vue钩子函数
+		它是一种事件劫持机制，也就是说它会比你的事件更早进行执行处理。
+		你可以简单地把它理解为vue的内置事件，但是这个内置事件是由你去配置的。
+
+		vue钩子函数在什么时候用
+		beforecreate : 举个栗子：可以在这加个loading事件 
+		created ：在这结束loading，还做一些初始化，实现函数自执行 
+		mounted： 在这发起后端请求，拿回数据，配合路由钩子做一些事情 
+		beforeDestory： 你确认删除XX吗？ 
+		destoryed ：当前组件已被删除，清空相关内容 
+
+		beforecreated：el 和 data 并未初始化 
+		created:完成了 data 数据的初始化，el没有
+		beforeMount：完成了 el 和 data 初始化 
+		mounted ：完成挂载
+
+		1、beforeCreate 此时$el、data 的值都为undefined
+		2、创建之后，此时可以拿到data的值，但是$el依旧为undefined
+		3、mount之前，$el的值为“虚拟”的元素节点
+		4、mount之后，mounted之前，“虚拟”的dom节点被真实的dom节点替换，并将其插入到dom树中，于是在触发mounted时，可以获取到$el为真实的dom元素()
+		myVue.$el===document.getElementById("app-8")  // true
+	4.vue组件
+		我们new vue({})的时候它就是一个组件
+		定义组件然后使用组件
+		分好组件后，组件的内部该怎么写就怎么写，但是要理清数据的关系
+
+		组件的定义
+			Vue.component('comp-name', {})
+			new Vue({
+				components: {
+					comp1: {},
+					comp2: {}
+				}
+			})
+		prop
+			Prop 是你可以在组件上注册的一些自定义特性
+		parent
+			new Vue的时候才可以指定他的parent是什么
+			组件的parent就是使用这个组件的父组件或vue实例
+		组件的继承extend
+			用vue.extend()来扩展我们的vue, 可以简单理解为extend之后得到的是vue这个类的一个子类
+		组件高级
+			一些通用的组建使用api调用的方式做，而不是定义，引用，使用组件的这种方式去做。类似于vue插件的使用方法。
+		vue.use源码解析
+			https://www.cnblogs.com/dupd/p/6716386.html
+		组件间通信
+			1.props, this.$emit()用于父子组件
+			2.this.$parent, this.$children, this.$refs 用于父子组件
+			3.通过一个空的Vue实例作为中央事件总线（事件中心），用它来触发事件和监听事件,巧妙而轻量地实现了任何组件间
+			  的通信，包括父子、兄弟、跨级。
+				var Event = new Vue();
+				Event.$emit(事件名, 数据);
+				Event.$on(事件名, data => {});
+			4.vuex
+vue全家桶
+	vue-router
+		vue-router它就是一个路由的功能。
+		我们现在做webapp，路由是一个必不可缺的功能。
+		相对于以前的老的网站开发来讲，一个链接输入之后，然后跳转到后端进行一个模版渲染产生一个新的html然后返回给浏览器端。然后浏览器把这个
+		内容显示出来，这是一次路由跳转。
+		做为单页应用来说，我们的页面跳转肯定是不经过我们的后端服务器了。我们页面渲染的内容全部是来自于我们的javascript，既然我们的路由跳转
+		是在前端去做，我们肯定要有一个称职合理的工具来帮我们去更好的处理我们的前端路由。
+		1.部署路由
+			cd client
+			mkdir config
+			cd config
+			touch router.js
+			touch routes.js
+			在我们项目变得更庞大之后，我们的路哟配置可能会非常的多。那我们就单独去配置一个路由映射关系的一个文件，就是我们的routes.js。
+			router.js这个文件主要是router的一些设置还有它里面的一些内容。
+				1.routes.js
+					import Todo from '../views/todo/todo.vue'
+					import Login from '../views/login/login.vue'
+					export default [
+						{
+							path: '/', // /是默认路由的意思
+							redirect: '/app' // 进到这个页面之后，如果vue-router发现我们的路由是默认路由那么它会自动redirect到/app，因为这是我们的主页
+						}
+						{
+							path: '/app',
+							component: Todo
+						},
+						{
+							path: '/login',
+							component: Login
+						}
+					]
+				2.router.js
+					import Router from 'vue-router'
+					import routes from './routes'
+					export default () = {
+						return new Router({
+							routes,
+							mode: 'history' // 使用history的路由形式
+						})
+					}
+				3.index.js
+					import VueRouter from 'vue-router'
+					// vue插件的使用方式，然后我们vue-router会在里面去做一系列的事情让我们可以通过挂载到我们根结点上面的router对象，
+					// 让我们在每一个我们写的组件里面都可以去拿到这个对象。
+					Vue.use(VueRouter)
+					// 把router加到整个应用里面去
+					import createRouter from './config/router'
+					const router = createRouter()
+					// 然后在最外层的应用，也就是我们new Vue({})的过程当中，把它注入到我们的这个应用里面，这是vue-router的一个使用方法，
+					它会通过我们在根结点的vue实例上面去挂载了这个router对象之后，然后通过provider或者其他的一些类似的方式让我们在每一个
+					我们写的组件里面都可以拿到这个router对象
+					new Vue({
+						router,
+						render: (h) => h(App)
+					}).$mount('#root')
+				4.页面中使用<router-view />这个vue-router内置的组件来承载我们的路由组件。
+				使用<router-link></router-link>进行路由跳转
+			这样我们的路由配置基本就部署好了。
+		2.在new一个Router的时候我们有哪些配置参数可以去使用，它们分别有什么用。
+			1.vue-router的一些设置
+			new Router({
+				routes,
+				mode: 'history' // 使用history的路由形式
+				base: '/base/' // 它在我们routes里配置的所有path前面都会给它加上一个/base/，这段路径作为整个应用的基路径，我们所有
+								// 的路径都要在这个基础之上，然后在应用里面使用router对象去跳转还是使用router-link去跳转，只要你通过
+								// 的是vue-router的api进行的跳转，那么它都会自动加上这个/base/
+				linkActiveClass: 'active-link', // 配置<router-link></router-link>的class名称。给全局写一些样式的时候会用到的东西。当前页面路由和router-link要跳转的路由一致的话，router-link实际的a标签上就会显示这两个类名。
+												// 我们在页面上可点击的使用vue-router的路由，我们一般都会使用router-link去做。因为我们使用router-link它里面是a标签，a标签的href会有利于我们整个网站去做seo的。
+				linkExactActiveClass: 'exact-active-link',
+				scrollBehavior (to, from, savedPosition) { // 在页面路径进行跳转的时候，这个页面要不要滚动的问题。
+					// to: 路由跳转的过程中要去的那个路由。
+					// from: 从哪个路由跳转到下一个路由。
+					// savedPosition: 如果之前有进入到这个路由过，它会自动记录这个路由下它滚动条所滚动到的一个位置。
+					// 它们拿到的不是一个字符串，它们拿到的是一个完整的route对象，就是我们的路由对象，它会包含一些路由的信息，它的param,query这些东西它都会包含在里面。然后我们自己可以根据to,from,savedPosition这些参数去自定义一些我们页面滚动的行为。
+					// 一般来说我们都会像下面这样做。
+					if (savedPosition) {
+						return savedPosition
+					} else {
+						return {x: 0, y: 0}
+					}
+				},
+				fallback: true, // 对于不支持history前端路由跳转方式的浏览器，vue自动给我们fallback到hash的这种模式。如果设为false，我们的单页应用就变成了多页应用，每次路由跳转都会到我们的后端，然后再去返回新的内容，那么这个比较耗时。所以一般来说我们都会设置成true，让它自动处理就可以了，但遇到特殊情况，那么你也可以设置这个值。
+				parseQuery (query) { // 自定义转换query
+
+				},
+				stringifyQuery (obj) { // 自定义转换query
+
+				}
+			})
+			2.historyApiFallback
+				1.devServer配置
+					const devServer = {
+						historyApiFallback: { // 防止我们没有使用vue-router的api进行跳转，比如在地址栏直接输入我们的路由，这时就会请求到我们本地服务器，由于这个路由是前端路由，服务器是不认识这个路径的，所以会返回找不到页面。加了这个配置就可以在这种情况下，让服务器去找我们htmlPlugin生成的index.html，这样就可以进到我们前端的页面来了。只要进到我们前端的页面，那么路由就由我们前端来掌控了，就不会有问题了。
+							index: '/public/index.html' // 这个index它的写法跟我们在webpack.config.base.js中output里的publicPath是有关系，这个publicPath就是作为historyApiFallback里index的基路径。如果你不这么写它是找不到的。
+						}
+					}
+				2.webpack.config.base.js配置
+					const config = {
+						output: {
+							publicPath: '/public/'
+						}
+					}
+			这就是我们在创建一个router实例的时候可能会用到的一些参数以及它们的作用。	
+		3.路由映射配置routes
+			1.路由的命名，我们可以通过这个name来进行路由的跳转
+				1.routes.js中
+					export default [
+						{
+							path: '/app',
+							component: Todo,
+							name: 'app'
+						}
+					]
+				2.<router-link>上面改
+					<router-link :to="{name: 'app'}"></router-link>
+			2.meta，用来保存一下路由里面的一些信息的
+			我们在写html的时候，会在head标签里面写一些meta，我们叫它是一些页面的元信息，这些信息会有利于我们去处理一些seo的东西。比如说我们
+			用description，那么搜索引擎它们会根据description里面的内容来去排列它们的一个搜索结果。那么这些信息，因为我们在写vue组件的时候
+			很难在组件里面去写这些东西，那么我们就可以在路由配置里面，我们去给每一个配置，我们加一个meta，我们可以在meta里面写任何你想要用到
+			的一些东西，比如说我们给它加一个title,description，这些信息都可以在你拿到这个路由的route对象的时候，可以通过.meta去拿到这些
+			信息然后你可以自己去进行一些操作，比如说你往head标签里面去插一下这个title，增加一个description的标签。
+				export default [
+					{
+						path: '/app',
+						component: Todo,
+						name: 'app',
+						meta: {
+							title: 'this is app',
+							description: 'afalhfal'
+						}	
+					}
+				]
+			首先要知道，在这个路由配置里面，不是你传的所有东西，你在拿到那个路由对象的时候，你都可以拿到里面你写的这些内容。它是有规定的，所以
+			一般来说，一些跟路由其实内容没什么关系的一些配置，基本上都要写在meta里面，你才能在你想用的时候去拿到它。不然会被vue进行一个忽视。
+			3.children
+			它也是一个数组，它就跟我们最外层的路由列表一样。它就相当于是在/app下面的子路由。配置了routes，还要记得在Todo组件中加一个<router-view />
+			不然也显示不了我们配置的路由对应的组件。
+				export default [
+					{
+						path: '/app',
+						component: Todo,
+						name: 'app',
+						meta: {
+							title: 'this is app',
+							description: 'afalhfal'
+						},
+						children: [
+							{
+								path: 'test',
+								component: Login
+							}
+						]
+					}
+				]
+			那么关于在路由routes里面你可以配置的一些东西主要的就是这些内容了。
+			4.路由的transition，vue的过渡的一个动画。
+				1.就是在router-view的外面包一层transition
+					<transition name="fade">
+						<router-view />
+					</transition>
+				2.在transition上面加一个过渡的动画
+		4.跟路由有关的参数的传递
+			我们的路由上面是可以定义一些参数的
+			我们使用了vue-router之后，我们都会在我们的组件内部可以拿到一个叫做this.$route这么一个对象。这个对象会包含我们当前这个路由
+			匹配到之后，它里面包含的所有的信息。
+			1.params
+				params使用方法1:
+					1.在routes上定义
+						{
+							path: '/app/:id' // /app/xxx
+						}
+					2.在组件跳转时传进来
+					<router-link to="/app/123"></router-link>
+					3.在route对象中就可以拿到这个参数，会以键值对的形式存在this.$route.params这个对象中
+				params使用方法2:
+					更好的方法去传递这个params
+					1.在声明路由的地方routes中写一个参数props: true
+						{
+							path: '/app/:id',
+							props: true,
+							component: Todo
+						}
+						props定义为true之后呢，它会把这个:id作为prop传到我们Todo这个组件里面来，而不需要我们通过this.$route这个对象
+						去获取。通过这种方式我们就实现了路由和组件的解偶。
+			2.query
+				不需要定义，只要传了，就可以在route对象中拿到。也是以键值对的形式存在this.$route.query对象中的
+			vue-router它不仅仅只是给你实现了一个页面跳转的功能，它还帮你处理好了非常多的跟业务逻辑有关的东西，用起来会非常的方便
+		5.一个router下就是一个路由下有不同的router-view的情况
+			1.组件中使用两个router-view，并分别命名
+				<router-view />
+				<router-view name="a" />
+			2.在routes中的components下对应的名字加对应的组件，无命名的对应的就是default
+				{
+					path: '/app',
+					components: {
+						default: Todo,
+						a: Login
+					}
+				}
+		6.导航守卫（路由钩子）
+			1.全局导航守卫
+				index.js中引入的全局router下面
+				在每一次路由跳转的时候，这3个钩子都会被触发
+					1.router.beforeEach((to, from, next) => {
+						console.log('before each invoked')
+						next() // 执行了这个next之后路由才会真正的跳转
+
+						// 可以在这里面进行数据的校验，例如一些页面是需要用户登陆才显示的，这个验证就可以放到beforeEach里面去做
+						// if (to.fullPath === '/app') {
+						//   next('/login')
+						// } else {
+						//   next()
+						// }
+					})
+					2.router.beforeResolve((to, from, next) => {
+						console.log('before resolve invoked')
+						next()
+					})
+					3.每次导航跳转之后会触发，所以就不需要next了
+					router.afterEach((to, from) => {
+						console.log('after each invoked')
+					})
+				每一次路由跳转它们仨都会被触发
+			2.在路由配置里面添加钩子
+				1.
+				{
+					path: '/app',
+					component: Todo,
+					beforeEnter (to, from, next) { // 这个钩子只有在我们进入这个路由之前，它才会被调用。
+						console.log('app route before enter')
+						next()
+					}
+				}
+			3.从组件内部增加钩子
+				<script>
+					export default {
+						1.注意一点，在这里我们是拿不到我们这个组件的this的，没有拿到它的上下文，因为我们没有通过next之前，这个组件根本
+						就没有被创建，所以我们拿不到这个this，你不能去调用this上面的任何的东西，你也不可以给this上面去赋值。
+						2.一般我们在这里做数据的获取，然后塞到我们的vue对象当中当中，这样的话我们页面进入的时候，数据已经是获取好的了。那不能用this，我们可以在next里面做。
+						beforeRouteEnter (to, from, next) {
+							console.log('todo before enter')
+							next(vm => {
+								console.log(vm.id)
+							})
+						},
+						1.不用的路由下使用同一个组件时触发，例如params变化时，可以在这个时候重新获取数据，避免了使用watch来观察params中的id变化。
+						因为使用的是同一个组件所以mounted只会触发一次，所以数据的获取不能在mounted里做，只能使用beforeRouteUpdate这个路由钩子或者使用watch来获取数据
+						beforeRouteUpdate (to, from, next) {
+							console.log('todo update enter')
+							next()
+						},
+						1.路由离开的时候，这时可以做提醒用户是否要离开的操作，用来控制页面离开的行为的一个方式
+						beforeRouteLeave (to, from, next) {
+							console.log('todo leave enter')
+							if (global.confirm('are you sure?')) {
+								next()
+							}	
+						}
+					}
+				</script>
+			4.触发顺序router.beforeEach(全局路由钩子)，beforeEnter(路由配置钩子)，beforeRouteEnter(组件内路由钩子)，router.beforeResolve，router.afterEach
+		7.异步组件
+			我们的路由如果非常多的情况下，我们如果一次性通过webpack把所有的代码打包进去，会导致我们这个js文件变得非常的大。初始加载的时候，时间
+			就会非常的长，而且我们在访问对应的这个页面的时候，我们把其他页面的js代码全部加载过来，这明显是一种很浪费的行为。这种时候如果我们可以
+			对于不同的路由，我们只加载对应的这一部分的代码和我们整个核心的代码。核心的代码肯定是要加载的。然后对应的页面的代码我们到下一次我们真正
+			访问到那个页面的时候才去加载会不会更好一点。这种时候我们就可以使用异步组件的方式去做。
+			通过vue-router和webpack可以很方便的去使用异步页面的一个行为。
+				1.routes.js中
+					不直接引入我们的组件了
+					{
+						path: '/app',
+						component: () => import('../views/todo/todo.vue')
+					}	
+				2.babel-plugin-syntax-dynamic-import
+				我们使用上面的这种import语法。需要按转一个babel的插件
+				3.修改.babelrc
+				在plugins里面加上这个插件
+				"plugins": [
+					"syntax-dynamic-import"
+				]
+				4.做了异步组件后，我们在正式环境中打包的时候就会给我们分离出我们的异步组件，打包成一个单独的js文件，名字为0.hash.js,1.hash.js
+				 	以此类推，这样我们使用下面的方法就可以给我们每个异步组件使用我们给的命名。
+					1.routes.js
+						{
+							path: '/app',
+							component: () => import(/* webpackChunkName: "todo-view" */'../views/todo/todo.vue')
+						}
+					2.在正式环境的webpack配置中加一个插件
+						new webpack.NamedChunksPlugin()
+	vuex
+		vuex是vue体系当中的一个store，store这个概念呢最先是由react提出来的，他们提出了一个叫flux的数据流结构。flux就是所谓的单向
+		数据流。我们在做前端webapp的时候，我们把所有应用的数据结构都可以放在这个store里面，由store去单独的维护这个数据结构。然后下面
+		的应用就是我们的view层。也就是vue或者是react它们写的这些代码都是通过store里面的数据的更改然后进行view层的一个变化。然后在数
+		据变化之后展示出一个新的内容。通过这种方式去维护数据呢，有一个非常大的好处，那就是整个应用的数据全部放在了一起。然后每个人的修改
+		数据都要通过一个特定的操作，比如说去触发一个action，在vue里面我们还可以直接触发一个mutation。但是我们的操作只有这两种。一个
+		是action，一个是mutation。在这种情况下，那么数据的修改就被限制的非常死。我们不能很随意的去修改整个应用的数据，让我们的应用的
+		规范性就会变得非常的高。
+
+		1.在项目里面加入vuex
+			1.新建store.js
+			这是我们整个应用的store的主要入口。
+				import Vuex from 'vuex'
+
+				const store = new Vuex.Store({ // 生成我们的store
+					state: { // 传入一个初始化的state，那么这就是我们应用在初始化的时候的一个数据
+						count: 0
+					},
+					mutations: { // 如果我们要去修改上面的数据，就要通过这个mutations
+						// 1.mutations里面呢我们给它加一个方法叫做updateCount，mutation它都会接收第一个参数为state，因为我们在mutation里面主要做的事情就是去修改这个state。
+						// 2.第二个参数是你后续在调用这个mutation的时候传进来的。我们拿到了这两个参数之后，我们就可以去修改我们的store，来更新我们store的数据。
+						updateCount (state, num) {
+							state.count = num
+						}
+					}
+				})
+				export default store
+			这样我们一个最简单的store就已经创建好了
+			2.创建好我们的store，我们要在我们的应用入口也就是index.js里面去把它加入进去。
+				import store from './store/store'
+				new Vue({
+					router,
+					store,
+					render: (h) => h(App)
+				}).$mount('#root')
+			3.如何使用我们的store
+				做完上面两步之后，我们在应用里面就可以直接调用我们的store对象。
+				1.我们可以直接通过this.$store去调用我们全局的这个store对象，vuex会帮我们处理这个数据，在我们每一个组件内部都会给它加上这个
+				this.$store这么一个对象，它就是指向我们在应用入口里面去传入的那个store对象。
+					app.vue
+						mounted () {
+							console.log(this.$store)
+						}
+				2.然后我们可以去调用我们的store的state
+					app.vue
+						computed: {
+							count () {
+								return this.$store.state.count
+							}
+						}
+				3.在组件中修改store里面的值
+					我们调用一个mutation，就是通过store的commit方法。
+					这里面传入的首先第一个参数就是这个mutation的名称。
+					第二个参数就是我们要传入的那个num
+					mounted () {
+						let i = 1
+						setInterval(() => {
+							this.$store.commit('updateCount', i++)
+						}, 1000)
+					}
+					那么这就是我们在组件内部去调用store的commit方法去修改我们mutation的一个操作。
+			这就是我们在vue里面去使用vuex来作为我们store的一个基础的方法。
+				1.我们首先要声明一个store
+				2.然后要在我们应用的入口，就是我们最外层new的这个Vue instance里面，把它放到这个里面。
+				因为vue它是一个树形结构的跟我们dom一样的一个结构，所以你只有放在最外层，那么它下面所有的子节点都可以拿到这个store对象。
+			这就是vuex的最基础的用法。
+		2.vuex里面的两个特性，一个叫state，一个叫getters
+			我们在上一节中，在创建我们的store的过程当中，直接在new的过程中传入了我们的state和mutation，这个方法不是特别的好。
+			接下来我们按照一个比较常规的方法去做。
+			1.在store中创建一个state文件夹，在state文件夹中创建一个state.js
+				在这里面呢，根据我们某一些情况的state的不同的形式，我们可以根据不同的模块去分不同的state，我们目前先按照只有一个模块的形式来做。
+			2.在state.js中
+				因为我们的state，其实它就是一个初始的js的对象，我们的数据是在这个基础上进行修改的。我们在声明state的过程当中，即便是一开始
+				用不到的一些字段或者用不到的一些对象都要去事先给它声明一个值。所以我们这边的使用，这个state你就把它当作你去在写一个vue组件的
+				时候，你写的这个data方法里面返回的那个对象一样这么去写。需要去用到的字段，你全部要一次性声明好。
+				export default {
+					count: 0
+				}
+			3.在store.js里面我们就去import我们的state.js
+			import defaultState from './state/state'
+			我们这样去维护的好处就是我们每一样东西都去单独写一个文件，后续你可以拆更多的文件，以一个更好的形式去组织你的代码，而不是你把
+			所有的东西写在一起，因为我们现在可能应用的数据和操作都非常的少。所以你写在一起感觉也不是特别的奇怪。但是当你的action和mutation
+			变得非常多的时候。你的内容的增加会让你的维护成本变得非常的高。所以一开始就建立一个好的目录结构是非常重要的一件事情。
+			4.同样的我们的mutation也给它拿到一个新的文件里面去。
+				mutation它也是一个对象：
+				export default {
+					updateCount (state, num) {
+						state.count = num
+					}
+				}
+			5.在store.js里面我们就去import我们的mutations.js
+			import mutations from './mutations/mutations'
+			6.getters
+			我们在vuex的应用当中有一个属性叫做getters
+				1.在store中创建一个getters文件夹，在state文件夹中创建一个getters.js
+				2.在getters.js中
+					它也是一个对象
+					export default {
+						fullName (state) {
+							return `${state.firstName} ${state.lastName}`
+						}
+					}
+					getters是一个什么样的概念呢。你完全可以把它理解为我们的computed，我们在组件内的computed。我们getters是为了方便
+					我们去生成一些我们直接在应用里面可以用的数据。因为我们在跟后端开发进行一个联调的时候。我们会发现他们提供我们的一些数据
+					有时候并不适合我们直接在view层去显示的时候用的这些数据，我们还要进行一些组装，那么这个组装的过程我们当然可以简单的拿到
+					我们的页面里面去写一个computed，它也可以帮我们去组装数据，但是如果这个组装的过程不仅仅是在这一个页面上要用，在其他的
+					页面上也要用，那么你不可能每个地方都写这个computed，这样的话你的代码就重复了，你是一个重复劳动，而且你将来要去维护的话
+					会变得比较的麻烦，那这个时候呢，我们如果把数据放在我们的store里面，那我们可以通过getters给我们统一的去产出这一些我们
+					直接在页面里面可以直接去用的数据
+				3.在store.js中引入
+				import getters from './getters/getters'
+				4.在app.vue中使用
+				computed: {
+					fullName () {
+						return this.$store.getters.fullName
+					}
+				}
+			7.我们在组件内去使用store的时候，我们发现这么去写会非常的麻烦。有没有更简单的办法帮我们去处理这些内容呢。vuex为我们提供了非常
+			多的帮助方法能够让我们快速的在我们组件内去使用我们的vuex。
+			在app.vue中
+				1.import {mapState, mapGetters} from 'vuex'
+				这两个都是一个帮助方法，它非常的好用。
+				2.原来的app.vue中的写法是
+					count () {
+						return this.$store.state.count
+					},
+				  使用mapState的写法是
+				  	...mapState(['count'])
+				3.使用上面...的写法的时候，在babel里面它默认是不支持这个语法的，也就是我们在.babelrc里面使用env的时候它是不支持我们...
+				这个解构的语法的，因为它目前还是一个未定稿的语法，那么我们要使用这个语法，我们要安装babel-preset-stage-1，那么我们安装
+				stage-1就代表我们基本上到es8甚至是一些没有定稿的语法我们都可以去使用了。
+				.babelrc中preset增加一项。
+				"preset": [
+					"env",
+					"stage-1"
+				]
+				4.这就是我们使用mapState方法，它能够让我们非常方便的去在我们的组件内部使用我们的一些数据，那么我们就不需要去自己声明每一个
+				数据，而且还要去通过return这个store里面的state的内容去声明啦。
+				如果都是同名的那我们就可以直接通过一个数组去传，如果有不同名的情况，比如说我们不叫它count，我们叫它counter，那这样我们要
+				通过一个object的方式来进行一个声明。
+				...mapState({
+					counter: 'count' 
+				})
+				5.那么我们还可以有更好的方法去做，就是我们可以传一个方法，我们这个方法接收的参数就是我们的state对象，那么这个写法就跟我们
+				最开始使用$store的写法差不多了。当然如果是在这个computed的里面你要做一些计算的，用这种方式肯定是最好的，因为你如果只是用
+				字符串来做，那么你没有办法做任何的计算
+				...mapState({
+					counter: (state) => state.count
+				})
+				6.那么同样的我们的mapGetters也是一样的用法，因为getters跟我们的state其实性质差不多，它们都是一个属性，我们直接去调用的
+			那么这就是在我们组件内部去使用我们的state和getters的一个简单的方法，和我们vuex里面去使用state和getters的一些用法。
+		3.vuex的另外两个特性，就是我们的mutation和我们的action
+			1.mutation
+				1.我们在mutation里面去拿到一个state，然后拿到我们的在我们调用mutation的时候传过来的一些数据，然后我们去根据这些数据去更改我们
+				state的状态就可以了。要注意的一点就是我们mutation的只能传入两个参数，你要传多个数据的时候，它接收的第二个参数只能是一个object，
+				它没有第三个参数的一说。
+				2.mutation是我们专门用来去修改state里面的数据的。vue官方的推荐就是你所有的state的修改都要放在mutation的方法里面，但是实际上
+				你是可以在外面去直接修改这个数据的，但是vue不推荐我们这么去做，我们使用vuex主要的目的也是希望我们去规范整个数据的修改，所以如果
+				我们要进行一个限制，我们可以在我们new一个Store()的时候传入一个参数叫做strict: true，这样的话你就无法从外部去修改这个数据了。
+				但是这个你不要在正式环境里面去使用，也就是我们只有在开发的环境我们去规范每个开发人员的写的代码的时候我们可以去使用这个参数来规范我
+				们的代码。
+				3.这就是我们要去修改一个数据我们尽量都把它放到我们的mutation里面去做，因为这是一个代码规范的问题，而且如果你在外面随便修改这个store
+				里面的state，那么你用这个state的意义就没有了，你还不如你不用这个store，然后你直接去维护你自己的一个数据就可以了。
+				4.这就是mutation它的一个意义以及它的传参的一个规范性问题
+			2.action
+				1.新建store/actions/actions.js
+				2.action跟mutation看上去其实差不多
+				action的方法接收的第一个参数是我们整个vuex的store的对象，第二个参数跟我们的mutation的第二个参数一样，是你去触发这个action
+				的时候传入的。
+				3.那么既然它跟mutation差不多都是用来去修改数据的，那为什么我们要有action存在呢，因为我们的mutation是必须要同步操作的，也就是
+				说你不能有异步代码写在我们的mutation里面，如果你要去写一个异步的代码，你必须把它放到action里面去写。
+				action基本上按照vuex现在的分类来讲，它就是用来处理一些异步的修改数据的方法，我们同步的修改数据可以直接放在mutation里面去做，
+				因为mutation它有这个功能，你可以直接去通过commit去调用。然后我们要异步的去修改数据的时候，我们就要在action里面去这么写了。
+				actions.js
+					export default {
+						updateCountAsync (store, data) {
+							setTimeout(() => {
+								store.commit('updateCount', data.num)
+							}, data.time)
+						}
+					}
+				4.在store.js中引入actions
+				import actions from './actions/actions'
+				5.在组件app.vue中使用
+				mounted () {
+					this.$store.dispatch('updateCountAsync', {
+						num: 5,
+						time: 2000
+					})
+				}
+				dispatch是专门用来触发action的，它对应的就是相当于我们触发mutation的时候要用的commit
+				6.这就是我们的action的用处，你可以简单的理解为有异步代码的就比如说数据请求这种类型的修改我们store里面数据的，那么我们要
+				写在action里面，如果是同步的简单的直接当前操作逻辑就可以把数据修改掉的你把它写到mutation里面就ok了。
+				7.mapActions和mapMutations
+				mapActions和mapMutations它们对应的是操作，那么操作我们肯定是要写在我们的methods里面。
+				那么使用方法就跟我们之前的是一样的。
+				methods: {
+					...mapActions(['updateCountAsync']),
+					...mapMutations(['updateCount'])
+				}
+				然后：
+				原来的actions写法是：
+					mounted () {
+						this.$store.dispatch('updateCountAsync', {
+							num: 5,
+							time: 2000
+						})
+					}
+				现在的mapActions写法是：
+					mounted () {
+						this.updateCountAsync({
+							num: 5,
+							time: 2000
+						})
+					}
+				原来的mutations写法是：
+					mounted () {
+						setInterval(() => {
+							this.$store.commit('updateCount', {
+								num: i++,
+								num2: 2
+							})
+						}, 1000)
+					}
+				现在的mapMutations写法是：
+					mounted () {
+						setInterval(() => {
+							this.updateCount({
+								num: i++,
+								num2: 2
+							})
+						}, 1000)
+					}
+		4.vuex的模块功能
+		vuex是可以分模块的，因为在我们的应用变得越来越大的过程当中我们如果只是有一个模块来维护我们的状态，那么可能你这个模块里面，它的
+		内容就会变得非常的多非常的复杂，对于可维护性就不是那么高。那么这个时候，vuex就为我们提供了一个分模块的功能。
+		
+		5.给vuex加上热更替的功能
+		vuex官方是给我们提供了一套方法去做这个事情的。
+			1.要在创建new Store()的时候加一部分的代码，我们加的代码呢它是一个webpack热更替的功能的一个普遍适用的代码，只不过它要有
+			一些api的支持，那么vuex会有官方的api来支持我们这个操作。
+				if (module.hot) {
+					module.hot.accept([
+						// 这个数组里面的列表对应的就是我们去引用的那几个文件它的地址
+						'./state/state',
+						'./mutations/mutations',
+						'./getters/getters',
+						'./actions/actions'
+					], () => {
+						const newState = require('./state/state').default
+						const newMutations = require('./mutations/mutations').default
+						const newGetters = require('./getters/getters').default
+						const newActions = require('./actions/actions').default
+						store.hotUpdate({
+							state: newState,
+							mutations: newMutations,
+							getters: newGetters,
+							actions: newActions
+						})
+					})
+				}
+		6.vuex的其他一些api和配置
+	vue整个应用
+		1.我们会在顶部声明一个叫做root的，所谓的root呢就是我们new一个Vue对象，然后通过它把我们整个应用都挂载到我们的root节点上面，然后这个应用它
+		渲染的是App这个节点，然后在App里面呢我们去承担了一个路由的操作，也就是它相对来说就是有两个子节点，一个是router1一个是router2，那么这个
+		router就是我们在routes里面去声明的对应不同的路由它会去使用哪一个节点去渲染，比如说我们的router1渲染的就是我们的Todo组件，然后Todo组件它
+		里面会有很多的子组件，相对应的我们的router2它渲染的就是我们的Login组件。那么整个vue应用它就是一个节点的一个树形，我们从我们的root节点然后
+		去一层一层的往下去渲染，把所有的节点渲染出来之后就形成了我们最终看到的那个html的节点。然后呢我们有一个独立于我们的vue的节点树的一个store，
+		它类似于数据库，然后这个store呢通过我们在声明我们的Vue对象的时候，把它放到我们这个对象里面，去注入到我们整个组件树里面，注入进去之后呢，我们
+		的App我们的Login我们的Todo我们的其他所有节点都可以通过$store这个对象去调用我们这个store的内容，然后在我们的节点内就可以通过dispatch或者
+		commit去分别调用它们的mutation或者是action，以这种方式让我们可以在我们的节点组件里面去修改我们的store数据，但是要注意，我们真正的修改是在
+		store里面去做的，也就是说它自己对自己做了一个真正的修改。这就是我们在vue开发当中加入了router和我们的store之后整的一个结构。我们当然也可以在
+		下面的子节点里面再去增加路由，我们就是通过这种树形的向下的扩展来扩展我们整的一个组件树，然后store是完全独立于我们整个组件树的，它通过注入的方
+		式让我们可以调用它，然后我们可以通过一个通知的方式是dispatch还是commit然后去修改我们的store的数据，所以这就是这样的一个过程。这就是router
+		和vuex加入到我们整个vue的应用开发里面之后带来的一个影响。
+	vue高级组件开发
+		通用性组件的开发
+		1.notification全局通用性通知组件
+			在我们vue开发里面，vue基本是一个组件化的形式来进行开发，它本身的组件是要通过我们在模版里面去声明然后再去用的，这种方法其实比较的不适合于我们
+			去使用像一些notification这种组件的，那么我们有什么办法去让它变成我们api调用的方式呢。
+			1.notification.vue
+				这是一个基本组件，就是我们这个组件长的样式以及它的一些基础的内容。
+			2.index.js
+				1.通过它将notification制作成一个vue的插件，并将notification这个组件注册到全局，让每个页面都能都使用这个组件。
+				2.将api调用的方法加到Vue.prototype中去。
+			3.func-notification.js
+				扩展notification.vue这个组件
+					1.通过vue的extends的功能扩展notification这个组件
+			4.function.js
+				实现我们的notification通过fucniton去调用的这种方式。主要的方法调用涉及到的逻辑都在这里写。
+					1.我们要通过js的方法调用去创建一个vue的组件，这个组件我们怎么去创建最方便呢，我们肯定是通过去new一下，我们可以直接通过new Vue()然后去
+					创建一个组件，那么同样我们可以通过Vue的extend它返回的这个方法然后我们去创建一个组件。
+			5.这就是我们的notification的全局通用性组件，这里面会涉及到一些最主要的内容就是我们如何去通过js方法调用的形式动态的创建一个组件，
+			并且动态的把它渲染到我们的dom里面，然后再经过一系列的操作之后呢，我们又动态的去把它删除掉，那么这些内容其实相对来说是跟vue的组件
+			化不太配套的一个内容，但是呢它会在我们日常的代码开发里面非常的有用。
+		2.tabs组件
+
+js组件化设计原则
+	1.复用
+	2.高内聚低耦合：一个组件内不要依赖任何其他组件，组件的功能尽量不要收页面其他组件的控制
+	3.周期性迭代，长期打造一个越来越好的代码设计，让组件越来越完美
+	  所以前期组件的设计不是那么准确也没有关系，因为这个东西本身也没有标准，只有你随着自己的工作不断的去探索，你才能知道，什么样的组件设计
+	  最适合自己的业务场景，
+	4.不断抽象出一个跟业务没有关系的模块，而这些业务模块对它是可以继承的，那么这种抽象的设计就是组件化设计思维非常大的一个转换。
+	5.怎么做到让它们去灵活的可继承的呢，这个就是要考虑的问题
+		首先我们要解决一个类名的问题，这种抽象的组件我们要先给它有一个默认的类名，然后允许它传递进来一个类名，这样的话就可以实现可继承了。
+	6.所有的npm开源项目都可以去npmjs.com上去查它的使用方法，比如vue的插件
+	7.抽象组件不涉及业务，是抽象的最高层，但是你必须要支持各种配置怎么传进去，这个抽象组件在最上层，业务组件去用的时候，我怎么继承你的
+	  默认这个框架，还要把我自己想要的东西定制进去，说白了就是一个传参的过程
+	8.组件抽象是要抽象到一个通用性较强的架子，并且还要有相对可以的功能，不能只是一个什么都没有的架子。
+	9.一个组件的复杂度不能太高，也不能太低(除非这个复杂度特别低的组件的复用性特别高)
+	10.组件抽象时不要考虑里面的具体内容，而是抽象出大致的框架
+
+服务端渲染
+
+vue第三方组件
+	vue轮子工厂
+		http://www.wheelsfactory.cn
+	vue-awesome
+
+vue核心之虚拟DOM(vdom)
+	https://www.jianshu.com/p/af0b398602bc
+
+经验总结：
+	1.获取不到dom的，可以在mounted或nextTick里做，或者可以在setTimeout延迟里做。或者两者结合着做。
+	2.在父组件mouted里，不一定能获取到子组件的dom，必须要在子组件本身的mounted里才能获取到子组件的dom。
+
+vue-cli 2.x(对应的是webpack3.x)
+	1.npm install -g vue-cli 安装
+	2.vue init webpack my-project 新建基于webpack模版的新项目
+	3.npm install 安装项目依赖
+	4.搞定，可以进行项目开发了
+
+vue线上打包
+	1.根据环境变量来区分开发环境的请求地址还是线上的请求地址
+	2.可以在打包后，通过修改配置文件来更换线上请求地址，修改完配置文件后刷新页面即可。
+		https://www.cnblogs.com/webhmy/p/9517680.html
+	3.vue-cli工程详解
+		https://www.cnblogs.com/zhaowy/p/9542369.html
+		https://www.jianshu.com/p/7006a663fb9f

@@ -1,0 +1,190 @@
+
+https://cnodejs.org/
+
+Mac下使用Brew安装node出错
+https://blog.csdn.net/s_521_h/article/details/77017152
+
+
+nodejs
+    nodejs是构建在v8引擎上的javascript的运行时
+    nodejs使用了事件驱动，非阻塞的i/o模型
+
+1.nodejs使用的commonjs模块化规范
+    一个文件就是一个模块，也只能是一个模块
+    (
+        function (exports, require, module, __filename, __dirname) {
+            // 我们的code
+        }
+    );
+2.global全局对象
+    里面有下面这些内容，不需要引用就可以直接拿过来使用的
+    1.commonjs
+    2.buffer,process,console
+    3.timer
+
+nodejs api
+    学习一个新的模块，我们最好的方式呢就是来查看官方文档
+    1.path
+    和路径有关的一切
+    2.buffer
+    3.event
+    4.fs
+    文件系统
+
+.gitignore
+    .gitignore规则
+        匹配模式前面的/：代表整个项目的根目录
+        匹配模式最后面加/：代表是一个目录，不是一个文件
+        匹配模式之前加!：代表取反
+        *代表任意个字符
+        ?代表匹配任意一个字符
+        **代表匹配多级目录，就是任意级的目录都可以用这个
+    常见的.gitignore中需要的忽略文件都有哪些呢
+        node_modules/目录
+        各种各样的log文件
+            logs
+            *.log
+            npm-debug.log*
+        各种各样的临时文件
+            .idea/ vscode产生的一些临时文件
+            .DS_Store mac系统会带的一个默认的文件
+        build/目录
+.npmignore
+.editorconfig
+    root true
+
+    [*]
+    charset = utf-8
+
+    indent_style = tab
+    indent_size = 2
+
+    end_of_line = lf
+    insert_final_newline = true # 文件的最后一行必须有一个回车
+    trim_trailing_whitespace = true # 删去尾部空白空格
+
+    [*.json]
+    indent_size = 4
+.eslintrc
+.eslintignore
+    build/
+    node_modules/
+    test/
+
+
+开发命令行工具cli
+    1.readme.md
+        ## 安装
+        npm i -g anydoor
+        ## 使用方法
+        anydoor # 把当前文件夹作为静态资源服务器根目录
+        anydoor -p 8080 # 手工的自定义端口号
+        anydoor -h localhost # 可以手工的设置主机
+        anydoor -d /usr # 设置根目录为/usr
+    2.安装yargs
+        npm i yargs
+    3.在src目录下新建一个index.js文件
+        const yargs = require('yargs');
+        const argv = yargs
+        .usage('anywhere [options]')
+        .option('p', {
+            alias: 'port',
+            describe: '端口号',
+            default: 9527
+        })
+        .option('h', {
+            alias: 'hostname',
+            describe: 'host',
+            default: '127.0.0.1'
+        })
+        .option('d', {
+            alias: 'root',
+            describe: 'root path',
+            default: process.cwd()
+        })
+        .version()
+        .alias('v', 'version')
+        .help()
+        .argv;
+
+        const server = new Server(argv);
+        server.start();
+    这样就可以使用node src/index.js -p 9999
+    4.现在将这个编程cli工具，在package.json中加一个配置发到npm中就行了
+        "bin": {
+            "anydoor": "bin/anydoor"
+        }
+    5.然后新建bin/anydoor这个目录，bin和src同级都在项目根目录下
+    6.然后anydoor中编写
+        ## 这样子它就会到这里面就是说用我们的env会到path里面找到node帮我们用node启动下面的语句
+        #! /usr/bin/env node
+        require('../src/index');
+    7.用linux的话这个文件是没有执行权限的，我们需要给它加上执行权限
+    chmod +x bin/anydoor
+    这时候用ll bin/anydoor查看会出现这样的
+    -rwxr-xr-x
+    这时候它有x就是有执行权限了，这时候它也就是anydoor这个文件就可以被执行到了
+    8.bin/anydoor -p 9999
+    这样就能执行起来了
+    9.这时我们就可以把它给发布到npm中了
+    10.提交代码到github上
+    11.到npm上把我们的包发到npm上，这样我们才可以安装到全局或者是让别人使用
+    登录npm的官方站点，注册账号
+    npm login
+    根据提示输入用户名密码email
+    npm publish
+    这样就发完了
+
+语义化版本号
+    1.x.y.z大概的含义
+    bug fixed时升级z位
+    有新增的功能并且保证跟以前是兼容的升级y位
+    大版本升级，不保证兼容，可能是全新的api了，这时升级x位
+    2.linux中，x是偶数位的时候代表稳定版，是奇数位的时候代表的是不稳定版。但也不是所有的程序都遵从这个
+    3.x.y.*
+    1.2.*指的是1.2.0到1.2.几都行，但是不会给你升y位
+    z位呢就说我们每次在安装的时候自动用最新的
+    x.y.z是确切的版本号，如果在package.json里安装的是1.2.3那么就算有1.2.8了也会给你安装1.2.3
+    如果在package.json里写的是1.2.*它的意思就是z位永远自动给你升，不会装准确的，但y位我不升
+    4.~1.2.0和1.2.*表达的含义是一样的
+    z位就是永远用最新的，但是x跟y位呢是用固定的，帮助我们随时升级一些bug
+    5.2.x
+    这个也与上述3，4的相似，就是说y位都给你自动升了，代表的是只有大版本不自动升，y位跟z位都是默认用最新的
+    6.^2.0.0
+    这种写法和上述的5的写法是一样的，也就是现在我们npm安装时在package.json中记录的是一样的。
+    就表示y位永远用最新的，但是大的版本，因为大的版本是不保证兼容的，我不能随便给升，是不是啊。
+    7.但是如果我什么都没写我只写了一个*号，就表示任意版本了，大版本都帮我升
+
+glob匹配模式
+    *匹配任意个字符
+    ?匹配一个字符
+    [...]匹配范围内字符
+    !(pattern1|pattern2)匹配取反
+    ?(pattern1|pattern2)匹配括号中的模式中的0个或一个
+    +(pattern1|pattern2)匹配一个或多个
+    *(a|b|c)匹配任意个，匹配不上都行
+    @(pattern|pat*|pat?erN)匹配特定的一个
+    **任意层级匹配
+
+webpack
+    entry
+    output
+    loader
+    plugins
+
+
+
+
+
+1.启动服务的时候，报错如下即为端口被占用
+    Error: listen EADDRINUSE :::3000
+    1.查看端口占用情况
+        lsof -i tcp:3000
+        lsof -n -P | grep :3000
+        就会找出相应端口的PID，上面两种方法都可以
+    2.杀死该端口进程
+        kill -9 PID
+
+
+
+

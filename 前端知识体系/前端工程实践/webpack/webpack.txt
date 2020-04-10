@@ -1,0 +1,373 @@
+webpack
+	模块打包机
+	将浏览器不能解析的东西打包成浏览器可以解析的静态资源
+	webpack会根据模块依赖依次去执行相关的操作
+前端项目工程化精要
+	1.npm init
+	  它就会给我们生成一个package.json，然后我们就可以安装我们需要的包
+	2.npm install
+	3.配置webpack.config.js
+		1.entry：入口js文件，这个入口文件中引入我们的项目代码，需要一个路径
+		2.output：出口，把我们的项目源文件输出
+			{
+				filename: 文件名
+				path: 输出路径
+			}
+		3.loader处理一些特定的文件
+		module: {
+			rules: [
+				{
+					test: /\.vue$/,
+					loader: 'vue-loader'
+				},
+				{
+					test: /\.css$/,
+					use: [
+						'style-loader',
+						'css-loader'
+					]
+				},
+				{
+					test: /\.styl/,
+					use: [
+						'style-loader',
+						'css-loader',
+						{
+							loader: 'postcss-loader',
+							options: {
+								sourceMap: true,
+							}
+						},
+						'stylus-loader'
+					]
+				},
+			]
+		}
+		4.plugins：添加一些功能
+		plugins: [
+			new HTMLPlugin(),
+			new webpack.HotModuleReplacementPlugin()
+		]
+	4.配置package.json里面的scripts脚本来跑我们特定的命令
+	"build": "webpack --config webpack.config.js"
+	5.npm run build
+	6.新建项目目录
+		/src
+
+一个完整的工程项目需要的所有包以及它的用途
+	webpack
+	vue
+	vue-loader
+		css-loader
+		vue-template-compiler
+	style-loader
+	url-loader // 可以将图片转换成base64代码直接写在js内容里面而不用生成一个新的文件。对于几kb的小图片作用还是很大的，因为减少了http请求
+		file-loader // url-loader封装了file-loader，file-loader其实就是把这个图片读取一下，然后进行一些简单的操作之后，然后再把这个
+						图片文件重新换一个名字换一个地方把它存在另外的地方
+	做好这些我们就可以在我们的index.js代码里面直接去import这些非js的内容。用什么文件就配置相应的loader。	
+	webpack-dev-server
+		1.在脚本里面加一个命令："dev": "webpack-dev-server --config webpack.config.js"
+		2.修改webpack的配置来专门适应webpack-dev-server的开发模式
+			1.添加target: 'web'
+			2.根据环境判断使用配置
+				1.安装cross-env
+				  作用：
+					1.不同平台上设置环境变量的方式是不一样的，cross-env将其统一
+					2.在package.json中配置了cross-env环境变量的启动的命令的配置文件中拿到process.env.NODE_ENV
+				2.写判断代码
+				const isDev = process.env.NODE_ENV === 'development'
+				if (isDev) {
+					config.devServer = {
+						port: '8000',
+						host: '0.0.0.0',
+						overlay: { // webpack编译时有什么错误，都让显示到网页上面
+							errors: true
+						}
+					}
+				}
+				3.启动热重载功能
+					这个热重载功能是在修改js文件的时候会自动刷新页面，修改.vue文件的时候不会刷新页面。并且这个功能只针对我们的业务代码也就是
+					client里面的代码修改后才会处罚热重载功能，我们的配置文件像webpack的配置文件修改是没有热重载功能的是需要重新本地服务的。
+					1.new webpack.HotModuleReplacementPlugin()，这个插件是帮我们启动webpack HotModuleReplacement这个功能的plugin
+					2.并且webpack devServer里配置上hot: true
+					3.一般这个插件也要加上，new webpack.NoEmitOnErrorsPlugin() 他能够帮我们减少一些我们不需要的信息展示的一些问题
+
+	html-webpack-plugin
+		让我们的项目自动有一个html来包涵我们的js，它是一个插件，webpack的插件在配置文件中是要引入后才能使用的
+		作用：
+			1.在开发环境中的作用：也就是启动了webpack-dev-server之后，它会在项目根目录中生成一个隐形的index.html，如果output中配置了
+			  publicPath，那么这个index.html就会生成在项目跟目录的这个publicPath中，都是隐形的。启动了webpack-dev-server之后，
+			  webpack-dev-server会自动在根目录下寻找上述的index.html，但是我们根目录里根本没有index.html。所以此时访问网页页面上如果
+				出现的是项目的目录结构，这时要在webpack-dev-server中配置historyApiFallback配置项就可以了。
+			2.在正式环境打包中的作用：就是我们带包正式环境的代码的时候，这个插件会自动生成一个index.html来包含我们打包好的js和css文件
+		const HTMLPlugin = require('html-webpack-plugin')
+		plugin: [
+			new HTMLPlugin()
+		]	
+	webpack.DefinePlugin
+		我们使用vue,react这些框架的时候，我们一定要用一个webpack的plugin叫做webpack.DefinePlugin，这个插件是在webpack上面的，
+		不用安装和引用。
+		new webpack.DefinePlugin({
+			'process.env': {
+				NODE_ENV: isDev ? '"development"' : '"production"'
+			}
+		})  
+		作用：
+			1.定义了这个，就可以在我们自己写的业务js代码中引用到process.env.NODE_ENV这个变量
+			2.在webpack运行的时候会根据我们在配置文件上定义的环境变量去选择不同的vue或react源代码的版本去打包进去
+	devtool = "#cheap-module-eval-source-map" 
+		帮助我们在页面上去调试我们代码的
+		使用sourceMap进行代码的映射，在浏览器打开的就是我们正常的自己写的代码，而不是编译过后我们看不懂的代码，这样就能很快的调试代码，定位错误
+	postcss-loader
+		postcss是帮我们后处理我们的css的，就是我们的css已经编译完成了。我们再通过postcss去优化我们的css代码。优化的过程就是通过一系列的组件去优化
+		1.创建postcss配置文件postcss.config.js
+		2.编辑配置文件
+			const autoprefixer = require('autoprefixer')
+			module.exports = {
+				plugins: [
+					autoprefixer()
+				]
+			}
+	autoprefixer
+		帮我们自动补全需要加浏览器前缀的css属性
+	babel
+		babel为使用vue的render方法以及也可以支持写jsx的代码。需要在.babelrc中配置，一个是babel-presets-env插件，还有一个
+		是babel-plugin-transform-vue-jsx处理vue的jsx，它有两个依赖，一个是babel-helper-vue-jsx-merge-props还一个是
+		babel-plugin-syntax-jsx，这两个安装配置好之后，我们要在webpack里加上这部分的配置，对于jsx的文件使用babel-loader
+		去进行操作。babel可以编译特定的js文件，但是要把整个模块联系起来还是要用到webpack，babel做不了。
+		1.创建babel配置文件.babelrc
+			plugin: babel的插件，在6.x版本之后babel必需要配合插件来进行工作
+			preset: babel插件集合的预设
+			{
+				"presets": [
+					"env", // 相当于es6,es7,es8
+					"stage-1"
+				],
+				"plugins": [
+					"transform-vue-jsx",
+					"syntax-dynamic-import"
+				]
+			}
+		2.babel相关的包：
+			1.babel-loader
+				2.babel-core
+			3.babel-preset-env
+			4.babel-plugin-transform-vue-jsx
+				5.babel-helper-vue-jsx-merge-props
+				6.babel-plugin-syntax-jsx
+			7.babel-eslint
+			8.babel-plugin-syntax-dynamic-import
+			9.babel-preset-stage-1
+	线上打包优化
+		1.extract-text-webpack-plugin
+		这个是用在正是环境打包时需要使用的插件，而且是必须要使用的，不使用的话正式环境打包的时候会报错。
+		作用：
+			帮我们把text，一些非javascript代码的一些东西，把它单独的打包成一个静态资源文件。比如把css文件拎出来打包成一个单独的文件。
+			因为这些文件可能是要做浏览器缓存的，放在js里引用就不太好，影响效率。所以还是要作为一个文件在html中引入比较好。
+		用法：
+			1.const ExtractPlugin = require('extract-text-webpack-plugin')
+			2.new ExtractPlugin('styles.[contentHash:8].css')
+			3.正式环境webpack的样式相关的配置要使用下面的这个方法去加载才能够真正的打包出带有内容的分离出来的css文件，不然这个css文件是
+			  可以分离出来，但是是没有内容的，也就是样式还是在js文件中，没有实现我们想要的目的。
+					ExtractPlugin.extract({
+						fallback: 'vue-style-loader',
+						use: [
+							'css-loader',
+							{
+								loader: 'postcss-loader',
+								options: {
+									sourceMap: true // 使用stylus生成好的sourceMap来用，编译效率更快
+								}
+							},
+							'stylus-loader'
+						]
+					})
+		2.webpack.optimize.CommonsChunkPlugin
+		作用：框架代码和业务代码拆分，单独打包类库框架文件，为了使浏览器能够长缓存我们的框架代码。来减少服务器的流量，让用户加载速度更快
+		正式环境webpack配置更改entry：
+			config.entry = {
+				app: path(__dirname, 'src/index.js'),
+				vendor: ['vue']
+			}
+			config.plugins.push(
+				new webpack.optimize.CommonsChunkPlugin({
+					name: 'vendor'
+				})
+			)
+		3.hash和chunkhash的区别
+		开发环境使用webpack-dev-server的时候，打包后的文件一定要使用hash，不然会报错。
+		正式环境的时候，entry为多入口，也就是当我们单独打包类库框架代码的时候，输出文件要使用chunkhash。因为hash是整个应用的hash，每个
+		打包出来的js的模块都是同样一个hash，这样就失去了单独打包的意义，每次打包业务代码变更，框架的hash也会改变。chunk可以理解为entry
+		里面声明的不同的的节点，每个异步加载的模块也是一个chunk。每一个chunk会单独生成一个hash，hash就会有区别。所以我们一旦使用了不同
+		entry或者是把我们的类库文件单独打包的时候，我们必须要使用chunkhash。
+		4.把webpack相关的代码单独打包到一个文件里面
+		new webpack.optimize.CommonsChunkPlugin({
+			name: 'runtime' // name指定一个在entry里面没有声明过的任何一个名字，一般会声明为runtime
+		})
+		把我们webpack生成在app.js里面的webpack相关的一些代码给单独的打包到一个文件里面去。这样打包的好处是我们在有新的模块加入的
+		时候，webpack是会给每一个模块给它加一个id上去，有新的模块加入的时候，它插入的顺序可能是在中间，会导致后面每一个模块的id都发
+		生变化，发生变化之后就会导致打包出来的内容它的hash会产生一定的变化，hash想要使用浏览器长缓存就失去了效果，使用这个方法就可以
+		规避这个问题
+	一个正式项目的目录结构
+		1.webpack配置文件目录
+			1.把webpack的配置的都放到一个文件夹/build中
+			2.新建webpack.config.base.js，把所有webpack配置都要用到的共同的配置放到这里。其它的比如说开发环境和正式环境以及后期会加入的服务端
+			渲染的webpack配置都去依赖于这个base它的配置，因为这部分配置是所有环境都会用到的。
+			删掉一些配置，只留下全都能用到的公共的配置
+				1.跟环境判断相关的代码肯定就直接删掉了
+				2.然后我们的entry默认先给它设置在这里，大部分情况都是用到这个entry，所以我们给它加一个默认值也没有什么关系，在需要更换
+				entry的时候去覆盖掉就好了。
+				3.解析.vue文件，.jsx文件，图片，忽略编译node_modules里的js文件的loader配置是每个地方都需要的，放在这里就行了
+				4.插件相关的都不需要在这里放置，因为不是所有的环境都需要去这么定义的，定义的内容也不一样。
+			3.加一个使用babel-loader解析js的配置，且忽略node_modules
+			{
+				test: /\.js$/,
+				loader: 'babel-loader',
+				exclude: /node_modules/
+			}
+			4.我们使用url-loader的时候，我们还可以把我们的静态文件给它归档的更合理一点，我们希望把它放到我们打包之后的一个单独的文件夹
+			里面，甚至可以根据我们在开发的时候的目录结构去生成我们的资源的目录结构，我们只要把这个路径给它写完整就可以了：
+				{
+					test: /\.(gif|jpg|jpeg|png|svg)/,
+					use: [
+					{
+						loader: 'url-loader',
+						options: {
+							limit: 1024,
+							name: 'resources/[path][name].[hash:8].[ext]'
+						}
+					}
+					]
+				}
+			这样让我们静态资源生成的文件目录变得更好看一点
+			5.webpack-merge
+			作用：这个工具用来来帮助我们来扩展我们的配置文件，它能够非常好的帮我们去合并不同的webpack配置。
+			它不像object.assign()那样只合并object的第一层，它会根据webpack里面所有的配置项，它里面的内容如何分布，然后去合理的合并我们的webpack
+			它的config，所以我们一般要去合并我们的webpack config，我们都会使用这个工具。它是不会覆盖base config的，它得到的是一个合并后的新的结果。
+			实际有的是需要覆盖，有的是扩展的，webpack.merge会帮我们做这部分事情。
+			6.新建webpack.config.client.js
+			依赖于webpack.base去扩展它的一个配置，环境判断的代码都放在这里
+			7.到这，webpack的配置改的差不多就这个样子
+		2.src目录
+			1.新建views目录，存放所有的页面
+	vue-loader的配置
+		1.新建vue-loader.config.js文件存放vue-loader配置项
+			module.exports = (isDev) => {
+				return {
+					preserveWhitepace: true, // 在我们写.vue文件的时候，去掉模版行末多余的空格
+					extractCSS: !isDev, // 将.vue文件里的css也通过extract-text-webpack-plugin这个插件单独打包到我们的那个大css文件中去,
+					                       注：正式环境打包的时候，在使用异步加载也就是访问到了那个.vue文件再把这个.vue文件加载过来的时候，这
+										   个作用就失效了。使用异步加载.vue文件，就是不是一开始就把所有的组件都加载出来，节省了首屏加载时间，
+										   这时，会打包出来一个单独的js文件，这个.vue文件里面的所有东西都会打包到这个js文件中，包括样式也在这
+										   个js中。
+					cssModules: {}, //实现css module的功能
+				}
+			}
+		2.使用.vue文件进行开发时候应该使用vue-style-loader而不是style-loader，这样vue项目的样式也有热重载的功能了，不论是.vue文件里的样式，
+		  还是样式文件的样式都适用。
+		3.适用rimraf这个工具每次运行npm run build的时候先删掉之前的dist里面的打包内容
+	css module配置
+		实现css module的功能
+	eslint的配置
+		校验代码，代码规范，代码必须按照这个规范书写。
+		好处：
+			1.防止我们的代码出现一些低级的错误，比如格式上的错误，导致运行时出现一些不明所以的报错。
+			2.团队协作的时候每个人都保持同一个风格进行代码书写，这样互相去看别人的代码的时候就可以更容易的看懂。
+		1.安装包
+			1.eslint
+			2.eslint-loader
+			3.eslint-config-standard
+				4.eslint-plugin-standard
+				5.eslint-plugin-promise
+				6.eslint-plugin-import
+				7.eslint-plugin-node
+			8.eslint-plugin-html
+			说明：
+				1. 3是一个比较好且流行的eslint书写规范，我们自己就不定义这个规范了。
+				2. 4567是3官方推荐我们安装的，因为它的校验规则要依赖于这些plugin进行验证
+				3. 因为.vue文件类似于html的格式，它不是我们标准的javascript文件。eslint没法直接识别vue文件里面的javascript代码，
+				所以8能够让eslint识别一个文件里script标签下面的javascript。所以就用这个工具去解析我们的.vue文件就可以了。官方的推荐
+				也是这么去做。
+		2.在项目的根目录下创建一个.eslintrc文件，在这个rc文件里面呢是一个json格式的内容
+			{
+				"extends": "standard",
+				"plugins": [
+					"html"
+				],
+				"parser": "babel-eslint"
+			}
+			每项配置的作用
+				1."extends": "standard"这个配置是说明使用哪个eslint的规范的，我们这里使用的就是eslint-plugin-standard规范，所以
+				  写standard
+				2."plugins": ["html"]这个配置是为了eslint编译正确的.vue文件能够不报错的
+				3.为什么我们要指定这个parser呢，因为我们的项目是基于webpack进行开发的。我们的代码都是要经过babel去处理过的。然后babel
+				  处理的这种方式呢，会有一些语法可能对eslint不是特别支持。然后我们使用loader的时候去处理eslint的时候，可能就会出现一些
+				  问题。所以我们一般使用webpack和babel进行开发的项目我们都会指定它的parser是babel-eslint。
+			有了这个eslint的配置文件之后才可以使用eslint，后续的3,4,5都是要根据这个配置文件才能去做事情的
+		3.在npm script加一条命令
+		"lint": "eslint --ext .js --ext .jsx --ext .vue client/"
+		现在我们就可以跑我们的lint去检验我们的代码是否符合我们想要它符合的那个规则
+		4.让eslint自动帮我们修复错误
+		"lint-fix": "eslint --fix --ext .js --ext .jsx --ext .vue client/"
+		5.eslint-loader
+			1.我们希望在项目开发的过程中，我们每次改代码，它都能够自动给我们进行eslint的检查。
+			好处：
+				1.这样能够很快的定位到这个问题，这就避免了我们每一次改了一大堆代码之后，然后要去提交的时候，再去跑一次lint，然后可能有很多地方
+				要去改，会浪费很多的时间，因为一下子找不到这些问题在哪里了。
+				2.每次改代码的时候都去检测也能够提高我们写代码的一个规范性。
+			2.在webpack里配置eslint-loader
+			直接在base里面配置就可以了
+			{
+				test: /\.(vue|js|jsx)$/,
+				loader: 'eslint-loader',
+				exclude: /node_modules/,
+				enforce: 'pre' // 在被其他loader加载之前，先用eslint-loader处理一遍
+			}
+		6.babel-eslint
+		在.eslintrc里面里面配置一个东西
+		"parser": "babel-eslint"
+		为什么我们要指定这个parser呢，因为我们的项目是基于webpack进行开发的。我们的代码都是要经过babel去处理过的。然后babel处理的这种方式呢，
+		会有一些语法可能对eslint不是特别支持。然后我们使用loader的时候去处理eslint的时候，可能就会出现一些问题。所以我们一般使用webpack和
+		babel进行开发的项目我们都会指定它的parser是babel-eslint
+	editorconfig配置文件
+		用来规范编辑器的一些配置的。
+	precommit
+		我们还可以再做的更好一点去规范我们的代码。
+		在我们的项目要使用git进行代码提交的时候，我们可以使用一个叫precommit的这种git的钩子。它让我们在调用git commit这个命令的时候，它
+		自动帮我们去检测代码，如果我们的代码不通过eslint的检测，我们是没有办法commit我们git的提交，那么我们没有办法提交也就没有办法推到我
+		们远程的仓库，就不会共享给别人，这样的话就保证了我们的代码只会出在我们自己本身。就是我们本地的仓库里面，然后不会把这些问题带到每个跟
+		你一起协作的人的代码里面。
+		1.先安装一个包叫做husky
+		安装了这个包之后呢，它自动会在我们本地这个项目的.git目录下面去生成一个hook，那么这个hook呢，它会读取我们package.json里面写的一些
+		内容，比如说我们的precommit。
+		注意：
+			我们安装husky或者是其他的一些帮助我们做git hook的一些工具的时候，都要提前先把我们的项目里面去git init初始化好，因为我们如果
+			连git目录都没有，那么它安装的过程当中，它生成的这个git hook就没有办法放进去。先后顺序一定要弄好。
+		2.那我们在package.json中添加一条npm script脚本命令。
+		"precommit": "npm run lint-fix"
+		这样，我们装了husky之后，每一次我们执行git commit命令的时候，它自动会调用precommit这个命令。
+		所以这就是我们的更强制的规范我们的代码协作的一个关系。因为我们在执行git commit的时候，它自动会给我们去验证我们的代码。如果我们没有办法
+		执行git commit，那我们就没有办法去推送我们的代码，我们的代码就不会影响到其他的人。
+	eslint,editorconfig,precommit
+		这整个的流程主要的目的其实就是为了我们规范我们自己的代码的一个格式，也同时是为了我们团队协作能够更高效的一个方式。那么这些东西都是一劳
+		永逸的，所以在开发一个项目的时候把这些事情都给它去提前做好。这样的话能够为你的团队带来非常多的好处。
+	sha1 -S
+		帮我们生成请求线上数据库的签名
+包版本问题
+	1.npm下载低版本的东西，指定版本安装时可以不用卸载当前的
+		npm install webpack@^3.0.0 -D
+		npm install webpackr@3.10.1 -g
+	2.npm卸载模块 
+		npm uninstall webpack webpack-dev-server webpack-merge -D
+	3.下载没有发布的下一个版本，处于测试（bate）阶段
+		npm install extract-text-webpack-plugin@next -D
+	4.报错包的版本有问题卸载重装就行了
+	5.webpack奇怪的报错大多数是npm包之间版本的问题
+webpack4升级
+	1.报错如下：
+		vue-loader was used without the corresponding plugin. Make sure to include VueLoaderPlugin in your webpack config.
+	解决：
+		webpack4 必须加上
+		plugins: [
+			new VueLoaderPlugin()
+		]

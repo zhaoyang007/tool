@@ -1,0 +1,141 @@
+1.不固定宽高元素垂直水平居中
+		<div class="wrap">
+			<div class="main">
+				<div class="content">jfalfjal;fja;fa</div>
+			</div>
+		</div>	
+		.wrap { 
+				display:table;  
+				width:1200px; 
+				height:1000px;  
+		}   
+		.main { 
+				display:table-cell; 
+				vertical-align:middle; 
+				text-align:center;
+		}   
+		.content { 
+				display:inline-block;
+		}   
+2.媒体查询
+		@media only screen and (max-width:700px){
+	    	body{background:red;}
+		}
+		@media only screen and (min-width:701px){
+		    body{background:black;}
+		}
+		@media only screen and (min-width:1001px){
+		    body{background:yellow}
+		}
+3.变换
+		transform: rotate(45deg) scale(0.5) skew(30deg, 30deg) translate(100px, 100px);
+		旋转 rotate
+		缩放 scale
+		倾斜 skew
+		移动 translate
+4.过渡效果
+		transition定义到元素开始的时候，此元素发生动作之后就会触发transition
+		div {
+			width:100px;
+			transition: width 2s;
+			-webkit-transition: width 2s; /* Safari 和 Chrome */
+		}
+		div:hover {
+			width: 300px;
+		}
+		transition: property duration timing-function delay;
+		transition: 过渡效果的CSS属性的名称 动效持续时间 速度曲线 延迟;
+		transition: all 0 ease 0;
+5.持续性动画
+		css中定义一个关键帧
+			@keyframes mymove {
+				from {background: red;}
+    			to {background: yellow;}
+			}
+			@-webkit-keyframes mymove { /* Safari 与 Chrome */
+				from {background: red;}
+				to {background: yellow;}
+			}
+		css选择器中使用关键帧
+			.class {
+				width: 100px;
+				height: 100px;
+				animation: mymove;
+				-webkit-animation: mymove; /* Safari 与 Chrome */
+			}
+		animation: name duration timing-function delay iteration-count direction;
+		animation: 关键帧动画名 动画持续时间 速度曲线 延迟时间 动画播放的次数 是否轮流反向播放动画;
+		animation: none 0 ease 0 1 normal;
+6.清除浮动
+	1.额外标签法（在最后一个浮动标签后，新加一个标签，给其设置clear：both；）（不推荐）
+		优点：通俗易懂，方便
+		缺点：添加无意义标签，语义化差
+	2.父级添加overflow属性（父元素添加overflow:hidden）（不推荐）
+		通过触发BFC方式，实现清除浮动
+    .fahter{
+        width: 400px;
+        overflow: hidden;
+    }
+		优点：代码简洁
+		缺点：内容增多的时候容易造成不会自动换行导致内容被隐藏掉，无法显示要溢出的元素
+	3.使用after伪元素清除浮动（推荐使用）
+    .clearfix:after{/*伪元素是行内元素 正常浏览器清除浮动方法*/
+        content: "";
+        display: block;
+        height: 0;
+        clear:both;
+        visibility: hidden;
+    }
+		.clearfix{
+        *zoom: 1; /*ie6清除浮动的方式 *号只有IE6-IE7执行，其他浏览器不执行*/
+    }
+		优点：符合闭合浮动思想，结构语义化正确
+		缺点：ie6-7不支持伪元素：after，使用zoom:1触发hasLayout
+	4.使用before和after双伪元素清除浮动（推荐使用）（万能清除法）
+		.clearfix:before,
+		.clearfix:after {
+			display: block;
+			content: " ";
+		}
+		.clearfix:after {
+			clear: both;
+		}
+		.clearfix{
+        *zoom: 1; /*ie6清除浮动的方式 *号只有IE6-IE7执行，其他浏览器不执行*/
+    }
+		优点：代码更简洁
+		缺点：用zoom:1触发hasLayout.
+	
+
+
+css模块化
+	1.复用，继承，覆盖
+自适应
+	1.像素
+	  https://github.com/jawil/blog/issues/21
+	2.viewport
+	3.rem 
+	  css单位
+	  根据跟标签html的字体大小进行计算
+	  em是相对于父元素字体大小进行计算
+	4.http://www.woshipm.com/ucd/198774.html
+		分辨率(像素) 1920PX * 1080PX
+		设备尺寸 5.2英寸
+		像素密度(ppi, 每英寸所拥有的像素数目)
+		ppi = √(横向^2 + 纵向^2) / 屏幕尺寸(inch)
+		小结：1.我们平时做的适配就是关心的分辨率而不是屏幕尺寸。
+				 2.在同一个设备上，它的像素个数和像素大小是固定的了，也就是系统的最高分辨率，这是厂商在出厂时就设置好了的，
+				 	 只有不同的设备之间，才有像素大小的区别。像素这个东西，就像金箍，能变大能变小。系统调节分辨率是使用虚拟
+					 色彩块来充当部分像素块，以达到降低分辨率的效果。
+				 3.像素密度是决定屏幕显示清晰度的。也就是分辨率和尺寸大小共同决定的。
+ui框架重点
+	1.设计或选择一个ui框架的要点
+		1.交互友好，美观
+		2.可复用，提高效率
+		3.源码可修改可覆盖，易扩展
+	2.ui框架的使用所关注的点
+		1.结构和样式(样式一般都是使用类名来加载的)
+		2.怎么覆盖或修改ui框架中的默认样式
+			1.直接使用ui框架里面的类名进行样式的覆盖
+			2.在ui组件上添加一个新的类名做ui框架的样式覆盖或新增一些我们需要的样式
+			3.可以在原有ui组件上添加结构和样式来实现相应的样式需求

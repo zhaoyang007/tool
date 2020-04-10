@@ -1,0 +1,39 @@
+1.标题：#表示，共6级
+2.列表：无序-，有序1.
+3.列表嵌套：上一级和下一级之间敲三个空格即可
+4.自定义列表：
+    Markdown
+    :  Text-to-HTML conversion tool
+    Authors
+    :  John
+    :  Luke
+5.链接：[显示文本](链接地址)
+6.图片：![](图片链接地址)
+7.引用：> 引用的文字
+8.粗体：**粗体**
+9.斜体：*斜体*
+10.标记：==标记文本==
+11.代码引用：单行`单行代码引用`
+          多行
+            ```
+            多行代码引用
+            多行代码引用
+            ```
+12.表格：
+    | Tables        | Are           | Cool  |
+    | ------------- |:-------------:| -----:|
+    | col 3 is      | right-aligned | $1600 |
+    | col 2 is      | centered      |   $12 |
+    | zebra stripes | are neat      |    $1 |
+
+13.分割线：三个或者三个以上的 - 或者 * 都可以。
+14.流程图:
+    ```flow
+    st=>start: 开始
+    op=>operation: My Operation
+    cond=>condition: Yes or No?
+    e=>end
+    st->op->cond
+    cond(yes)->e
+    cond(no)->op
+    &```

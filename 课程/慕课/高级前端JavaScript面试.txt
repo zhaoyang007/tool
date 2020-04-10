@@ -1,0 +1,679 @@
+高级前端javascript面试
+  1.es6
+    es6
+      开发环境已经普及使用
+      浏览器环境却支持不好（需要开发环境编译）
+      内容很多，重点了解常用语法
+      面试：开发环境的使用 + 重点语法的掌握
+    问题：
+      1.es6模块化如何使用，开发环境如何配置如何打包
+        1.模块化的基本语法
+          es6的模块化比以前的模块化方式都要简单，因为代码标准的迭代和更新肯定是更加趋向于简单，更加趋向于用来的。没有一个标准
+          说我会越变越复杂，都是越变越简单。
+        2.开发环境配置
+          babel
+          webpack
+            babel可以解析es6的语法到普通js的语法，它只是语法层面的。但是针对于模块化，就是index.js引用util1.js util2.js
+            这种相互引用的关系，以及多层次引用的关系，那babel是无能为力的。所以说针对模块化的处理我们需要用webpack来处理，当
+            然webpack不仅仅是一个处理模块化的工具，它还有其他很多很多的功能，但是至少它是可以处理模块化的。而且我们现阶段，有
+            好多的前端开发环境都是借用于webpack来做的。
+          rollup
+            1.我们日常用的vue react这些框架都是通过rollup来打包的，所以说可见它的可用之处还是很多的。rollup打包的内容会非常
+              非常的小。能尽量简化输出之后的内容大小。这样对于源代码很多，很复杂，很多人维护的这种代码库非常重要。因为它能优化
+              一点点冗余内容，对于小的程序来说可能无所谓，但对于一些庞大的开发环境中，如果能优化一点点，哪怕是百分之四百分之五
+              这样概率的一个冗余的代码，那到最后输出的整个的产出内容就会有很大的影响。
+            2.rollup它也是一个工具，只要是工具它就需要配置文件，这一点它和webpack没有什么区别。它们都是工具，工具就需要配置。
+              需要配置那肯定是写在文件里最方便。
+            3.rollup功能单一，webpack功能强大
+              rollup的功能比较单一，它就是能打包模块化，没有模块化，rollup就没用了。可以这么认为。但是js不可能没有模块化。现
+              在的开发环境，模块化是一个非常重要的存在。如果没有模块化，那js将不可想象是什么样子的。所以说rollup功能单一，但是
+              它做到了极致。webpack功能比较强大，但是它有一个问题，就是它的学习成本非常的高。想把webpack玩溜了不是那么容易的
+              事情。这一点可以参考《设计原则》和《Linux/Unix设计思想》这两本书。它们都提到一个单一值的原则，就是所有的东西呢你
+              都给我做成一个单一功能就行了，没必要说更好更快更强。在软件设计中这是一个不好的事情。软件设计中比较喜欢一个东西只做
+              一件事情，做好了就行了。越简单越单一越好，不能说一个东西把所有东西都干完。让其他的工具没有事干。这样是不好的。
+            4.工具要尽量功能单一，可集成，可扩展
+              这样学习成本也会低一些，不想webpack学习成本那么高。 
+        3.关于js众多模块化标准
+          1.没有模块化的时代
+          2.AMD成为标准，require.js
+          3.前端打包工具，使得nodejs的commonjs模块化可以被使用了
+          4.es6出现，想统一现在所有模块化的标准
+            标准这么多不就很乱嘛。我们希望标准是越统一越好，越简单越好，越被大家认可越好。所以说es6就想统一这个标准。这个是很
+            好的。没有问题。现在的现状是nodejs积极支持，浏览器尚未统一。
+        4.问题解答
+          1.语法：import export
+          2.环境：babel是编译es6语法的一个核心的工具。模块化的工具可用webpack和rollup
+      2.class和普通构造函数有何区别
+        1.js构造函数
+        2.class基本语法
+        3.语法糖
+          class MathHandle {
+            // ...
+          }
+          const m = new MathHandle()
+          typeof MathHandle // 'function'
+          console.log(MathHandle === MathHandle.prototype.constructor) // true
+          console.log(m.__proto__ === MathHandle.prototype) // true
+          我们根据上面的这三个判断就是之前使用js构造函数的基本的原理来对一下class的这种方式也是一样的。证明了class就是js构造
+          函数方式的语法糖。
+        4.继承
+          继承就是从抽象到具象的一个关系，从高级到低级的一个关系
+        5.问题解答
+          1.class在语法上更加贴合面向对象的写法
+          2.class实现继承更加易读，易理解，学习成本更加低
+          3.更易于写java等后端语言的使用
+          4.class本质还是语法糖，使用的还是prototype原型的那种继承方式。所有的语法糖都要了解其本质。
+      3.promise的基本使用和原理
+        1.callback hell
+        2.Promise的语法
+      4.总结一下es6其他常用功能
+        es6更新的语法第一种就是说之前没有这个功能导致了很多问题，现在es6中加上这个功能避免这些问题。第二种就是说之前可以实现这
+        个功能，但是写法比较复杂。es6中有了新的写法，代码更加简单和易读。代码写出来第一步是给人读的，第二步是给计算机进行运算。
+        所以语法简单易读很重要。
+        1.let/const
+        2.模版字符串
+        3.解构赋值
+        4.块级作用域
+        5.函数默认参数
+        6.箭头函数
+  2.原型
+    题目：
+      1.说一个原型的实际应用
+        1.jquery和zepto的简单使用
+          var $p = $('p')
+          $p.css('font-size', '40px')
+          alert($p.html())
+          var $div1 = $('#div1')
+          $div1.css('color', 'blue')
+          alert($div1.html())
+          $p和$div1都有css和html等方法。当多个实例都可以共用一套方法的时候，就说明这些方法都是来自于一个构造函数的原型中的。
+        2.zepto是如何使用原型的
+          // 定义一个自执行的函数，避免全局变量的污染。
+          (function (window) {
+            // 空对象
+            var zepto = {}
+            zepto.init = function (selector) {
+              var slice = Array.prototype.slice
+              var dom = slice.call(document.querySelectorAll(selector))
+              return zepto.Z(dom, selector)
+            }
+            // 即使用zepto时候的$
+            var $ = function (selector) {
+              return zepto.init(selector)
+            }
+            window.$ = $ // 把这个$函数给它开放到window这个全局的变量中，就可以$('p')这样用了
+            // 这就是构造函数
+            function Z (dom, selector) {
+              // 这些初始化操作就是给自己本身复制一些属性
+              var i, len = dom ? dom.length : 0
+              for (i = 0; i < len; i++) this[i] = dom[i] // 把dom的每个元素复制成它本身自己的属性
+              this.length = len                          // 把dom的length复制成自己的length
+              this.selector = selector || ''             // 把selector给它传到自己的selector上
+            }
+            zepto.Z = function (dom, selector) {
+              // 注意，出现了new关键字
+              return new Z(dom, selector)
+            }
+            // 如果选择这么用的话$p = $('p')，它返回的就是Z这个构造函数new出来的一个实例。
+            // css html这些方法在什么地方呢，Z是构造函数，构造函数得有原型啊，原型是$.fn，$.fn赋值成了一个对象，这个对象中
+            // 就有css和html这些方法。
+            $.fn = {
+              constructor: zepto.Z,
+              css: function (key, value) {
+
+              },
+              html: function (value) {
+
+              }
+            }
+            zepto.Z.prototype = Z.prototype = $.fn
+          })(window)
+        3.jquery是如何使用原型的
+          (function (window) {
+            // jquery里面这个$，和jquery源码中的这个jQuery函数是一回事是一个。
+            var jQuery = function (selector) {
+              // 注意new关键字，第一步就找到了构造函数
+              return new jQuery.fn.init(selector)
+            }
+            window.$ = jQuery
+            jQuery.fn = {}
+            // 定义构造函数
+            var init = jQuery.fn.init = function (selector) {
+              // 构造函数体的内容跟zepto的逻辑基本一样
+              var slice = Array.prototype.slice
+              var dom = slice.call(document.querySelectorAll(selector))
+              var i, len = dom ? dom.length : 0
+              for (i = 0; i < len; i++) this[i] = dom[i] 
+              this.length = len                         
+              this.selector = selector || ''             
+            }
+            // 初始化jQuery.fn
+            jQuery.fn = jQuery.prototype = {
+              constructor: jQuery,
+              css: function (key, value) {
+
+              },
+              html (value) {
+
+              }
+            }
+            // 定义原型
+            init.prototype = jQuery.fn
+          })(window)
+        4.问题解答
+          1.描述一下jquery和zepto如何使用原型的
+          2.再结合自己的项目经验，说一个自己开发的例子
+      2.原型如何体现它的扩展性
+        通过zepto和jquery的插件机制来理解。原型作为js最基础的一个部分，它肯定是要有扩展性的，要不然我们js的这个语言就没法用了。
+        所有的软件所有的程序都必须保证有扩展性，有扩展性我们才能更好的封装，能更好的去集成。所以扩展性这个东西还是非常重要的。 
+        1.总结zepto和jquery原型的使用
+        2.插件机制
+          插件机制也是体现原型扩展性的一个非常好的例子，你说出来大家都懂。不会觉得云山雾绕，不知道你说的是什么。说插件机制大家也
+          都明白。插件机制不是平白无故的出来，而是通过之前的讲的zepto和jquery的原型源码实现的方式的疑问提出来的。就是：
+          1.为什么要把原型方法对象放到$.fn上再赋值给原型，而不是直接把这个对象赋值给原型。
+            因为要扩展插件，做一个简单的插件的例子
+            $.fn.getNodeName = function () {
+              return this[0].nodeName
+            }
+            jq的插件都是这么做的。这就是zepto和jquery插件的实现机制，特别简单，就是扩展原型。
+          2.为什么不直接给构造函数的原型赋值，而是通过$.fn给原型赋值，进行转化一步呢。这样的好处是什么呢。
+            1.只有$会暴露在window全局变量
+              因为我们不能变量污染啊，你jquery和zepto内部封装定义的构造函数叫init也好叫Z也好，这些都是你jquery和zepto执行
+              的这个自定义函数里面的。不会暴露给外边的全局变量。我们只有$会暴露在外面的全局变量。所以说我们必须通过$.fn去扩展
+              我们不能通过构造函数的原型直接去扩展。因为构造函数我们外面拿不到。我们一个工具一个库基本上要暴露给全局一个变量就
+              好了，不要暴露好多变量，因为很容易造成全局变量的污染。只暴露一个变量就好了，其他东西全部在这一个变量下进行实现。
+            2.将插件扩展统一到$.fn.xxx这个接口中，是方便使用的。
+              这样的话我们扩展插件特别容易。就是直接$.fn.xxx = xxx就完啦，文档中也没有必要写我的构造函数是什么样子的，我要在
+              什么样的构造函数下扩展，zepto的构造函数和jquery的构造函数还不一样，你要用的话，两者还得分开，这样的话会增加学习
+              成本，然后使用上也不方便，我们用一个统一的接口，特别简单的接口把这个事情做完。这是封装sdk封装软件封装工具的一个符
+              合设计模式的一个方法
+        3.问题解答
+          1.说一下jquery和zepto的插件机制，因为这很大众，说完都能明白
+          2.结合自己的开发经验，做过的基于原型的插件
+
+  3.异步
+    问题：
+      1.什么是单线程，和异步有什么关系
+        线程和进程都是计算机中的一些概念，这个是偏底层，偏操作系统的一些概念。
+        1.单线程 - 只有一个线程，同一时间只能做一件事情
+          // 循环过程中，js执行和dom渲染暂时卡顿
+          // 比如这个循环执行了1s，那这1s钟之内，浏览器是处于卡顿状态，就是后面的js肯定不会去执行，然后如果是有dom渲染，有页
+          // 面的渲染，它肯定也会暂停，不会执行。
+          var i, sum = 0
+          for (i = 0; i < 1000000000; i++) {
+            sum += i
+          }
+          console.log(sum)
+          // alert如果不处理完，js执行和dom渲染暂时卡顿
+          consolee.log(1)
+          alert('hello')
+          console.log(2)
+        2.原因 - 避免dom渲染的冲突
+          1.浏览器需要渲染dom
+          2.js可以修改dom结构
+          3.所以js执行的时候，浏览器dom渲染就要暂停，因为它们都可以修改dom结构，如果它们同时修改了一个dom节点那不就冲突了么。
+            所以说只能是这样，js执行的时候浏览器渲染只能停止，我先等等把，你先来，你来完之后我再来，要有一个先后顺序。这样就
+            不冲突了。
+          4.两段js也不能同时执行。原因跟上面一样，避免同时修改一段dom的冲突。所以说这段js执行的时候，下段js就先等一下。等这
+            段js执行完了，下段js再执行。js执行就是一行一行来，谁都不能同时来。因为同时来都有可能引起dom修改的冲突。
+          所以说js在前端应用，在浏览器中应用必须是单线程的。而且呢还要和浏览器的渲染的线程共用一个线程。就是js本身执行是单线程
+          的，js执行的时候呢还和浏览器渲染的dom这块的线程也是共用一个线程的。
+          5.html5中有一个webworker，它能实现多线程，能做到这种两行js代码一块执行这种效果。但是webworker不能访问dom。
+        3.解决方案 - 异步
+          针对js单线程的机制。我们的解决方案是异步。因为遇到一些需要等待的事情我们不可能等地它做完我们再往下走，这个等待的时间
+          那页面就是卡死的状态，这显然是不合理的。所以我们将这些需要等待的事情让它们成为异步，就是遇到这样的事我们先不管它，先
+          让其他的js代码运行。不要让这个等待影响我们后面的事情。然后等这个异步等待结束后我们再处理这个异步。就是我们先把该执行
+          的执行完了，异步最后再说。这是异步的一个核心逻辑。
+        4.异步解决方案的问题
+          异步是js单线程的一个唯一解决方案，现在来看也是一个非常合适非常高效的解决方案，但是呢它还是有一些问题的。
+          1.没有按照书写的顺序来执行，可读性差
+          2.callback中不容易模块化
+            因为异步它要回过头来执行这么一个模式，所以它要传一个callback函数。什么叫callback呢，就是当我异步完成之后我要执
+            行的这个函数就叫callback。callback中不容易模块化，就是我们callback中是传一个函数过去的，js中函数是一等公民，
+            可以作为参数传来传去，所以我们可以把callback这个函数传过去，但是这个函数传过去，你不可能把这个函数写的特别特别
+            复杂，你写的特别复杂的话，第一它本来就没有按照书写顺序来执行，你又把callback写的特别复杂，就容易出现这种耦合度不
+            高的问题，以后有问题就不好排查。所以之后的Promise, async/await就是为了解决这两个问题来服务的。
+        5.问题解答
+          1.单线程就是同一时间只能做一件事情，两段js不能同时执行
+          2.原因就是为了避免dom渲染的冲突
+          3.异步是一个无奈的解决方案，因为js只能是单线程，也有很多问题，但是异步确实是一个非常高效的解决方案。特别是当你js写
+            的非常熟练之后，你发现异步真是一件特别神奇的事情。
+      2.什么是event-loop
+        问到异步的相关知识，稍微往深一点问，基本上单线程，event-loop都会问到。所以说这是一个异步基础知识的非常非常重点的内容。
+        1.知识串联
+          上一节讲单线程和异步的关系，这一节讲event-loop和异步的关系。它之间肯定是有联系的。
+          1.单线程 - 同一时间只能做一件事，体现在程序中就是我们的js代码要一行一行执行。不能同一时间执行两行代码。
+          2.原因 - 避免dom冲突渲染
+          3.解决方案 - 异步
+          4.异步的实现方式 - event loop
+            异步的这种先不管它，先执行后面的代码，最后再来处理这个异步。这是怎么实现的。就是用这个event loop实现的。
+        2.文字解释
+          1.事件轮询，js实现异步的具体解决方案。js的异步就是通过这种方式来实现的。
+          2.具体的实现过程
+            1.同步代码，直接执行
+            2.异步函数先放在异步队列中，先把它挪到一个地方去，先不要管它
+            3.待所有的同步函数都执行完毕，轮询执行异步队列的函数
+              轮询的意思，
+        3.实例分析
+          1.
+            setTimeout(function () {
+              console.log(100)
+            })
+            console.log(200)
+            // 主进程
+            console.log(200)
+            // 异步队列
+            function () {
+              console.log(100)
+            }
+            一旦一句话放在主进程中，它就能立刻被执行。我们把console.log(200)扔进来它就立刻被执行。当同步代码全部都执行完
+            了，执行完之后，我们再立刻回头看，异步队列中有没有，发现异步队列中有这么一个函数，我们就把这个函数也立刻放到这个
+            主进程中，因为这个函数立刻放到主进程中，这个函数立刻就会被执行。这些都是js引擎来做的。这就是异步执行方式的真正的
+            实现过程。
+          2.
+            setTimeout(function () {
+              console.log(1)
+            }, 100)
+            setTimeout(function () {
+              console.log(2)
+            })
+            console.log(3)
+            // 主进程
+            console.log(3)
+            // 异步队列
+            // 立刻被放入
+            function () {
+              console.log(2)
+            }
+            // 100ms之后被放入
+            function () {
+              console.log(1)
+            }
+            还是按照那个过程，第一步同步代码直接扔进主进程中执行，第二步异步函数要放在异步队列中，第三步等着同步代码执行完成
+            之后，再去异步队列中看，有的话就拿到主进程中来执行。第一个setTimeout是一个异步，我们是不是应该立刻把它放在右侧
+            的异步队列中啊，答案是否定的，因为它有个延时，有延时我们不能立刻把它放到异步队列中，我们需要100ms之后在放入，所
+            以说第一个setTimeout执行完之后呢，异步队列中是暂时没有东西的，因为100ms对于计算机来说是一个非常长非常长的时间，
+            因为计算机的运行都是毫秒级的。执行第一个setTimeout它是执行了这么一件事，就是告诉计算机我100ms之后再把打印1的
+            这个函数放在异步队列中，现在不放。然后执行第二个setTimeout，执行第二个setTimeout没有延时，所以说我们就把这个
+            打印2的异步函数立刻放到异步队列中。最后console.log(3)就直接扔在主进程中，就直接执行了。等着所有的同步代码都执
+            行完了之后。那我们就立刻来看异步队列中有没有东西，精确的说是有没有异步函数。现在来看，刚刚执行完打印3的这一行之后
+            ，我们立刻来看异步队列中，这个时候其实异步队列中只有第二个setTimeout的这个函数。因为第一个setTimeout函数要100
+            ms之后才放入，100ms是一个很久很久之后的事情了。现在暂时是没有的。所以说我们把第二个setTimeout的这个函数立刻拿
+            到主进程中来执行。执行完之后，我们还是立刻到异步队列中看有没有，这个时候回来看还有吗，是没有的，因为这个时间太短
+            了，100ms之后的事还没有发生，没有的话js的引擎会一直轮询着来看异步队列中有没有异步队列中有没有，也可以说是一直监
+            视着异步队列中有没有，一旦100ms之后，第一个setTimeout的函数被放到异步队列中之后，那这个js引擎会立刻把这个函数
+            拿到主进程中，然后执行。只要主进程的代码都执行完后，就去监视异步队列中有没有异步函数，有的话就立刻拿到主进程中去
+            执行，主进程的代码执行完之后，又再去异步队列中监视。这就是事件轮询的机制。这个轮询的间隔是4ms。事件轮询机制就是异
+            步的实现原理和本质。当你能看穿一个东西的本质，能看穿一个东西的实际逻辑的时候，和之前光会用的时候是完全不一样的。你
+            对代码的看法是完全不一样的。你看代码你写代码都完全不一样。
+            说单线程是说js的执行是单线程的，要处理异步队列，一个线程肯定不够。就是说单线程是负责主进程中执行当前应该执行的程
+            序，还会另外有一个线程去控制那些异步队列的函数比如100s后加载timeout函数，或者ajax加载完毕后的回调函数。
+          3.
+            $.ajax({
+              url: 'xxxx',
+              success: function (result) {
+                console.log('a')
+              }
+            })
+            setTimeout(function () {
+              console.log('b')
+            }, 100)
+            setTimeout(function () {
+              console.log('c')
+            })
+            console.log('d')
+            // 主进程
+            console.log('d')
+            // 异步队列
+            // 立刻被放入
+            function () {
+              console.log('c')
+            }
+            // 100ms之后被放入
+            function () {
+              console.log('b')
+            }
+            // ajax加载完成是放入
+            function () {
+              console.log('a')
+            }
+        4.宏任务 微任务
+          https://blog.csdn.net/sjn0503/article/details/76087631
+          微任务和宏任务
+          介绍
+          // demo
+          function test() {    console.log('start'),
+              setTimeout(() => {        console.log('setTimeout 1')
+              })
+              setTimeout(() => {        console.log('setTimeout 2')
+              })    Promise.resolve().then(() => {        console.log('promise 1')
+              }).then(() => {        console.log('promise 2')
+              })    console.log('end')
+          }
+          test()
+          宏任务：setTimeout setInterval DOM 事件
+          微任务：Promise（对于前端来说）
+          微任务比宏任务执行的更早
+          event loop 和 DOM 渲染
+          先回顾 event loop 的过程
+          每一次 call stack 结束，都会触发 DOM 渲染
+          然后再进行 event loop
+          const $p1 = $('<p>一段文字</p>')const $p2 = $('<p>一段文字</p>')const $p3 = $('<p>一段文字</p>')
+          $('#container')
+                      .append($p1)
+                      .append($p2)
+                      .append($p3)console.log('length',  $('#container').children().length )
+          alert('本次 call stack 结束，尚未触发 DOM 渲染')
+          宏任务和微任务的区别
+          宏任务：DOM 渲染后再触发
+          微任务：DOM 渲染前会触发
+          // 修改 DOM
+          const $p1 = $('<p>一段文字</p>')
+          const $p2 = $('<p>一段文字</p>')
+          const $p3 = $('<p>一段文字</p>')
+          $('#container')
+            .append($p1)
+            .append($p2)
+            .append($p3)
+          // 微任务：DOM 渲染之前执行
+          Promise.resolve().then(() => {
+            const length = $('#container').children().length     
+            alert(`micro task ${length}`)
+          })
+          // 宏任务：DOM 渲染之后执行
+          setTimeout(() => {    
+            const length = $('#container').children().length
+            alert(`macro task ${length}`)
+          })
+          总结
+          微任务和宏任务的介绍
+          微任务会更早被执行
+        5.问题解答
+          1.事件轮询，js异步的解决方案
+          2.什么是异步队列，何时被放入异步队列
+          3.轮询的过程
+      3.是否用过jQuery的Deferred
+        1.jquery1.5的变化 
+          1.jquery1.5之前的写法
+            var ajax = $.ajax({
+              url: 'data.json',
+              success: function () {
+                console.log('success1')
+                console.log('success2')
+                console.log('success3')
+              },
+              error: () {
+                console.log('error')
+              }
+            })
+            console.log(ajax) // 返回一个xhr对象
+          2.jquery1.5之后的写法
+            // 写法1
+              var ajax = $.ajax('data.json')
+              ajax
+                .done(function () {
+                  console.log('success1')
+                })
+                .fail(function () {
+                  console.log('error')
+                })
+                .done(function () {
+                  console.log('success2')
+                })
+              console.log(ajax) // 返回一个deferred对象
+            // 写法2
+              var ajax = $.ajax('data.json')
+              ajax
+                .then(function () {
+                  console.log('success1')
+                }, function () {
+                  console.log('error1')
+                })
+                .then(function () {
+                  console.log('success2')
+                }, function () {
+                  console.log('error2')
+                })
+              console.log(ajax) // 返回一个deferred对象
+          3.总结
+            1.无法改变js异步和单线程的本质
+              不光jquery无法改变，现在所有的解决方案都无法改变这个本质，因为js只要在浏览器中运行，异步和单线程肯定就要存在，
+              肯定永远都没不了。我们改变异步的写法，只是从一些写法上，从一些易读性上改变它。
+            2.只能从写法上杜绝callback这种形式
+              之前的这种在callback函数里面写三千行代码，和你用三个.then，每个.then里面写1000行代码那是完全不一样的。有利
+              于模块化。
+            3.它是一种语法糖形式，但是解偶了代码
+              之前是所有业务逻辑代码在callback中一下子全写完。现在是我们把它分到好多个函数中，而且这个函数还是按顺序执行的，
+              它不会乱。这个解偶非常重要。
+            4.很好的体现了，开放封闭原则
+              编程界有著名的23种设计模式，其实在学习23中设计模式之前应该先学5个设计原则。其中最最关键的设计原则就是开放封闭
+              原则。就是对扩展开放，对修改封闭。对比上面jquery1.5前后的代码，如果我想加一个success4，对于1.5之前的代码，
+              我们要修改success函数的代码，这样的话就是对修改开放，对扩展封闭，因为我没地方可扩展啊，我就只能修改success
+              代码了。1.5之后呢，我直接加一个.done就好了，这种情况就是对扩展开放，对修改封闭。就是你不用改之前的打印的函数
+              逻辑。你只需要再加一个函数就行了。这两种方式就有质的区别，特别是在实际工作中，在多人开发中。首先我们多人开发，
+              我们一个人负责一个函数，大家都各干各的，你不要改我的，我也不改你的，我需要新增功能呢，我就扩展，我不要修改别人
+              的而是我扩展。如果是之前那种情况，你三个人维护一坨代码，改着改着不就乱了吗。还有一种情况是你原有的代码改完之后
+              ，之前所有的功能都要再测试一遍啊。每个模块都需要测试人员回归一遍。因为一旦改代码就有可能出问题。而1.5之后的这
+              中写法，之前的代码没改啊，我只是扩展了一个方法而已啊。只需要测试我扩展的方法就行了。这样就大大减少了回归测试的
+              成本。其实还有很多的好处。代码的解偶减少，模块化划分，代码的管理，维护都是有好处的，检查派发bug，调试，联调，
+              定位问题都是有好处的。所以说我们极力推崇这种写法。
+        2.使用jquery deferred
+          1.给出一段非常简单的异步操作代码，使用setTimout函数
+            // 新增需求：要在执行完成之后进行某些特别复杂的操作，代码可能会很多，而且分好几个步骤
+            1.原始写法
+              var wait = function () {
+                var task = function () {
+                  console.log('执行完成')
+                }
+                setTimeout(task, 2000)
+              }
+              wait()
+            2.jquery deferred 写法
+              // 封装
+              function waitHandle () {
+                var dtd = $.Deferred() // 创建一个deferred对象
+                var wait = function (dtd) { // 要求传入一个deferred对象
+                  var task = function () {
+                    console.log('执行完成')
+                    dtd.resolve()    // 表示异步任务已经完成
+                    // dtd.reject()  // 表示异步任务失败或出错
+                  }
+                  setTimeout(task, 2000)
+                  return dtd // 要求返回deferred对象
+                }
+                // 注意，这里一定要有返回值
+                return wait(dtd)
+              }
+              // 使用
+              var w = waitHandle()
+              w.then(function () {
+                  console.log('ok 1')
+                }, function () {
+                  console.log('err 1')
+                })
+                .then(function () {
+                  console.log('ok 2')
+                }, function () {
+                  console.log('err 2')
+                })
+              // 还有w.done() w.fail()
+        3.初步引入Promise的概念
+          Promise是现在js异步的一个比较正统的解决方案。Promise这个东西就是jquery deferred演化过来的。
+          1.总结来说，dtd的api分成两类，用意不同
+          2.第一类：dtd.resolve dtd.reject 这是主动去执行的函数
+          3.第二类：dtd.then dtd.done dtd.fail 这是被动受监听的方法
+          4.这两类应该分开，否则后果很严重
+            所以这两类不能放一块，放一块就容易出问题，从我们程序设计的角度应该是分开。
+          5.api的错误使用，改进方法即jquery deferred中最初引入promise的概念
+            1.在使用的过程中不正确的使用了w.reject
+              function waitHandle () {
+                var dtd = $.Deferred() // 创建一个deferred对象
+                var wait = function (dtd) { // 要求传入一个deferred对象
+                  var task = function () {
+                    console.log('执行完成')
+                    dtd.resolve()    // 表示异步任务已经完成
+                    // dtd.reject()  // 表示异步任务失败或出错
+                  }
+                  setTimeout(task, 2000)
+                  return dtd // 要求返回deferred对象
+                }
+                // 注意，这里一定要有返回值
+                return wait(dtd)
+              }
+              // 使用
+              var w = waitHandle()
+              w.reject() // 主动执行了reject（不老实的做法），这时下面的代码直接输出的都是执行的error的函数了。
+              w.then(function () {
+                  console.log('ok 1')
+                }, function () {
+                  console.log('err 1')
+                })
+                .then(function () {
+                  console.log('ok 2')
+                }, function () {
+                  console.log('err 2')
+                })
+            2.解决，使用dtd.promise
+              function waitHandle () {
+                var dtd = $.Deferred() // 创建一个deferred对象
+                var wait = function (dtd) { // 要求传入一个deferred对象
+                  var task = function () {
+                    console.log('执行完成')
+                    dtd.resolve()    // 表示异步任务已经完成
+                    // dtd.reject()  // 表示异步任务失败或出错
+                  }
+                  setTimeout(task, 2000)
+                  return dtd.promise() // 注意，这里返回的是promise，而不是直接返回deferred对象
+                }
+                // 注意，这里一定要有返回值
+                return wait(dtd)
+              }
+              // 使用
+              var w = waitHandle() // 经过上面的改动，w接收的就是一个promise对象
+              w.reject() // 这时执行这句话会报错，因为这个返回的promise对象只有.then .done .fail这一些监听的方法。它不
+                         // 再支持resolve reject这种主动调用的方法了。也就是我们通过返回promise对象，已经把dtd的resolve
+                         // 和reject方法给它过滤掉了。你外面不能再调用了。只有我封装的时候才能调用resolve和reject。你外
+                         // 面使用者只能是被动监听，不能主动去修改我的这个resolve和reject。这就是会报错的原因。
+              $.when(w).then(function () {
+                  console.log('ok 1')
+                }, function () {
+                  console.log('err 1')
+                })
+                .then(function () {
+                  console.log('ok 2')
+                }, function () {
+                  console.log('err 2')
+                })
+        4.问题解答
+          1.可以说一下jquery中的deferred，jquery 1.5对ajax的改变举例
+          2.说明如何使用Deferred简单的封装异步函数
+            这样封装的好处，开放封闭原则
+          3.说明Promise和Deferred的区别
+            想要深入的理解一个东西，就需要知道它的前世今生。了解一个东西，一个文化，一个人都是这样。其实我很反感一些新概念直接
+            填鸭式的告诉你怎么用，包括计算机的一些历史，就是你想要真正的了解计算机，想要真正了解编程是什么，操作系统是什么，你
+            一定要从它的历史，从它的根源开始说起。比如说计算机历史这一块，你肯定要从图灵那块开始说起，你要了解图灵，什么叫图灵
+            机，什么叫图灵完美的语言。
+      4.Promise的基本使用和原理
+        1.基本语法回顾
+        2.异常捕获
+          异常捕获不光是js开发，在各个语言开发中都需要注意的项，因为你不能保证你的程序没有异常，当出现异常之后，你该怎么捕获它
+          来保证这个程序正常的运行，而不是一出现异常，一出现错误就崩溃了，每一个程序都需要有一定的健壮性。
+          then这个函数接收两个参数，第一个参数是成功之后的回调函数，第二个参数是失败之后的回调函数。那我们要进行异常捕获的时候
+          呢，我们就不能传入两个参数了。我们让then只接收一个参数，就是每个then只接收一个成功的回调函数，失败的回调函数我们不管
+          ，这样的话，不管有多少个then，我们可以在后面统一加一个catch，catch里面可以接收一个函数，函数的参数就是那个异常。也
+          就是说我们.then.then，不管多少个.then，只接收一个参数，就是成功的回调函数，失败的或者说报异常的，我们统一用catch
+          去管。
+          会被catch捕获到的情况：
+            1.第一种是在程序执行中的逻辑之外的一些东西的报错，比如语法的报错或一些其他的bug。并不是我们逻辑之内的，并不是我们
+              自己要生成的错误。
+            2.第二种是我们逻辑之内的，是在我们逻辑之内的自己通过rejec()生成的错误。
+            这两种情况都可以通过catch来进行捕获。所以说，我们以后在写promise的时候，这个.then里面我们就只传一个参数就可以了，
+            就只传这个成功的回调就可以了，这会让我们更加的关注到业务逻辑的开发中，而把这个业务逻辑之外的一些错误的一些捕获，我
+            们可以通过统一的catch方法去收敛起来，就是让这个异常捕获更加的统一一些。
+          catch里面一般做的事情：
+            1.做异常处理，例如显示一个 message。异常业务逻辑处理。
+            2.做错误日志统计和上报
+        3.多个串联
+          then参数的函数如果返回了promise实例，那then函数返回就是这个promise实例；如果返回的不是promise实例，那then函数
+          会返回一个全新的promise实例并resolve这个返回的数据；如果什么都没返回，那then函数也是会返回一个全新的promise实例
+          并resolve undefined。
+        4.Promise.all和Promise.race
+        5.总结一些Promise的标准
+          每一个标准化的东西都有一个标准，就像我们常说的，w3c标准，http标准，ECMA标准。
+          1.关于“标准”的闲谈
+            1.任何技术推广使用都需要一套标准来支撑
+            2.如html js css http等，无规矩不成方圆，这个规矩就是标准
+            3.任何不符合标准的东西，终将会被用户抛弃
+            4.不要挑战标准，不要自造标准
+              就是你遇到一个问题，你要尽量的去找一些可靠的标准来解决，不要挑战标准，不要去觉得这个标准不行，我要自己造一个。标
+              准和标准之间都是有一些扩展关系的，你自己造了一个标准。不管好不好用原来的标准都是被业界所认可的，被社区所认可的，
+              大家所公用的。你自己造的标准你自己用还行，你自己玩没问题，但是你一旦涉及到和别人交接啊配合啊，包括和别的框架融合
+              和别的业务端联调啊，这个时候你就麻烦了，因为大家都符合标准来，你自己不符合标准，这不是你自己找事吗。作为一个合格
+              的程序员，这些东西都是要深入骨髓的去理解的。这些对你以后的发展也绝对是有好处的。文字描述作为一个标准来输出，但是
+              标准的落地呢还是在代码中落地。
+          2.状态变化
+            1.三种状态：pending fulfilled rejected
+            2.初始状态就是pending
+            3.pending可以变为fulfilled，或者pending变为rejected
+            4.状态变化不可逆
+          3.then
+            1.Promise实例必须实现then这个方法，如果没有.then它就不是promise了
+            2.then()必须可以接收两个函数作为参数，成功之后的回调和失败之后的回调
+            3.then()返回的必须是一个Promise实例
+        6.问题解答
+          1.基本语法
+          2.如何捕获异常（Error和reject都要考虑）
+          3.多个串联 - 链式执行的好处
+          4.Promise.all和Promise.race
+          5.Promise标准总结 - 状态变化，then函数 
+      5.介绍一下async/await（和Promise的区别、联系）
+        async/await这种写法跟Promise其实完全不冲突，它是用了Promise的一些特性，然后又做了一些改进，所以也可以作为Promise
+        的一个扩展。
+        1.then只是将callback拆分了
+          它的写法还是一个异步的写法，它的本质上还是callback，因为then里面传的是一个函数，所以说它这个写法还是callback的写
+          法，只不过比以前的callback写法更加可以拆分了，更加可以模块化了，更加可以这种链式的串行了，不像之前那种嵌套很多层那
+          样了。
+        2.async/await可以直接用同步的写法来写，最直接的同步写法
+          其实我们解决了这么长时间的异步，我们之前也说过，我们无法改变js单线程，异步这种本质，但是单线程，异步的这个本质呢导致
+          的一个问题就是我们编写代码的顺序和执行的顺序不一致。所以我们一直在解决什么问题呢，我们一直在解决那种callback所带来
+          的问题，就是异步的编写和执行这个逻辑不一致上带来的问题，所以我们现在有了终极解决方案，就是这个async/await，它看上去
+          就是一个特别直接的同步代码写法。
+          const load = async function () {
+            const result1 = await loadImg(src1)
+            console.log(result1)
+            const result2 = await loadImg(src2)
+            console.log(result2)
+          }
+          load()
+          这个写法完全就是取出第一个值打印第一个值，取出第二个值打印第二个值。这完全是同步的写法，使用上没有一个回调函数，可能回
+          调函数的事情封装起来了，我们使用的时候就完全不需要使用回调函数，使用上是完全的同步的写法。但它就是来解决一个异步的问题。
+          它跟我们.then.then这种方式效果是一致的。这种写法就比我们直接使用promise.then.then这种写法要好很多，因为.then里面
+          还要传回调函数。所以说有机会在开发环境中就可以去试一试async/await。
+        3.语法
+          1.使用await，函数必须用async标识
+            你想要在函数体里面用await，你函数体这个function前面必须加一个async，然后这个函数呢还可以作为一个普通的函数来执行。 
+          2.await后面必须跟一个promise实例
+            await的返回值就是这个promise实例resolve或reject传出来的结果。
+          3.需要用babel-polyfill做编译
+        4.问题解答
+          1.基本语法的使用
+          2.async/await使用了Promise，并没有和Promise冲突
+          3.完全是同步的写法，再也没有回调函数了
+          Promise是对异步回调的一个封装，Promise标准中如果是要使用的话，就是封装完了再使用的话，是要有一个.then.then.catch
+          这种写法的。但是async/await呢使用了Promise的封装，又对Promise的写法进行了封装，它还能使用完全同步的写法。就再也没
+          有回调函数了。这是一个进步。但它并不是取代了Promise，而是和Promise进行了一个完美的兼容。也算是Promise再封装以后在
+          使用中的一个扩展。
+          4.任何的写法的改变都改变不了js单线程和异步的本质
+            这个是永远变不了的，除非js的执行引擎发生了变化，否则它是永远变不了的。变的只是做异步的事情的越来越趋向于同步的写法。
+      6.总结一下当前js解决异步的方案
+        1.jquery deferred
+        2.Promise
+        3.async/await
+        4.generator
+          1.原理比较复杂
+          2.不是异步的直接解决方案
+            它提出来并不是直接为了解决异步的问题，而是它提出了一个新的功能，那这个功能呢可以通过这么用那么用，通过复杂的封装可以
+            解决异步的问题，但是它并不是直接针对异步提出来的这么一个功能，它也是一个异步的解决方案，但是它提出来并不是为了解决异
+            步的。它能解决异步类似于曲线救国那种感觉。能解决但不是为了解决异步。
+          3.主要的原因是我们有更好更简洁的解决方案async/await
+          4.koa也是放弃了generator而使用async/await来解决异步
