@@ -99,7 +99,7 @@ names = filterOut(names, ["GeolocationPositionError", "GeolocationPosition", "Ge
 names = filterOut(names, ["GamepadHapticActuator", "GamepadEvent", "Gamepad", "GamepadButton"]);
 // DOM - Living Standard — Last Updated 1 April 2020
 // https://dom.spec.whatwg.org/#interface-domerror
-names = filterOut(names, ["DOMError"]);
+names = filterOut(names, ["DOMError", "TreeWalker", "StaticRange"]);
 // Media Capture from DOM Elements
 // https://w3c.github.io/mediacapture-fromelement/#idl-def-CanvasCaptureMediaStream
 names = filterOut(names, ["CanvasCaptureMediaStreamTrack"]);
@@ -127,12 +127,36 @@ names = filterOut(names, ["VTTCue"]);
 // URL
 // https://url.spec.whatwg.org/
 names = filterOut(names, ["URLSearchParams", "URL"]);
-
+// CSS Transitions
+// https://drafts.csswg.org/css-transitions/#Events-TransitionEvent
+names = filterOut(names, ["TransitionEvent"]);
+// Touch Events
+// https://www.w3.org/TR/touch-events/
+names = filterOut(names, ["TouchList", "TouchEvent", "Touch"]);
+// Long Tasks API 1
+// https://www.w3.org/TR/longtasks/#sec-TaskAttributionTiming
+names = filterOut(names, ["TaskAttributionTiming"]);
+// CSS Object Model (CSSOM)
+// https://drafts.csswg.org/cssom/
+names = filterOut(names, ["StyleSheetList", "StyleSheet"]);
+// CSS Typed OM Level 1
+// https://drafts.css-houdini.org/css-typed-om-1/#stylepropertymapreadonly
+names = filterOut(names, ["StylePropertyMapReadOnly", "StylePropertyMap"]);
+// Content Security Policy Level 2
+// https://w3c.github.io/webappsec-csp/2/#firing-securitypolicyviolationevent-events
+names = filterOut(names, ["SecurityPolicyViolationEvent"]);
+// CSSOM View Module
+// https://drafts.csswg.org/cssom-view/#the-screen-interface
+names = filterOut(names, ["Screen"]);
+// Scalable Vector Graphics (SVG) 2
+// https://svgwg.org/svg2-draft/types.html
+names = filterOut(names, ["SVGUnitTypes", "SVGTransformList", "SVGTransform", "SVGStringList", "SVGRect", "SVGPreserveAspectRatio", "SVGPointList", "SVGPoint", "SVGNumberList", "SVGNumber", "SVGMatrix", "SVGLengthList", "SVGLength", "SVGAnimatedTransformList", "SVGAnimatedString", "SVGAnimatedRect", "SVGAnimatedPreserveAspectRatio", "SVGAnimatedNumberList", "SVGAnimatedNumber", "SVGAnimatedLengthList", "SVGAnimatedLength", "SVGAnimatedInteger", "SVGAnimatedEnumeration", "SVGAnimatedBoolean", "SVGAnimatedAngle", "SVGAngle"]);
 
 
 
 // MDN中查找不到的属性
-names = filterOut(names, ["MediaEncryptedEvent", "AudioParamMap", "XMLSerializer", "XMLHttpRequestUpload"]);
+names = filterOut(names, ["MediaEncryptedEvent", "AudioParamMap", "XMLSerializer", "XMLHttpRequestUpload", 
+        "TextEvent", "Selection"]);
 
 
 
