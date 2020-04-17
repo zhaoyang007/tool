@@ -922,6 +922,7 @@ JavaScript
                     // 以上三步就是call和apply内部实现的核心步骤
                   }
               4.call,apply,bind
+                call和apply关注的就是this和传参两件事。
                 1.call和apply可以用来重新定义函数的this指向。
                 2.call和apply可以实现多重继承，就是一个子类能够继承多个父类。F1可以同时从F2,F3...等继承。
                 3.call apply bind方法的内部实现

@@ -1,0 +1,259 @@
+
+知识点思维导图
+https://www.processon.com/mindmap/5d42d603e4b065dc42bb16db
+
+问题
+vue的vdom + diff + 操作dom
+就比直接原生或jquery直接操作dom的性能更高吗
+
+
+Vue组件化的实践
+1.内容概要
+  1.工作中以及通用组件库的开发中一些常见的组件化的技术盘点
+  2.通用组件库（ElementUI）的设计与实现
+    1.通用表单组件设计与实现
+    2.弹窗类组件设计与实现
+    3.树形（递归）组件的设计与实现
+    有些功能遇到难处了，怎么从组件库的源码中找到解决办法。
+2.知识储备
+  1.element-ui
+    使用一下，看看它的API是怎么设计的。
+  2.组件通讯
+    inject/provide跨层级传参
+    $children/$parent
+    $refs
+  3.组件复合
+    插槽
+  4.组件的构造函数
+    Vue.extend() 平时的工作中几乎不会和它有接触。但是写底层的通用组件库时，我们可能就要接触到构造函数。主要的原因在于像弹窗
+    组件，我们可能会在全局的范围内创造它的构造函数以及执行挂载，挂载的目标不是当前的宿主，而是一个更靠上的，怎么做到这一点，首
+    先这个组件实例的创建过程就需要靠我们自己来了，而不能靠vue来做了。所以我们要涉及到组件的构造函数。要涉及到extend这个方法。
+  5.渲染函数
+    render()上述方法的替代方案。
+  6.组件实例创建后怎么挂载
+    $mount
+    $destroy
+  7.递归组件
+    循环引用
+    在做树形组件的时候，会用到递归组件
+3.直播正课内容
+  1.技能金字塔
+    顶层1.业务技术结合的最佳实践。比如请求封装，鉴权怎么做，前后端通信方式，数据模拟，工作流，代码质量。
+    中层2.业务层，API调用，重复的工作。
+    底层3.底层，不了解或很少接触到。比如底层原理，底层API。进阶和提升受到了很大的限制。
+  2.把一块拿下，独当一面就是p6的水平了。能拿下很多块，头脑中有架构思维，解决问题非常灵活，面对问题很快有一个好的解决方案就达到了p7。
+  3.大厂思维，广度，深度，实战
+  4.课堂目标
+    mvvm框架里，一个比较重要的特性就是组件化。
+    1. 深入理解Vue的组件化机制
+    2. 掌握Vue组件化常用技术
+    3. 能够设计并实现多种类型的组件 
+    4. 加深对一些vue原理的理解
+    5. 学会看开源组件库源码
+  5.知识要点
+    1. 组件通信方式盘点 
+    2. 组件复合
+    3. 递归组件
+    4. 组件构造函数和实例 
+    5. 渲染函数
+    6. 组件挂载 7. ...
+  6.运行环境
+    1. node 12.x 
+    2. vue.js 2.6.x 
+    3. vue-cli 4.x
+  7.知识点 
+    组件化
+      vue组件系统提供了一种抽象，让我们可以使用独立可复用的组件来构建大型应用，任意类型的应用界 面都可以抽象为一个组件树。组件化
+      能提高开发效率，方便重复使用，简化调试步骤，提升项目可维护 性，便于多人协同开发。
+      1.vue中一些常见的组件化技术
+        1.组件之间的通信方式。
+          1.props
+            父给子传值
+            // child
+            props: { msg: String }
+            // parent
+            <HelloWorld msg="Welcome to Your Vue.js App"/>
+          2.自定义事件
+            子给父传值
+            // child
+            this.$emit('add', good)
+            // parent
+            <Cart @add="cartAdd($event)"></Cart>
+          3.eventbus
+            事件总线
+            任意两个组件之间传值常用事件总线 或 vuex的方式。
+            // Bus:事件派发、监听和回调管理。发布订阅模式
+            class Bus {
+              constructor(){
+                this.callbacks = {}
+              }
+              $on(name, fn){
+                this.callbacks[name] = this.callbacks[name] || []
+                this.callbacks[name].push(fn)
+              }
+              $emit(name, args){
+                if(this.callbacks[name]){
+                  this.callbacks[name].forEach(cb => cb(args))
+                }
+              } 
+            }
+            // main.js
+            Vue.prototype.$bus = new Bus()
+            // child1
+            this.$bus.$on('foo', handle)
+            // child2
+            this.$bus.$emit('foo')
+            实践中通常用Vue代替Bus，因为Vue已经实现了相应接口
+          4.vuex
+            创建唯一的全局数据管理者store，通过它管理数据并通知组件状态变更。 
+            组件通信最佳实践，预习视频第12章
+          5.边界情况（不太常用的）
+            我们在做一些通用组件的时候这些不常用的方式就用得着了。vuex等常用的通信方式这么好，为什么还要用这些不常用的方式，最主要
+            的原因是你不能强迫用户装vuex。因为我们现在要写的是通用组件，所以你能使用的是框架提供给你的最原始最基础的API，不可以使
+            用超出框架的其他东西，否则就有很强的侵入性，就不是一个很好的组件库了。
+            $parent/$root
+              子组件访问老爹可以用$parent。访问根元素可以用$root。
+              兄弟组件之间通信可通过共同祖辈搭桥，$parent或$root。从原理上来讲跟总线模式是一样的，互相通信的组件之间有一个共同的
+              中介人。
+              事件派发这个模式，事件它的派发和监听者必须是同一个。发布订阅模式，事件谁派发谁监听。
+              // brother1
+              this.$parent.$on('foo', handle)
+              // brother2
+              this.$parent.$emit('foo')
+            $children 
+              老爹可以通过$children访问所有孩子元素。
+              父组件可以通过$children访问子组件实现父子通信。
+              // parent
+              this.$children[0].xx = 'xxx'
+              注意:$children不能保证子元素顺序
+            $attrs/$listeners（非prop（属性）特性）
+              凡是子组件里没有通过prop方式去声明，这时候还通过老爹给传进来了，它就会被收纳到$attrs里( class 和 style 除外)。
+              包含了父作用域中不作为 prop 被识别 (且获取) 的特性绑定 ( class 和 style 除外)。当一个组件没有声明任何 prop 时，
+              这里会包含所有父作用域的绑定 ( class 和 style 除外)，并且可以通过 v-bind="$attrs" 传入内部组件——在创建高级别
+              的组件时非常有用。
+              // child:并未在props中声明foo 
+              <p>{{$attrs.foo}}</p>
+              // parent
+              <HelloWorld foo="foo"/>
+              $listeners和$attrs是类似的。
+              child组件被点击了我想做点事，但是做的这个事不是在child内部声明的，而是老爹传进来的。做比较高级的封装组件，你封了一
+              个其他组件，你还想给它传一个回调函数让它去调用，就可以用这种方式。回调函数是在老爹里声明的。
+              // child
+              <!-- $listeners会被展开并监听 -->
+              <p v-on="$listeners"></p>
+              // parent
+              <HelloWorld @click="handle"/>
+            $refs 
+              可以通过$refs的方式可以找到当前老爹里面包含的所有的孩子，直接去访问。除了组件实例本身，还能访问一些dom元素。平时用
+              的还是挺多的。
+              获取子节点引用
+              // parent
+              <HelloWorld ref="hw"/>
+              mounted() {
+                this.$refs.hw.xx = 'xxx'
+              }
+            provide/inject
+              实际工作中不常遇到，因为有vuex。比如老祖宗组件里有一个值，想传给特别深的一个后代元素，这时候就能用到这个依赖注入这
+              种方式，一个是提供，一个是注入。它可以跨层级的传参，如果没有vuex可以使用的话，可以用这种方式。平时开发中很少用，只
+              限于UI库的开发过程。
+              能够实现祖先和后代之间传值
+              // ancestor
+              provide() {
+                  return {foo: 'foo'}
+              }
+              // descendant
+              inject: ['foo']
+          6.范例:组件通信
+            组件通信范例代码请参考components/communication  
+        2.复合组件，内容分发应该怎么做。就是插槽。
+          1.插槽
+            插槽是另外一个非常重要的组件化技术，它其实是组件内容的分发。如果在老爹里面声明一些内容，想在子组件中去显示就要用到插槽。
+            这就是插槽技术，它很常用。
+            插槽语法是Vue 实现的内容分发 API，用于复合组件开发。该技术在通用组件库开发中有大量应用。
+            子组件中使用<slot></slot>占据坑位。父组件中使用<template></template>模版填充坑位。
+            1.匿名插槽
+              // comp1
+              <div>
+                <slot></slot>
+              </div>
+              // parent
+              <comp>hello</comp>
+            2.具名插槽
+              将内容分发到子组件指定位置
+              // comp2
+              <div>
+                <slot></slot>
+                <slot name="content"></slot>
+              </div>
+              // parent
+              <Comp2>
+                <!-- 默认插槽用default做参数 -->
+                <template v-slot:default>具名插槽</template> 
+                <!-- 具名插槽用插槽名做参数 -->
+                <template v-slot:content>内容...</template>
+              </Comp2> 
+            3.作用域插槽
+              分发内容要用到子组件中的数据
+              // comp3
+              <div>
+                <slot :foo="foo"></slot>
+              </div>
+              // parent
+              <Comp3>
+                <!-- 把v-slot的值指定为作用域上下文对象 --> 
+                <template v-slot:default="slotProps">
+                  来自子组件数据:{{slotProps.foo}} 
+                </template>
+              </Comp3>
+            4.范例
+              插槽相关范例请参考components/slots中代码
+      2.组件化实战  
+        1.通用表单组件
+          功能：收集数据、校验数据并提交。
+          需求分析
+            在开始之前要做一个需求分析，到底要什么什么样的功能，为了实现这些功能要做一些什么事情。
+            做通用组件的注意事项
+              1.高内聚，低耦合。功能尽量单一，才能更好的实现复用。正因为这样我们在KInput外面再设计一层KFormItem，让它去做校
+                验的事。校验的事就不用在KInput里面做了。
+              2.接收数据的是KForm，真正使用数据的是KInput或KFormItem，所以就涉及到组件之间的传参。不止一层的向下传递，所以
+                应该用到provide/inject。
+            实现KForm 
+              指定数据、校验规则
+            KformItem
+              执行校验
+              显示错误信息
+            KInput
+              维护数据  
+          最终效果：Element表单
+            范例代码查看components/form/ElementTest.vue
+        2.实现弹窗组件
+          弹窗这类组件的特点是它们在当前vue实例之外独立存在，通常挂载于body；它们是通过JS动态创建的，不需要在任何组件中声明。
+          常见使用姿势:
+            this.$create(Notice, {
+              title: '社会你杨哥喊你来搬砖', 
+              message: '提示信息', 
+              duration: 1000
+            }).show();
+      3.作业
+        1.修正input中$parent写法的问题
+          想跨层级的去传参，还不能使用$parent/$root/$children等，element官方用的是混入的方式，在src/mixins写了一个
+          emitter.js派发器。它可以做两件事，一个叫广播一个叫冒泡派发事件，vue1.0里是有的，之后删了。这个可以隔层的去派事件，
+          比如在input里可以不停的向上去找我想要的组件让它去派发事件。这个东西是作为一个混入被引入的，主要是为了复用。
+          1.mixin emitter
+          2.声明componentName
+          3.dispatch()
+        2.使用Vue.extend方式实现create方法
+          Vue.extend开发中很少接触，它是框架本身调的方法。
+          Vue.extend的用法
+            const comp = {data: {}, props: {}} // 一段组件的配置
+            // 如果想得到这个组件的构造函数，就用Vue.extend方式把这个组件的配置对象传进去，就会得到一个构造函数
+            const Ctor = Vue.extend(comp)
+            // 用的时候new一下这个构造函数，就可以得到这个组件的实例了。
+            // 接下来的问题是怎么传参，官方给的接口是用propsDate的方式去传递参数，就是模版上传过来的参数
+            new Ctor({propsDate: {}})
+            // 既然得到了组件实例，后面的写法就跟之前的比较类似了
+        3.学习element源码
+          1.github中搜element
+          2.packages
+            几乎所有源码都在这里，src只是暴露一些接口的地方
+          

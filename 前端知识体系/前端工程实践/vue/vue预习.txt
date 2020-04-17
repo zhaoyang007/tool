@@ -1,0 +1,899 @@
+vue预习
+1.vue核心思想，设计理念：
+  1.数据驱动的理念。想要修改界面中的数据，直接修改这个值即可，不用再进行dom操作，能大幅的提升开发效率。
+  2.MVVM模式的践行者
+    MVVM框架的三要素：响应式、模版引擎及其渲染
+      1.响应式：数据驱动需要实现数据的响应式。改数据界面发生变化这叫数据驱动，界面怎么知道变化就是数据响应式要实现的。
+      2.模版：vue的模版如何编译和解析？
+      3.渲染：vue如何将模版转换成html？
+        vue内部工作的实际原理是：这段模版实际上会被vue转换成一个js函数，称为渲染函数，将来数据发生变化的时候，会重新执行渲染函
+        数得到最新的结果，得到的结果就是虚拟dom，然后把虚拟dom再变成真实的dom。
+    vue用来做数据层和试图层的交互，数据变了我要改界面，界面变了我要反作用数据。vue就是中间层，连接我们数据以及我们的试图。vue的
+    核心就是vm这一块。
+2.模版语法
+  差值文本
+  列表渲染
+  条件渲染
+  表单输入绑定
+  事件处理
+  class与style绑定
+  模版和函数渲染
+    模版语法是如何实现的
+      在底层的实现上，Vue 将模板编译成虚拟 DOM 渲染函数，然后生成虚拟dom。结合响应系统，Vue 能够智能地计算出最少需要重新渲染
+      多少组件，并把 DOM 操作次数减到最少。Vue通过它的编译器将模板编译成渲染函数，在数据发生变化的时候再次执行渲染函数，通过对
+      比两次执行结果得出要做的dom操作。
+3.计算属性和监听器
+  模板内的表达式非常便利，但是设计它们的初衷是用于简单运算的。在模板中放入太多的逻辑会让模板过重且难以维护，此时就可以考虑计算属
+  性和监听器。
+  计算属性具有缓存性：计算所得的值如果没有变化不会重复执行，页面不会重新渲染。其实计算属性里的逻辑挪到methods里面也是可以实现的。
+  但是不管这个值有没有变化，每次都会重新计算。
+  默认情况下watch在初始化时不执行，监听的值变了才执行。想要初始化时执行，要使用带选项的watcher。
+  区别：
+    1.简洁性。且计算属性具有缓存性。所以实际开发中，如果能用computed实现就用computed。
+    2.从语境上说
+      watch：一个值变化了，我要做一些事情，适合做一个数据影响多个数据的情形。
+      computed：一个值是由其他值得来的，这些值变了这个值也要变，适合做多个值影响一个值的情形。
+    3.监听器选项提供了更通用的方法，适合执行异步操作或较大开销操作的情况。
+4.生命周期
+  每个 Vue 实例在被创建时都要经过一系列的过程。例如，需要设置数据监听、编译模板、将实例挂载到 DOM 并在数据变化时更新 DOM 等，
+  称为Vue实例的生命周期。
+  1.使用生命周期钩子
+    在Vue实例的生命周期过程中会运行一些叫做生命周期钩子的函数，这给用户在不同阶段添加自己代码的机会。
+    created：组件实例已创建，它自己的所有的数据以及父组件传下来的所有数据都可以访问到了。由于没有挂载，所以当前这些数据还没有
+            转换成真实的dom元素。
+    mounted：将所有渲染函数执行之后得到的虚拟dom，转换成真实dom。这个过程是很快的。
+  2.所有的生命周期
+    三个阶段：初始化、更新、销毁
+    初始化：beforeCreate、created、beforeMount、mounted
+    更新：beforeUpdate、updated
+    销毁：beforeDestroy、destroyed
+  3.使用场景分析
+    {
+      beforeCreate(){} // 执行时组件实例还未创建，通常用于插件开发中执行一些初始化任务
+      created(){} // 组件初始化完毕，各种数据可以使用，常用于异步数据获取
+      beforeMounted(){} // 未执行渲染、更新，dom未创建
+      mounted(){} // 初始化结束，dom已创建，可用于获取访问数据和dom元素
+      beforeUpdate(){} // 更新前，可用于获取更新前各种状态
+      updated(){} // 更新后，所有状态已是最新
+      beforeDestroy(){} // 销毁前，可用于一些定时器或订阅的取消
+      destroyed(){} // 组件已销毁，作用同上
+    }
+5.组件化实践
+  组件化就是把我们应用程序中的一些比较独立的功能的模块或者单元，把它抽取出来，然后把它封装成组件。就像工程化过程中的一些零件。搭
+  积木时候积木的零件。以后在开发后续程序的过程中，维护，复用都会得到进一步的提升。
+  vue官方：组件是可复用的 Vue 实例，带有一个名字，我们可以在一个通过 new Vue 创建的 Vue 根实例中，把这个组件作为自定义元素来使用。
+  1.组件的注册、使用及数据传递
+  2.自定义事件及其监听
+    当子组件需要和父级组件进行通信，可以派发并监听自定义事件。
+  3.在自定义组件上使用双向数据绑定
+    <course-add v-model="course" @add-course="addCourse"></course-add> 相当于：
+    <course-add :value="course" @input="course=$event" @add-course="addCourse"></course-add>
+    自定义组件支持v-model需要实现内部input的:value和@input
+  4.插槽
+    1.通过插槽分发内容
+      通过使用vue提供的 <slot> 元素可以给组件传递内容。
+      在子组件外面（父组件）提供内容，分发到子组件里面的指定的位置，这就是内容分发技术。
+    2.如果存在多个独立内容要分发，可以使用具名插槽v-slot:name
+    3.作用域插槽：数据值来自于子组件内部还是父组件
+  5.Vue组件化的理解
+    组件化是Vue的精髓，Vue应用就是由一个个组件构成的。Vue的组件化涉及到的内容非常多，当面试时
+    被问到：谈一下你对Vue组件化的理解。这时候有可能无从下手，可以从以下几点进行阐述：
+      定义：组件是可复用的 Vue 实例，准确讲它们是VueComponent的实例，继承自Vue。
+      优点：组件化其实是软件工程中的一些原则的践行。软件工程中一个最重要的原则就是高内聚低耦合，从而增强程序的复用性、可维护性和
+           可测试性。这些优点在vue程序中就是用组件化去实现的。
+      使用场景：什么时候使用组件？以下分类可作为参考：
+        通用组件：实现最基本的功能，具有通用性、复用性，例如按钮组件、输入框组件、布局组件等。
+        业务组件：它们完成具体业务，具有一定的复用性，例如登录组件、轮播图组件。
+        页面组件：组织应用各部分独立内容，需要时在不同页面组件间切换，例如列表页、详情页组件
+      如何使用组件
+        定义：Vue.component()，components选项，sfc
+        分类：有状态组件，functional，abstract
+        通信：props，$emit()/$on()，provide/inject，$children/$parent/$root/$attrs/$listeners
+        内容分发：<slot>，<template>，v-slot
+        使用及优化：is，keep-alive，异步组件
+      组件的本质
+        vue中的组件经历如下过程
+        组件配置 => VueComponent实例 => render() => Virtual DOM=> DOM
+        所以组件的本质是产生虚拟DOM
+6.vue必会API盘点
+  1.数据相关API
+    Vue.set
+      向响应式对象中添加一个属性，并确保这个新属性同样是响应式的，且触发视图更新。
+      使用方法： Vue.set(target, propertyName/index, value)
+    Vue.delete
+      删除对象的属性。如果对象是响应式的，确保删除能触发更新视图。
+      使用方法： Vue.delete(target, propertyName/index)
+  2.事件相关API
+    vm.$on
+      监听当前实例上的自定义事件。事件可以由 vm.$emit 触发。回调函数会接收所有传入事件触发函数的额外参数。
+      相当于在模版中@事件的方式：@test="callback"
+      vm.$on('test', function (msg) {
+        console.log(msg)
+      })
+      事件监听的时候，虽然我们@test是写在父组件里头，但是这个事件的监听者其实是事件的派发者。事件的监听者和派发者是同一个实例。
+      而不是在子组件中派发事件，在父组件中监听，要区分开来，只是用@那种语法写到父组件。将来转换成真正的代码其实还是$on这样的。
+    vm.$emit
+      触发当前实例上的事件。附加参数都会传给监听器回调。
+    典型应用：事件总线
+      通过在Vue原型上添加另外一个Vue实例作为事件总线，实现组件间相互通信，而且不受组件间关系的影响
+      Vue.prototype.$bus = new Vue();
+      这样做可以在任意组件中使用 this.$bus 访问到该Vue实例。这样的话，这个Vue的实例就可以作为所有组件的中间人。在任何的组件
+      中想给其他的组件传递消息都可以用$bus进行$emit，在其他组件中去$on监听。
+    vm.$once
+      监听一个自定义事件，但是只触发一次。一旦触发之后，监听器就会被移除。
+    vm.$off
+      移除自定义事件监听器。
+        如果没有提供参数，则移除所有的事件监听器；
+        如果只提供了事件，则移除该事件所有的监听器；
+        如果同时提供了事件与回调，则只移除这个回调的监听器。
+  3.组件或元素引用
+    ref和vm.$refs
+      ref 被用来给元素或子组件注册引用信息。引用信息将会注册在父组件的 $refs 对象上。如果在普通的 DOM 元素上使用，引用指向的
+      就是 DOM 元素；如果用在子组件上，引用就指向组件的实例。
+    注意：
+      ref 是作为渲染结果被创建的，在初始渲染时不能访问它们
+      $refs 不是响应式的，不要试图用它在模板中做数据绑定
+      当 v-for 用于元素或组件时，引用信息将是包含 DOM 节点或组件实例的数组。
+7.Vue拓展知识——过度&动画
+  Vue 在插入、更新或者移除 DOM 时，提供多种不同方式的应用过渡效果。 包括以下工具：
+    在 CSS 过渡和动画中自动应用 class
+    可以配合使用第三方 CSS 动画库，如 Animate.css
+    在过渡钩子函数中使用 JavaScript 直接操作 DOM
+    可以配合使用第三方 JavaScript 动画库，如 Velocity.js
+  css过度动画
+    transition组件会为嵌套元素自动添加class，可用于做css过度动画
+    1. v-enter ：定义进入过渡的开始状态。在元素被插入之前生效，在元素被插入之后的下一帧移除。
+    2. v-enter-active ：定义进入过渡生效时的状态。在元素被插入之前生效，在过渡/动画完成之后移除。
+    3. v-enter-to : 定义进入过渡的结束状态。在元素被插入之后下一帧生效 (与此同时 v-enter 被移除)，在过渡/动画完成之后移除。
+    4. v-leave : 定义离开过渡的开始状态。在离开过渡被触发时立刻生效，下一帧被移除。
+    5. v-leave-active ：定义离开过渡生效时的状态。在整个离开过渡的阶段中应用，在离开过渡被触发时立刻生效，在过渡/动画完成之后
+       移除。这个类可以被用来定义离开过渡的过程时间，延迟和曲线函数。
+    6. v-leave-to : 定义离开过渡的结束状态。在离开过渡被触发之后下一帧生效 (与此同时 v-leave 被删除)，在过渡/动画完成之后移除。
+  使用CSS动画库
+    通过自定义过度类名可以有效结合Animate.css这类动画库制作更精美的动画效果。
+      <transition enter-active-class="animated bounceIn"
+                  leave-active-class="animated bounceOut">
+  JavaScript 钩子
+    可以在<transition>属性中声明 JavaScript 钩子，使用JS实现动画。
+    <transition
+      v-on:before-enter="beforeEnter" // 动画开始前，设置初始状态
+      v-on:enter="enter" // 执行动画
+      v-on:after-enter="afterEnter" // 动画结束，清理工作
+      v-on:enter-cancelled="enterCancelled" // 取消动画
+      v-on:before-leave="beforeLeave"
+      v-on:leave="leave"
+      v-on:after-leave="afterLeave"
+      v-on:leave-cancelled="leaveCancelled"
+    ></transition>
+    保留css中过度的部分，加上js钩子做动画起始状态
+    Vue.component('message', {
+      template: `
+        <transition ... @before-enter="beforeEnter" @enter="enter">
+        ...
+        </transition>
+      `,
+      methods: {
+        beforeEnter(el) {
+          el.style.opacity = 0 // 设置初始状态
+        },
+        enter(el, done) {
+          document.body.offsetHeight; // 触发回流激活动画
+          el.style.opacity = 1 // 设置结束状态
+        }
+      },
+    })
+    纯js方案：
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/velocity/1.2.3/velocity.min.js"></script>
+      Vue.component('message', {
+        template: `
+          <transition name="fade"
+          :css="false" // 禁用css
+          @before-enter="beforeEnter"
+          @enter="enter"
+          @before-leave="beforeLeave"
+          @leave="leave">
+          </transition>
+        `,
+        methods: {
+          beforeEnter(el) {
+            el.style.opacity = 0
+          },
+          enter(el, done) {
+            Velocity(el, { opacity: 1 }, { duration: 500, complete: done })
+          },
+          beforeLeave(el) {
+            el.style.opacity = 1
+          },
+          leave(el, done) {
+            Velocity(el, { opacity: 0 }, { duration: 500, complete: done })
+          }
+        },
+      })
+  列表过度
+    利用transition-group可以对v-for渲染的每个元素应用过度
+    <transition-group name="fade">
+      <div v-for="c in courses" :key="c.name">
+        {{ c.name }} - ￥{{c.price}}
+        <button @click="addToCart(c)">加购</button>
+      </div>
+    </transition-group>
+    用transition-group包裹v-for的元素，最终transition-group会展开成n个transition，每一个transition包裹一个单独的
+    v-for元素
+8.Vue拓展知识——可复用性
+  过滤器
+    Vue.js 允许你自定义过滤器，可被用于一些常见的文本格式化。过滤器可以用在两个地方：双花括号插值和 v-bind 表达式 (后者从 
+    2.1.0+ 开始支持)。过滤器应该被添加在 JavaScript 表达式的尾部，由“管道”符号指示：
+  自定义指令
+    除了核心功能默认内置的指令 ( v-model 和 v-show )，Vue 也允许注册自定义指令。注意，在 Vue2.0中，代码复用和抽象的主要形
+    式是组件。然而，有的情况下，你仍然需要对普通 DOM 元素进行底层操作，这时候就会用到自定义指令。
+  渲染函数
+    Vue 推荐在绝大多数情况下使用模板来创建你的 HTML。然而在一些场景中，你真的需要 JavaScript 的完全编程的能力。这时你可以用
+    渲染函数，它比模板更接近编译器。
+    1.渲染函数函数签名
+      render: function (createElement) {
+        // render函数接收一个参数createElement叫创建元素，createElement函数返回VNode称为虚拟dom，这个元素就是一个原生
+        // 的js对象，可以描述我们的dom结构，在后续的虚拟dom的比对中来产生它的作用。
+        return createElement(
+          tag, // 标签名称
+          data, // 传递数据
+          children // 子节点数组
+        )
+      }
+    2.虚拟DOM
+      Vue 通过建立一个虚拟 DOM 来追踪自己要如何改变真实 DOM。虚拟dom就是真实dom的一个映射。它来描述一些真实dom的方式，更轻
+      量，更快速。
+    3.createElement参数
+      接下来你需要熟悉的是如何在 createElement 函数中使用模板中的那些功能。这里是
+      createElement 接受的参数：
+      createElement(
+        // {String | Object | Function}
+        // 一个 HTML 标签名、组件选项对象，或者
+        // resolve 了上述任何一种的一个 async 函数。必填项。
+        'div',
+        // {Object}
+        // 一个与模板中属性对应的数据对象。可选。
+        {
+          // (详情见下一节)
+        },
+        // {String | Array}
+        // 子级虚拟节点 (VNodes)，由 `createElement()` 构建而成，
+        // 也可以使用字符串来生成“文本虚拟节点”。可选。
+        [
+          '先写一些文字',
+          createElement('h1', '一则头条'),
+          createElement(MyComponent, {
+            props: {
+              someProp: 'foobar'
+            }
+          })
+        ]
+      )
+    4.函数式组件
+      组件没有管理任何状态，也没有监听任何传递给它的状态，也没有生命周期方法时，可以将组件标记为functional ，这意味它无状态 
+      (没有响应式数据)，也没有实例 (没有 this 上下文)。
+    5.混入
+      混入 (mixin) 提供了一种非常灵活的方式，来分发 Vue 组件中的可复用功能。一个混入对象可以包含任意组件选项。当组件使用混入
+      对象时，所有混入对象的选项将被“混合”进入该组件本身的选项。
+    6.插件
+      插件通常用来为 Vue 添加全局功能。插件的功能范围一般有下面几种
+        1. 添加全局方法或者属性。如: vue-custom-element
+        2. 添加全局资源：指令/过滤器/过渡等。如 vue-touch
+        3. 通过全局混入来添加一些组件选项。如 vue-router
+        4. 添加 Vue 实例方法，通过把它们添加到 Vue.prototype 上实现。
+        5. 一个库，提供自己的 API，同时提供上面提到的一个或多个功能。如 vue-router
+      插件声明
+        Vue.js 的插件应该暴露一个 install 方法。这个方法的第一个参数是 Vue 构造器，第二个参数是一
+        个可选的选项对象：
+        MyPlugin.install = function (Vue, options) {
+          // 1. 添加全局方法或属性
+          Vue.myGlobalMethod = function () {}
+          // 2. 添加全局资源
+          Vue.directive('my-directive', {})
+          // 3. 注入组件选项
+          Vue.mixin({
+            created: function () {
+              // 逻辑...
+            }
+          })
+          // 4. 添加实例方法
+          Vue.prototype.$myMethod = function (methodOptions) {}
+        }
+      插件使用
+        使用Vue.use即可引入插件
+        Vue.use(MyPlugin)
+      范例：修改heading组件为插件
+        const MyPlugin = {
+          install (Vue, options) {
+            Vue.component('heading', {...})
+          }
+        }
+        if (typeof window !== 'undefined' && window.Vue) {
+          window.Vue.use(MyPlugin)
+        }
+9.工程化
+  1.Vue Cli
+    快速原型开发
+      你可以使用 vue serve 和 vue build 命令对单个 *.vue 文件进行快速原型开发。
+        安装 @vue/cli-service-global 扩展
+          npm install -g @vue/cli-service-global
+        准备一个内容原型
+        vue serve
+          启动一个服务并运行原型
+          vue serve Hello.vue
+    创建项目
+      vue create
+        创建一个vue项目
+        vue create my-vue-test
+      vue ui
+        图形化项目管理
+        vue ui
+    Vue CLI 插件
+      Vue CLI 使用了一套基于插件的架构。插件可以修改 webpack 的内部配置，也可以向 vue-cliservice 注入命令。在项目创建的
+      过程中，绝大部分列出的特性都是通过插件来实现的。 
+      在现有的项目中安装插件
+        如果你想在一个已经被创建好的项目中安装一个插件，可以使用 vue add 命令。
+        vue add router
+    开发中的一些知识
+      处理资源路径
+        当你在 JavaScript、CSS 或 *.vue 文件中使用相对路径 (必须以 . 开头) 引用一个静态资源时，该资源将被webpack处理。
+        转换规则
+          如果 URL 是一个绝对路径 (例如 /images/foo.png )，它将会被保留不变。
+          如果 URL 以 . 开头会作为一个相对模块请求被解释并基于文件系统相对路径。
+          如果 URL 以 ~ 开头会作为一个模块请求被解析。这意味着你甚至可以引用 Node 模块中的资源：
+          如果 URL 以 @ 开头会作为一个模块请求被解析。Vue CLI 默认会设置一个指向 src 的别名 @ 。
+      何时使用 public 文件夹
+        通过 webpack 的处理并获得如下好处：
+          脚本和样式表会被压缩且打包在一起，从而避免额外的网络请求。
+          文件丢失会直接在编译时报错，而不是到了用户端才产生 404 错误。
+          最终生成的文件名包含了内容哈希，因此你不必担心浏览器会缓存它们的老版本。
+        如下情况考虑使用public文件夹
+          你需要在构建输出中指定一个固定的文件名字。
+          你有上千个图片，需要动态引用它们的路径。
+          有些库可能和 webpack 不兼容，除了将其用一个独立的 <script> 标签引入没有别的选择。
+        使用public文件夹的注意事项
+          如果你的应用没有部署在域名的根部，那么你需要为你的 URL 配置 publicPath 前缀
+            // vue.config.js
+            module.exports = {
+              publicPath: process.env.NODE_ENV === 'production'
+                ? '/cart/'
+                : '/'
+            }
+          在 public/index.html 等通过 html-webpack-plugin 用作模板的 HTML 文件中，你需要通过<%= BASE_URL %> 设置链接前缀：
+            <link rel="icon" href="<%= BASE_URL %>favicon.ico">
+          在模板中，先向组件传入BASE_URL：
+            data () {
+              return {
+                publicPath: process.env.BASE_URL
+              }
+            }
+            然后：
+            <img :src="`${publicPath}my-image.png`">
+      CSS相关
+        使用预处理器
+          如果创建项目时没有选择需要的预处理器（Sass/Less/Stylus），则需手动安装相应loader
+        自动化导入样式
+          自动化导入样式文件 (用于颜色、变量、mixin等)，可以使用 style-resources-loader。
+        Scoped CSS
+          当 <style> 标签有 scoped 属性时，它的 CSS 只作用于当前组件中的元素
+            <style scoped>
+              .red {
+                color: red;
+              }
+            </style>
+          其原理是通过使用 PostCSS 来实现以下转换：
+            <template>
+              <div class="red" data-v-f3f3eg9>hi</div>
+            </template>
+            <style>
+              .red[data-v-f3f3eg9] {
+                color: red;
+              }
+            </style>
+          混用本地和全局
+            <style>
+            /* 全局样式 */
+            </style>
+            <style scoped>
+            /* 本地样式 */
+            </style>
+          深度作用选择器：使用 >>> 操作符可以使 scoped 样式中的一个选择器能够作用得“更深”，例如影响子组件
+            <style scoped>
+              #app >>> a {
+              color: red
+              }
+            </style>
+          Sass 之类的预处理器无法正确解析 >>> 。这种情况下你可以使用 /deep/ 或 ::v-deep 操作符取而代之
+            <style scoped lang="scss">
+              #app {
+                /deep/ a {
+                  color: rgb(196, 50, 140)
+                }
+                ::v-deep a {
+                  color: rgb(196, 50, 140)
+                }
+              }
+            </style>
+        CSS Module
+          如何用模块化的方式来写css。CSS Modules 是一个流行的，用于模块化和组合 CSS 的系统。 vue-loader 提供了与 CSS 
+          Modules 的一流集成，可以作为模拟 scoped CSS 的替代方案。
+            添加module
+              <style module lang="scss">
+                .red {  
+                  color: #f00;
+                }
+                .bold {
+                  font-weight: bold;
+                }
+              </style>
+            模板中通过$style.xx访问
+              <a :class="$style.red">awesome-vue</a>
+              <a :class="{[$style.red]:isRed}">awesome-vue</a>
+              <a :class="[$style.red, $style.bold]">awesome-vue</a>
+            JS中访问
+              <script>
+              export default {
+                created () {
+                  // -> "red_1VyoJ-uZ"
+                  // 一个基于文件名和类名生成的标识符
+                  console.log(this.$style.red)
+                }
+              }
+              </script>
+      数据访问相关
+        数据模拟
+          使用开发服务器配置before选项，可以编写接口，提供模拟数据。
+            devServer:{
+              before(app) {
+                app.get('/api/courses', (req, res) => {
+                  res.json([{ name: 'web全栈', price: 8999 }, { name: 'web高级', price:8999 }])
+                })
+              }
+            }
+          调用
+            import axios from 'axios'
+            export function getCourses() {
+              return axios.get('/api/courses').then(res => res.data)
+            }
+        代理
+          设置开发服务器代理选项可以有效避免调用接口时出现的跨域问题。
+            devServer: {
+              proxy: 'http://localhost:3000'
+            }
+          测试接口
+            // 需要安装express：npm i express
+            const express = require('express')
+            const app = express()
+            app.get('/api/courses', (req, res) => {
+              res.json([{ name: 'web全栈', price: 8999 }, { name: 'web高级', price: 8999 }])
+            })
+            app.listen(3000)
+10.路由
+  Vue Router
+    Vue Router 是 Vue.js 官方的路由管理器
+  安装
+    vue add router
+  基础
+    起步
+      路由规划、配置，router/index.js
+      商品列表（home） - 商品管理（about)
+      路由出口、导航，App.vue
+        <nav>
+          <router-link to="/">首页</router-link>
+          <router-link to="/about">管理</router-link>
+        </nav>
+        <router-view></router-view>
+      商品管理，About.vue
+    动态路由匹配
+      我们经常需要把某种模式匹配到的所有路由，全都映射到同个组件。例如，我们有一个 User 组件，对于所有 ID 各不相同的用户，都要
+      使用这个组件来渲染。那么，我们可以在 vue-router 的路由路径中使用“动态路径参数”(dynamic segment) 来达到这个效果：
+        { path: '/user/:id', component: User }
+      范例：查看课程详情，views/Detail.vue
+        <div>
+          <h2>detail page</h2>
+          <p>{{$route.params.name}} ...</p>
+        </div>
+      router/index.js
+        {
+          path: '/course/:name',
+          component: () => import('../views/Detail.vue')
+        }
+      列表中的导航，About.vue
+        <router-link :to="`/course/${c.name}`">
+          {{ c.name }} - {{ c.price | currency('￥') }}
+        </router-link>
+      通配符
+        适合做404页面路由
+        {
+          // 会匹配所有路径
+          path: '*',
+          component: () => import('../views/404.vue')
+        }
+    嵌套路由
+      实际生活中的应用界面，通常由多层嵌套的组件组合而成。同样地，URL 中各段动态路径也按某种结构
+      对应嵌套的各层组件，例如：
+        /user/foo/profile                     /user/foo/posts
+        +------------------+                  +-----------------+
+        | User             |                  | User            |
+        | +--------------+ |                  | +-------------+ |
+        | | Profile      | |  +------------>  | | Posts       | |
+        | |              | |                  | |             | |
+        | +--------------+ |                  | +-------------+ |
+        +------------------+                  +-----------------+
+      范例：嵌套方式显示课程详情
+        <router-link :to="`/about/${c.name}`">
+          {{ c.name }} - {{ c.price | currency('￥') }}
+        </router-link>
+        <router-view></router-view>
+      路由配置
+        {
+          path: '/about',
+          name: 'about',
+          component: () => import(/* webpackChunkName: "about" */'../views/About.vue'),
+          children: [
+            {
+              path: ':name',
+              component: () => import('../views/Detail.vue')
+            },
+          ]
+        }
+      响应路由参数变化，Detail.vue
+        export default {
+          watch: {
+            $route: {
+              handler: () => {
+                console.log("$route change");
+              },
+              immediate: true
+            }
+          }
+        };
+    编程导航
+      借助 router 的实例方法，可编写代码来实现编程式导航
+        router.push(location, onComplete?, onAbort?)
+        // 字符串
+        router.push('home')
+        // 对象
+        router.push({ path: 'home' })
+        // 命名的路由
+        router.push({ name: 'user', params: { userId: '123' }})
+        // 带查询参数，变成 /register?plan=private
+        router.push({ path: 'register', query: { plan: 'private' }})
+      范例：修改为课程详情跳转为编程导航
+        <div @click="selectedCourse = c;$router.push(`/about/${c.name}`)">
+          {{ c.name }} - {{ c.price | currency('￥') }}
+        </div>
+    命名路由
+      通过一个名称来标识一个路由显得更方便一些，特别是在链接一个路由，或者是执行一些跳转的时候。你可以在创建 Router 实例的时候，
+      在 routes 配置中给某个路由设置名称。
+        const router = new VueRouter({
+          routes: [
+            {
+              path: '/user/:userId',
+              name: 'user',
+              component: User
+            }
+          ]
+        })
+      要链接到一个命名路由，可以给 router-link 的 to 属性传一个对象：
+        <router-link :to="{ name: 'user', params: { userId: 123 }}">User</router-link>
+      调用 router.push() 时：
+        router.push({ name: 'user', params: { userId: 123 }})
+  进阶
+    路由守卫
+      vue-router 提供的导航守卫主要用来通过跳转或取消的方式守卫导航。有多种机会植入路由导航过程
+      中：全局的, 单个路由独享的, 或者组件级的。
+      全局守卫
+        router.beforeEach((to, from, next) => {
+          // ...
+          // to: Route: 即将要进入的目标 路由对象
+          // from: Route: 当前导航正要离开的路由
+          // next: Function: 一定要调用该方法来 resolve 这个钩子。
+        })
+      范例：守卫About.vue
+        router.beforeEach((to, from, next) => {
+          if (to.meta.auth) {
+            if (window.isLogin) {
+              next()
+            } else {
+              next('/login?redirect='+to.fullPath)
+            }
+          } else {
+            next()
+          }
+        })
+
+        {
+          path: '/about',
+          meta: {
+            auth: true
+          }
+        },
+        {
+        path: '/login',
+          component: () => import('../views/Login.vue')
+        }
+
+        <template>
+          <div>
+            <button @click="login" v-if="!isLogin">登录</button>
+            <button @click="logout" v-else>登出</button>
+          </div>
+        </template>
+        <script>
+        export default {
+          methods: {
+            login() {
+              window.isLogin = true
+              this.$router.push(this.$route.query.redirect)
+            },
+            logout() {
+              window.isLogin = false
+            }
+          },
+          computed: {
+            isLogin() {
+              return window.isLogin
+            }
+          }
+        }
+        </script>
+      路由独享的守卫
+        可以路由配置上直接定义 beforeEnter 守卫：
+        {
+          path: '/about',
+          name: 'about',
+          // ...
+          beforeEnter(to, from, next) {
+            if (to.meta.auth) {
+              if (window.isLogin) {
+                next()
+              } else {
+                next('/login?redirect=' + to.fullPath)
+              }
+            } else {
+              next()
+            }
+          }
+        }
+      组件内守卫
+        可以在路由组件内直接定义以下路由导航守卫：
+          beforeRouteEnter
+          beforeRouteUpdate
+          beforeRouteLeave
+          // About.vue
+          beforeRouteEnter(to, from, next) {
+            if (window.isLogin) {
+              next();
+            } else {
+              next("/login?redirect=" + to.fullPath);
+            }
+          }
+    数据获取
+      路由激活时，获取数据的时机有两个：
+      路由导航前
+        // 组件未渲染，通过给next传递回调访问组件实例
+        beforeRouteEnter (to, from, next) {
+          getPost(to.params.id, post => {
+            next(vm => vm.setData(post))
+          })
+        },
+        // 组件已渲染，可以访问this直接赋值
+        beforeRouteUpdate (to, from, next) {
+          this.post = null
+          getPost(to.params.id, post => {
+            this.setData(post)
+            next()
+          })
+        }
+      路由导航后
+        created () {
+          this.fetchData()
+        },
+        watch: {
+          '$route': 'fetchData'
+        }
+    动态路由
+      通过router.addRoutes(routes)方式动态添加路由
+      // 全局守卫修改为：要求用户必须登录，否则只能去登录页
+      router.beforeEach((to, from, next) => {
+        if (window.isLogin) {
+          if (to.path === '/login') {
+            next('/')
+          } else {
+            next()
+          }
+        } else {
+          if (to.path === '/login') {
+            next()
+          } else {
+            next('/login?redirect=' + to.fullPath)
+          }
+        }
+      })
+      // Login.vue用户登录成功后动态添加/about
+      login() {
+        window.isLogin = true;
+        this.$router.addRoutes([
+          {
+            path: "/about", //...
+          }
+        ]);
+        const redirect = this.$route.query.redirect || "/";
+        this.$router.push(redirect);
+      }
+    路由组件缓存
+      利用keepalive做组件缓存，保留组件状态，提高执行效率
+      范例：缓存about组件
+        <keep-alive include="about">
+          <router-view></router-view>
+        </keep-alive>
+      使用include或exclude时要给组件设置name
+      两个特别的生命周期：activated、deactivated
+    路由懒加载
+      路由组件的懒加载能把不同路由对应的组件分割成不同的代码块，然后当路由被访问的时候才加载对应组件，这样就更加高效了。
+        () => import("../views/About.vue")
+      把组件按组分块
+        () => import(/* webpackChunkName: "group-about" */ "../views/About.vue")
+11.统一状态管理 - Vuex
+  Vuex
+    Vuex 是一个专为 Vue.js 应用程序开发的状态管理模式。它采用集中式存储管理应用的所有组件的状
+    态，并以相应的规则保证状态以可预测的方式发生变化。
+  安装
+    vue add vuex
+  起始
+    State
+      将应用全局状态定义在state中
+        state: {
+          isLogin: false
+        }
+    Mutation
+      修改state只能通过mutation
+        mutations: {
+          login(state) {
+            state.isLogin = true
+          },
+          logout(state) {
+            state.isLogin = false
+          }
+        },
+      获取和修改状态
+        使用store.state获取状态
+          <button @click="login" v-if="!$store.state.isLogin">登录</button>
+          <button @click="logout" v-else>登出</button>
+        修改状态只能通过store.dispatch(mutation)
+          this.$store.commit('login')
+          this.$store.commit('logout')
+    Action
+      Action 类似于 mutation，不同在于：
+        Action 提交的是 mutation，而不是直接变更状态。
+        Action 可以包含任意异步操作。
+          login({commit}, username) {
+            return new Promise((resolve, reject) => {
+              setTimeout(() => {
+                if (username === 'admin') {
+                  commit('login')
+                  resolve()
+                } else {
+                  reject()
+                }
+              }, 1000);
+            })
+          }
+        派发动作
+          this.$store.dispatch('login', 'admin').then(() => {
+            this.$router.push(this.$route.query.redirect)
+          }).catch(() => {
+            alert('用户名或密码错误')
+          })
+  最佳实践
+    模块化
+      使用modules定义多个子模块利于组件复杂状态
+        import user from './user'
+        export default new Vuex.Store({
+          modules: {
+            user,
+          }
+        })
+      移动先前登录状态相关代码到user.js
+        export default {
+          namespaced: true, // 避免命名冲突
+          // ...
+        }
+      访问方式响应变化
+        // Login.vue
+        <button @click="login" v-if="!$store.state.user.isLogin">登录</button>
+        this.$store.dispatch('user/login', 'admin').then(() => {
+          const redirect = this.$route.query.redirect || '/'
+          this.$router.push(redirect)
+        }).catch(() => {
+          alert('用户名或密码错误')
+        })
+        // router/index.js
+        store.state.user.isLogin
+      mapState()/mapMutation()/mapAction()  
+        通过这些映射方法可以让大家少敲几个字，避免对$store直接访问。
+        tate相关修改，Login.vue
+          import { mapState } from 'vuex'
+          computed: {
+            ...mapState('user', ['isLogin'])
+          }
+          <button @click="login" v-if="!isLogin">登录</button>
+      action相关修改
+        import { mapActions } from 'vuex'
+        methods: {
+          login() {
+            this['user/login']('admin').then(...)
+          },
+          ...mapActions(['user/login', 'user/logout'])
+        },
+    Getter
+      可以使用getters从store的state中派生出一些状态
+        export default {
+          namespaced: true,
+          state: {
+            isLogin: false,
+            username: '' // 用户名
+          },
+          mutations: {
+            setUsername(state, username) {
+              state.username = username
+            }
+          },
+          getters: { // 派生出欢迎信息
+            welcome: state => {
+              return state.username + ',欢迎回来';
+            }
+          },
+          actions: {
+            login({ commit }, username) {
+              return new Promise((resolve, reject) => {
+                setTimeout(() => {
+                  if (username === 'admin') {
+                    // 登录成功，设置用户名
+                    commit('setUsername', username)
+                    resolve()
+                  } else {
+                    reject()
+                  }
+                }, 1000);
+              })
+            }
+          },
+        }
+    严格模式
+      严格模式下，无论何时发生了状态变更且不是由 mutation 函数引起的，将会抛出错误。这能保证所有的状态变更都能被调试工具跟踪
+      到。开启严格模式 strict: true
+        const store = new Vuex.Store({
+          // ...
+          strict: true
+        })
+    插件
+      Vuex 的 store 接受 plugins 选项，这个选项暴露出每次 mutation 的钩子。Vuex 插件就是一个函数，它接收 store 作为唯
+      一参数：
+        const myPlugin = store => {
+          // 当 store 初始化后调用
+        }
+      注册插件：
+        const store = new Vuex.Store({
+          // ...
+          plugins: [myPlugin]
+        })
+      范例：实现登录状态持久化，store/plugins/persist.js
+        export default store => {
+          // 初始化时从localStorage获取数据
+          if(localStorage) {
+            const user = JSON.parse(localStorage.getItem('user'))
+            if (user) {
+              store.commit('user/login')
+              store.commit('user/setUsername', user.username)
+            }
+          }
+          // 用户状态发生变化时缓存之
+          store.subscribe((mutation, state) => {
+            if (mutation.type.startsWith('user/')) {
+              localStorage.setItem('user', JSON.stringify(state.user))
+            } else if (mutation.type === 'user/logout') {
+              localStorage.removeItem('user')
+            }
+          })
+        }
