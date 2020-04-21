@@ -179,7 +179,5 @@ Vue全家桶原理剖析
         这些东西的内部是怎么去做数据修改的追踪拦截的。
         像数组这样的不支持Object.defineProperty()的应该怎么去做。
         界面中视图的更新函数到底从哪来，怎么这个数据变了那个部分就要去更新呢，就会涉及到依赖收集这样的概念。
-        
-        
-
-
+vue全家桶知识点思维导图
+https://www.processon.com/view/link/5e146d6be4b0da16bb15aa2a#map      

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+
+<body>
+  <div id="app"></div>
+
+  <script>
+    // 数据响应式的基本流程
+    // 1.有一个数据
+    const obj = {}
+
+    // 3.数据响应式的内部拦截
+    function defineReactive(obj, key, val) {
+      // 对传入obj进行访问拦截
+      Object.defineProperty(obj, key, {
+        get() {
+          console.log('get ' + key);
+          return val
+        },
+        set(newVal) {
+          if (newVal !== val) {
+            console.log('set ' + key + ':' + newVal);
+            val = newVal
+            // 4.数据变化的时候更新视图
+            // 更新函数
+            // 因为我需要把数据的变更映射到视图上去
+            // 每次数据发生变化的时候，只需重新的渲染界面即可
+            update()
+          }
+        }
+      })
+    }
+
+    function update() {
+      app.innerText = obj.foo
+    }
+    // 2.把这个数据定义它的响应式
+    defineReactive(obj, 'foo', '')
+    obj.foo = new Date().toLocaleTimeString()
+
+    setInterval(() => {
+      obj.foo = new Date().toLocaleTimeString()
+    }, 1000);
+
+    // 这是最简单的mvvm的一个雏形，但它缺乏一些高级的特性
+    // 1.现在这个数据太简单了，而且是手动的设置的这个响应式，假设现在这个数据很多，有很多很多属性，显然一个一个设置就不合理了。
+    //   所以要遍历需要响应式对象，让它自动的把所有的属性全部响应化，这个在new Vue的时候我们的data就是一个这样的对象，它就会
+    //   做这样的事情。
+
+
+
+  </script>
+</body>
+
+</html>

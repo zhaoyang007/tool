@@ -123,8 +123,6 @@ keys关键点
 
 学习掌握理解性记忆一个东西
 
-科学上网：https://www.heduian.buzz/
-
 learn now
 1.vue            						4.16 ～ 5.15
 2.前端工程化       						5.16 ～ 6.15
