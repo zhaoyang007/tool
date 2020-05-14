@@ -202,6 +202,8 @@ module.exports = {
 }
 ```
 
+使用 .vue 文件进行开发，应该使用 vue-style-loade r而不是 style-loader，这样 .vue 文件的样式也有热重载的功能了，.vue 文件和样式文件的样式都适用。
+
 ### 解析 less 和 sass
 
 less-loade r的作用就是将 less 转换成 css。
