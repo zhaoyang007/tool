@@ -44,7 +44,7 @@ webpack(config, (err, stats) => {
 
 可以看到每个loader和插件执行耗时，重点的关注耗时较长的loader或插件，针对这些做优化。
 
-
+![构建速度分析](../images/构建速度分析.png)
 
 ```js
 const SpeedMeatureWebpackPlugin = require('speed-measure-webpack-plugin')
@@ -182,13 +182,15 @@ indexOfTest()
 
 ### 多进程/多实例构建：资源并行解析可选方案
 
+![资源并行解析可选方案](../images/资源并行解析可选方案.png)
+
 
 ### 多进程/多实例：使用HappyPack解析资源
 
 原理：每次 webapck 解析一个模块，HappyPack 会将它及它的依赖分配给 worker 线程中。
 
 每次 webpack 解析一个模块，webpack 自身开启一个进程去解析这个模块。HappyPack 会将这个模块进行划分，比如有多个模块，在 webpack compiler run 方法之后，到达 HappyPack，它会做一些初始化，创建一个线程池，线程池会将构建任务里的模块进行分配 ，比如将某个模块以及它的依赖分配给 HappyPack 其中的一个线程，以此类推，那么一个 HappyPack 的线程池可能会包括多个线程，这些线程会各自的处理这些模块以及它的依赖。处理完成之后，会有一个通信的过程，将处理好的资源传输给 HappyPack 的主进程，完成整个构建的过程。
-									
+									![HappyPack工作流程](../images/HappyPack工作流程.png)
 
 ```js
 module.exports = {
@@ -624,16 +626,21 @@ babel-polyfill
 
 打包后体积：88.49k，占比 29.6%
 
+![babel-polyfill构建体积占比](../images/babel-polyfill构建体积占比.png)
 
 ### Promise 的浏览器支持情况
 
+![Promise浏览器支持情况](../images/Promise浏览器支持情况.png)
 
 ### Polyfill 方案
 
+![babel-polyfill方案](../images/babel-polyfill方案.png)
 
 ### Polyfill Service原理
 
 识别 User Agent，下发不同的 Polyfill。
+
+![polyfill-service](../images/polyfill-service.png)
 
 ### 如何使用动态 Polyfill service
 
@@ -656,4 +663,3 @@ https://polyfill.io/v3/polyfill.min.js
 * 图片压缩
 
 * 动态 polyfill
-

@@ -112,6 +112,10 @@ module.exports = {
 }
 ```
 
+#### Mode 的内置函数功能
+
+![Mode的内置函数功能](../images/Mode的内置函数功能.png)
+
 
 
 ## 资源解析
