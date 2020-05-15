@@ -64,7 +64,7 @@ module.exports = merge(baseConfig, devConfig)
 
 ### 功能模块设计
 
-![构建包功能模块设计](/Users/zhaoyang/tool/前端知识体系/前端工程实践/webpack/images/构建包功能模块设计.png)
+![构建包功能模块设计](../images/构建包功能模块设计.png)
 
 ### 目录结构设计
 
@@ -317,7 +317,7 @@ istanbul cover test.js
 
 ### github 最流行的 CI
 
-![github-ci](/Users/zhaoyang/tool/前端知识体系/前端工程实践/webpack/images/github-ci.png)
+![github-ci](../images/github-ci.png)
 
 ## 接入 Travis CI
 
@@ -425,11 +425,11 @@ npm publish
 
 ### 技术方案
 
-![gitcommit规范技术方案](/Users/zhaoyang/tool/前端知识体系/前端工程实践/webpack/images/gitcommit规范技术方案.png)
+![gitcommit规范技术方案](../images/gitcommit规范技术方案.png)
 
 ### 提交格式要求
 
-<img src="/Users/zhaoyang/tool/前端知识体系/前端工程实践/webpack/images/git提交格式.png" alt="git提交格式" style="zoom:150%;" />
+<img src="../images/git提交格式.png" alt="git提交格式" style="zoom:150%;" />
 
 #### 格式说明如下：
 
@@ -509,7 +509,7 @@ vilidate-commit-msg 也是尊从 angularjs 提交规范，每次 git commit 的�
 
 alpha 和 rc 等修饰版本的关键字后面可 以带上次数和 meta 信息
 
-![react版本信息](/Users/zhaoyang/tool/前端知识体系/前端工程实践/webpack/images/react版本信息.png)
+![react版本信息](../images/react版本信息.png)
 
 ### 遵守 semver 规范的优势
 

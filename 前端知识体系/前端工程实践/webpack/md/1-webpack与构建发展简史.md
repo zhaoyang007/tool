@@ -44,7 +44,7 @@ CSS 前缀补全/预处理器
 
 
 
-![es6支持情况](/Users/zhaoyang/tool/前端知识体系/前端工程实践/webpack/images/es6支持情况.png)
+![es6支持情况](../images/es6支持情况.png)
 
 ​																ES6 module 主流浏览器支持情况
 
@@ -179,4 +179,3 @@ module.exports = {
 通过 npm run build 运行构建
 
 原理：局部安装的依赖，如果有创建一些命令，会在 node_modules/.bin目录创建软链接，package.json是可以默认的读取到.bin目录下的这些命令。
-
