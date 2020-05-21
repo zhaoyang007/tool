@@ -6,7 +6,7 @@ entry ⽤来指定 webpack 的打包⼊⼝。
 
 #### 理解依赖图的含义
 
-![依赖图](../images/依赖图.png)       
+![依赖图](images/依赖图.png)       
 
 webpack 是一个模块打包器，会把一切的资源，不管是 js css 等代码资源，还是图片字体等非代码资源都会当成一个个的模块，模块之间存在着依赖关系，webpack 根据入口文件去找到它的依赖，形成一颗依赖图，只要遇到依赖，webpack 就会将依赖文件加入到依赖图里面去。最终遍历完后，生成打包之后的一些资源。
 
@@ -114,7 +114,7 @@ module.exports = {
 
 #### Mode 的内置函数功能
 
-![Mode的内置函数功能](../images/Mode的内置函数功能.png)
+![Mode的内置函数功能](images/Mode的内置函数功能.png)
 
 
 
@@ -431,7 +431,7 @@ app.listen(3000, function() {
 
 * bundle.js：构建输出的文件。
 
-  ![热更新](../images/热更新.png) 
+  ![热更新](images/热更新.png) 
 
 #### 热更新的过程
 
@@ -534,7 +534,7 @@ module.exports = {
 }
 ```
 
-![文件占位符](../images/文件占位符.png)
+![文件占位符](images/文件占位符.png)
 
 
 
