@@ -475,7 +475,7 @@ BFC 模式开启会有副作用。这里副作用就是 overflow 原本的作用
   float: left;
 }
 .right { 
-  margin-legt: 200px; 
+  margin-left: 200px; 
 }
 ```
 
