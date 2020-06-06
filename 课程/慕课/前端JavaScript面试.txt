@@ -1,1818 +1,755 @@
-前端javascript面试
-  扎实的基础知识能让你高效的学习新技术。那些框架和工具都是依赖于基础知识搭建出来的。你的基础知识不过关，你是无法理解它的一些本质
-  内容的，你只能理解一些它的使用方法。所以说基础知识非常重要，而且面试的时候也是主要考基础知识。基础知识在工作中也非常有用。
-  1.如何对待面试题
-    1.拿到一个面试题，第一时间看到 --> 考点，知识点，这个题考察的到底是什么。要把题目真正的意图给识破。而且可以通过这个考点给
-      融会贯通起来。知道这个考点之后，你就会知道这个考点还会有哪些题目。
-    2.对于做不完的题海 --> 以不变应万变（题可变，考点不变）
-    3.考点不变，考点的范围也不会变。前端的基础知识就这么多，它一共就有这么多知识点。所以说我们只要把这个知识点给搞定，把考点都
-      一个一个捋明白，都给它看透。这样什么面试题都没问题。
-  2.前端知识体系
-    1.知识点到底有多少，它的范围是多少
-    2.我们把所有的知识点都归结起来，它就叫知识体系
-    3.什么是知识体系
-      1.高效学习三部曲：
-        1.知识体系
-          找准找全知识体系
-        2.刻意训练
-          针对知识体系中的每一个部分都要去刻意训练
-        3.及时反馈
-          真正的在实战中把知识点给运用起来，看看哪个地方还有不足，理解的还不到位。然后针对不足还要去刻意训练。
-      2.知识体系
-        知识体系就是在某一个知识范围领域内，结构化的知识范围。知识范围涵盖所有的知识点。它是个结构化的，有组织的，易扩展的。
-      3.从哪些方面开始梳理我们的知识体系
-        1.第一个我们要从标准出发，你写的一些html代码，css代码，js代码它都是有标准的。W3C标准是我们前端最重要的一个标准。它
-          里面包含了像html,css，比如说dom操作，bom操作，ajax，事件绑定等等这些。所以说这个标准它就为我们提供了前端的一部
-          分的知识体系。因为这个标准它本身就是成体系化的。前端还有一个叫ECMA 262标准。这个标准它是规范的是js或者说是es语言
-          的语法。比如说变量怎么定义，if else逻辑怎么写，函数该怎么定义，以及它的原型的方式，闭包的方式，promise等等这些
-          都是它定义的。所以说它是一个语法的标准，W3C更多的是应用的标准。所以说有了这两个标准之后，我们前端的知识方面的或者
-          说语言语法方面的体系就有了。所以我们要从比较高的层次往下去思考。就是从标准这个层次往下去思考。再一步一步思考到比如
-          js变量怎么定义，你不能一上来就思考js变量怎么定义。还有一个就是开发环境，比如说我们程序员是要写代码，我们不是说天天
-          像定义标准的这些委员会的人一样去制造标准，我们是写代码。写代码肯定要有开发环境，比如说我们代码的版本怎么管理啊，出
-          了问题怎么调试啊，怎么去做工程化啊，怎么做打包上线啊等等这些。这些也是需要我们去掌握的，也在我们的知识体系之内。还
-          有一个就是我们开发完之后要线上运行，运行环境，浏览器运行我们的代码它是怎么加载的，我们怎么让它更快一些就是性能优化，
-          怎么让它更安全一些，不出安全问题等等这些。所以我们从标准出发，结合开发环境以及运行环境，我们就能把知识体系总结出来。
-      4.前端知识体
-        1.js基础语法
-          变量定义，类型判断，逻辑运算，函数该怎么定义，原型，闭包，promise，class这种语法。
-        2.js Web API
-          怎么获取一个网页元素，怎么获取浏览器的url，就是bom操作dom操作，怎么发起ajax请求啊，怎么去绑定一个事件啊等等，也
-          就是说js-web-api在js基础语法之上，我们在浏览器端做的一些api，也就是做的一些真正有实用价值的一些事情，真正能操作
-          网页，发起请求的一些事情。
-        3.开发环境
-          代码的版本，代码的架构设计方式，调试工具，工程化等等，这是我们开发的工程中需要用到的一些知识。而且现在已经比较统一
-          化了。
-        4.运行环境
-          网页怎么去加载，浏览器怎么加载网页，性能怎么去优化，体验怎么去优化，怎么去避免安全的一些问题等等。
-      5.思维导图
-        前端知识体系
-          1.js基础知识
-            1.变量类型和计算
-              1.值类型和引用类型
-              2.类型判断
-              3.逻辑运算
-            2.原型和原型链
-              1.class
-              2.继承
-              3.原型
-              4.原型链
-              5.instanceof
-            3.作用域和闭包
-              1.作用域
-              2.自由变量
-              3.闭包
-              4.this
-            4.异步
-              1.单线程
-              2.callback
-              3.应用场景
-              4.promise
-            5.模块化
-              1.es6 module
-          2.js-web-api
-            1.dom
-              1.树形结构
-              2.节点操作
-              3.属性
-              4.树结构操作
-              5.性能
-            2.bom
-              1.navigator
-              2.screen
-              3.location
-              4.history
-            3.事件
-              1.绑定
-              2.冒泡
-              3.代理
-            4.ajax
-              1.XMLHttpRequest
-              2.状态码
-              3.跨域
-            5.存储
-              1.cookie
-              2.localStorage
-              3.sessionStorage
-          3.开发环境
-            1.git
-            2.调试
-            3.webpack和babel
-            4.linux命令
-          4.运行环境
-            1.页面加载
-              1.加载
-              2.渲染
-            2.性能优化
-              1.加载资源优化
-              2.渲染优化
-            3.安全
-              1.xss
-              2.CSRF
-  3.前端知识体系
-  题目 --> 知识点 --> 解答
-  1.js基础知识
-    1.变量类型和计算
-      变量是在每个语言中都是最开始要讲的东西。
-      题目:
-        1.typeof能判断哪些类型
-        2.何时使用===何时使用==
-        3.值类型和引用类型的区别
-        4.手写深拷贝（涉及到递归的问题）
-      知识点:
-        1.变量类型
-          1.值类型和引用类型
-            1.本质
-              值类型是在栈中存储的，栈是计算机的内存结构。它是存取变量的一个地方。这块是js引擎或js虚拟机帮我们实现的。我们又引
-              用了一个东西叫堆，我们在计算机变量存储的时候，栈和堆是同时存在的。在内存存储中，栈是从上往下累加，堆是从下往上累
-              加。它们两个之间会不会重合呢，异常情况下可能会重合，但是我们的操作系统一般分配的内存是够我们的程序使用的。我们的
-              堆就不一样了，比如说我们把a赋值成一个对象，它会在堆中申请一个内存地址，然后把这个对象放到这个堆里，然后这个变量
-              a指向这个内存地址。也就是说变量a里面存储的并不是这个对象，而是存的这个内存地址，这个内存地址指向这个对象。这就是
-              从js引擎或js虚拟机去解析或定义变量的这个内存模型或堆栈模型。从中我们就很明白的看出值类型和引用类型它们的本质是什
-              么。那为什么值类型和引用类型是这样的存储方式。原因还是考虑到性能或者存储的问题。因为值类型它的占用空间是比较少的。
-              引用类型可能存储占用的空间太大，不好管理。再一个就是我们在复制的时候直接复制值会导致复制过程非常的慢。所以说计算
-              机所有的程序，代码，语言都是采用这种方式。就是值类型和引用类型严格的分离出来。它们的存储机制，它们的赋值机制，它
-              们的拷贝机制也是严格的分离出来。它是基于这个内存的空间和cpu的计算的耗时来去做的这么一个区分，它并不是故意这么做，
-              故意为难你，它是不得以而为之的。
-            2.常见值类型
-              undefined, string, number, boolean, symbol
-            3.常见引用类型
-              1.对象，数组，null(特殊的引用类型，它在内存中指向的是一个空地址。它没有，我是一个引用类型，但是我谁也没引用)，
-              2.函数(特殊的引用类型，但不用于存储数据，所以它没有拷贝复制函数这种说法的。函数是一个可执行代码，它直接定义好了就
-                执行就好了。或者你也可以单独拿出来把它当成函数类型这么理解也没有问题。)
-          2.typeof运算符
-            1.能识别出所有的值类型
-            2.能识别函数
-            3.能判断出是否是引用类型(不可再细分)
-          3.深拷贝
-            const obj1 = {
-              name: 'xxx',
-              age: 20,
-              address: {
-                city: 'beijing'
-              },
-              arr: ['a', 'b', 'c']
-            }
-            // 它要传入一个你要拷贝的对象
-            function deepClone (obj = {}) {
-              // obj是null，或者不是对象或数组，直接返回
-              if (typeof obj !== 'object' || obj == null) {
-                return obj
-              }
-              // 初始化返回结果，也就是说我们该返回什么东西，我们先初始化一下
-              let result
-              // 如果传入的这个值是数组类型的，我们返回的这个结果应该是数组格式的。传入的值如果不是数组的话，返回的结果应该是对象格式的
-              if (obj instanceof Array) {
-                result = []
-              } else {
-                result = {}
-              }
-              // 无论是对象还是数组，它都可以用for in去遍历
-              for (let key in obj) {
-                // 判断每个key是不是这个对象自己拥有的属性，保证key不是原型上的属性
-                if (obj.hasOwnProperty(key)) {
-                  // 递归调用！！！ 递归就是为了防止比较深层次的东西，我们就需要一层层的去递归才能最终给它完全的拷贝出来。
-                  // 这样的话才能完成深拷贝。我们考察深拷贝的时候，递归是非常看中的东西。
-                  // obj的每个key的值都要重新深拷贝然后赋值给result[key]
-                  result[key] = deepClone(obj[key])
-                }
-              }
-              // 最终它要返回一个你拷贝后的对象
-              return result
-            }
-            const obj2 = deepClone(obj1)
-            obj2.address.city = 'shanghai'
-            console.log(obj1.address.city)
-        2.变量计算
-          1.类型转换
-            1.字符串拼接
-            2.==
-              ==会发生隐式类型转换，除了==null之外，其他一律用===
-              // 判断对象中有没有这个属性
-              const obj = {x: 100}
-              if (obj.a == null) {}
-              // 相当于：
-              if (obj.a === null || obj.a === undefined) {}
-              ==null这种规则是jquery和zipto等源码都在使用的，而且eslint检测也是支持这种规则的。
-            3.if语句和逻辑运算
-              truly变量和falsely变量这两个概念对我们的if语句和逻辑运算是非常有用的，它们判断的就是truly变量和falsely变量，
-              它不是必须要判断true和false
-              truly变量：!!a === true的变量，就是经过两步非运算如果得出true那就是truly变量
-              flasely变量：!!a === flase的变量，就是经过两步非运算如果得出flase那就是flasely变量
-              // 以下是falsely变量。除此之外都是truly变量
-              !!0 === false
-              !!NaN === false
-              !!'' === false
-              !!null === false
-              !!undefined === false
-              !!false === false
-              // 逻辑运算与或非
-              console.log(10 && 0) // 0
-              console.log('' || 'abc') // 'abc'
-              console.log(!window.abc) // true
-    2.原型和原型链
-      原型和原型链是js中比较重的一个基础知识，也是它和其他语言比如c语言，java这种语言不大一样的地方。考察js基础知识的时候，原型
-      和原型链是必考的一个内容。为什么原型和原型链是一个比较重要的基础知识呢，因为js它本身是一个基于原型继承的语言。我们在es6之前
-      写继承的时候只能通过原型来继承。不像java似的通过class来继承。从es6之后它引入了class语法，我们可以通过class来继承。但是
-      基于我们现在对class的抛解来看，class也仅仅是形式上继承的写法而已，它真正的继承还是利用原型的继承。
-      题目:
-        1.如何判断一个变量是不是数组
-          instanceof结合原型和原型链的图去理解
-        2.手写一个简易的jquery，考虑插件和扩展性
-          jquery现在可能用的不多了，但是我们通过jquery的结构的学习，是学习class或学习原型的特别好的一种方式。
-          1.jquery的基本结构
-            // jquery是做dom查询的，所以首先constructor里面要传入一个selector
-            class jQuery {
-              constructor (selector) {
-                const result = document.querySelectorAll(selector)
-                const length = result.length
-                for (let i = 0; i < length; i++) {
-                  this[i] = result[i]
-                }
-                this.length = length
-                this.selector = selector
-              }
-              get (index) {
-                return this[index]
-              }
-              each (fn) {
-                for (let i = 0; i < this.length; i++) {
-                  const elem = this[i]
-                  fn(elem)
-                }
-              }
-              on (type, fn) {
-                return this.each(elem => {
-                  elem.addEventListener(type, fn, false)
-                })
-              }
-              // 可以扩展很多dom 操作 api
-            }
-            // 关注这里面this是怎么使用的
-          2.使用
-            const $p = new jQuery('p')
-            $p.get(1)
-            $p.each(elem => console.log(elem.nodeName))
-            $p.on('click', elem => console.log('clicked'))
-          3.考虑插件和扩展性
-            jquery结构上面使用class和原型，扩展性就是要用到继承了。有了class之后我们可以考虑扩展性。考虑扩展性或插件机制，我们有
-            两种方式
-            1.插件的形式
-              // 我们可以直接往jquery的原型里面添加函数，这就是所谓的jquery插件
-              jQuery.prototype.dialog = function (info) {
-                alert(info)
-              }
-              $p.dialog('abc')就有了
-            2.复写机制(造轮子)
-              也就是说jquery摆在这了，但是呢，你觉得它还不够，可以做为一个基础。那我可以基于这个jquery我们再做一个更加完美的东西，
-              然后给大家使用。就是说插件机制呢，是我做一个插件，大家用的还是jquery。造轮子就是说我基于jquery去造，但是造出来就是
-              我的，大家都用我的，不要用jquery了。这个时候我们就可以用继承了。
-              class myJQuery extends jQuery {
-                constructor (selector) {
-                  super(selector) // 这个时候super就体现出它的价值来了，super(selector)里面这个父类，jQuery这个父类，super
-                                  // 执行父类的构造函数，这里面的逻辑还是挺复杂的。所以说我们直接用super就可以把jQuery这个父类
-                                  // 的复杂性全部包含在里面去，我们不用再自己把jQuery构造函数里面复杂的逻辑写一遍。直接用super
-                                  // 调用就行了。
-                }
-                // 扩展自己的方法，把它造成一个新轮子
-                addClass (classname) {
 
-                }
-                style (data) {
 
-                }
-              }
-              写完之后，这个东西就可以给别人用了，别人用的话呢，既可以用jquery的东西，还可以用你自己的东西。这样的话这个东西就变得
-              强大了。但是这种情况在现实中是不存在的，因为jquery已经非常非常强大了。没必要自己再重新去写。
-        3.class的原型本质，怎么理解
-          1.原型和原型链的图示
-          2.属性和方法的执行规则，就是我们怎么通过隐式原型一步一步往上通过链式的方式去找那个属性和方法。
-      知识点:
-        1.class和继承
-          1.class
-            class它是面向对象的一个语法实现。它能更加具象的然我们思考编程的问题。class它本质上类似于一个模版，然后我们可以通过这个
-            模版去构建一些东西。构建的时候，我们可以去复制上一些属性和方法。
-            class Student {}
-            typeof Student // 'function'
-            class这个东西它只是语法上的一个形式，它的继承并不是完全像java这种纯class的继承。它还是符合js的这种原型继承。可见class
-            它是一个语法糖，它还是通过function构造函数实现的，但写法是class的写法。
-          2.继承
-            当我们有很多个class，这个class中有一些比较通用的属性的时候，我们就可以把它抽离出来。继承我们通过extends这个关键字来去
-            做的。然后里面是通过super来执行父类的构造函数，也就是父类的构建过程然后扩展和重写它的一些方法。
-        2.类型判断instanceof
-          我们可以通过instanceof去判断这个对象到底是属于哪个class，或者属于哪个构造函数。也就是说只要这个对象是这个class构建出
-          来的，那instanceof就是true。xialuo虽然是Student构造出来的，但People是Student的父类，那说明People也参与了构建
-          xialuo的一部分，所以也是true。Object是所有class的父类，这个js引擎去做的。
-          xialuo instanceof Student // true
-          xialuo instanceof People // true
-          xialuo instanceof Object // true
-          [] instanceof Array // true
-          [] instanceof Object // true
-          {} instanceof Object // true
-        3.原型和原型链
-          1.原型
-            1.每个class都有显示原型prototype
-            2.每个实例都有隐式原型__proto__
-            3.实例的隐式原型__proto__指向对应class的显示原型prototype
-            4.基于原型的执行规则
-              实例在获取属性xialuo.name或执行方法xialuo.sayHi()的时候，现在自身的属性和方法中寻找，如果找不到则自动去自身的隐式
-              原型__proto__中去查找。
-          2.原型链
-            class People {}
-            class Student extends People {}
-            Student的显示原型的隐式原型它正好等于People的显示原型
-            console.log(Student.prototype.__proto__)
-            console.log(People.prototype)
-            console.log(Student.prototype.__proto__ === People.prototype) // true
-            它们两个是一个继承关系，Student是继承于People的，所以Student的原型的隐式原型正好指向People的显示原型。
-            console.log(People.prototype.__proto__ === Object.prototype) // true
-            console.log(Object.prototype.__proto__ === null) // true 原型链顶端
-          这就是实例和class里面调用属性调用方法的一个本质，以及继承的本质。
-          3.再看instanceof
-            instanceof是一个什么工作原理
-            xialuo instanceof Student
-            xialuo instanceof People
-            xialuo instanceof Object
-            instanceof前面这个实例顺着隐式原型往上往上找，然后能不能找到第二个操作数，就是Student的这个显示原型，以及People的显示
-            原型，以及Object的显示原型。也就是说xialuo顺着隐式原型一层一层往上爬能不能对应到class的显示原型，如果能对应到，那
-            instanceof成立，如果对应不到，那instanceof就返回false。要深入理解instanceof的原理我们还是要借助原型和原型链。
-          4.class
-            1.class是es6语法规范，由ECMA委员会发布的
-            2.但ECMA只规定语法规则，即我们代码的书写规范，但不规定如何实现这个语法，你到底是用原型实现还是用其他方式实现它不管。
-            3.所以说以上实现方式都是v8引擎的实现方式，也是现在最主流的实现方式。
-    3.作用域和闭包
-      题目:
-        1.this在不同应用场景，如何取值
-        2.手写bind函数
-          Function.prototype.bind1 = function () {
-            // 将函数参数解析为数组
-            const args = Array.prototype.slice.call(arguments)
-            // 获取 this (取出数组第一项，数组剩余的就是传递的参数)
-            const t = args.shift()
-            const self = this // 当前函数
-            // 返回一个函数
-            return function () {
-              // 执行原函数，并返回结果
-              return self.apply(t, args)
-            }
+
+2.js-web-api
+  1.dom
+    题目:
+      1.dom属于哪种数据结构
+      2.dom操作常用的api
+      3.attr和property的区别
+      4.一次性插入多个dom节点，考虑性能
+        如果这个你不知道，你盲目操作dom，可能会带来一些很麻烦的事情。
+    知识点:
+      1.dom本质
+        dom是浏览器内存里面已经初始化好的树的一个结构。dom的本质是从html文件解析出来的一棵树。
+      2.dom节点操作
+        这个节点操作就是针对单个节点。
+        1.获取dom节点
+          document.getElementById('div1') // 元素
+          document.getElementsByTagName('div') // 集合
+          document.getElementsByClassName('container') // 集合
+          document.querySelectorAll('p') // css选择器来获取，集合
+        2.attribute
+          获取节点之后，我们可以操作它的attribute
+          const pList = document.querySelectorAll('p')
+          const p = pList[0]
+          p.getAttribute('data-name')
+          p.setAttribute('data-name', 'imooc')
+          p.getAttribute('style')
+          p.setAttribute('style', 'font-size: 30px;')
+          我们可以通过一个getAttribute和setAttribute这样的api去直接修改这个html的结构。它是能真正作用到dom结构里面去的。它
+          是修改的标签的一个属性。
+        3.property
+          property的意思就是我们能获取dom元素，然后去通过js的属性的方式来操作
+          const pList = document.querySelectorAll('p')
+          const p = pList[0]
+          p.style.width // 获取样式
+          p.style.width = '100px' // 修改样式
+          p.className // 获取class
+          p.className = 'p1' // 修改class
+          p.nodeName // 获取nodename
+          p.nodeType // 获取nodeType
+          也就是说我们说的这个property是通过以js对象属性的形式来去操作它里面的一些东西。所以说property它本身不是一个api的名字。
+          它是一种形式，就是用js的属性操作的这么一种形式。我们可以对这个属性进行设置和获取，就是读和写都可以。设置完了之后它真正
+          的渲染到了页面上。也就是说，property这种形式它是一种通过修改或获取js的属性的方式来去改变页面样式或页面渲染结构的一种
+          形式。
+        property修改的是js变量的属性，不会对标签产生影响。attribute它修改的是标签的属性，设置上之后，标签上就会有这个属性。两者
+        都有可能引起dom的重新渲染。平常该怎么用它们呢，建议尽量用property去操作。因为property它可能会在js的一些机制中去重复避免
+        一些dom的不必要的渲染。attribute你一旦改了这个html结构，它肯定引起这个重新渲染。dom的重新渲染是比较耗费性能的。如果必须
+        要修改标签结构的话当然也要用attribute。
+      3.dom结构操作
+        因为dom是一棵树，对于树的结构操作一般会分为这么几个
+        1.新增/插入节点
+        2.获取子节点列表，获取父节点
+        3.删除子节点
+        const div1 = document.getElementsById('div1')
+        const p1 = document.createElement('p') // 新增一个节点
+        p1.innerHTML = 'this is p1'
+        div1.appendChild(p1)                   // 插入节点
+        const p2 = document.getElementById('p2')
+        div1.appendChild(p2)                   // 移动一个节点
+        const child = div1.childNodes          // 获取子节点列表
+        const parent = div1.parentNode         // 获取父节点
+        div1.removeChild(child[0])             // 删除子节点
+      4.dom性能
+        dom操作是比较耗时和耗cpu的。
+        dom操作可能会导致浏览器的重绘或重排就是重新渲染，所以要避免频繁的dom操作。
+        1.对dom查询做一些缓存
+          现在电脑的内存都还好，所以我们做一些dom查询的缓存应该会减少我们dom的操作。查出来之后就先存起来，存起来之后就不要再
+          查了。为什么浏览器自己不缓存呢，因为我们的js有可能会操作dom，比如每次循环里面我们都对这个p进
+          行一些修改，这样的话，浏览器是不是就没办法做到它保存完之后的正确性了。是不是缓存得由我们自己来决定，既然浏览器不能缓存，我们就自己缓存。
+          // 不缓存dom查询结果
+          for (let i = 0; i < document.getElementsByTagName('p').length; i++) {
+            // 每次循环，都会计算length，频繁进行dom查询
           }
-          // 使用
-          function fn1 (a, b, c) {
-            console.log('this', this)
-            console.log(a, b, c)
-            return 'this is fn1'
+          // 缓存dom查询结果
+          const pList = document.getElementsByTagName('p')
+          const length = pList.length
+          for (let i = 0; i < length; i++) {
+            // 缓存length，只进行一次dom查询
           }
-          const fn2 = fn1.bind({x: 100}, 10, 20. 30)
-          const res = fn2()
-          console.log(res)
-          // 做bind函数的三点基本的要求
-          1.this要传进去
-          2.参数要传进去
-          3.返回值还要正确的返回回来
-        3.闭包在实际开发中的应用场景，举例说明，用没用过，该怎么用。
-          1.隐藏数据
-            我们通过闭包把一些数据隐藏起来，然后不让外边去改变。比如我们做一个简单的缓存工具。
-            // 闭包隐藏数据，只提供api。缓存的小插件，小工具
-            function createCache () {
-              const data = {} // 闭包中的数据，被隐藏，不被外界访问
-              return {
-                get (key) {
-                  return data[key]
-                },
-                set (key, value) {
-                  data[key] = value
-                }
-              }
-            }
-            const c = createCache()
-            c.set('a', 100)
-            console.log(c.get('a'))
-            为什么说它可以隐藏数据呢，比如我们现在想去不通过set,get直接去改data值怎么改呢，没有办法改。因为这个data是在这个
-            createCache的这个作用域里面的。它不会被外界所访问到。也就是它的合法作用域只是createCache这个函数里面，如果你在
-            这个函数外界直接去data.a赋值成200，这个是会报错的。data在这个作用域里没有定义，作用域的自由变量的查找顺序它不会
-            找到createCache函数里面来。这样我们通过return get set返回函数的闭包的一种形式，执行这个函数的时候，因为这个函
-            数是在这个createCache作用域里面的，所以说它能找到这个data，对它做一些修改。所以说这种方式是非常常见的，不管是缓
-            存也好，还是其他的数据也好。比如说jquery的事件绑定和自定义事件，它都是通过这种方式来去隐藏的，就是一个函数里面，我
-            们去把这个数据隐藏，然后只提供一些api在外面，然后去用api，然后这个数据我自己去管理着。所以说这是闭包的一个非常常见
-            和常用的一种方。
-        4.创建10个'<a>'标签，点击的时候弹出对应的序号
-          let i, a
-          for (i = 0; i < 10; i++) {
-            a = document.createElement('a')
-            a.innerHTML = i + '<br>'
-            a.addEventListener('click', function (e) {
-              e.preventDefault()
-              alert(i)
-            })
-            document.body.appendChild(a)
-          }
-          // 上面的写法，点击每个a标签弹出来的都是10
-          // 因为事件绑定的函数定义时里面的i是找的全局作用域i，当遍历结束后，这个全局i已经变成10了。这时点击触发函数里面的i就会
-            向上找到全局变量i，所以都会弹出10。
-          let a
+          如果p的数量多了之后，这个性能的差异还是很大的。
+        2.将频繁操作改为一次性操作，就是合并的处理
+          有时候我们可能会频繁插入一些东西，这时能不能打个包一块插入进去。这样的话也是避免频繁的dom操作。
+          const listNode = document.getElementById('list')
+          // 创建一个文档片段，此时还没有插入到dom树中
+          const frag = document.createDocumentFragment()
+          // 执行插入
           for (let i = 0; i < 10; i++) {
-            a = document.createElement('a')
-            a.innerHTML = i + '<br>'
-            a.addEventListener('click', function (e) {
-              e.preventDefault()
-              alert(i)
-            })
-            document.body.appendChild(a)
+            const li = document.createElement('li')
+            li.innerHTML = 'list item ' + i
+            frag.appendChild(li)
           }
-          // 上面的写法，i就变成了块级作用域中的变量，每次for循环执行的时候都会形成一个新的块，这时配合事件绑定的函数就形成了一
-            个闭包，所以每次循环的变量i都会保存下来。这时点击触发函数里面的i就会向上找到块级作用域里的变量i，所以就会弹出对应的i。
-          let i, a
-          for (i = 0; i < 10; i++) {
-            a = document.createElement('a')
-            a.innerHTML = i + '<br>'
-            a.addEventListener('click', (function (i) {
-              return function (e) {
-                e.preventDefault()
-                alert(i)
-              }
-            })(i))
-            document.body.appendChild(a)
-          }
-          // 第三种写法跟第二种的目的和解释是一样的，只是写法不同。
-          这种情况是针对不会立即执行的函数中存在自由变量的取值的情况可能会被外面作用域里面的数据的改变所影响。解决的办法就是让这个
-          自由变量存在在闭包中，这时它就能常驻内存了。
-      知识点:
-        1.作用域和自由变量
-          作用域就是代表了一个变量的合法的使用范围
-          1.作用域分类
-            1.全局作用域
-            2.局部作用域
-            3.块级作用域
-          2.自由变量
-            一个变量在当前作用域没有定义，但被使用了。这个时候该怎么办呢，它会向上级作用域一层一层一次寻找，直到找到为止，找到了就停
-            止。不会继续再向上寻找。如果到了全局作用域都没有找到，因为全局作用域是最顶层的作用域，则报错 xx is not defined。说明
-            这个东西没有被定义。
-        2.闭包closure
-          闭包这个词，听着很专业，它其实上是一个作用域应用的一个特殊的情况。它跟我们正常的函数定义在什么地方，就会在什么地方执行。但
-          闭包不一样，闭包一般有两种情况:
-          1.函数作为参数被传递
-            也就是函数在这个地方定义好之后，传递到另一个地方去执行。
-            function print (fn) {
-              let a = 200
-              fn()
+          // 都完成之后，再插入到dom树中
+          listNode.appendChild(frag)
+  2.bom
+    题目:
+      2.分析拆解url的各个部分
+    知识点:
+      3.location
+        地址的一些信息，就是分析url的一些信息
+        https://coding.imooc.com/lesson/400.html?a=100&b=200#mid=30309
+        location.href        // https://coding.imooc.com/lesson/400.html#mid=30309
+        location.protocol    // 'https:'  
+        location.host        // 'coding.imooc.com'  
+        location.pathname    // '/lesson/400.html'
+        location.search      // '?a=100&b=200'
+        location.hash        // '#mid=30309'
+        我们整个的网址都是通过这些信息拼接出来的。
+      4.history
+        前进后退这些信息
+        history.back()    // 网页后退
+        history.forward() // 网页前进
+  3.事件
+    题目:
+      1.编写一个通用的事件监听函数
+        function bindEvent (elem, type, fn) {
+          elem.addEventListener(type, fn)
+        }
+        const btn1 = document.getElementById('btn1')
+        bindEvent(btn1, 'click', event => {
+          console.log(event.target) // 我们触发点击的元素，就是这个btn1这个dom对象
+          event.preventDefault() // 阻止浏览器默认行为
+          event.stopPropagation() // 阻止事件冒泡
+          console.log('clicked')
+        })
+      2.描述事件冒泡的流程
+        事件冒泡是基于dom的树形结构，事件会顺着触发元素往上冒泡。应用场景就是事件代理。代理它是基于事件冒泡这个机制才能够用起来的。
+      3.无限下拉的图片列表，如何监听每个图片的点击
+        利用事件代理，我们可以通过event.target获取触发元素。用matches来判断是否是我们业务逻辑需要的触发元素是不是这个选择器范
+        围之内的。
+    知识点:
+      1.事件绑定
+        事件绑定就是addEventListener
+        const btn = document.getElementById('btn1')
+        btn.addEventListener('click', event => {
+          console.log('clicked')
+        })
+      2.事件冒泡
+        我们的实际事件触发完之后，它是像一种冒泡机制一样，它是顺着这个dom结构往它的上级一层一层的冒，就是说在它当前这个元素中监听
+        事件和在它上级或上上级只要是它的上级监听事件，都可以把这个事件给监听到。
+      3.事件代理
+        事件代理是基于事件冒泡来做的。有了事件冒泡这个机制，我们才能在这个机制的基础上去实现这个代理。所谓代理就是因为数量太多或结
+        果比较复杂，不好去挨个都去绑定事件的情况。我们把事件绑到某一个父元素上。事件里我们要去获取它触发的元素做一些判断，是不是我
+        们想要的那个元素。然后再去做一些其他的动作。
+        1.代码简洁
+          事件代理的代码比较简洁，你如果是每一个元素都给它绑一个事件的话，这样代码反而就会麻烦了，至少你还得做个dom查询，还得做个
+          循环。
+        2.减少浏览器内存使用
+          如果需要绑定事件的元素非常多的话，每一个元素都去挂一个事件监听，如果数量过多的话，它是非常耗费内存的。但是利用事件代理只
+          在父元素上去挂一个事件，只挂一次事件就没有那么耗费内存。
+        3.不要滥用
+          只有在一些情况下可以用。就是因为数量太多结果复杂的不好去每一个都去绑定事件的情况下才应该去用。你不要到处都去用这个代理。
+          这个代理还是有一定复杂度的。它的代码简洁程度虽然也比较简洁，但是它的简洁是相比于每个元素都做事件监听的情况。比如一个按
+          钮的绑定就不至于用代理了。直接把事件绑定到这个按钮上不就完了吗。这样的话才是更简洁的。所以不要滥用，不要为了用代理而用
+          代理。要在合适的场景下去使用。
+          1.重新写通用事件绑定函数，使其能够适用普通的绑定和事件代理的绑定。
+          function bindEvent (elem, type, selector, fn) {
+            if (fn == null) {
+              fn = selector
+              selector = null
             }
-            let a = 100
-            function fn () {
-              console.log(a)
-            }
-            print(fn) // 100
-          2.函数做为返回值被返回
-            函数在这个地方定义好之后，它会被返回到另一个地方去执行。
-            function create () {
-              let a = 100
-              return function () {
-                console.log(a)
-              }
-            }
-            let fn = create()
-            let a = 200
-            fn() // 100
-          总之它函数定义的地方和函数执行的地方它是不一样的。
-          自由变量的查找，是在函数定义的地方，向上级作用域查找。不是在函数执行的地方。
-        3.this
-          this的场景比较多
-          1.做为普通函数去调用
-          2.使用call apply bind去调用
-          3.作为对象方法被调用
-          4.在class方法中被调用
-          5.箭头函数，箭头函数中的this是取它上级作用域中this的值。
-          this在各个场景中取什么样的值是在函数执行的确时候定的，不是在函数定义的时候确定的。所有场景都适用。
-    4.异步
-      异步又是js非常重要的内容。
-      题目:
-        1.同步和异步的区别是什么
-          这个问题很能表达出对于异步理解的一个问题。有时候你可能知道异步是怎么回事，也知道异步该怎么用。但是到底为什么会有异步，异步
-          和同步为什么会有区别，为什么不能直接用同步。对于这些问题深挖一些的话，你可能会就蒙了。
-        2.手写用Promise加载一张图片
-          function loadImg (src) {
-            return new Promise((resolve, reject) => {
-              const img = document.createElement('img')
-              img.onload = function () {
-                resolve(img)
-              }
-              img.onerror = function () {
-                const err = new Error(`图片加载失败 ${src}`)
-                reject(err)
-              }
-              img.src = src
-            })
-          }
-          const url1 = '1.png'
-          const url2 = '2.png'
-          loadImg(url1)
-            .then(img1 => {
-              console.log(img1.width)
-              return img1 // return 普通对象
-            })
-            .then(img1 => {
-              console.log(img1.height)
-              return loadImg(url2) // return promise实例
-            })
-            .then(img2 => {
-              console.log(img2.width)
-              return img2
-            })
-            .then(img2 => {
-              console.log(img2.height)
-            })
-            .catch(ex => {
-              console.log(ex)
-            })
-        3.前端使用异步的场景有哪些
-      知识点:
-        1.单线程异步
-          1.单线程语言
-            首先我们把这个异步给说一下，它为什么会有异步这个东西，js在设计初衷上能不能就直接按照同步的来。别搞这些异步，因为异步还
-            是挺麻烦的。所以说它到底为什么会有异步。这个概念我们首先要明白。
-            js是一门单线程语言。所谓单线程语言呢，通俗来讲说就是它只能同时做一件事儿。比如我们发一个ajax请求去加载一个资源或者做一
-            个定时器，先等待1秒钟在干嘛，如果是按照单线程的这个同时只能做一件事来说的话，那它加载资源的过程中，按理说页面就应该卡住
-            了，卡住之后你鼠标点不了，也拖不动，js也不执行，这就是同时只能做一件事，这就是js单线程语言的一个本质。如果说你想让它干
-            着这个加载，同时再去做另外一件事情，去执行其他的代码。不好意思，单线程语言不行。所以说这是单线程语言。
-          2.浏览器和nodejs其实已经支持js启动进程，如Web Worker或nodejs里面的多进程的api。但那只是进程，它能启动进程，但并不能
-            改变js单线程语言的这样一种本质。
-          3.js和dom渲染共用同一个线程，因为js可以修改dom结构。也就是说这是不得已的事情，因为js可以修改dom结构，所以说js和dom渲染
-            必须公用同一个线程。dom渲染的过程中，js必须停止，然后js执行过程中，dom渲染也必须停止。
-          所以说它是有很多限制的。为什么要单线程和异步呢，就是异步是由单线程这个背景而来的。并不是说我们为了异步而异步，我们故意搞一
-          个难的东西而为难大家，不是这样的。所以说它是有一个背景，就是单线程。
-          4.所以说遇到等待，比如网络请求，定时任务，不能卡住啊。不管这个时间是多少，我们的浏览器都不能卡住比如你请求了一个资源花了
-            半秒钟，这半秒钟之内浏览器是不能滚动，不能点击，不能有动画，这样的话就麻烦了。所以说需要异步。异步就是为了解决单线程的
-            等待这种问题。
-          5.异步是基于callback函数形式来调用的。也就是说每个异步里面都需要加个回调函数。回调函数的意思就是说我们先去执行同步任务，
-            先去执行不是异步的任务。执行完之后，我们再到一个时间再去执行这个回调函数。异步的特点是它不会阻塞后面代码的执行。同步呢，
-            它就会阻塞后面代码的执行，它会在等待的时候卡住。浏览器也不会渲染。js代码也不会执行。这就是同步。
-        2.应用场景
-          什么情况下需要异步呢，其实就是一些等待的情况。等待的情况有哪些呢。
-          1.网络请求，如ajax，图片加载等
-          2.定时任务，如setTimeout
-          前端主要是这两个主要的场景。
-          等待的过程中，cpu是空闲的，不能浪费资源。就需要一个异步的机制。所以说这个就是我们的应用场景。
-        3.callback hell 和 Promise
-          Promise到底是解决什么问题，就是解决这个callback hell回调地狱的问题。如果是没有这个问题，那Promise这个概念根本就不会出
-          来，这个概念最早是由jquery提出的。后来落实到es6的一个语法中。它是有一定的应用背景的。回调这种形式本身和我们的编程习惯就不
-          一样。我们编程的习惯它是一个顺序的一个形式。它并不是一个data1里面包含了data2，data2里面包含了data3这种形式，这种形式看
-          着就很费劲。callback hell这个东西是触及我们这个Promise产出的一个核心的一个问题。Promise里还是用到了回调函数的形式，但
-          是它把这个callback的形式变成了一个非嵌套的形式。它变成了一个管道式的串联的形式。这就是一个进步。这样就比较符合我们的感官的
-          感觉。它是串联的形式，它是一串一串往后走，它永远是一层。所以说这就是Promise的形式。Promise不是避免了回调函数，而是说它把
-          回调函数变成了一种串行的形式。Promise解决了callback hell的问题，而不是解决了callback的问题，callback它本身没有问题。
-          callback多了之后才出现了这个地狱的问题。所以Promise解决的是callback嵌套的问题。
-          // callback hell
-            // 获取第一份数据
-            $.get(url1, function (data1) {
-              // 获取第二份数据
-              console.log(data1)
-              $.get(url2, function (data2) {
-                console.log(data2)
-                // 获取第三份数据
-                $.get(url3, function (data3) {
-                  console.log(data3)
-                  
-                  // 还可能获取更多的数据
-                })
-              })
-            })
-          // Promise
-            function getData (url) {
-              return new Promise((resolve, reject) => {
-                $.ajax({
-                  url,
-                  success (data) {
-                    resolve(data)
-                  },
-                  error (err) {
-                    reject(err)
-                  }
-                })
-              })
-            }
-            const url1 = '/data1.json'
-            const url2 = '/data2.json'
-            const url3 = '/data3.json'
-            getData(url1)
-              .then(data1 => {
-                console.log(data1)
-                return getData(url2)
-              })
-              .then(data2 => {
-                console.log(data2)
-                return getData(url3)
-              })
-              .then(data1 => {
-                console.log(data1)
-              })
-              .catch(err => {
-                console.error(err)
-              })
-    5.模块化
-      1.es6 module
-  2.js-web-api
-    从js基础知识过度到js web api，它们有什么区别和联系。
-    js基础知识是规定的语法（ECMA 262 标准）。其实光靠语法你是做不了网页的一些操作的。你没法添加一个点击事件然后怎么怎么样。js web api
-    它不是语法的一部分，它是在语法的基础上写出的一些逻辑。js web api就是那些网页操作的api（w3c标准）。比如我们添加一个dom元素啊，
-    添加一个文字啊，设置一些css样式啊，我们去存储一个什么东西啊，我们去监听一个什么事件啊，我们去获取浏览器的一些宽度高度啊等等这一
-    些，这个是w3c标准规定的。其实w3c标准规定的东西很多啊，比如说html是它规定的，css是它规定的，js web api也就是说怎么借助js的语
-    法去实现网页的一些操作是它规定的。然后像网络请求ajax是它规定的，存储是它规定的，内容很多。前者是后者的基础，也就是说我们得先有一
-    个语言，然后有一个语法。有这种规定的写法之后，我们再在这种基础之上，我们去规定出第二个的这个网页操作api，两者结合才能有一个真正的
-    实际应用。只有一个的话，无论只有哪个，都没法把我们的网页操作真正的去操作起来。所以说这两个是一个过度，我们先有基础的语法之后，再去
-    讲一些实际的api。而且这两个是真正结合才能在我们的实际的工作中去应用的。
-    1.dom
-      现在vue和react框架应用广泛，封装了dom操作，也就是说你用vue或react框架的时候，你平时是接触不到dom操作的，自己也不会去手写dom
-      操作。而且框架也建议你不要手写。但dom操作一直都是都是前端工程师的基础和必备知识。只会vue不会dom操作的程序员不会长久。因为框架
-      它都是基于dom操作自己做了一些封装，它的基础还是dom操作。所以说任何一个框架或者一个工具在使用的时候都要知道它的基础。还有就是框
-      架总有一些场景，它本身满足不了这种功能，满足不了这种场景的使用。这个时候你就需要自己去做一些dom操作的封装。你如果不会的话，你就
-      很难去通过一个框架来把一个项目做起来。总之无论在什么情况下，必备的基础知识一定是一个工程师的长生之本。算是你能立足于这个行业的一
-      个必备的基础。所以不要做所谓的vue工程师，react工程师，不要被这种框架迷惑了眼睛。注重基础。
-      dom document object model 文档对象模型的这么一个集合
-      题目:
-        1.dom属于哪种数据结构
-        2.dom操作常用的api
-        3.attr和property的区别
-        4.一次性插入多个dom节点，考虑性能
-          如果这个你不知道，你盲目操作dom，可能会带来一些很麻烦的事情。
-      知识点:
-        1.dom本质
-          它到底是个什么东西
-          dom的本质就是一颗树。首先html它本身是一个树形的结构。浏览器的开发者工具中的elements里面的我们就可以把它理解为dom结构。
-          它不是完全百分之百的dom，它的结构就是dom的结构，但它里面还有一些css的信息。我们的html代码下载到浏览器之后，浏览器一解
-          析，就会生成一个dom结构。html和dom它是不一样的。html它是一个文件或者说一段代码，dom它是一个浏览器内存里面已经初始化好
-          的树的一个结构。所以它是一棵树。它是一层一层这样往下来的一棵树。dom的本质是从html文件解析出来的一棵树。
-        2.dom节点操作
-          这个节点操作就是针对单个节点。
-          1.获取dom节点
-            document.getElementById('div1') // 元素
-            document.getElementsByTagName('div') // 集合
-            document.getElementsByClassName('container') // 集合
-            document.querySelectorAll('p') // css选择器来获取，集合
-          2.attribute
-            获取节点之后，我们可以操作它的attribute
-            const pList = document.querySelectorAll('p')
-            const p = pList[0]
-            p.getAttribute('data-name')
-            p.setAttribute('data-name', 'imooc')
-            p.getAttribute('style')
-            p.setAttribute('style', 'font-size: 30px;')
-            我们可以通过一个getAttribute和setAttribute这样的api去直接修改这个html的结构。它是能真正作用到dom结构里面去的。它
-            是修改的标签的一个属性。
-          3.property
-            property的意思就是我们能获取dom元素，然后去通过js的属性的方式来操作
-            const pList = document.querySelectorAll('p')
-            const p = pList[0]
-            p.style.width // 获取样式
-            p.style.width = '100px' // 修改样式
-            p.className // 获取class
-            p.className = 'p1' // 修改class
-            p.nodeName // 获取nodename
-            p.nodeType // 获取nodeType
-            也就是说我们说的这个property是通过以js对象属性的形式来去操作它里面的一些东西。所以说property它本身不是一个api的名字。
-            它是一种形式，就是用js的属性操作的这么一种形式。我们可以对这个属性进行设置和获取，就是读和写都可以。设置完了之后它真正
-            的渲染到了页面上。也就是说，property这种形式它是一种通过修改或获取js的属性的方式来去改变页面样式或页面渲染结构的一种
-            形式。
-          property修改的是js变量的属性，不会对标签产生影响。attribute它修改的是标签的属性，设置上之后，标签上就会有这个属性。两者
-          都有可能引起dom的重新渲染。平常该怎么用它们呢，建议尽量用property去操作。因为property它可能会在js的一些机制中去重复避免
-          一些dom的不必要的渲染。attribute你一旦改了这个html结构，它肯定引起这个重新渲染。dom的重新渲染是比较耗费性能的。如果必须
-          要修改标签结构的话当然也要用attribute。
-        3.dom结构操作
-          因为dom是一棵树，对于树的结构操作一般会分为这么几个
-          1.新增/插入节点
-          2.获取子节点列表，获取父节点
-          3.删除子节点
-          const div1 = document.getElementsById('div1')
-          const p1 = document.createElement('p') // 新增一个节点
-          p1.innerHTML = 'this is p1'
-          div1.appendChild(p1)                   // 插入节点
-          const p2 = document.getElementById('p2')
-          div1.appendChild(p2)                   // 移动一个节点
-          const child = div1.childNodes          // 获取子节点列表
-          const parent = div1.parentNode         // 获取父节点
-          div1.removeChild(child[0])             // 删除子节点
-        4.dom性能
-          dom操作是比较耗时，也是比较耗cpu的，我们怎么通过自己的一些比较常用的手段去解决这种问题。
-          dom操作是非常昂贵的，所谓昂贵其实就是它占用cpu会比较多，因为它有可能会导致浏览器的重绘或重排就是重新渲染，这些工作会比较
-          耗时一些或耗费cpu计算比较多一些。如果是频繁操作呢，可能会导致卡顿的一些问题，所以说我们就需要注意这些地方，避免频繁的dom
-          操作。
-          1.对dom查询做一些缓存
-            我们现在电脑的内存都还好，所以我们做一些dom查询的缓存应该会减少我们dom的操作。查出来之后就先存起来，存起来之后就不要再
-            查了。为什么会比较频繁的查询呢，为什么浏览器自己不缓存呢，因为我们的js有可能会操作dom，比如每次循环里面我们都对这个p进
-            行一些修改，这样的话，浏览器是不是就没办法做到它保存完之后的正确性了。所以说我们的js可以去修改dom，所以说浏览器这个时候
-            它就不能缓存dom的查询。是不是缓存得由我们自己来决定，既然浏览器不能缓存，我们就自己缓存。
-            // 不缓存dom查询结果
-            for (let i = 0; i < document.getElementsByTagName('p').length; i++) {
-              // 每次循环，都会计算length，频繁进行dom查询
-            }
-            // 缓存dom查询结果
-            const pList = document.getElementsByTagName('p')
-            const length = pList.length
-            for (let i = 0; i < length; i++) {
-              // 缓存length，只进行一次dom查询
-            }
-            上面这样的结果对比很明显，如果是p的数量多了之后，这个性能的差异还是很大的。
-          2.将频繁操作改为一次性操作，就是合并的处理
-            有时候我们可能会频繁插入一些东西，这时能不能打个包一块插入进去。这样的话也是避免频繁的dom操作。
-            const listNode = document.getElementById('list')
-            // 创建一个文档片段，此时还没有插入到dom树中
-            const frag = document.createDocumentFragment()
-            // 执行插入
-            for (let i = 0; i < 10; i++) {
-              const li = document.createElement('li')
-              li.innerHTML = 'list item ' + i
-              frag.appendChild(li)
-            }
-            // 都完成之后，再插入到dom树中
-            listNode.appendChild(frag)
-    2.bom
-      bom browser object model 浏览器对象模型
-      它是跟浏览器相关的，跟客户端相关的一些东西。大部分都是一些简单粗燥的api，没有太多技术含量。
-      题目:
-        1.如何识别浏览器的类型
-        2.分析拆解url的各个部分
-      知识点:
-        1.navigator
-          浏览器的信息
-          navigator.userAgent
-        2.screen
-          屏幕的信息，比如说宽度高度等待这些
-          screen.width
-          screen.height
-        3.location
-          地址的一些信息，就是分析url的一些信息
-          https://coding.imooc.com/lesson/400.html?a=100&b=200#mid=30309
-          location.href        // https://coding.imooc.com/lesson/400.html#mid=30309
-          location.protocol    // 'https:'  
-          location.host        // 'coding.imooc.com'  
-          location.pathname    // '/lesson/400.html'
-          location.search      // '?a=100&b=200'
-          location.hash        // '#mid=30309'
-          我们整个的网址都是通过这些信息拼接出来的。
-        4.history
-          前进后退这些信息
-          history.back()    // 网页后退
-          history.forward() // 网页前进
-    3.事件
-      题目:
-        1.编写一个通用的事件监听函数
-          function bindEvent (elem, type, fn) {
-            elem.addEventListener(type, fn)
-          }
-          const btn1 = document.getElementById('btn1')
-          bindEvent(btn1, 'click', event => {
-            console.log(event.target) // 我们触发点击的元素，就是这个btn1这个dom对象
-            event.preventDefault() // 阻止浏览器默认行为
-            event.stopPropagation() // 阻止事件冒泡
-            console.log('clicked')
-          })
-        2.描述事件冒泡的流程
-          事件冒泡是基于dom的树形结构，事件会顺着触发元素往上冒泡。应用场景就是事件代理。代理它是基于事件冒泡这个机制才能够用起来的。
-        3.无限下拉的图片列表，如何监听每个图片的点击
-          利用事件代理，我们可以通过event.target获取触发元素。用matches来判断是否是我们业务逻辑需要的触发元素是不是这个选择器范
-          围之内的。
-      知识点:
-        1.事件绑定
-          事件绑定就是addEventListener
-          const btn = document.getElementById('btn1')
-          btn.addEventListener('click', event => {
-            console.log('clicked')
-          })
-        2.事件冒泡
-          我们的实际事件触发完之后，它是像一种冒泡机制一样，它是顺着这个dom结构往它的上级一层一层的冒，就是说在它当前这个元素中监听
-          事件和在它上级或上上级只要是它的上级监听事件，都可以把这个事件给监听到。
-        3.事件代理
-          事件代理是基于事件冒泡来做的。有了事件冒泡这个机制，我们才能在这个机制的基础上去实现这个代理。所谓代理就是因为数量太多或结
-          果比较复杂，不好去挨个都去绑定事件的情况。我们把事件绑到某一个父元素上。事件里我们要去获取它触发的元素做一些判断，是不是我
-          们想要的那个元素。然后再去做一些其他的动作。
-          1.代码简洁
-            事件代理的代码比较简洁，你如果是每一个元素都给它绑一个事件的话，这样代码反而就会麻烦了，至少你还得做个dom查询，还得做个
-            循环。
-          2.减少浏览器内存使用
-            如果需要绑定事件的元素非常多的话，每一个元素都去挂一个事件监听，如果数量过多的话，它是非常耗费内存的。但是利用事件代理只
-            在父元素上去挂一个事件，只挂一次事件就没有那么耗费内存。
-          3.不要滥用
-            只有在一些情况下可以用。就是因为数量太多结果复杂的不好去每一个都去绑定事件的情况下才应该去用。你不要到处都去用这个代理。
-            这个代理还是有一定复杂度的。它的代码简洁程度虽然也比较简洁，但是它的简洁是相比于每个元素都做事件监听的情况。比如一个按
-            钮的绑定就不至于用代理了。直接把事件绑定到这个按钮上不就完了吗。这样的话才是更简洁的。所以不要滥用，不要为了用代理而用
-            代理。要在合适的场景下去使用。
-            1.重新写通用事件绑定函数，使其能够适用普通的绑定和事件代理的绑定。
-            function bindEvent (elem, type, selector, fn) {
-              if (fn == null) {
-                fn = selector
-                selector = null
-              }
-              elem.addEventListener(type, event => {
-                const target = event.target
-                if (selector) {
-                  // 代理绑定
-                  if (target.matched(selector)) {
-                    fn.call(target, event)
-                  }
-                } else {
-                  // 普通绑定
+            elem.addEventListener(type, event => {
+              const target = event.target
+              if (selector) {
+                // 代理绑定
+                if (target.matched(selector)) {
                   fn.call(target, event)
                 }
-              })
+              } else {
+                // 普通绑定
+                fn.call(target, event)
+              }
+            })
+          }
+          const btn1 = document.getElementById('btn1')
+          const div3 = document.getElementById('div3')
+          bindEvent(btn1, 'click', function (event) {
+            event.preventDefault()
+            alert(this.innerHTML)
+          })
+          bindEvent(div3, 'click', 'a', function (event) {
+            event.preventDefault()
+            alert(this.innerHTML)
+          })
+  4.ajax
+    题目:
+      1.手写一个简易的ajax
+        1.ajax工作基本过程
+          // xhr.readyState等于4的时候才说明ajax的请求成功了，其他需要判断的东西只有xhr.status也就是http状态码了。比如
+          // 网络断开的情况下xhr不可能等于4，所以前端的ajax请求的业务逻辑中根本就不用判断类似断网的这种情况
+          1.get请求
+            const xhr = new XMLHttpRequest()
+            xhr.open('GET', '/api', true)
+            xhr.onreadystatechange = function () {
+              if (xhr.readyState === 4) {
+                if (xhr.status === 200) {
+                  alert(xhr.responseText) // 返回的信息是字符串
+                } else {
+                  console.log('其他情况')
+                }
+              }
             }
-            const btn1 = document.getElementById('btn1')
-            const div3 = document.getElementById('div3')
-            bindEvent(btn1, 'click', function (event) {
-              event.preventDefault()
-              alert(this.innerHTML)
-            })
-            bindEvent(div3, 'click', 'a', function (event) {
-              event.preventDefault()
-              alert(this.innerHTML)
-            })
-    4.ajax
-      题目:
-        1.手写一个简易的ajax
-          1.ajax工作基本过程
-            // xhr.readyState等于4的时候才说明ajax的请求成功了，其他需要判断的东西只有xhr.status也就是http状态码了。比如
-            // 网络断开的情况下xhr不可能等于4，所以前端的ajax请求的业务逻辑中根本就不用判断类似断网的这种情况
-            1.get请求
-              const xhr = new XMLHttpRequest()
-              xhr.open('GET', '/api', true)
-              xhr.onreadystatechange = function () {
-                if (xhr.readyState === 4) {
-                  if (xhr.status === 200) {
-                    alert(xhr.responseText) // 返回的信息是字符串
-                  } else {
-                    console.log('其他情况')
-                  }
+            xhr.send()
+          2.post请求
+            const xhr = new XMLHttpRequest()
+            xhr.open('POST', '/api', true)
+            xhr.onreadystatechange = function () {
+              if (xhr.readyState === 4) {
+                if (xhr.status === 200) {
+                  alert(xhr.responseText) // 返回的信息是字符串
+                } else {
+                  console.log('其他情况')
                 }
               }
-              xhr.send()
-            2.post请求
-              const xhr = new XMLHttpRequest()
-              xhr.open('POST', '/api', true)
-              xhr.onreadystatechange = function () {
-                if (xhr.readyState === 4) {
-                  if (xhr.status === 200) {
-                    alert(xhr.responseText) // 返回的信息是字符串
-                  } else {
-                    console.log('其他情况')
-                  }
+            }
+            const postData = {
+              username: 'zhangsan',
+              password: 'xxx'
+            }
+            // 发送的数据也是字符串
+            xhr.send(JSON.stringifypost(Data))
+        2.简易的ajax，回调函数版
+          function ajax (url, method, successFn, errorFn) {
+            const xhr = new XMLHttpRequest()
+            xhr.open(method, url, true)
+            xhr.onreadystatechange = function () {
+              if (xhr.readyState === 4) {
+                if (xhr.status === 200) {
+                  successFn(
+                    JSON.parse(xhr.responseText)
+                  )
+                } else if (xhr.status === 404) {
+                  errorFn(new Error('404 not found'))
                 }
               }
-              const postData = {
-                username: 'zhangsan',
-                password: 'xxx'
-              }
-              // 发送的数据也是字符串
-              xhr.send(JSON.stringifypost(Data))
-          2.简易的ajax，回调函数版
-            function ajax (url, method, successFn, errorFn) {
+            }
+            xhr.send()
+          }
+        3.简易的ajax，promise版
+          function ajax (url, method) {
+            const p = new Promise((resolve, reject) => {
               const xhr = new XMLHttpRequest()
               xhr.open(method, url, true)
               xhr.onreadystatechange = function () {
                 if (xhr.readyState === 4) {
                   if (xhr.status === 200) {
-                    successFn(
+                    resolve(
                       JSON.parse(xhr.responseText)
                     )
                   } else if (xhr.status === 404) {
-                    errorFn(new Error('404 not found'))
+                    reject(new Error('404 not found'))
                   }
                 }
               }
               xhr.send()
-            }
-          3.简易的ajax，promise版
-            function ajax (url, method) {
-              const p = new Promise((resolve, reject) => {
-                const xhr = new XMLHttpRequest()
-                xhr.open(method, url, true)
-                xhr.onreadystatechange = function () {
-                  if (xhr.readyState === 4) {
-                    if (xhr.status === 200) {
-                      resolve(
-                        JSON.parse(xhr.responseText)
-                      )
-                    } else if (xhr.status === 404) {
-                      reject(new Error('404 not found'))
-                    }
-                  }
+            })
+            return p
+          }
+          const url = '/data/test.json'
+          const method = 'GET'
+          ajax(url, method)
+            .then(res => {
+              console.log(res)
+            })
+            .catch(err => {
+              console.log(err)
+            })
+      2.跨域的常用实现方式
+        1.jsonp
+        2.cors
+    知识点:
+      1.XMLHttpRequest
+        网页实现ajax最核心的一个api。
+      2.状态码
+        // xhr.send()之后，这个xhr.readyState才开始从0-4变化
+        xhr.readyState
+          1.0 - （未初始化）还没有调用send()方法
+          2.1 - （载入）已调用send()方法，正在发送请求
+          3.2 - （载入完成）send()方法调用完成，已接收到全部响应内容
+          4.3 - （交互）正在解析响应内容
+          5.4 - （完成）响应内容解析完成，可在客户端调用
+        xhr.status  
+          status是我们常见的http协议的状态码
+          1.2xx - 表示成功处理请求，如200
+          2.3xx - 需要重定向，重定向不用我们自己处理，服务器返回之后浏览器会自己去跳转，如301 302 304
+          3.4xx - 客户端请求错误，如404 403
+          4.5xx - 服务端错误
+      3.跨域，跨域解决方案
+        1.什么是跨域（同源策略）
+          1.同源策略
+            ajax请求的时候，浏览器要求当前网页和server必须同源（安全）。在服务端或非浏览器的环境下是可以请求的。这个同源策略是
+            浏览器要求的。
+          2.同源
+            对于一个url来说，前端页面和server端做对比。协议、域名、端口，三者必须一致。
+            前端：http://a.com:8080/； server：https://b.com/api/xxx
+            这两个是不同源的，而且是协议，域名，端口都不相同的。有一个不一样就是不同源的。  
+            为什么同源策略仅限制浏览器呢。我们的搜索引擎，爬虫它不是浏览器上发送的，它是服务端发送的。搜索引擎的爬虫它是服务端去
+            做请求去访问各个网站的一些网页。它照样可以把数据拿到。所以说想要去攻击某一个不同源的网站的一些接口是可以发起攻击的。
+            server端可以发起攻击，因为server端它并没有像浏览器一样的同源策略，所以可以发起攻击的。怎么预防就是服务端相互较量的
+            事情了。但是浏览器必须要做这个同源的要求，因为每个网站都要有每个网站的一个范围，都要有个墙，都要有域的一个限制。你不
+            能乱套。如果说这个浏览器同源策略做的不好，那这个浏览器就是不安全的。我们就没法用，没法信任这个浏览器。
+          3.加载图片，css，js可无视同源策略
+            同源策略第一个条件就是ajax请求。但如果不是ajax请求，比如说图片，css，js可无视同源策略。它们的地址都可以跨域。浏览
+            器不会限制。
+            <img src="跨域的图片地址" />
+            <link href="跨域的css地址" />
+            <script src="跨域的js地址"></script>
+            应用：
+              1.<img/>
+                图片可用于统计打点。可能是使用第三方统计服务，比如站长之家，百度统计等，这些也都是外域的嘛，统计打点无非就是发
+                一个请求嘛，这个时候如果我们用ajax发的话那就出现跨域，那就不好解决了。所以说我们用图片，我们去初始化一个图片，
+                然后把图片的地址写成第三方统计服务的地址，然后在地址里面写上我们各种各样需要的参数，然后这个时候我们通过图片去
+                发这个请求，这样的话就不会出现跨域的问题。 
+              2.<link /> <script>
+                <link /> <script>可以使用cdn，cdn一般都是外域。 
+              3.<script>可以实现jsonp
+                jsonp是我们一般情况下前端实现跨域一个比较常用的方案。
+            所以说图片，css，js可以无视同源策略可以实现跨域，它们都是有一定的功能的。浏览器也是为了它们有一定功能做了一些考虑
+            的。所以说并不是说这三个平白无故的就实现了跨域的。
+          4.跨域
+            1.所有的跨域，都必须经过server端允许和配合
+            2.如果未经server端允许就实现的跨域，说明浏览器有漏洞，是一个危险信号。浏览器有漏洞那就非常危险了。因为你现在所有的
+            请求都是通过浏览器发出的。浏览器有漏洞那说明这个浏览器不可信，你的一些什么账号啊，密码啊，什么乱七八糟的请求啊，什么
+            一些数据啊都有可能被攻击。
+        2.Jsonp
+          我们先看一个问题。浏览器随便访问一个网址，服务端返回的一定是一个html文件吗。服务端拿到这个网址url之后分析，然后获取这
+          个文件的内容，然后把文件内容返回。其实服务端不一定返回一个html文件的内容，服务端可以动态拼接任何的数据内容返回，只要符
+          合相应文件的格式要求。
+          同理我们script去访问一个js地址的话，就一定是返回一个js静态文件吗。这个也是不一定的。
+          jsonp
+            1.<script>可以绕过跨域限制
+            2.服务端可以拼接任意动态数据返回
+            3.所以，我们就可以通过<script>获得跨域的数据，只要服务端愿意返回
+            4.jsonp简易demo
+              <script>
+                window.callback = function (data) {
+                  // 这是我们跨域接收的信息
+                  console.log(data)
                 }
-                xhr.send()
-              })
-              return p
-            }
-            const url = '/data/test.json'
-            const method = 'GET'
-            ajax(url, method)
-              .then(res => {
-                console.log(res)
-              })
-              .catch(err => {
-                console.log(err)
-              })
-        2.跨域的常用实现方式
-          1.jsonp
-          2.cors
-      知识点:
-        1.XMLHttpRequest
-          我们网页实现ajax最核心的一个api就是这个XMLHttpRequest。
-        2.状态码
-          // xhr.send()之后，这个xhr.readyState才开始从0-4变化
-          xhr.readyState
-            1.0 - （未初始化）还没有调用send()方法
-            2.1 - （载入）已调用send()方法，正在发送请求
-            3.2 - （载入完成）send()方法调用完成，已接收到全部响应内容
-            4.3 - （交互）正在解析响应内容
-            5.4 - （完成）响应内容解析完成，可在客户端调用
-          xhr.status  
-            status是我们常见的http协议的状态码
-            1.2xx - 表示成功处理请求，如200
-            2.3xx - 需要重定向，重定向不用我们自己处理，服务器返回之后浏览器会自己去跳转，如301 302 304
-            3.4xx - 客户端请求错误，如404 403
-            4.5xx - 服务端错误
-        3.跨域，跨域解决方案
-          1.什么是跨域（同源策略）
-            1.同源策略
-              ajax请求的时候，浏览器要求当前网页和server必须同源（安全）。在服务端或非浏览器的环境下是可以请求的。这个同源策略是
-              浏览器要求的。
-            2.同源
-              对于一个url来说，前端页面和server端做对比。协议、域名、端口，三者必须一致。
-              前端：http://a.com:8080/； server：https://b.com/api/xxx
-              这两个是不同源的，而且是协议，域名，端口都不相同的。有一个不一样就是不同源的。  
-              为什么同源策略仅限制浏览器呢。我们的搜索引擎，爬虫它不是浏览器上发送的，它是服务端发送的。搜索引擎的爬虫它是服务端去
-              做请求去访问各个网站的一些网页。它照样可以把数据拿到。所以说想要去攻击某一个不同源的网站的一些接口是可以发起攻击的。
-              server端可以发起攻击，因为server端它并没有像浏览器一样的同源策略，所以可以发起攻击的。怎么预防就是服务端相互较量的
-              事情了。但是浏览器必须要做这个同源的要求，因为每个网站都要有每个网站的一个范围，都要有个墙，都要有域的一个限制。你不
-              能乱套。如果说这个浏览器同源策略做的不好，那这个浏览器就是不安全的。我们就没法用，没法信任这个浏览器。
-            3.加载图片，css，js可无视同源策略
-              同源策略第一个条件就是ajax请求。但如果不是ajax请求，比如说图片，css，js可无视同源策略。它们的地址都可以跨域。浏览
-              器不会限制。
-              <img src="跨域的图片地址" />
-              <link href="跨域的css地址" />
-              <script src="跨域的js地址"></script>
-              应用：
-                1.<img/>
-                  图片可用于统计打点。可能是使用第三方统计服务，比如站长之家，百度统计等，这些也都是外域的嘛，统计打点无非就是发
-                  一个请求嘛，这个时候如果我们用ajax发的话那就出现跨域，那就不好解决了。所以说我们用图片，我们去初始化一个图片，
-                  然后把图片的地址写成第三方统计服务的地址，然后在地址里面写上我们各种各样需要的参数，然后这个时候我们通过图片去
-                  发这个请求，这样的话就不会出现跨域的问题。 
-                2.<link /> <script>
-                  <link /> <script>可以使用cdn，cdn一般都是外域。 
-                3.<script>可以实现jsonp
-                  jsonp是我们一般情况下前端实现跨域一个比较常用的方案。
-              所以说图片，css，js可以无视同源策略可以实现跨域，它们都是有一定的功能的。浏览器也是为了它们有一定功能做了一些考虑
-              的。所以说并不是说这三个平白无故的就实现了跨域的。
-            4.跨域
-              1.所有的跨域，都必须经过server端允许和配合
-              2.如果未经server端允许就实现的跨域，说明浏览器有漏洞，是一个危险信号。浏览器有漏洞那就非常危险了。因为你现在所有的
-              请求都是通过浏览器发出的。浏览器有漏洞那说明这个浏览器不可信，你的一些什么账号啊，密码啊，什么乱七八糟的请求啊，什么
-              一些数据啊都有可能被攻击。
-          2.Jsonp
-            我们先看一个问题。浏览器随便访问一个网址，服务端返回的一定是一个html文件吗。服务端拿到这个网址url之后分析，然后获取这
-            个文件的内容，然后把文件内容返回。其实服务端不一定返回一个html文件的内容，服务端可以动态拼接任何的数据内容返回，只要符
-            合相应文件的格式要求。
-            同理我们script去访问一个js地址的话，就一定是返回一个js静态文件吗。这个也是不一定的。
-            jsonp
-              1.<script>可以绕过跨域限制
-              2.服务端可以拼接任意动态数据返回
-              3.所以，我们就可以通过<script>获得跨域的数据，只要服务端愿意返回
-              4.jsonp简易demo
-                <script>
-                  window.callback = function (data) {
-                    // 这是我们跨域接收的信息
-                    console.log(data)
-                  }
-                </script>
-                <script src="https://imooc.com/getData.js"></script>
-                <!-- 上面的script将返回 callback({x: 100, y: 200}) -->
-          3.cors(服务端支持的一种解决跨域的方式)
-            cors其实是一个统称，就是服务器端可以设置http header，就是在服务端response返回的时候可以设置header，如下面这些东西。
-            response.setHeader('Access-Control-Allow-Origin', 'http://localhost:8081')        // 允许的域名是什么 
-            response.setHeader('Access-Control-Allow-Headers', 'X-Requested-With')            // 允许的headers是什么 
-            response.setHeader('Access-Control-Allow-Methods', 'PUT,POST,GET,DELETE,OPTIONS') // 允许的methods是什么 
-            response.setHeader('Access-Control-Allow-Credentials', 'true')                    // 接收跨域的cookie，是否允许传cookie
-            这种方式就是纯服务器端的操作
-    5.存储
-      存储比较简单，但是很常用。
-      题目:
-        1.描述cookie localStorage sessionStorage的区别
-          存储一般就是说localStorage和sessionStorage，但是cookie它也掺和到这来。cookie它应该算是http请求的一部分，虽然它
-          不是存储这一类的东西，但是它具备存储的这种能力，所以它也能一块来做一个比较。
-          1.容量
-          2.api易用性
-          3.是否跟随http请求发送出去
-      知识点:
-        1.cookie
-          1.cookie它本身是用于浏览器端和server端通讯，也就是http请求的一部分。
-          2.它最早是被借用来做本地存储，因为localStorage和sessionStorage这两个它是html5之后才提出来的。html5是大约在09年
-            左右提出来的。那个时候其实我们的互联网已经发展的特别好了。虽说移动互联网还没有那么好，比如美团滴滴啊各种软件那时候还
-            没有。只能手机还没有普及。但是那时候的个人电脑已经非常普及了，各种网站，比如百度啊163啊搜狐汽车之家啊，各种网站已经
-            很普及了。那时候刚刚发布html5，没有localStorage和sessionStorage，所以说我们只能是用cookie来做本地存储。
-          3.我们可以用document.cookie = ''这个方式来去修改。当然这是前端的修改方式。就是h5页前端的用js修改的方式。后端也可以
-            去修改cookie，因为cookie它本身是一个通讯的一个标准。
-          4.比如我们在浏览器中访问一个h5的页面，Network中可以看到这个Request Headers里面就有cookie。也就是说它是用来浏览器
-            和server端通讯的。所以现在即便是html5已经普及，localStorage和sessionStorage已经被我们使用。但是cookie还是有
-            自己的价值。因为它的价值不在于本地存储，而在于本地和服务器端进行通讯。cookie的信息中一般是有个人的一些信息标识的。
-            这个cookie是个字符串的形式，中间通过分号分割的形式，每一部分都是key=value的形式。我们也可以通过Application里面
-            看到cookie一些它拆分出来的一种形式，当前域名下的所有cookie。
-            怎么加一个cookie：
-              document.cookie = 'a=100'
-              console.log(document.cookie) // 'a=100'
-              document.cookie = 'b=200'
-              console.log(document.cookie) // 'a=100; b=200'
-              我们每赋值一个就追加一遍。它是一个追加的过程，它不是一个覆盖的过程。所以说这个api看着还比较怪异。
-              document.cookie = 'a=300'
-              console.log(document.cookie) // 'b=200; a=300'
-              同一个key它会覆盖，不同key它会追加
-              所以说这种api的计算形式就和我们之前做的js的那种普通的计算形式它就不一样。这就很难让人理解，你不知道的话可能就会掉
-              到坑里面去。所以从api这个易用程度来说，这个cookie做本地存储就不合适。
-              我们加上了上面的cookie之后，我们访问这个页面的时候，Request Headers里面就带了这个cookie，这个时候我们访问页面，
-              后端是能接收到这个cookie的。比如我们这个cookie里面有一个userId=xxx，服务端接收到这个cookie之后就知道这个登录
-              用户是谁了。也就是说登录的过程通常用cookie来实现。
-          5.它为什么能做本地存储呢，假使我们现在没有localStorage和sessionStorage，其实cookie是可以做本地存储的。我们上面存
-            储了一些cookie信息。我们刷新后，还能够查到这些信息，也就是说只要我们的cookie不清除，页面不管怎么刷新，这个cookie
-            出来的都是这些信息。也就是我们在前端对cookie进行赋值，然后页面不管怎么刷新，这个赋的值都会在的，就是浏览器会帮我们
-            存下来。所以说它能做本地存储。这也是我们在html5规范出来或普及之前唯一的能在页面中做本地存储的一种能力。但是cookie
-            当时的设计并不是为了做本地存储，它是为了浏览器和服务端进行通讯。它只是被借用来做本地存储。它本来就不是干这个活的，但
-            是干这个活了。所以它肯定会有一些问题。
-            cookie的缺点
-              1.存储大小，cookie有个限制，最大存4kb，也就是说我们这写了很长很长的cookie，超过了4kb，那就存不下了，为什么存不
-                下呢，因为我们在去发送请求的时候，我们是要把cookie带上的。如果你这个cookie内容很多，当时的网速又不快，网速有限。
-                你如果每次请求都带上cookie，然后cookie每次都挂上好几kb的数据，那样的话会严重影响每次的请求。要知道，我们刷新一
-                个网页，它是要发很多请求的，每个请求都要把这个cookie给带上的。这个事是很烦人的。所以要有大小限制。
-              2.http请求的时候需要发送到服务端，增加请求的数据量，就是你用cookie作为本地的存储，你存什么东西，每次请求都会带到
-                服务器上去。这样的话就会让这个请求变得数据量比较大，就会慢一些。
-              3.只能用document.cookie = ''这种方式来修改，这种api太过简陋也太不好理解，你每次修改都是追加，这种东西其实和我
-                们的js语法本身不是那么的贴近，而且比较费解。
-            所以说cookie呢，大家要理解这个背景。它本身是用来干嘛的。是用来联系这个服务端通讯的。但是由于之前我们没有合理的本地缓
-            存或本地存储的这个能力，所以我们不得不用cookie来做这个事情。但是呢它有一些限制让我们不是很好用。
-        2.localStorage sessionStorage
-          1.这两个是html5专门为存储设计的，最大可存储5M。5M这个空间对于我们前端来说就算是已经很知足了。因为前端存储的信息基本上
-            也就存储个字符串啊，存储个数字啊，就是简单的缓存一下，简单的暂存一下。不会存一些很大的数据量，所以说5M绝对是绰绰有余。
-            而且这5M是针对每个域名来说的。每个host，每个域我们可以存储5M，所以说它是专门为存春来设计的，空间更大。
-          2.api简单易用，是用setItem getItem来做的。这个方式就完全符合于我们自己写一个存储的功能或者缓存的功能。get set这种
-            api，很多这种key value的库都是用这种get set api，所以说非常符合我们的使用。
-            localStorage.setItem('a', 100)
-            localStorage.getItem('a')
-            sessionStorage.setItem('b', 200)
-            sessionStorage.getItem('b')
-          3.不会随着http请求被发送出去，如果是5M都随便发的话那就麻烦了。你如果是自己实现一个类似于存储缓存的一个功能的话。其实
-            也是有一个get有一个set就可以了。别的基本上用处不是很大。
-          4.localStorage和sessionStorage的区别
-            1.localStorage的数据会永久存储，除非代码或手动删除。
-            2.sessionStorage的数据只存在于当前会话，当前会话就是当前你和服务端的一个连接，比如说浏览器关闭的时候它会清空。也就
-              是sessionStorage类似于我们服务端的一个session。session是和登录和用户验证有关系的。sessionStorage它会存在于
-              用户活跃的这段事件，如果用户关闭浏览器走了，不再访问这个网站了，它就会自动清空了。
-            3.用的话一般用localStorage会更多一些。
-  3.开发环境
-    1.git
-    2.调试
-    3.webpack和babel
-    4.linux命令
-  4.运行环境
-    运行环境我们通常指浏览器，当然server端有nodejs运行环境。其实它也不仅仅是只有浏览器。比如说我们的网页会在浏览器中运行对吧。pc
-    端一般是浏览器中运行，但是移动端现在就不一定了。浏览器现在浏览器运行的可能会比较少一些。比如我们的移动端很多场景会在微信这个app
-    里面去运行。包括我们可能还会在支付宝啊这些app里面去运行。你的页面还有可能在你们公司自己开发的app里面去运行。这些统称为浏览器。
-    因为浏览器它自己本身也是个app。只不过浏览器这个app是以浏览器的功能为主。所以说我们叫浏览器。比如说像微信这种app，它可能是以其他
-    功能为主，但它里面也嵌了一个浏览器的我们叫webview，就是网页webview的一个插件或者说一个模块。它具备浏览器的功能，所以说在浏览器
-    这一方面，浏览器本身app和微信这种其他功能的app对我们的网页来说它都是浏览器。
-    然后浏览器呢要下载代码，渲染出页面， 期间可能会执行若干的js。这是它的一个主要的功能。也就是说前端页面h5页面和服务端或者是客户端
-    有个不一样的地方就在于它需要随时的去下载网页代码，下载完之后还要渲染，渲染的过程中还要执行js的一些运算，所以说它的性能就需要一个
-    比较高的要求。首先你要下载快吧，还要渲染快吧，里面的js执行逻辑还要比较合理吧。所以说我们就针对它的这一个过程来去做一些优化。怎么
-    让我们的网页能更快一些。这是我们运行环境这一大节我们需要做的一些工作。我们需要做什么呢，就是保证代码在浏览器中稳定且高效。首先是
-    稳定，你不能乱了，你做了高效之后有什么安全问题，这个肯定不行。高效就是让它更快，下载的更快，渲染的更快以及执行的更快，这就是我们
-    需要做的一个工作。这个也是比较重要的一部分。
-      1.网页加载过程
-        我们首先得知道网页是怎么加载的，才能把这个稳定且高效给做好。你连它的加载过程你都不知道，那你就不知道从何入手是不是。
-      2.性能优化
-        这其实不光是性能，还要有一个体验优化。性能优化有时候可能会表现的更倾向于说让这个事情做的更快一些，更高效一些。但是体验优化呢，
-        有时候是让这个事情做的更顺畅一些，就是不卡顿，更顺畅一些。
-      3.安全
-        就是我们要知道一些在web前端在h5页面一些常见的安全攻击。然后我们要做一些常见的预防。当然安全这个问题肯定不仅仅是前端的一些问
-        题。我们只需要做好我们自己的本职工作，至少我们能把这个前端的安全工作给它做好，至少把大家都知道的一些安全的问题给它预防掉。这
-        是我们最基本的一个工作。
-    1.页面加载过程
-      题目:
-        1.从输入url到渲染出页面的整个过程
-          从下面这些方面去思考
-          1.下载资源：各个资源类型，下载过程
-          2.渲染页面：结合html css javascript 图片等
-          考虑一下这个整个的页面是怎么被渲染出来的
-        2.window.onload和DOMContentLoaded的区别
-      知识点:
-        1.加载资源的形式
-          首先我们要知道它加载什么东西
-          1.html代码
-            最基本的访问页面需要html代码对吧
-          2.媒体文件，如图片，视频等
-            再一个页面中如果有图片有视频这样的媒体文件。我们需要加载一些文件，加载一些图片视频的媒体文件。所以我们
-          3.javascript css
-            然后呢就是js和css的这个代码
-          一般情况下的页面就基本上三部分。
-        2.加载资源的过程
-          1.DNS解析：域名 -> IP地址
-            我们输入url，第一步的时候它要进行dns解析，dns就是domin name server就是域名服务，域名服务解析，把域名变成ip地址。
-            其实域名直接是ip地址也没问题，但由于ip地址很难记，还有就是ip地址在不同区域内，特别是大型网站，像百度，淘宝这种大型
-            的网站，ip地址是不一样的，因为它们做了分区域的ip地址的一个均衡或者代理。所以说我们在访问域名的时候，这个域名解析这个
-            服务它会根据地域去解析不同的域名，让你的网站会访问的更快一些。比如说你人在北京，你去访问广州的一个机器，ip地址肯定会
-            慢对吧。你人在北京，你去访问一个昌平的一个机器，那肯定会快很多。所以基于这两点，我们肯定是要用域名而不是用ip地址。那
-            用域名，你就必须用一个域名解析服务。为什么要用域名解析服务呢，我们的手机或电脑去访问一个域名的时候，它真正对应到的还
-            是一个ip地址，还是一个ip地址的机器。所以说域名只是一个中间的，方便大家记住，方便统一使用的一个符号，它真正到网络中，
-            它还是用ip地址做这个网络访问的。所以说第一步我们要把域名解析成ip地址。
-          2.浏览器根据ip地址向服务器发起http请求
-            浏览器向ip地址发送请求，其实浏览器只是一个发起方，它真正的核心模块还是操作系统的，操作系统里面有一些能发送网络服务的
-            一些系统服务。浏览器调用这个操作系统的系统服务。然后操作系统去把这个事情发送。这里面我们说是http请求，其他它里面还涉
-            及到一些http的一些连接，比如说我们常说的三次握手这些。这些有点概念化了。三次握手这个东西在我们实际的应用中，其实我们
-            体会不到。我们能体会到的就是ip地址，http请求。我们前端常用的协议就是http协议。这是发起请求。
-          3.发起请求后服务器接收请求并处理http请求，并返回给浏览器。返回的东西就是前面讲的加载的资源。看你请求的是什么东西，它就
-            给你返回什么东西。
-          大体过程就是这样的。
-        3.渲染页面的过程
-          1.如果我们请求的是一个页面的话，那肯定是返回html代码。然后网页根据html代码生成DOM Tree。
-          2.根据css代码生成CSSOM，这个OM跟DOM的OM是一样的，就是object model对象模型。就是css对象模型。这个意思和html生成dom
-            树是一样的，html是一个文本代码，浏览器解析完之后呢，它要生成一个结构化的树结构。那css它也是一个文本代码，然后它要生成
-            一个css object model的一个可结构化的一个对象。从概念上理解它和dom树是一样的。遇到css的代码出现就会生成一个CSSOM。
-          3.DOM Tree和CSSOM整合成一个Render Tree渲染树。为什么要这么做呢，因为只有dom树是没法渲染的。因为有些标签的css属性是
-            在CSSOM里面的。DOM树是整个网页的结构框架。然后再在框架上放上一些样式。最终整合成一个框架和样式合并出来的一个结构。我
-            们叫做Render Tree。这样的话就可以去渲染了。所谓Render Tree就是我们dom树里面挂了很多css的属性。它也是一个树结构。只
-            不过每个节点它挂了一些css的属性。这样的话就可以渲染了。
-          4.然后浏览器根据Render Tree渲染页面
-            因为有了结构了也有了css属性了，就可以渲染页面了。
-          5.如果入到<script>则暂停渲染，优先加载并执行js代码，完成之后再继续。
-            我们之前讲js异步的时候说过，js的进程和渲染进程是共用一个线程的。为什么要共用一个线程呢，因为js有可能会改变dom的结构，
-            还有可能会改变Render Tree这个结构。这也是为何建议把js放到body最后的原因所在。
-          6.直至把Render Tree渲染完成。这个页面就渲染完成了。
-          这就是整个的一个渲染过程。
-        4.页面加载和渲染示例
-          可以通过示例来分析一下加载和渲染过程
-          1.示例1
-            <!DOCTYPE html>
-            <html>
-              <head>
-                <meta charset="UTF-8">
-                <title>Document</title>
-              </head>
-              <body>
-                <p>test</p>
-              </body>
-            </html>
-            我们根据加载过程把页面加载下来，然后根据html生成一个dom树，根据cssOM，然后最后生成render Tree去渲染。
-          2.示例2
-            <!DOCTYPE html>
-            <html>
-              <head>
-                <meta charset="UTF-8">
-                <title>Document</title>
-                <link rel="stylesheet" type="text/css" href="test.css">
-              </head>
-              <body>
-                <p>test</p>
-              </body>
-            </html>
-            我们页面加载完之后，我们要先把css代码加载完，因为它是在head里面，加载完之后我们css代码的这个cssOM就已经给它做出来了。
-            出来之后我们再根据html这个结构渲染出dom树，然后两个整合成render tree，然后去把这个页面渲染出来。这个是有css的情况。
-            思考题：
-              1.为何建议把css放在head中
-                根据浏览器的渲染过程。如果css放到dom结构下面，那么就会先生成dom树，因为它没有css的信息，所以它就照着默认标签的样式渲染
-                到浏览器上，继续向下渲染发现有一个css，把这个css文件加载完成之后，生成一个CSSOM，然后又和当前的这个dom树做一个合并生成
-                RenderTree，然后可能会再重新渲染。可能就会是一个重复的过程。有时候这个动作比较慢的话就可能会出现肉眼可见的样式变化的过
-                程，感官上不好。所以即使网速很好，电脑也很好的时候，也不建议把css放到下面来写。因为这是一个不好的书写方式。我们之所以把
-                css放到上面来写是建议想把css的规则把css的代码在dom树生成完成之前就给它加载完，就把这个css的规则放到这，然后当dom树生
-                成完之后直接和所有的css整合生成一个渲染树，生成一个Render Tree，然后一步渲染完成。这样的话就不要再出现重复了。这样的话
-                是我们期望的一个过程。所以说我们要把css放到head中。
-          3.示例3
-            <!DOCTYPE html>
-            <html>
-              <head>
-                <meta charset="UTF-8">
-                <title>Document</title>
-              </head>
-              <body>
-                <div id="container">default</div>
-                <script src="index.js"></script>
-                <p>test</p>
-              </body>
-            </html>
-            根据我们的渲染过程，我们可以这样分析。拿到html之后，我们去分析html，然后生成一个dom树。然后根据dom树进行渲染。
-            思考题：
-              1.为何建议把js放到body最后
-                如果没有放在最后，可能会出现本来渲染了一部分，然后突然卡住了去加载执行js了，然后有进行渲染后面的dom内容。所以说它就会导致
-                一个页面渲染的过程比较长。本来我们期望的是这个页面一共的渲染时间是1s钟。我们期望在0.3s或0.5s钟之内让用户看到页面的所有内
-                容。然后剩下的0.5s之内我们执行js代码，然后把这个页面渲染完成。这是我们期望的。我们不期望说这个页面渲染一共是1s钟。然后直
-                到1s钟的最后一刻我们才让用户看到所有的内容。所以说我们要把js放到最后。就是说我们要把先能出来的东西全部都渲染出来，把html
-                渲染完之后，然后在把script继续执行，到时候你该干什么干什么，反正我dom已经渲染完了，你愿意改的话你就改吧。这样是我们比较
-                期望的一个结果。
-          4.示例4
-            <!DOCTYPE html>
-            <html>
-              <head>
-                <meta charset="UTF-8">
-                <title>Document</title>
-              </head>
-              <body>
-                <p>test</p>
-                <img src="test.png" />
-                <p>test</p>
-              </body>
-            </html>
-            生成dom树之后，依次渲染，发现img，我们就要去加载test.png这个文件。但这个过程不会停止渲染，它不像是一个js文件，它不
-            像js代码，因为图片这个东西加载完之后直接插进去就行了，它不会改变其他的结果。只不过这个时候这个图片还没过来，所以说我们
-            这个位置先空着，然后继续向下渲染，这个时候不会去阻塞这个渲染过程。等什么时候图片加载完，然后我们就把图片塞到这来。有可
-            能图片会比较大，或者比较高，可能会把内容向下撑一下，这个就需要重排一下就可以了。
-            这就是带img这个情况的一个用处。
-              window.addEventListener('load', function () {
-                // 网页全部资源加载完才会执行，包括图片，视频等
-              })
-              window.addEventListener('DOMContentLoaded', function () {
-                // dom渲染完即可执行，此时图片，视频可能还没有加载完
-              })
-              所以说，如果是有图片的话，用DOMContentLoaded这个事件去监听网页加载完成，这样的话就会更快一些。它就不用等到图片加
-              载完，因为我们基本上所有的操作都是对dom的操作，图片是不是加载完对我们的一些js的代码中操作的时候可能不是那么的重要。
-              所以我们在一般的情况下，像jquery这种代码它都是要监听DOMContentLoaded这个事件来去做一些处理的。只要是监听到这个
-              事件，它就认为这个网页它已经加载完了。它不会等到图片加载完再执行，所以说用这个比用load这个事件更加靠谱。
+              </script>
+              <script src="https://imooc.com/getData.js"></script>
+              <!-- 上面的script将返回 callback({x: 100, y: 200}) -->
+        3.cors(服务端支持的一种解决跨域的方式)
+          cors其实是一个统称，就是服务器端可以设置http header，就是在服务端response返回的时候可以设置header，如下面这些东西。
+          response.setHeader('Access-Control-Allow-Origin', 'http://localhost:8081')        // 允许的域名是什么 
+          response.setHeader('Access-Control-Allow-Headers', 'X-Requested-With')            // 允许的headers是什么 
+          response.setHeader('Access-Control-Allow-Methods', 'PUT,POST,GET,DELETE,OPTIONS') // 允许的methods是什么 
+          response.setHeader('Access-Control-Allow-Credentials', 'true')                    // 接收跨域的cookie，是否允许传cookie
+          这种方式就是纯服务器端的操作
+  5.存储
+    题目:
+      1.描述cookie localStorage sessionStorage的区别
+        存储一般就是说localStorage和sessionStorage，但是cookie它也掺和到这来。cookie它应该算是http请求的一部分，虽然它
+        不是存储这一类的东西，但是它具备存储的这种能力，所以它也能一块来做一个比较。
+        1.容量
+        2.api易用性
+        3.是否跟随http请求发送出去
+    知识点:
+      1.cookie
+        1.cookie它本身是用于浏览器端和server端通讯，也就是http请求的一部分。
+        2.它最早是被借用来做本地存储，因为localStorage和sessionStorage这两个它是09年html5之后才提出来的。之前没有localStorage和sessionStorage，所以说我们只能是用cookie来做本地存储。
+        3.前端可以用document.cookie = ''这个方式来去修改。后端也可以去修改cookie，因为cookie它本身是一个通讯的一个标准。
+        4.cookie的价值不在于本地存储，而在于本地和服务器端进行通讯。cookie的信息中一般是有个人的一些信息标识的。
+          cookie是个字符串，中间通过分号分割的形式，每一部分都是key=value的形式。
+          怎么加一个cookie：
+            document.cookie = 'a=100'
+            console.log(document.cookie) // 'a=100'
+            document.cookie = 'b=200'
+            console.log(document.cookie) // 'a=100; b=200'
+            我们每赋值一个就追加一遍。它是一个追加的过程，它不是一个覆盖的过程。所以说这个api看着还比较怪异。
+            document.cookie = 'a=300'
+            console.log(document.cookie) // 'b=200; a=300'
+            同一个key它会覆盖，不同key它会追加
+            所以说这种api的计算形式就和我们之前做的js的那种普通的计算形式它就不一样。这就很难让人理解，你不知道的话可能就会掉
+            到坑里面去。所以从api这个易用程度来说，这个cookie做本地存储就不合适。
+            我们加上了上面的cookie之后，我们访问这个页面的时候，Request Headers里面就带了这个cookie，这个时候我们访问页面，
+            后端是能接收到这个cookie的。比如我们这个cookie里面有一个userId=xxx，服务端接收到这个cookie之后就知道这个登录
+            用户是谁了。也就是说登录的过程通常用cookie来实现。
+        5.它为什么能做本地存储呢，假使我们现在没有localStorage和sessionStorage，其实cookie是可以做本地存储的。我们上面存
+          储了一些cookie信息。我们刷新后，还能够查到这些信息，也就是说只要我们的cookie不清除，页面不管怎么刷新，这个cookie
+          出来的都是这些信息。也就是我们在前端对cookie进行赋值，然后页面不管怎么刷新，这个赋的值都会在的，就是浏览器会帮我们
+          存下来。所以说它能做本地存储。这也是我们在html5规范出来或普及之前唯一的能在页面中做本地存储的一种能力。但是cookie
+          当时的设计并不是为了做本地存储，它是为了浏览器和服务端进行通讯。它只是被借用来做本地存储。它本来就不是干这个活的，但
+          是干这个活了。所以它肯定会有一些问题。
+          cookie的缺点
+            1.存储大小，cookie有个限制，最大存4kb，也就是说我们这写了很长很长的cookie，超过了4kb，那就存不下了，为什么存不
+              下呢，因为我们在去发送请求的时候，我们是要把cookie带上的。如果你这个cookie内容很多，当时的网速又不快，网速有限。
+              你如果每次请求都带上cookie，然后cookie每次都挂上好几kb的数据，那样的话会严重影响每次的请求。
+            2.http请求的时候需要发送到服务端，增加请求的数据量，就是你用cookie作为本地的存储，你存什么东西，每次请求都会带到
+              服务器上去。这样的话就会让这个请求变得数据量比较大，就会慢一些。
+            3.只能用document.cookie = ''这种方式来修改，这种api太过简陋也太不好理解，你每次修改都是追加，这种东西其实和我
+              们的js语法本身不是那么的贴近，而且比较费解。
+      2.localStorage sessionStorage
+        1.这两个是html5专门为存储设计的，最大可存储5M。5M这个空间对于我们前端来说就算是已经很知足了。因为前端存储的信息基本上
+          也就存储个字符串啊，存储个数字啊，就是简单的缓存一下，简单的暂存一下。不会存一些很大的数据量，所以说5M绝对是绰绰有余。
+          而且这5M是针对每个域名来说的。每个host，每个域我们可以存储5M，所以说它是专门为存春来设计的，空间更大。
+        2.api简单易用，是用setItem getItem来做的。这个方式就完全符合于我们自己写一个存储的功能或者缓存的功能。get set这种
+          api，很多这种key value的库都是用这种get set api，所以说非常符合我们的使用。
+          localStorage.setItem('a', 100)
+          localStorage.getItem('a')
+          sessionStorage.setItem('b', 200)
+          sessionStorage.getItem('b')
+        3.不会随着http请求被发送出去，如果是5M都随便发的话那就麻烦了。你如果是自己实现一个类似于存储缓存的一个功能的话。其实
+          也是有一个get有一个set就可以了。别的基本上用处不是很大。
+        4.localStorage和sessionStorage的区别
+          1.localStorage的数据会永久存储，除非代码或手动删除。
+          2.sessionStorage的数据只存在于当前会话，当前会话就是当前你和服务端的一个连接，比如说浏览器关闭的时候它会清空。也就
+            是sessionStorage类似于我们服务端的一个session。session是和登录和用户验证有关系的。sessionStorage它会存在于
+            用户活跃的这段事件，如果用户关闭浏览器走了，不再访问这个网站了，它就会自动清空了。
+          3.用的话一般用localStorage会更多一些。
+4.运行环境
+  前端页面和服务端或者是客户端不一样的地方就是它需要随时去下载网页代码，下载完还要渲染，渲染的过程中还要执行js的一些运算，所以
+  它的性能需要比较高的要求。首先要下载快，渲染快，js执行逻辑要比较合理。所以针对它要做一些优化。怎么
+  让网页能更快一些。就是保证代码在浏览器中稳定且高效。首先是
+  稳定，你不能乱了，你做了高效之后有什么安全问题，这个肯定不行。高效就是让它更快，下载的更快，渲染的更快以及执行的更快，这就是我们
+  需要做的一个工作。这个也是比较重要的一部分。
+    1.网页加载过程
+      我们首先得知道网页是怎么加载的，才能把这个稳定且高效给做好。你连它的加载过程你都不知道，那你就不知道从何入手是不是。
     2.性能优化
-      1.性能优化介绍
-        1.性能优化是一个综合性的问题，没有标准答案，但要求尽量全面。面试的是想听到尽量全面的方案或比较全面的一个思考。所以我们本着这
-          个思路去分析一下应该怎么去回答这个问题。
-        2.某些细节问题可能会单独提问：比如手写防抖、手写节流
-          防抖和节流它算是一个体验性的优化方案，也算这个性能优化方案之内。
-      2.性能优化原则
-        1.多使用内存、缓存或其他方法
-        2. 减少cpu计算量，减少网络加载耗时
-        所以大家要明白，我们到底是多用什么少用什么，所谓性能优化就是让这个网页加载的更快，渲染的更快，运行的更流畅一些。你想要更快
-        更流畅，你就需要多使用内存，缓存这种方法。这种方法适用于所有编程的性能优化。都是用空间换时间。算法中的一个时间复杂度的减小
-        也是通过空间换时间。这个没有什么神奇的东西，就是通过空间换时间。
-      3.从何入手
-        性能优化就是让它更快，怎么让它更快呢。
-        1.让加载更快
-          就是下载的东西更快，别人下载一个页面或所有的文件需要2s钟，那我的代码让人下载完只需要1s钟，这样不就更快了吗。
-        2.让渲染更快
-          就是我的这个代码逻辑结构更加合理，没有什么重复的多余的渲染操作，没有无用功，没有等待。让渲染更快，至少是在同一时间内，我
-          让用户看得更快。
-        所以说我们从让加载更快，让渲染更快这个角度来考虑，我们就能直到这个性能优化从何入手。
-      4.让加载更快
-        1.减少资源体积：压缩代码
-          js代码，css代码，包括图片我们也可以压缩。包括服务器端也会进行一些其他的压缩方式，比如说服务器端会进行gzip压缩，这个和
-          我们前端没有太多的关系，这是服务器端做的压缩，然后浏览器进行解压。gzip压缩一般能把代码压缩到体积三分之一左右。
-        2.减少访问次数：合并代码，ssr服务端渲染，缓存
-          1.合并代码
-            我们的http请求每次访问都是很耗时的，同样的代码，比如说一共三个代码，每个代码3kb，一共是9kb。如果是你分三次访问，每次
-            访问3kb和你这一次访问9kb这个时间是不一样的。我们就选后者，访问次数比较少的那个。js代码，css代码，图片都是可以合并的。
-          2.ssr服务端渲染
-            服务端渲染为什么能减少访问次数呢，服务端渲染就是说我们服务端把页面以及页面要显示的内容一块给前端显示出来，这样前端拿到
-            内容之后就立马去把这个内容展示出来。如果不是服务端渲染的话，是我们把页面拿到之后，我们再通过ajax再去加载资源，加载资源
-            之后再去渲染到页面上去。
-          3.缓存
-            比如说我们这个页面要访问10个资源，如果没有缓存的话，那就是访问10个资源，也就是10次。如果是其中六个都命中的缓存，那我们
-            就可以只访问4个资源，那次数就变少了。
-        3.使用更快的网络：cdn
-          cdn是根据区域来去做服务器的一个处理。也就是说你如果用cdn的一个网络的话，你从北京访问的ip和你从上海访问的ip是不一样的。
-          因为它会根据区域来去联系运营商的服务器然后让下载更快一些。
-      5.让渲染更快
-        1.css放在head里面，js放到body最下面
-        2.今早开始执行js，用DOMContentLoaded里面去触发
-        3.懒加载（图片懒加载，上滑加载更多）
-          上滑的时候加载更多，这个图片呢它是懒加载的。我们看这种新闻的app，图片都是懒加载的。图片没必要说直接加载，我们可以什么时
-          候用什么时候加载。这样渲染就会更快一些。
-        4.对dom查询进行缓存
-        5.频繁dom操作，合并到一起插入dom结构
-        6.节流throttle防抖debounce
-          你要知道节流防抖它是怎么回事，节流防抖不能说是让渲染更快，而是让渲染更加流畅，它是一个体验性的优化。当然归到让渲染更快，
-          渲染优化里面也没问题。
-      6.总之，我们分析了一个性能优化的一个原则，以及我们思考的一些思路，通过这个思路得出来的那么几个方法。
-      7.示例
-        1.资源合并
-          <script src="a.js"></script>
-          <script src="b.js"></script>
-          <script src="c.js"></script>
-          合并后
-          <script src="abc.js"></script>
-        2.缓存
-          bundle.[contenthash].js
-          bundle.58jffjq0482nf.js
-          1.静态资源加hash后缀，根据文件内容计算hash
-          2.文件内容不变，则hash不变，则url不变
-          3.url和文件不变，则会自动触发http缓存机制，返回304
-            如果我们每次访问一个js的资源，它的url如果不变，并且服务器判断它的文件也不变的话，如果是第一次访问成功之后，第二次再
-            去访问，浏览器已经访问过一次了，服务器就会告诉浏览器说这个是304了，304就是说我们的资源根本没有变，所以说你就回去把，
-            我就不用给你了。这样直接返回一个304的状态码，那这个内容就非常少了，可能用几个字节就能把这个事情搞定了。就告诉浏览器
-            说这个没变，你就用之前的就行了。立马就可以启动这个缓存机制，然后就不用下载了，就可以用之前的缓存的这个文件了。所以这
-            个机制不是我们前端去写js实现的，而它是http的缓存机制，浏览器和服务器都会遵从这个机制去做缓存。所以说我们只需要符合
-            这个机制去让它尽可能的去命中这个缓存就可以了。
-        3.cdn
-        4.ssr
-          服务端渲染：将网页和数据一起加载，一起渲染
-          非ssr：先加载网页，网页的ajax再加载数据，返回后再渲染数据
-          所以ssr确实是为了性能考虑来做的。如果是有ssr的话这个性能会提高很多。特别是再网络速度比较慢的情况下会提高很多。所以说
-          ssr也是一种减少网络请求的一种思路。
-          早先的jsp asp php都属于ssr。ssr是一个比较宽泛的概念。server side render就是服务端渲染。现在的vue react做ssr也
-          是借助node的一些能力来做。从服务端渲染这个思路上和jsp asp php也没有什么本质上的区别。只不过它用的更加高级的前端框架
-          而已。
-        5.懒加载
-          比如说一个图片，有时候我们需要图片加载，有时候不需要，比如一个很长的新闻列表，每一个列表项中都有一个图片，这个时候其实
-          我们不希望图片一下子全部加载完，我们希望第一屏看到的图片就是在手机屏幕上的图片，我们加载完，比如前五个或前八个让它加载
-          完，然后随着用户往上去滑动页面的时候，这个图片慢慢的一个一个加载出来，并不是说我页面下载完之后所有图片立马加载出来。所
-          以我们利用懒加载，可以把这个图片默认赋值成一个src="preview.png"就是一个预览的一个图片，这个图片的体积非常小，很容易
-          加载，然后我们把真正的图片地址放到data-realsrc="abc.png"里面，放在这里面的话这个图片不会去加载这个地址。当浏览器判
-          断到用户往上滑，当这个图片露出这个屏幕的时候我们再去把这个图片地址的data-realsrc赋值给这个图片的src，去加载真正的图
-          片地址。这就是懒加载。这个是很常见的，也是性能优化的一个很好的一钟方式。
-          <img id="img1" src="preview.png" data-realsrc="abc.png" />
-          <script type="text/javascript">
-            var img1 = document.getElementById('img1')
-            img1.src = img1.getAttribute('data-realsrc')
-          </script>
-        6.缓存dom查询
-        7.多个dom操作合并到一起插入到dom结构
-        8.尽早开始js执行
-        9.防抖debounce
-          1.监听一个输入框，文字变化后触发change事件
-          2.直接监听keyup事件，则会频繁触发change事件
-          3.防抖：用户在输入结束或暂停的时候，才会触发change事件
-          // 防抖简易demo
-          const input1 = document.getElementById('input1')
+      这其实不光是性能，还要有一个体验优化。性能优化有时候可能会表现的更倾向于说让这个事情做的更快一些，更高效一些。但是体验优化呢，
+      有时候是让这个事情做的更顺畅一些，就是不卡顿，更顺畅一些。
+    3.安全
+      就是我们要知道一些在web前端在h5页面一些常见的安全攻击。然后我们要做一些常见的预防。当然安全这个问题肯定不仅仅是前端的一些问
+      题。我们只需要做好我们自己的本职工作，至少我们能把这个前端的安全工作给它做好，至少把大家都知道的一些安全的问题给它预防掉。这
+      是我们最基本的一个工作。
+  1.页面加载过程
+    题目:
+      1.从输入url到渲染出页面的整个过程
+        从下面这些方面去思考
+        1.下载资源：各个资源类型，下载过程
+        2.渲染页面：结合html css javascript 图片等
+        考虑一下这个整个的页面是怎么被渲染出来的
+      2.window.onload和DOMContentLoaded的区别
+    知识点:
+      1.加载资源的形式
+        首先我们要知道它加载什么东西
+        1.html代码
+          最基本的访问页面需要html代码对吧
+        2.媒体文件，如图片，视频等
+          再一个页面中如果有图片有视频这样的媒体文件。我们需要加载一些文件，加载一些图片视频的媒体文件。所以我们
+        3.javascript css
+          然后呢就是js和css的这个代码
+        一般情况下的页面就基本上三部分。
+      2.加载资源的过程
+        1.DNS解析：域名 -> IP地址
+          我们输入url，第一步的时候它要进行dns解析，dns就是domin name server就是域名服务，域名服务解析，把域名变成ip地址。
+          其实域名直接是ip地址也没问题，但由于ip地址很难记，还有就是ip地址在不同区域内，特别是大型网站，像百度，淘宝这种大型
+          的网站，ip地址是不一样的，因为它们做了分区域的ip地址的一个均衡或者代理。所以说我们在访问域名的时候，这个域名解析这个
+          服务它会根据地域去解析不同的域名，让你的网站会访问的更快一些。比如说你人在北京，你去访问广州的一个机器，ip地址肯定会
+          慢对吧。你人在北京，你去访问一个昌平的一个机器，那肯定会快很多。所以基于这两点，我们肯定是要用域名而不是用ip地址。那
+          用域名，你就必须用一个域名解析服务。为什么要用域名解析服务呢，我们的手机或电脑去访问一个域名的时候，它真正对应到的还
+          是一个ip地址，还是一个ip地址的机器。所以说域名只是一个中间的，方便大家记住，方便统一使用的一个符号，它真正到网络中，
+          它还是用ip地址做这个网络访问的。所以说第一步我们要把域名解析成ip地址。
+        2.浏览器根据ip地址向服务器发起http请求
+          浏览器向ip地址发送请求，其实浏览器只是一个发起方，它真正的核心模块还是操作系统的，操作系统里面有一些能发送网络服务的
+          一些系统服务。浏览器调用这个操作系统的系统服务。然后操作系统去把这个事情发送。这里面我们说是http请求，其他它里面还涉
+          及到一些http的一些连接，比如说我们常说的三次握手这些。这些有点概念化了。三次握手这个东西在我们实际的应用中，其实我们
+          体会不到。我们能体会到的就是ip地址，http请求。我们前端常用的协议就是http协议。这是发起请求。
+        3.发起请求后服务器接收请求并处理http请求，并返回给浏览器。返回的东西就是前面讲的加载的资源。看你请求的是什么东西，它就
+          给你返回什么东西。
+        大体过程就是这样的。
+      3.渲染页面的过程
+        1.如果我们请求的是一个页面的话，那肯定是返回html代码。然后网页根据html代码生成DOM Tree。
+        2.根据css代码生成CSSOM，这个OM跟DOM的OM是一样的，就是object model对象模型。就是css对象模型。这个意思和html生成dom
+          树是一样的，html是一个文本代码，浏览器解析完之后呢，它要生成一个结构化的树结构。那css它也是一个文本代码，然后它要生成
+          一个css object model的一个可结构化的一个对象。从概念上理解它和dom树是一样的。遇到css的代码出现就会生成一个CSSOM。
+        3.DOM Tree和CSSOM整合成一个Render Tree渲染树。为什么要这么做呢，因为只有dom树是没法渲染的。因为有些标签的css属性是
+          在CSSOM里面的。DOM树是整个网页的结构框架。然后再在框架上放上一些样式。最终整合成一个框架和样式合并出来的一个结构。我
+          们叫做Render Tree。这样的话就可以去渲染了。所谓Render Tree就是我们dom树里面挂了很多css的属性。它也是一个树结构。只
+          不过每个节点它挂了一些css的属性。这样的话就可以渲染了。
+        4.然后浏览器根据Render Tree渲染页面
+          因为有了结构了也有了css属性了，就可以渲染页面了。
+        5.如果入到<script>则暂停渲染，优先加载并执行js代码，完成之后再继续。
+          我们之前讲js异步的时候说过，js的进程和渲染进程是共用一个线程的。为什么要共用一个线程呢，因为js有可能会改变dom的结构，
+          还有可能会改变Render Tree这个结构。这也是为何建议把js放到body最后的原因所在。
+        6.直至把Render Tree渲染完成。这个页面就渲染完成了。
+        这就是整个的一个渲染过程。
+      4.页面加载和渲染示例
+        可以通过示例来分析一下加载和渲染过程
+        1.示例1
+          <!DOCTYPE html>
+          <html>
+            <head>
+              <meta charset="UTF-8">
+              <title>Document</title>
+            </head>
+            <body>
+              <p>test</p>
+            </body>
+          </html>
+          我们根据加载过程把页面加载下来，然后根据html生成一个dom树，根据cssOM，然后最后生成render Tree去渲染。
+        2.示例2
+          <!DOCTYPE html>
+          <html>
+            <head>
+              <meta charset="UTF-8">
+              <title>Document</title>
+              <link rel="stylesheet" type="text/css" href="test.css">
+            </head>
+            <body>
+              <p>test</p>
+            </body>
+          </html>
+          我们页面加载完之后，我们要先把css代码加载完，因为它是在head里面，加载完之后我们css代码的这个cssOM就已经给它做出来了。
+          出来之后我们再根据html这个结构渲染出dom树，然后两个整合成render tree，然后去把这个页面渲染出来。这个是有css的情况。
+          思考题：
+            1.为何建议把css放在head中
+              根据浏览器的渲染过程。如果css放到dom结构下面，那么就会先生成dom树，因为它没有css的信息，所以它就照着默认标签的样式渲染
+              到浏览器上，继续向下渲染发现有一个css，把这个css文件加载完成之后，生成一个CSSOM，然后又和当前的这个dom树做一个合并生成
+              RenderTree，然后可能会再重新渲染。可能就会是一个重复的过程。有时候这个动作比较慢的话就可能会出现肉眼可见的样式变化的过
+              程，感官上不好。所以即使网速很好，电脑也很好的时候，也不建议把css放到下面来写。因为这是一个不好的书写方式。我们之所以把
+              css放到上面来写是建议想把css的规则把css的代码在dom树生成完成之前就给它加载完，就把这个css的规则放到这，然后当dom树生
+              成完之后直接和所有的css整合生成一个渲染树，生成一个Render Tree，然后一步渲染完成。这样的话就不要再出现重复了。这样的话
+              是我们期望的一个过程。所以说我们要把css放到head中。
+        3.示例3
+          <!DOCTYPE html>
+          <html>
+            <head>
+              <meta charset="UTF-8">
+              <title>Document</title>
+            </head>
+            <body>
+              <div id="container">default</div>
+              <script src="index.js"></script>
+              <p>test</p>
+            </body>
+          </html>
+          根据我们的渲染过程，我们可以这样分析。拿到html之后，我们去分析html，然后生成一个dom树。然后根据dom树进行渲染。
+          思考题：
+            1.为何建议把js放到body最后
+              如果没有放在最后，可能会出现本来渲染了一部分，然后突然卡住了去加载执行js了，然后有进行渲染后面的dom内容。所以说它就会导致
+              一个页面渲染的过程比较长。本来我们期望的是这个页面一共的渲染时间是1s钟。我们期望在0.3s或0.5s钟之内让用户看到页面的所有内
+              容。然后剩下的0.5s之内我们执行js代码，然后把这个页面渲染完成。这是我们期望的。我们不期望说这个页面渲染一共是1s钟。然后直
+              到1s钟的最后一刻我们才让用户看到所有的内容。所以说我们要把js放到最后。就是说我们要把先能出来的东西全部都渲染出来，把html
+              渲染完之后，然后在把script继续执行，到时候你该干什么干什么，反正我dom已经渲染完了，你愿意改的话你就改吧。这样是我们比较
+              期望的一个结果。
+        4.示例4
+          <!DOCTYPE html>
+          <html>
+            <head>
+              <meta charset="UTF-8">
+              <title>Document</title>
+            </head>
+            <body>
+              <p>test</p>
+              <img src="test.png" />
+              <p>test</p>
+            </body>
+          </html>
+          生成dom树之后，依次渲染，发现img，我们就要去加载test.png这个文件。但这个过程不会停止渲染，它不像是一个js文件，它不
+          像js代码，因为图片这个东西加载完之后直接插进去就行了，它不会改变其他的结果。只不过这个时候这个图片还没过来，所以说我们
+          这个位置先空着，然后继续向下渲染，这个时候不会去阻塞这个渲染过程。等什么时候图片加载完，然后我们就把图片塞到这来。有可
+          能图片会比较大，或者比较高，可能会把内容向下撑一下，这个就需要重排一下就可以了。
+          这就是带img这个情况的一个用处。
+            window.addEventListener('load', function () {
+              // 网页全部资源加载完才会执行，包括图片，视频等
+            })
+            window.addEventListener('DOMContentLoaded', function () {
+              // dom渲染完即可执行，此时图片，视频可能还没有加载完
+            })
+            所以说，如果是有图片的话，用DOMContentLoaded这个事件去监听网页加载完成，这样的话就会更快一些。它就不用等到图片加
+            载完，因为我们基本上所有的操作都是对dom的操作，图片是不是加载完对我们的一些js的代码中操作的时候可能不是那么的重要。
+            所以我们在一般的情况下，像jquery这种代码它都是要监听DOMContentLoaded这个事件来去做一些处理的。只要是监听到这个
+            事件，它就认为这个网页它已经加载完了。它不会等到图片加载完再执行，所以说用这个比用load这个事件更加靠谱。
+  2.性能优化
+    1.性能优化介绍
+      1.性能优化是一个综合性的问题，没有标准答案，但要求尽量全面。面试的是想听到尽量全面的方案或比较全面的一个思考。所以我们本着这
+        个思路去分析一下应该怎么去回答这个问题。
+      2.某些细节问题可能会单独提问：比如手写防抖、手写节流
+        防抖和节流它算是一个体验性的优化方案，也算这个性能优化方案之内。
+    2.性能优化原则
+      1.多使用内存、缓存或其他方法
+      2. 减少cpu计算量，减少网络加载耗时
+      所以大家要明白，我们到底是多用什么少用什么，所谓性能优化就是让这个网页加载的更快，渲染的更快，运行的更流畅一些。你想要更快
+      更流畅，你就需要多使用内存，缓存这种方法。这种方法适用于所有编程的性能优化。都是用空间换时间。算法中的一个时间复杂度的减小
+      也是通过空间换时间。这个没有什么神奇的东西，就是通过空间换时间。
+    3.从何入手
+      性能优化就是让它更快，怎么让它更快呢。
+      1.让加载更快
+        就是下载的东西更快，别人下载一个页面或所有的文件需要2s钟，那我的代码让人下载完只需要1s钟，这样不就更快了吗。
+      2.让渲染更快
+        就是我的这个代码逻辑结构更加合理，没有什么重复的多余的渲染操作，没有无用功，没有等待。让渲染更快，至少是在同一时间内，我
+        让用户看得更快。
+      所以说我们从让加载更快，让渲染更快这个角度来考虑，我们就能直到这个性能优化从何入手。
+    4.让加载更快
+      1.减少资源体积：压缩代码
+        js代码，css代码，包括图片我们也可以压缩。包括服务器端也会进行一些其他的压缩方式，比如说服务器端会进行gzip压缩，这个和
+        我们前端没有太多的关系，这是服务器端做的压缩，然后浏览器进行解压。gzip压缩一般能把代码压缩到体积三分之一左右。
+      2.减少访问次数：合并代码，ssr服务端渲染，缓存
+        1.合并代码
+          我们的http请求每次访问都是很耗时的，同样的代码，比如说一共三个代码，每个代码3kb，一共是9kb。如果是你分三次访问，每次
+          访问3kb和你这一次访问9kb这个时间是不一样的。我们就选后者，访问次数比较少的那个。js代码，css代码，图片都是可以合并的。
+        2.ssr服务端渲染
+          服务端渲染为什么能减少访问次数呢，服务端渲染就是说我们服务端把页面以及页面要显示的内容一块给前端显示出来，这样前端拿到
+          内容之后就立马去把这个内容展示出来。如果不是服务端渲染的话，是我们把页面拿到之后，我们再通过ajax再去加载资源，加载资源
+          之后再去渲染到页面上去。
+        3.缓存
+          比如说我们这个页面要访问10个资源，如果没有缓存的话，那就是访问10个资源，也就是10次。如果是其中六个都命中的缓存，那我们
+          就可以只访问4个资源，那次数就变少了。
+      3.使用更快的网络：cdn
+        cdn是根据区域来去做服务器的一个处理。也就是说你如果用cdn的一个网络的话，你从北京访问的ip和你从上海访问的ip是不一样的。
+        因为它会根据区域来去联系运营商的服务器然后让下载更快一些。
+    5.让渲染更快
+      1.css放在head里面，js放到body最下面
+      2.今早开始执行js，用DOMContentLoaded里面去触发
+      3.懒加载（图片懒加载，上滑加载更多）
+        上滑的时候加载更多，这个图片呢它是懒加载的。我们看这种新闻的app，图片都是懒加载的。图片没必要说直接加载，我们可以什么时
+        候用什么时候加载。这样渲染就会更快一些。
+      4.对dom查询进行缓存
+      5.频繁dom操作，合并到一起插入dom结构
+      6.节流throttle防抖debounce
+        你要知道节流防抖它是怎么回事，节流防抖不能说是让渲染更快，而是让渲染更加流畅，它是一个体验性的优化。当然归到让渲染更快，
+        渲染优化里面也没问题。
+    7.示例
+      1.资源合并
+        <script src="a.js"></script>
+        <script src="b.js"></script>
+        <script src="c.js"></script>
+        合并后
+        <script src="abc.js"></script>
+      2.缓存
+        bundle.[contenthash].js
+        bundle.58jffjq0482nf.js
+        1.静态资源加hash后缀，根据文件内容计算hash
+        2.文件内容不变，则hash不变，则url不变
+        3.url和文件不变，则会自动触发http缓存机制，返回304
+          如果我们每次访问一个js的资源，它的url如果不变，并且服务器判断它的文件也不变的话，如果是第一次访问成功之后，第二次再
+          去访问，浏览器已经访问过一次了，服务器就会告诉浏览器说这个是304了，304就是说我们的资源根本没有变，所以说你就回去把，
+          我就不用给你了。这样直接返回一个304的状态码，那这个内容就非常少了，可能用几个字节就能把这个事情搞定了。就告诉浏览器
+          说这个没变，你就用之前的就行了。立马就可以启动这个缓存机制，然后就不用下载了，就可以用之前的缓存的这个文件了。所以这
+          个机制不是我们前端去写js实现的，而它是http的缓存机制，浏览器和服务器都会遵从这个机制去做缓存。所以说我们只需要符合
+          这个机制去让它尽可能的去命中这个缓存就可以了。
+      3.cdn
+      4.ssr
+        服务端渲染：将网页和数据一起加载，一起渲染
+        非ssr：先加载网页，网页的ajax再加载数据，返回后再渲染数据
+        所以ssr确实是为了性能考虑来做的。如果是有ssr的话这个性能会提高很多。特别是再网络速度比较慢的情况下会提高很多。所以说
+        ssr也是一种减少网络请求的一种思路。
+        早先的jsp asp php都属于ssr。ssr是一个比较宽泛的概念。server side render就是服务端渲染。现在的vue react做ssr也
+        是借助node的一些能力来做。从服务端渲染这个思路上和jsp asp php也没有什么本质上的区别。只不过它用的更加高级的前端框架
+        而已。
+      5.懒加载
+        比如说一个图片，有时候我们需要图片加载，有时候不需要，比如一个很长的新闻列表，每一个列表项中都有一个图片，这个时候其实
+        我们不希望图片一下子全部加载完，我们希望第一屏看到的图片就是在手机屏幕上的图片，我们加载完，比如前五个或前八个让它加载
+        完，然后随着用户往上去滑动页面的时候，这个图片慢慢的一个一个加载出来，并不是说我页面下载完之后所有图片立马加载出来。所
+        以我们利用懒加载，可以把这个图片默认赋值成一个src="preview.png"就是一个预览的一个图片，这个图片的体积非常小，很容易
+        加载，然后我们把真正的图片地址放到data-realsrc="abc.png"里面，放在这里面的话这个图片不会去加载这个地址。当浏览器判
+        断到用户往上滑，当这个图片露出这个屏幕的时候我们再去把这个图片地址的data-realsrc赋值给这个图片的src，去加载真正的图
+        片地址。这就是懒加载。这个是很常见的，也是性能优化的一个很好的一钟方式。
+        <img id="img1" src="preview.png" data-realsrc="abc.png" />
+        <script type="text/javascript">
+          var img1 = document.getElementById('img1')
+          img1.src = img1.getAttribute('data-realsrc')
+        </script>
+      6.缓存dom查询
+      7.多个dom操作合并到一起插入到dom结构
+      8.尽早开始js执行
+      9.防抖debounce
+        1.监听一个输入框，文字变化后触发change事件
+        2.直接监听keyup事件，则会频繁触发change事件
+        3.防抖：用户在输入结束或暂停的时候，才会触发change事件
+        // 防抖简易demo
+        const input1 = document.getElementById('input1')
+        let timer = null
+        input1.addEventListener('keyup', function () {
+          if (timer) {
+            clearTimeout(timer)
+          }
+          timer = setTimeout(() => {
+            // 模拟触发change事件
+            console.log(input1.value)
+            // 清空定时器
+            timer = null
+          }, 500)
+        })
+        // debounce是对函数的封装，所以它最终返回应该是一个函数
+        // 函数的封装就是将大部分逻辑封装起来，使使用的时候更加简单，只写业务逻辑就行了。jq zepto等库和插件都是这个原理。
+        function debounce (fn, delay = 500) {
+          // 这个timer是在闭包中的，timer这个数据就被隐藏了，不会被外面轻易拿到
           let timer = null
-          input1.addEventListener('keyup', function () {
+
+          return function () {
             if (timer) {
               clearTimeout(timer)
             }
             timer = setTimeout(() => {
-              // 模拟触发change事件
-              console.log(input1.value)
-              // 清空定时器
+              // this是为了获取添加事件的dom对象，arguments是为了将事件函数接收到的参数透传给fn
+              fn.apply(this, arguments)
               timer = null
-            }, 500)
-          })
-          // debounce是对函数的封装，所以它最终返回应该是一个函数
-          // 函数的封装就是将大部分逻辑封装起来，使使用的时候更加简单，只写业务逻辑就行了。jq zepto等库和插件都是这个原理。
-          function debounce (fn, delay = 500) {
-            // 这个timer是在闭包中的，timer这个数据就被隐藏了，不会被外面轻易拿到
-            let timer = null
-
-            return function () {
-              if (timer) {
-                clearTimeout(timer)
-              }
-              timer = setTimeout(() => {
-                // this是为了获取添加事件的dom对象，arguments是为了将事件函数接收到的参数透传给fn
-                fn.apply(this, arguments)
-                timer = null
-              }, delay)
-            }
+            }, delay)
           }
-          // 使用
-          input1.addEventListener('keyup', debounce(function () {
-            console.log(input1.value)
-          }, 300))
-        10.节流throttle  
-          防抖的场景是频繁输入和频繁操作的时候最后的时候才去触发。节流是你在频繁输入频繁操作的时候它会保持一个频率连续触发。
-          1.比如拖拽一个元素时，要随时拿到这个元素被拖拽的位置
-          2.如果直接用drag事件，则会频繁触发，很容易导致卡顿
-          3.这个时候我们需要节流：无论拖拽的速度多快，都会每隔100ms触发一次
-          // 防抖简易demo
-          const div1 = document.getElementById('div1')
+        }
+        // 使用
+        input1.addEventListener('keyup', debounce(function () {
+          console.log(input1.value)
+        }, 300))
+      10.节流throttle  
+        防抖的场景是频繁输入和频繁操作的时候最后的时候才去触发。节流是你在频繁输入频繁操作的时候它会保持一个频率连续触发。
+        1.比如拖拽一个元素时，要随时拿到这个元素被拖拽的位置
+        2.如果直接用drag事件，则会频繁触发，很容易导致卡顿
+        3.这个时候我们需要节流：无论拖拽的速度多快，都会每隔100ms触发一次
+        // 防抖简易demo
+        const div1 = document.getElementById('div1')
+        let timer = null
+        div1.addEventListener('drag', function (e) {
+          if (timer) {
+            return 
+          }
+          timer = setTimeout(() => {
+            console.log(e.offsetX, e.offsetY)
+            timer = null
+          }, 100)
+        })
+        // 节流函数封装
+        function throttle (fn, delay = 100) {
           let timer = null
-          div1.addEventListener('drag', function (e) {
+          return function () {
             if (timer) {
-              return 
+              return
             }
             timer = setTimeout(() => {
-              console.log(e.offsetX, e.offsetY)
+              fn.apply(this, arguments)
               timer = null
-            }, 100)
-          })
-          // 节流函数封装
-          function throttle (fn, delay = 100) {
-            let timer = null
-            return function () {
-              if (timer) {
-                return
-              }
-              timer = setTimeout(() => {
-                fn.apply(this, arguments)
-                timer = null
-              }, delay)
-            }
-          }
-          // 使用
-          input1.addEventListener('drag', throttle(function (e) {
-            console.log(e.offsetX, e.offsetY)
-          }, 200))
-    3.安全
-      问题:
-        1.常见的web前端攻击方式有哪些，怎么预防
-          1.XSS跨站请求攻击
-            1.一个博客网站，我发表一篇博客，其中嵌入<script>脚本
-            2.脚本内容：获取cookie，发送到我的服务器（服务器配合跨域）
-            3.发布这篇博客，有人查看它，我轻松收割访问者的cookie
-            预防：
-            1.替换特殊字符，如把<变为&lt;，把>变为&gt;
-            2.这样的话<script>就变为&lt;script&gt;，直接显示，而不会作为脚本被执行。只有html里面有script才会作为脚本被执行
-            3.前端要替换，后端也要替换，都做总不会有错
-            4.有xss npm工具
-          2.XSRF跨站请求伪造
-            1.你正在购物，看中了某个商品，商品id是100
-            2.付费接口是xxx.com/pay?id=100，但没有任何验证
-            3.我是一个攻击者，我看中了一个商品，id是200
-            4.我向你发送一个电子邮件，邮件标题很吸引人
-            5.但邮件正文隐藏着<img src="xxx.com/pay?id=200" />
-            6.你一查看邮件，就购买了id是200的商品
-            因为你现在正在购物，肯定登录了这个网站了，你就会有用户信息了，图片的地址去访问的时候，你的用户信息已经带过去了。
-            预防：
-            1.使用post接口
-              使用post接口，你用img攻击是攻击不通的，因为img的src只支持get请求
-            2.增加验证，例如密码，短信验证码，指纹等
-  5.面试真题
-    api它就是一个技术点，关注输入什么，输出什么就完了。
-    1.var和let const的区别
-      1.var是es5的语法，let const是es6的语法。var有变量提升
-      2.var和let声明的是变量，可修改。const是常量，不可修改
-      3.let const有块级作用域，var没有
-    2.typeof返回哪些类型
-      1.undefined string number boolean symbol
-      2.object（注意，typeof null === 'object'）
-      3.function
-    3.列举强制类型转换和隐式类型转换
-      1.强制：parseInt parseFloat toString等
-      2.隐式：if 逻辑运算 == +字符串拼接
-    4.手写深度比较，模拟lodash isEqual
-      // 实现如下效果，属性相等就相等
-      const obj1 = {a: 10, b: {x: 100, y: 200}}
-      const obj2 = {a: 10, b: {x: 100, y: 200}}
-      isEqual(obj1, obj2) // true
-      // 判断是否是对象或数组
-      function isObject (obj) {
-        return typeof obj === 'object' && obj !== null
-      }
-      // 全相等函数
-      function isEqual (obj1, obj2) {
-        // 值类型，（注意，参与equal的一般不会是函数）
-        if (!isObject(obj1) || !isObject(obj2)) {
-          return obj1 === obj2
-        }
-        if (obj1 === obj2) {
-          return true
-        }
-        // 两个都是对象或数组，而且不相等
-        // 1.先取出obj1和obj2的keys，比较个数
-        const obj1Keys = Object.keys(obj1)
-        const obj2Keys = Object.keys(obj2)
-        if (obj1Keys.length !== obj2Keys.length) {
-          return false
-        }
-        // 2.以obj1为基准，和obj2依次递归做比较
-        for (let key in obj1) {
-          // 比较当前key的val -- 递归！！
-          const res = isEqual(obj1[key], obj2[key])
-          if (!res) {
-            return false
+            }, delay)
           }
         }
-        // 3.全相等
-        return true
-      }
-    5.split()和join()的区别
-    6.数组的pop push unshift shift分别做什么
-      针对数组的api
-        1.功能是什么
-        2.参数是什么
-        3.返回值是什么
-        4.是否会对原数组造成影响
-      1.pop
-        const arr = [10, 20, 30, 40]
-        const popRes = arr.pop()
-        console.log(popRes, arr) // 40 [10, 20, 30]
-      2.push
-        const arr = [10, 20, 30, 40]
-        const pushRes = arr.push(50)
-        console.log(pushRes, arr) // 5 [10, 20, 30, 40, 50]
-      3.unshift
-        const arr = [10, 20, 30, 40]
-        const unshiftRes = arr.unshift(50)
-        console.log(unshiftRes, arr) // 5 [50, 10, 20, 30, 40]
-      4.shift
-        const arr = [10, 20, 30, 40]
-        const shiftRes = arr.shift()
-        console.log(shiftRes, arr) // 10 [20, 30, 40]
-      数组的api，有哪些是纯函数
-      纯函数：1.不改变原数组（没有副作用） 2.返回一个新数组
-      1.concat
-        const arr = [10, 20, 30, 40]
-        const arr1 = arr.concat([50, 60, 70])
-        console.log(arr1, arr) // [10, 20, 30, 40, 50, 60, 70] [10, 20, 30, 40]
-      2.map
-        const arr = [10, 20, 30, 40]
-        const arr1 = arr.map(item => item * 10)
-        console.log(arr1, arr) // [100, 200, 300, 400] [10, 20, 30, 40]
-      3.filter
-        const arr = [10, 20, 30, 40]
-        const arr1 = arr.filter(item => item > 25)
-        console.log(arr1, arr) // [30, 40] [10, 20, 30, 40]
-      4.slice
-        const arr = [10, 20, 30, 40]
-        const arr1 = arr.slice()
-        console.log(arr1, arr) // [10, 20, 30, 40] [10, 20, 30, 40]
-      非纯函数数组api
-      pop push unshift shift 
-      forEach some every
-      reduce
-    7.数组slice和splice的区别 
-      1.功能区别
-        slice是切片，一片一片的这样切。splice是剪接，剪完之后再给你接上。
-      2.参数和返回值
-      3.是否是纯函数
-      4.演示
-        1.slice 纯函数
-          const arr = [10, 20, 30, 40, 50]
-          const arr1 = arr.slice()     // slice如果不传参数的话，它相当于把这个数组整个的拷贝一份然后复制到一个新的数组中。
-          const arr1 = arr.slice(1, 4) // [20, 30, 40]  截取区间
-          const arr1 = arr.slice(2)    // [30, 40, 50]  截取到最后
-          const arr1 = arr.slice(0, 2) // [10, 20, 30]  截取前几位
-          const arr1 = arr.slice(-3)   // [30, 40, 50]  截取后几位
-        2.splice 非纯函数
-          const arr = [10, 20, 30, 40, 50]
-          const spliceRes = arr.splice(1, 2, 'a', 'b', 'c')
-          const spliceRes1 = arr.splice(1, 2)
-          const spliceRes2 = arr.splice(1, 0, 'a', 'b', 'c')
-          const spliceRes3 = arr.splice(1)
-          console.log(spliceRes, arr)  // [20, 30] [10, 'a', 'b', 'c', 40, 50]    剪切出来，再添上
-          console.log(spliceRes1, arr) // [20, 30] [10, 40, 50]                   只想剪切，不想添
-          console.log(spliceRes2, arr) // [] [10, 'a', 'b', 'c', 20, 30, 40, 50]  只想增加，不想剪切
-          console.log(spliceRes3, arr) // [20, 30, 40, 50] [10]                   剪切到最后
-    8.[10, 20, 30].map(parseInt)返回结果是什么
-      1.map的参数和返回值
-      2.parseInt参数和返回值
-      const res = [10, 20, 30].map(parseInt)
-      console.log(res) // [10, NaN, NaN]
-      // 拆解
-      [10, 20, 30].map((item, index) => {
-        return parseInt(item, index)
-      })
-    9.ajax请求get和post的区别
-      1.get请求一般用于查询操作，post一般用于用户提交操作
-        我们在一些项目设计的时候，有一些功能是用get还是post是根据这个方式来去做的。
-      2.get请求的参数拼接到url上，post放在请求体内（数据体积可更大）
-        所以说我们去上传提交一个什么东西，特别是数据量比较大的一个东西的话，一般是用post请求去提交。我们查询一个东西呢，就是把这
-        个查询的参数放到url上，这样是比较方便的。因为url的长度最终是比较受限制的。至少它不适合比如去上传一个文件，一段json这些
-        比较大比较麻烦的就比较适合用post请求放到请求体中去往上发送
-      3.安全性：post易于防止csrf
-    10.函数call和apply的区别
-      传参方式的不同。call的参数是一个一个拆分的传进去的。apply的参数是一个数组或类数组。其实它们两个可以相互去转换， 但是为了大
-      家使用，js的运行时就做了这么两个不同的执行形式，更方便我们去使用。
-    11.事件代理（委托）是什么
-    12.闭包是什么，有什么特性特点，有什么负面影响
-      1.回顾作用域和自由变量
-      2.回顾闭包应用场景：函数作为参数被传入，函数作为返回值被返回
-      3.回顾：自由变量的查找，要在函数定义的地方（而非执行的地方）
-      4.影响：会让变量常驻内存，得不到释放。闭包不要乱用
-        用的太多有可能会影响性能。我们这个地方说一个变量常驻内存，得不到释放。并不一定是内存泄漏。有的人说闭包会造成内存泄漏，这个
-        是有可能的，但是不一定啊。所谓内存泄漏是说你的变量也好你的一个数据也好在内存中应该被释放，因为没有用了，但是呢没有被释放，
-        也就是说无用的垃圾放在那了，它没有用了，放在那，释放不了。但是闭包有可能的情况是我们的变量也好对象也好在闭包中，它有可能是
-        会被用到的。所以说我们判断不了它未来是不是一定会被用到或一定是不用了。我们无非做这个判断，所以我们不去释放它。这并不是说一
-        个bug，内存泄漏一般是由bug造成的，就是说我们应该去能识别出来，结果由于什么bug没有识别出来导致的内存泄漏了。闭包是我们没法
-        判断这个闭包的变量是不是未来还可用，所以说我们不得不去保存它，就是先不去释放它。
-      闭包：1.函数嵌套函数。2.函数内使用的自由变量不能在执行时的父作用域中查找到，要去定义时的父作用域才能查找到的。满足这两点就是
-          闭包了。这个自由变量会常驻内存。
-    13.如何阻止事件冒泡和默认行为
-    14.查找、添加、删除、移动dom节点的方法
-    15.如何减少dom操作
-    16.解释jsonp的原理，为何它不是真正的ajax
-      后端没有同源策略，那为什么前端浏览器需要这个同源策略，就是因为一个安全的问题，就是不同域之间你不能有相互的资源访问。那后端没有
-      同源策略会不会有安全问题啊，当然也会有安全问题，那就是需要后端去做一些自己的一些预防，因为后端代码是运行到服务器上的，你可以对
-      它进行一系列的控制，那前端代码呢是运行到浏览器上的，所以这个控制就需要浏览器自己去做这个同源策略的安全性的控制。如果这个浏览器
-      它自己不做同源策略的话，这个浏览器是不能用的。这个浏览器可以被称作是毫无安全底线的浏览器，没有人会用它的。而且你做的网站要对这
-      样的浏览器做一个屏蔽的措施，如果识别是这个浏览器的话，告诉用户这个用户不安全，不要用这个浏览器来访问。我们不提供这个浏览器的服
-      务。都不用，这个浏览器不就死了吗。
-    17.document load和ready的区别
-    18.==和===的区别
-    19.函数声明和函数表达式的区别
-    20.new Object()和Object.create()有什么区别
-      1.{}等同于new Object()，原型都是Object.prototype
-      2.Object.create(null)，必须传一个参数，可以是一个对象也可以是null，如果传的是null就是一个空对象。传入null就是没有原型。
-        传入对象就是指定原型。也就是Object.create()是创建一个空对象，然后把空对象的原型指定为传入的这个对象上。
-      const obj1 = {
-        a: 10,
-        b: 20,
-        sum () {
-          return this.a + this.b
-        }
-      }
-      const obj2 = new Object({
-        a: 10,
-        b: 20,
-        sum () {
-          return this.a + this.b
-        }
-      })
-      const obj3 = new Object(obj1)
-      console.log(obj1 === obj3)            // true
-      const obj4 = Object.create(null)      // {}，但是没有原型
-      const obj5 = new Object()             // {}，有原型
-      const obj6 = Object.create({          // {}，原型就是传入的这个对象
-        a: 10,
-        b: 20,
-        sum () {
-          return this.a + this.b
-        }
-      })
-      const obj7 = Object.create(obj1)      // 意思就是说我们通过obj1创建了obj6，通过create方式来创建的。
-      console.log(obj6.__proto__ === obj1)  // true
-      console.log(obj6 === obj1)            // false
-      console.log(obj1 === obj3)            // true 
-    21.关于this的场景题
-    22.关于作用域和自由变量的场景题-1
-    23.判断字符串以字母开头，后面是字母数字下划线，长度6-30
-      正则表达式它不是js特有的一个东西。它是一个脱离了语言和平台的一个标准规范。跟json差不多。一个标准规范。它是在判断字符串是不是
-      某一个规则或者说查找字符串的某一个规则的时候是用的比较多的。
-      const reg = /^[a-zA-Z]\w{5,29}$/
-      常用的正则表达式
-      1.
-    24.关于作用域和自由变量的场景题-2
-    25.手写字符串trim方法，保证浏览器兼容性
-      String.prototype.trim = function () {
-        return this.replace(/^s+/, '').replace(/s+$/, '')
-      }
-    26.如何获取多个数字中的最大值
-      1.
-        function max () {
-          const nums = Array.prototype.slice.call(arguments)
-          let max = 0
-          nums.forEach(n => {
-            if (n > max) {
-              max = n
-            }
-          })
-          return max
-        }
-        max(10, 20, 30, 40) // 40 
-      2.Math.max(10, 20, 30, 40) // 40
-    27.如何用js实现继承
-      1.class继承
-      2.prototype继承
-    28.如何捕获js程序中的异常
-      1.手动捕获异常
-        这种方式用的比较常见，觉得哪个地方可能会风险比较高，那就用一个try catch给它包起来，然后有异常就输出
-        try {
-          // todo
-        } catch (ex) {
-          console.error(ex) // 手动捕获catch
-        } finally {
-          // todo
-        }
-      2.自动捕获异常
-        一种兜底方案，比如说我们想要监听一下前端页面，已经上线了，我们做一个统计监听，我们看一下前端页面有没有什么js错误，一般我们
-        第一种方式就是用上面的方式在该try catch的地方打上try catch，如果catch到我们就发一个统计打点，作为一个记录。第二种方式
-        就是我们不可能每一行都用try catch。这样成本太高。我们只在一个高风险的地方用try catch，其他地方我们用一个window.onerror
-        就可以了。它会自动捕获你程序中的一些问题。
-        window.onerror = function (message, source, lineNum, colNum, error) {
-          // 报错信息 源码 行号 列号 错误栈
-          // 第一，对跨域的js，如cdn，会告诉你错误了，但不会有详细的报错信息
-          // 第二，对于压缩的js，还要配合sourceMap去反查到为压缩代码的行，列
-        }
-      所以通过这两个方式来集合，你就能监听到页面上绝大部分的错误。
-    29.什么是json
-      1.json是一种数据格式，本质是一段字符串
-      2.json格式和js对象结构一致，所以对js语言更友好一些
-        在json格式普及之前，js中的一些数据格式，比如ajax的上传下载包括一些数据的管理都是用xml比较多一些。ajax的核心api的名字
-        XMLHttpRequest就是由xml数据格式来引起的一个名字。就一直延用到现在。但是现在json已经全面替代了xml。就是因为json和js
-        对象结构比较一致。所以对s语言更友好一些。
-      3.window.JSON是一个全局对象：JSON.stringify JSON.parse
-        我们会用到这两个函数去转换对象和json字符串，因为json它本质是一个字符串。那我们通过JSON.stringify就能把这个对象转换成
-        json字符串。通过JSON.parse就能把json字符串转换成对象。
-      4.json格式的特点跟js对象不一样的就是key和字符串的value必须用双引号引起来。不然就会报错。js里面一般是用单引号做字符串。
-    30.获取当前页面url参数
-      1.传统方式，查找location.search
-        function query (name) {
-          const search = location.search.substr(1)
-          const reg = new RegExp(`(^|&)${name}=([^&]*)(&|$)`, 'i')
-          const res = search.match(reg)
-          if (res == null) {
-            return null
-          }
-          return res[2]
-        }
-      2.新api，URLSearchParams
-        function query (name) {
-          const search = location.search
-          const p = new URLSearchParams(search)
-          return p.get(name)
-        }
-    31.将url参数解析为js对象
-      1.传统方式，利用拆分
-        function queryToObj () {
-          const res = {}
-          const search = location.search.substr(1)
-          search.split('&').forEach(item => {
-            const arr = item.split('=')
-            const key = arr[0]
-            const val = arr[1]
-            res[key] = val
-          })
-          return res
-        }
-      2.使用URLSearchParams
-        function queryToObj () {
-          const res = {}
-          const pList = new URLSearchParams(location.search)
-          pList.forEach((val, key) => {
-            res[key] = val
-          })
-          return res
-        }
-    32.手写数组flatern，考虑多层级
-      function flat (arr) {
-        // 验证arr中，还有没有深层数组 [1, 2, [3, 4], 5]
-        const isDeep = arr.some(item => item instanceof Array)
-        if (!isDeep) {
-          return arr // 已经是flatern [1, 2, 3, 4, 5]
-        }
-        const res = Array.prototype.concat.apply([], arr)
-        return flat(res) // 递归
-      }
-      const res = flat([1, 2, [3, 4], 5])
-      console.log(res)
-    33.数组去重
-      1.传统方式，遍历元素挨个比较，去重
-        function unique (arr) {
-          const res = []
-          arr.forEach(item => {
-            if (res.indexOf(item) < 0) {
-              res.push(item)
-            }
-          })
-          return res
-        }
-      2.使用Set（无序，不能重复）
-        function unique (arr) {
-          const set = new Set(arr)
-          return [...set]
-        }
-      3.考虑计算效率和效率
-        Set这种方式比较简单，Set这种数据结构本身是不允许有重复存在的元素的无序结构。这种特点比较适合这种去重的操作，它不需要进行
-        遍历。传统方式它要进行一次遍历，遍历里面的indexOf它本质上也是一种遍历，因为数组它是一个有序结构，你要判断数组里有没有你
-        想要的那一项，你要从数组的第一项开始一个一个往后找看看有没有满足条件的元素。所以传统方式相当于是遍历了两层，这个算法的效率
-        是稍微低一点的。所以能使用Set就使用Set，不要使用传统的方式。这种方式会比较慢。尤其数据量比较大的时候更明显。
-    34.手写深拷贝
-      function deepClone (obj = {}) {
-        // obj是null，或者不是对象或数组，直接返回
-        if (typeof obj !== 'object' || obj == null) {
-          return obj
-        }
-        // 初始化返回结果，也就是说我们该返回什么东西，我们先初始化一下
-        let result
-        // 如果传入的这个值是数组类型的，我们返回的这个结果应该是数组格式的。传入的值如果不是数组的话，返回的结果应该是对象格式的
-        if (obj instanceof Array) {
-          result = []
-        } else {
-          result = {}
-        }
-        // 无论是对象还是数组，它都可以用for in去遍历
-        for (let key in obj) {
-          // 判断每个key是不是这个对象自己拥有的属性，保证key不是原型上的属性
-          if (obj.hasOwnProperty(key)) {
-            // 递归调用！！！ 递归就是为了防止比较深层次的东西，我们就需要一层层的去递归才能最终给它完全的拷贝出来。
-            // 这样的话才能完成深拷贝。我们考察深拷贝的时候，递归是非常看中的东西。
-            // obj的每个key的值都要重新深拷贝然后赋值给result[key]
-            result[key] = deepClone(obj[key])
-          }
-        }
-        // 最终它要返回一个你拷贝后的对象
-        return result
-      }
-      注意，Object.assign不是深拷贝
-    35.介绍一下RAF requestAnimationFrame
-      这个是做动画用的，这个api大家要知道，算是性能优化体验优化的一部分。
-      1.我们要想动画流畅，不管用js还是css，更新频率要达到60帧/s，也就是说我们1s钟动画能动60次，即16.67ms动画更新一次视图，这样
-        的话我们人的肉眼就能感觉这个动画非常流畅不卡顿。不管是动画片，电影还是网页上的一些动画，只要能保证这个条件就会让动画非常流
-        畅
-      2.setTimeout要手动控制频率，而RAF浏览器会自动控制，浏览器它会算好自己的帧率，然后去每隔16.67ms或每秒钟触发60次，这样的话
-        它自动就会动起来。
-      3.有一些不应该耗费性能的地方，比如后台标签，你的chrome已经切换到后台了已经最小化了，或隐藏的iframe中，这个RAF会暂停的。就
-        是浏览器会帮你做更多的事情，这个api提供出来是浏览器专门为了做一些动画动效用的，它会帮你做更多的事情。而setTimeout在这些
-        情况下会依然执行，因为setTimeout本身它不是为了做动画用的，它就是为了做一个异步定时器来用的，所以说我们之前用setTimeout
-        做动画也算是不得已而为之。但是有了这个新的api之后呢，我们就可以去用新的api去做一些更流畅或性能更好的一些工作。
-      示例
-        // 3s把宽度从100px变为640px，即增加540px。
-        // 60帧/s，3s 180帧，所以每帧变化3px。这样动画的视觉效果就是流畅的。
-        1.setTimeout
-          const div1 = document.getElementById('div1')
-          let curWidth = 100
-          const maxWidth = 640
-          function animate () {
-            curWidth = curWidth + 3
-            div1.style.width = curWidth + 'px'
-            if (curWidth < maxWidth) {
-              setTimeout(animate, 16.67) // 需要自己控制帧率，即时间和每次变化需要自己去评估
-            }
-          }
-          animate()
-        2.RAF
-          const div1 = document.getElementById('div1')
-          let curWidth = 100
-          const maxWidth = 640
-          function animate () {
-            curWidth = curWidth + 3
-            div1.style.width = curWidth + 'px'
-            if (curWidth < maxWidth) {
-              window.requestAnimationFrame(animate) // 时间不用自己控制
-            }
-          }
-          animate()
-    36.前端性能如何优化，一般从哪几个方面考虑
-      原则：多使用内存缓存，减少计算，减少网络请求
-      方向：加载页面要更快，页面渲染要更快，页面操作要更流畅
+        // 使用
+        input1.addEventListener('drag', throttle(function (e) {
+          console.log(e.offsetX, e.offsetY)
+        }, 200))
+  3.安全
+    问题:
+      1.常见的web前端攻击方式有哪些，怎么预防
+        1.XSS跨站请求攻击
+          1.一个博客网站，我发表一篇博客，其中嵌入<script>脚本
+          2.脚本内容：获取cookie，发送到我的服务器（服务器配合跨域）
+          3.发布这篇博客，有人查看它，我轻松收割访问者的cookie
+          预防：
+          1.替换特殊字符，如把<变为&lt;，把>变为&gt;
+          2.这样的话<script>就变为&lt;script&gt;，直接显示，而不会作为脚本被执行。只有html里面有script才会作为脚本被执行
+          3.前端要替换，后端也要替换，都做总不会有错
+          4.有xss npm工具
+        2.XSRF跨站请求伪造
+          1.你正在购物，看中了某个商品，商品id是100
+          2.付费接口是xxx.com/pay?id=100，但没有任何验证
+          3.我是一个攻击者，我看中了一个商品，id是200
+          4.我向你发送一个电子邮件，邮件标题很吸引人
+          5.但邮件正文隐藏着<img src="xxx.com/pay?id=200" />
+          6.你一查看邮件，就购买了id是200的商品
+          因为你现在正在购物，肯定登录了这个网站了，你就会有用户信息了，图片的地址去访问的时候，你的用户信息已经带过去了。
+          预防：
+          1.使用post接口
+            使用post接口，你用img攻击是攻击不通的，因为img的src只支持get请求
+          2.增加验证，例如密码，短信验证码，指纹等
       

@@ -1,98 +1,117 @@
-请你试着先不看我的代码，在自己的浏览器中计算出来 JavaScript 有多少固有对象。
-  var set = new Set()
-  var objects = [
-    eval,
-    isFinite,
-    isNaN,
-    parseFloat,
-    parseInt,
-    decodeURI,
-    decodeURIComponent,
-    encodeURI,
-    encodeURIComponent,
-    Array,
-    Date,
-    RegExp,
-    Promise,
-    Proxy,
-    Map,
-    WeakMap,
-    Set,
-    WeakSet,
-    Function,
-    Boolean,
-    String,
-    Number,
-    Symbol,
-    Object,
-    Error,
-    EvalError,
-    RangeError,
-    ReferenceError,
-    SyntaxError,
-    TypeError,
-    URIError,
-    ArrayBuffer,
-    SharedArrayBuffer,
-    DataView,
-    Float32Array,
-    Float64Array,
-    Int8Array,
-    Int16Array,
-    Int32Array,
-    Uint8Array,
-    Uint16Array,
-    Uint32Array,
-    Uint8ClampedArray,
-    Atomics,
-    JSON,
-    Math,
-    Reflect]
-  objects.forEach(o => set.add(o))
+在自己的浏览器中计算出来 JavaScript 有多少固有对象。
 
-  for(var i = 0; i < objects.length; i++) {
-    var o = objects[i]
-    for(var p of Object.getOwnPropertyNames(o)) {
-      var d = Object.getOwnPropertyDescriptor(o, p)
-      if( (d.value !== null && typeof d.value === "object") || (typeof d.value === "function"))
-        if(!set.has(d.value))
-          set.add(d.value), objects.push(d.value)
-      if( d.get )
-        if(!set.has(d.get))
-          set.add(d.get), objects.push(d.get)
-      if( d.set )
-        if(!set.has(d.set))
-          set.add(d.set), objects.push(d.set)
-    }
+```js
+var set = new Set()
+var objects = [
+  eval,
+  isFinite,
+  isNaN,
+  parseFloat,
+  parseInt,
+  decodeURI,
+  decodeURIComponent,
+  encodeURI,
+  encodeURIComponent,
+  Array,
+  Date,
+  RegExp,
+  Promise,
+  Proxy,
+  Map,
+  WeakMap,
+  Set,
+  WeakSet,
+  Function,
+  Boolean,
+  String,
+  Number,
+  Symbol,
+  Object,
+  Error,
+  EvalError,
+  RangeError,
+  ReferenceError,
+  SyntaxError,
+  TypeError,
+  URIError,
+  ArrayBuffer,
+  SharedArrayBuffer,
+  DataView,
+  Float32Array,
+  Float64Array,
+  Int8Array,
+  Int16Array,
+  Int32Array,
+  Uint8Array,
+  Uint16Array,
+  Uint32Array,
+  Uint8ClampedArray,
+  Atomics,
+  JSON,
+  Math,
+  Reflect]
+objects.forEach(o => set.add(o))
+
+for(var i = 0; i < objects.length; i++) {
+  var o = objects[i]
+  for(var p of Object.getOwnPropertyNames(o)) {
+    var d = Object.getOwnPropertyDescriptor(o, p)
+    if( (d.value !== null && typeof d.value === "object") || (typeof d.value === "function"))
+      if(!set.has(d.value))
+        set.add(d.value), objects.push(d.value)
+    if( d.get )
+      if(!set.has(d.get))
+        set.add(d.get), objects.push(d.get)
+    if( d.set )
+      if(!set.has(d.set))
+        set.add(d.set), objects.push(d.set)
   }
-JavaScript 所有固有对象
-  mac系统：Google Chrome：版本 79.0.3945.130（正式版本） （64 位）：总共989个JavaScript固有对象。
-  主要使用Object.getOwnPropertyNames, Object.getOwnPropertyDescriptor两种方法。
-  全部的JavaScript固有对象基本包含：
-    1.函数
-    2.函数中的prototype属性
-    3.构造器
-    4.构造器中的object和functions还有get set的属性，一般就是function属性和get set属性
-    5.构造器原型
-    6.构造器原型中的object和function还有get set的属性，一般就是function属性和get set属性
-    7.Atomics,JSON,Math,Reflect
-    8.Atomics,JSON,Math,Reflect中的object和function还有get set的属性，一般就是function属性和get set属性
-  1.三个值：（3）
-    Infinity、NaN、undefined
-  2.九个函数：（11）
-    eval
-    isFinite
-    isNaN
-    parseFloat
-      parseFloat.prototype: {constructor: ƒ parseFloat()}
-    parseInt
-      parseInt.prototype: {constructor: ƒ parseInt()}
-    decodeURI
-    decodeURIComponent
-    encodeURI
-    encodeURIComponent
-  3.一些构造器：（共880个）
-    Array: function Array() { [native code] }（共65个）
+}
+```
+
+### JavaScript 所有固有对象
+
+mac系统：Google Chrome：版本 79.0.3945.130（正式版本） （64 位）：总共989个JavaScript固有对象。
+
+主要使用Object.getOwnPropertyNames, Object.getOwnPropertyDescriptor两种方法。
+
+全部的JavaScript固有对象基本包含：
+
+* 函数
+* 函数中的prototype属性
+* 构造器
+* 构造器中的object和functions还有get set的属性，一般就是function属性和get set属性
+* 构造器原型
+* 构造器原型中的object和function还有get set的属性，一般就是function属性和get set属性
+* Atomics, JSON, Math, Reflect
+* Atomics, JSON, Math, Reflect中的 object 和 function 还有 get set 的属性，一般就是 function 属性和 get set 属性
+
+#### 1.三个值：（3）
+
+```
+Infinity、NaN、undefined
+```
+
+#### 2.九个函数：（11）
+
+```js
+eval
+isFinite
+isNaN
+parseFloat
+	parseFloat.prototype: {constructor: ƒ parseFloat()}
+parseInt
+	parseInt.prototype: {constructor: ƒ parseInt()}
+decodeURI
+decodeURIComponent
+encodeURI
+encodeURIComponent
+```
+
+#### 3.一些构造器：（共880个）
+
+```js
+		Array: function Array() { [native code] }（共65个）
       function isArray() { [native code] }
       function from() { [native code] }
       function of() { [native code] }
@@ -554,8 +573,12 @@ JavaScript 所有固有对象
     Uint16Array: function Uint16Array() { [native code] }（共50个）
     Uint32Array: function Uint32Array() { [native code] }（共50个）
     Uint8ClampedArray: function Uint8ClampedArray() { [native code] }（共50个）
-  4.四个用于当作命名空间的对象：（共108个）
-    Atomics: Atomics（共14个）
+```
+
+#### 4.四个用于当作命名空间的对象：（共108个）
+
+```js
+		Atomics: Atomics（共14个）
       function load() { [native code] }
       function store() { [native code] }
       function add() { [native code] }
@@ -663,3 +686,4 @@ JavaScript 所有固有对象
         hasOwnMetadata.prototype: {constructor: ƒ hasOwnMetadata()}
       function metadata() { [native code] }
         metadata.prototype: {constructor: ƒ metadata()}
+```
