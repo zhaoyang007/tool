@@ -44,7 +44,7 @@ CSS 前缀补全/预处理器
 
 
 
-![es6支持情况](images/es6支持情况.png)
+![es6支持情况](/Users/zhaoyang/tool/images/前端知识体系/前端工程实践/webpack/es6支持情况.png)
 
 ​																ES6 module 主流浏览器支持情况
 

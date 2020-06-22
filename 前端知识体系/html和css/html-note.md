@@ -1,10 +1,10 @@
 ### HTML 常见元素
 
-<img src="images/html常见元素.png" alt="html常见元素" style="zoom:50%;" />
+![html常见元素](/Users/zhaoyang/tool/images/前端知识体系/html和css/html常见元素.png)
 
 ### HTML 重要属性
 
-<img src="images/html重要属性.png" alt="html重要属性" style="zoom:50%;" />
+![html重要属性](/Users/zhaoyang/tool/images/前端知识体系/html和css/html重要属性.png)
 
 form 的 enctype 是用的编码格式，针对 post 的时候主要有两种编码
 
@@ -19,7 +19,7 @@ HTML 是页面的结构，可以按文档理解它，有标题，内容，区块
 
 ### HTML 版本
 
-<img src="images/HTML版本.png" alt="HTML版本" style="zoom: 50%;" />
+![HTML版本](/Users/zhaoyang/tool/images/前端知识体系/html和css/HTML版本.png)
 
 ### css reset
 

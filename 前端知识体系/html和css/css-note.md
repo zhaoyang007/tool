@@ -67,7 +67,7 @@ div {
 
 * 滚动行为和滚动条
 
-<img src="images/滚动条.png" alt="滚动条" style="zoom: 67%;" />
+![滚动条](/Users/zhaoyang/tool/images/前端知识体系/html和css/滚动条.png)
 
 scroll：不管需不需要滚动，滚动条都存在。
 
@@ -694,9 +694,9 @@ Bootstrap 虽然为我们提供了 js 插件，但是它限制还是比较大的
 
 在不同的分辨率下设置不同的分配。
 
-<img src="images/bootstrap响应式布局.png" alt="bootstrap响应式布局" style="zoom: 33%;" />
+![bootstrap响应式布局](/Users/zhaoyang/tool/images/前端知识体系/html和css/bootstrap响应式布局.png)
 
-<img src="images/bootstrap响应式布局2.png" alt="bootstrap响应式布局2" style="zoom: 50%;" />
+![bootstrap响应式布局2](/Users/zhaoyang/tool/images/前端知识体系/html和css/bootstrap响应式布局2.png)
 
 ### Bootstrap 定制化
 

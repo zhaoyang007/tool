@@ -72,7 +72,7 @@ module.exports = {
 移动设备流行之后，不同机型的分辨率是不一样的，这对前端开发来说，就会造成比较大的问题，需要不断的对
 页面进行适配。
 
-![浏览器分辨率](images/浏览器分辨率.png)
+![浏览器分辨率](/Users/zhaoyang/tool/images/前端知识体系/前端工程实践/webpack/浏览器分辨率.png)
 
 ### CSS 媒体查询实现响应式布局
 
@@ -296,7 +296,7 @@ module:包含 loader 的 sourcemap
 
 可以根据前面的关键字排列组合得到。
 
-![sourcemap类型](images/sourcemap类型.png)
+![sourcemap类型](/Users/zhaoyang/tool/images/前端知识体系/前端工程实践/webpack/sourcemap类型.png)
 
 ### 本地开发时使用 sourcemap 进行代码调试
 
@@ -619,13 +619,13 @@ airbnb：eslint-config-airbnb eslint-config-airbnb-base
 * 能够帮助发现代码错误的规则，全部开启 
 * 帮助保持团队的代码风格统一，而不是限制开发体验
 
-![eslint规则](images/eslint规则.png)
+![eslint规则](/Users/zhaoyang/tool/images/前端知识体系/前端工程实践/webpack/eslint规则.png)
 
 ### ESLint 如何执⾏落地？
 
 #### ⽅案⼀：与CI/CD系统集成
 
-![eslint与CI:CD集成](images/eslint与CI:CD集成.png)
+![eslint与CI:CD集成](/Users/zhaoyang/tool/images/前端知识体系/前端工程实践/webpack/eslint与CI:CD集成.png)
 
 把代码检查放在CI/CD的pipeline build里面去。
 
@@ -820,7 +820,7 @@ npm publish
 
 统计信息，可以分析构建速度或构建体积，也可以分析一些其他的数据出来。
 
-![stats统计信息](images/stats统计信息.png)
+![stats统计信息](/Users/zhaoyang/tool/images/前端知识体系/前端工程实践/webpack/stats统计信息.png)
 
 ### 命令行更加明显的提示信息
 
