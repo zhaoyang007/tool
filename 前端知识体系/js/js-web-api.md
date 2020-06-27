@@ -1,22 +1,5 @@
 ## DOM
 
-### dom 本质
-
-dom 是浏览器内存里面已经初始化好的树的一个结构，dom 的本质是从 html 文件解析出来的一棵树。
-
-### dom 节点操作
-
-节点操作就是针对单个节点的。
-
-#### 获取 dom 节点
-
-```js
-document.getElementById('div1') // 元素
-document.getElementsByTagName('div') // 集合
-document.getElementsByClassName('container') // 集合
-document.querySelectorAll('p') // css选择器来获取，集合
-```
-
 #### attribute
 
 获取节点之后，我们可以操作它的 attribute。
@@ -75,12 +58,6 @@ const parent = div1.parentNode         // 获取父节点
 div1.removeChild(child[0])             // 删除子节点
 ```
 
-### dom 性能
-
-dom 操作是比较耗时和耗 cpu 的。
-
-dom 操作可能会导致浏览器的重绘或重排就是重新渲染，所以要避免频繁的 dom 操作。
-
 #### 对 dom 查询做缓存
 
 现在电脑的内存都还好，所以我们做一些 dom 查询的缓存，会减少我们 dom 的操作。查出来之后就先存起来，存起来之后就不要再查了。
@@ -121,67 +98,7 @@ listNode.appendChild(frag)
 
 
 
-## BOM
-
-### location
-
-地址的一些信息，分析拆解 url 的各个部分。
-
-整个的网址都是通过这些信息拼接出来的。
-
-```js
-// https://coding.imooc.com/lesson/400.html?a=100&b=200#mid=30309
-location.href        // https://coding.imooc.com/lesson/400.html#mid=30309
-location.protocol    // 'https:'  
-location.host        // 'coding.imooc.com'  
-location.pathname    // '/lesson/400.html'
-location.search      // '?a=100&b=200'
-location.hash        // '#mid=30309'
-```
-
-### history
-
-前进后退这些信息。
-
-```js
-history.back()    // 网页后退
-history.forward() // 网页前进
-```
-
-
-
 ## 事件
-
-### 事件绑定
-
-事件绑定就是 addEventListener
-
-```js
-const btn = document.getElementById('btn1')
-btn.addEventListener('click', event => {
-  console.log('clicked')
-})
-```
-
-### 事件冒泡
-
-事件触发完之后，是像一种冒泡机制一样，顺着这个 dom 结构往上一层一层的冒，在当前这个元素中监听事件和在它上级或上上级，只要是它的上级监听事件，都可以把这个事件给监听到。
-
-### 事件代理
-
-事件代理是基于事件冒泡做的。有了事件冒泡这个机制，我们才能在这个机制的基础上去实现事件代理，所谓代理就是因为数量太多或结果比较复杂，不好去挨个都去绑定事件，所以把事件绑到某一个父元素上，在事件里判断是不是我们想要触发事件的那个元素，再去做一些其他的动作。
-
-#### 代码简洁
-
-事件代理的代码比较简洁，如果每一个元素都给它绑一个事件的话，代码就会麻烦，至少你还得做个 dom 查询，还得做个循环。
-
-#### 减少浏览器内存使用
-
-如果需要绑定事件的元素非常多的话，每一个元素都去挂一个事件监听，是非常耗费内存的。但是利用事件代理只在父元素上去挂一个事件，就没有那么耗费内存。
-
-#### 不要滥用
-
-只有在一些情况下可以用，比如数量太多结果复杂的不好去每个元素都绑定事件的情况下才应该去应用事件代理，不要到处都去用代理，它的代码简洁程度虽然也比较简洁，但是它的简洁是相比于每个元素都做事件监听的情况。比如一个按钮的绑定就不至于用代理了。
 
 ### 编写通用事件监听函数
 
@@ -240,27 +157,6 @@ bindEvent(div3, 'click', 'a', function (event) {
 ### XMLHttpRequest
 
 网页实现 ajax 最核心的一个 api。
-
-### 状态码
-
-xhr.send() 之后，这个 xhr.readyState 才开始从 0-4 变化
-
-#### xhr.readyState
-
-* 0 - （未初始化）还没有调用send()方法
-* 1 - （载入）已调用send()方法，正在发送请求
-* 2 - （载入完成）send()方法调用完成，已接收到全部响应内容
-* 3 - （交互）正在解析响应内容
-* 4 - （完成）响应内容解析完成，可在客户端调用
-
-#### xhr.status  
-
-status是我们常见的http协议的状态码。
-
-* 2xx - 表示成功处理请求，如200
-* 3xx - 需要重定向，重定向不用我们自己处理，服务器返回之后浏览器会自己去跳转，如301 302 304
-* 4xx - 客户端请求错误，如404 403
-* 5xx - 服务端错误
 
 ### ajax 基本工作过程
 
@@ -445,66 +341,3 @@ response.setHeader('Access-Control-Allow-Headers', 'X-Requested-With')     // �
 response.setHeader('Access-Control-Allow-Methods', 'PUT,POST,GET,DELETE,OPTIONS') // 允许的methods是什么 
 response.setHeader('Access-Control-Allow-Credentials', 'true') // 接收跨域的cookie，是否允许传cookie
 ```
-
-
-
-## 存储
-
-### cookie
-
-cookie 本身是用于浏览器端和 server 端通讯的，也就是 http 请求的一部分。
-
-早期是被借用来做本地存储，因为 localStorage 和 sessionStorage 是 09 年 html5 之后提出来的，之前没有，所以早期我们只能用 cookie 来做本地存储。
-
-前端可以用 document.cookie = '' 的方式来去修改。后端也可以修改 cookie，因为 cookie 本身是通讯的一个标准。
-
-cookie 的价值不在于本地存储，而在于本地和服务器端进行通讯。cookie 的信息中一般是有用户个人的一些信息标识的。
-
-cookie 是个字符串，中间通过分号分割的形式，每一部分都是 key=value 的形式。
-
-怎么加一个 cookie：
-
-```js
-document.cookie = 'a=100'
-console.log(document.cookie) // 'a=100'
-document.cookie = 'b=200'
-console.log(document.cookie) // 'a=100; b=200'
-// 每赋值一个就追加一遍，这是一个追加的过程，不是覆盖的过程，所以说这个api看着还比较怪异。同一个key它会覆盖，不同key它会追加
-document.cookie = 'a=300'
-console.log(document.cookie) // 'b=200; a=300'
-```
-
-所以这种 api 的计算形式和我们之前做的 js 的普通计算形式不一样，很难让人理解，不知道的话可能就会掉到坑里面去。所以从 api 的易用程度来说，cookie 做本地存储就不合适。
-
-我们加上 cookie 之后，以后访问这个页面的时候，Request Headers 里面就带了这个 cookie，后端是可以接收到这个cookie 的。比如这个 cookie 里面有一个 userId=xxx，服务端接收到这个 cookie 之后，就知道登录用户是谁了，登录的过程通常可以用 cookie 来实现。
-
-我们存储了一些 cookie 信息，刷新页面后，还能够查到这些信息，也就是说只要我们的 cookie 不清除，页面不管怎么刷新，cookie 存储信息都会在的，浏览器会帮我们存下来。所以说它能做本地存储。这也是我们在 html5 规范出来或普及之前唯一的能在页面中做本地存储的一种能力。
-
-但是 cookie 当时的设计并不是为了做本地存储，它是为了浏览器和服务端进行通讯，它只是被借用来做本地存储，它本来不是干这个活的，所以用它来做本地存储肯定会有一些问题。
-
-cookie的缺点：
-
-* 存储大小，cookie 是有存储大小限制的，最大存4kb，超过了4kb，就存不下了，为什么有这个限制呢，因为在发送请求的时候，是要把 cookie 带上的。如果 cookie 的内容很多。每次请求都带上 cookie，会严重影响每次的请求。
-* cookie 回跟随 http 请求发送出去，你存什么东西，每次请求都会带到服务器上去，增加请求的数据量，请求会变慢一些。
-* 只能用 document.cookie = '' 这种方式来修改，这种 api 太过简陋也太不好理解。
-
-### localStorage sessionStorage
-
-这两个是 html5 专门为存储设计的，最大可存储 5M，空间更大，因为前端存储的信息基本上也就存储个字符串或数字，就是简单的缓存一下。不会存一些很大的数据量，所以说 5M 绝对是绰绰有余，而且这 5M 是针对每个域名来说的。每个 host，每个域我们可以存储 5M。
-
-api 简单易用，是用 setItem getItem 来做的。这个方式就完全符合于我们自己写一个存储的功能或者缓存的功能。get set这种 api，很多这种 key value 的库都是用这种 get set api，所以说非常符合我们的使用。
-
-```js
-localStorage.setItem('a', 100)
-localStorage.getItem('a')
-sessionStorage.setItem('b', 200)
-sessionStorage.getItem('b')
-```
-
-不会随着 http 请求被发送出去，如果是 5M 都随便发的话那就麻烦了。你如果是自己实现一个类似于存储缓存的一个功能的话，其实也是有一个 get 有一个 set 就可以了，别的基本上用处不是很大。
-
-localStorage 和 sessionStorage 的区别：
-
-* localStorage 的数据会永久存储，除非使用代码或手动删除。
-* sessionStorage 的数据只存在于当前会话，当前会话就是当前你和服务端的一个连接，比如说浏览器关闭的时候它会清空，sessionStorage 类似于服务端的一个 session。session 是和登录和用户验证有关系的。sessionStorage 它会存在于用户活跃的这段事件，如果用户关闭浏览器走了，不再访问这个网站了，它就会自动清空了。
-* 用的话一般用 localStorage 会更多一些。
