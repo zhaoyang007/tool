@@ -1,78 +1,9 @@
-## 自动清理构建目录
-
-每次构建的时候不会清理⽬录，造成构建的输出⽬录 output ⽂件越来越多
-
-### 通过 npm scripts 清理构建⽬录
-
-rm -rf ./dist && webpack
-
-rimraf ./dist && webpack
-
-### ⾃动清理构建⽬录
-
-使⽤ clean-webpack-plugin。它会默认删除 output 指定的输出⽬录。
-
-```js
-const { CleanWebpackPlugin } = require('clean-webpack-plugin')
-
-module.exports = {
-  plugins: [
-    new CleanWebpackPlugin()
-  ]
-}
-```
-
-
-
-## PostCSS 插件 autoprefixer 自动补齐 CSS3 前缀
-
-由于现在移动设备的浏览器众多，因此需要面对很多兼容性的问题，有些兼容问题可以在构建阶段去尽量避免的，比如 css3 前缀的问题，为什么 css3 的属性需要添加前缀呢，因为由于浏览器的标准并没有完全的统一，目前来看还是有四种浏览器内核，IE Trident(-ms), Firefox Geko(-moz), Chrome Webkit(-webkit), Opera Presto(-o)。
-
-通过 PostCSS 的插件 autoprefixer 来自动补齐 css3 前缀的。
-
-postcss 是 css 的后置处理器，与 less 和 sass 不同，less 和 sass 是 css 的预处理器，预处理器一般是在打包前置去处理，autoprefixer 是在样式处理好之后，代码生成完之后，再对 css 进行后置处理。通过postcss去优化css代码。优化的过程就是通过一系列的组件去优化。
-
-### 使用autoprefixer
-
-autoprefixer 插件通常是和 postcss-loader 一起使用的。postcss-loader 的功能是比较强大的，除了做 css 样式补全之外，它还可以做支持 css module，style lint 等。
-
-```js
-module.exports = {
-  module: {
-    rules: [
-      {
-        test: /\.less$/,
-        use: [
-          'style-loader',
-          'css-loader',
-          'less-loader',
-          {
-            loader: 'postcss-loader',
-            options: {
-              plugins: () => [
-                require('autoprefixer')({
-                  overrideBrowserslist: ["last 2 version", ">1%", "IOS 7"] // 指定autoprefixer所需要兼容的浏览器的版本
-                })
-              ]
-            }
-          }
-        ]
-      }
-    ]
-  }
-}
-```
-
-
-
 ## 移动端 CSS px 自动转换成 rem
 
 ### 浏览器分辨率
 
 移动设备流行之后，不同机型的分辨率是不一样的，这对前端开发来说，就会造成比较大的问题，需要不断的对
 页面进行适配。
-
-![浏览器分辨率](/Users/zhaoyang/tool/images/前端知识体系/前端工程实践/webpack/浏览器分辨率.png)
 
 ### CSS 媒体查询实现响应式布局
 
@@ -136,11 +67,496 @@ module.exports = {
 
 
 
+## webpack 中的热更新
+
+### webpack-dev-server
+
+基于 express 启动了一个小型服务。
+
+WDS 会刷新浏览器。
+
+WDS 输出的文件不放入磁盘里面，没有磁盘的 IO 操作，它输出的文件是放在内存里面，而不像watch这种方式是放在本地的磁盘文件里面。所以它的构建速度会有更大的优势。
+
+#### 使用 WDS
+
+```js
+module.exports = {
+  mode: 'development',
+  // 配置devServer
+  devServer: {
+    // wds 服务的基础的目录
+    contentBase: './dist',
+    // 代理
+    proxy: {
+      '/api': {
+				target: 'http://localhost:9092'
+      }
+    },
+    // mock数据，跟wds中间件机制有关。wds中间件给我们提供了两个钩子，加载中间件之前和之后的概念。
+    before(app, server) {
+      // 就相当于在这里做服务器接口的工作
+			app.get("/api/mock.json", (req, res) => {
+        res.json({
+          hello: "express",
+        })
+      })
+    },
+    after() {
+      
+    }
+  }
+}
+```
+
+```json
+"scripts": {
+  "dev": "webpack-dev-server --open"
+}
+```
+
+运行构建
+
+```bash
+npm run dev
+```
+
+### webpack-dev-middleware
+
+WDM 将 webpack 输出的⽂件传输给服务器。
+
+适⽤于灵活的定制场景，可以对 webpack 的配置控制的更多。
+
+#### 使用WDM
+
+```js
+const express = require('express')
+const webpack = require('webpack')
+const webpackDevMiddleWare = require('webpack-dev-middleware')
+
+const app = express()
+const config = require('./webpack.config.js')
+const compiler = webpack(config)
+
+app.use(webpackDevMiddleWare(compiler, {
+  publicPath: config.output.publicPath
+}))
+
+app.listen(3000, function() {
+  console.log('Example app listening on port 3000')
+})
+```
+
+### 热更新
+
+借助 webpack-dev-server，每次代码修改，自动构建，构建完成后，通过热更新的方式让浏览器的内容自动的变化。
+
+启动 HMR 后，css 抽离会不⽣效，还有不⽀持 contenthash，chunkhash。
+
+#### 使用 HMR
+
+```js
+const webpack = require('webpack')
+
+module.exports = {
+  mode: 'development',
+  plugins: [
+    new webpack.HotModuleReplacementPlugin()
+  ],
+  // 配置devServer
+  devServer: {
+    // 开启热更新
+    hot: true,
+    // 即便HMR不⽣效，浏览器也不⾃动刷新，就开启hotOnly
+ 		hotOnly: true
+  }
+}
+```
+
+案例：
+
+```js
+// index.js
+import "./css/index.css";
+var btn = document.createElement("button");
+btn.innerHTML = "新增";
+document.body.appendChild(btn);
+btn.onclick = function() {
+  var div = document.createElement("div");
+  div.innerHTML = "item";
+  document.body.appendChild(div);
+};
+```
+
+```css
+/* index.css */
+div:nth-of-type(odd) {
+	background: yellow; 
+}
+```
+
+#### 处理 js 模块 HMR
+
+上面的方式就直接能处理 css 的热更新了，处理 js 的热更新需要使⽤ module.hot.accept 来观察模块更新，从⽽更新。
+
+案例：
+
+```js
+// counter.js
+function counter() {
+  var div = document.createElement("div");
+  div.setAttribute("id", "counter");
+  div.innerHTML = 1;
+  div.onclick = function() {
+  	div.innerHTML = parseInt(div.innerHTML, 10) + 1;
+  };
+  document.body.appendChild(div);
+}
+export default counter;
+```
+
+```js
+// number.js
+function number() {
+  var div = document.createElement("div");
+  div.setAttribute("id", "number");
+  div.innerHTML = 13000;
+  document.body.appendChild(div);
+}
+export default number;
+```
+
+```js
+// index.js
+import counter from "./counter";
+import number from "./number";
+counter();
+number();
+if (module.hot) {
+  module.hot.accept("./b", function() {
+    document.body.removeChild(document.getElementById("number"));
+    number();
+ 	});
+}
+```
+
+##### 热更新的原理分析
+
+* Webpack Compile：webpack 编译器，将 JS 源代码编译成 Bundle。
+
+* HMR Server：将热更新的文件输出给 HMR Runtime。
+
+* Bundle Server：提供文件在浏览器的访问，比如编译好的 Bundle 其实在浏览器里正常访问到的是文件目录，bundle server 可以让你通过服务器的方式访问。localhost:8080/bundle.js
+
+* HMR Runtime：在开发阶段将 HMR Runtime 注入到浏览器端bundle.js，浏览器端的 bundle.js 就可以和服务器建立一个连接，通常这个连接是一个 websocket。当收到文件的更新数据回包，就会自动的更新这个文件。
+
+* bundle.js：构建输出的文件。
+
+  ![热更新](/Users/zhaoyang/tool/images/前端知识体系/前端工程实践/webpack/热更新.png) 
+
+#### 热更新的过程
+
+启动阶段，在文件系统里进行编译，将初始的代码经过webpack compiler进行打包，将编译好的文件传输给
+bundle server，它是一个服务器，它可以让文件以server的方式让浏览器可以访问的到。                   
+
+文件更新的阶段，本地开发，有文件的变化，文件系统发生变化，代码经过 webpack compiler 进行编译，编译好之后它会将代码发送给 HMR Server，HMR Server 就可以知道哪些资源哪些模块发生了改变，这里的模块是指源代码部分的这些模块，然后 HMR Server 就会通知 HMR Runtime，就是 server 端通知客户端哪些文件发生了变化，通常是以 json 数据进行传输，传输到了 HMR Runtime 之后，HMR Runtime 就会更新代码。最终代码就会经过改变并且不需要刷新浏览器。这就是热更新的原理。
+
+
+
+## 在 webpack 中使用 ESLint
+
+### eslint 的必要性
+
+代码检查，代码规范。写 js 代码时将明显的问题及时的暴露出来。
+
+### 行业里面优秀的 eslint 规范实践
+
+airbnb：eslint-config-airbnb eslint-config-airbnb-base
+
+### 制定团队的 eslint 规范，遵循以下原则
+
+* 不重复造轮子，基于 eslint:recommend 配置去改进
+
+* 能够帮助发现代码错误的规则，全部开启 
+* 帮助保持团队的代码风格统一，而不是限制开发体验
+
+### ESLint 执⾏落地
+
+#### ⽅案⼀：与CI/CD系统集成
+
+![eslint与CI:CD集成](/Users/zhaoyang/tool/images/前端知识体系/前端工程实践/webpack/eslint与CI:CD集成.png)
+
+把代码检查放在 CI/CD 的 pipeline build 里面去。
+
+##### 安装 husky
+
+它自动会在本地项目的 .git 目录下面去生成一个 hook，它会读取 package.json 里的一些内容，比如说我们的precommit。
+
+注意：安装 husky 之前项目要 git init 初始化好，如果连 git 目录都没有，它安装的过程中生成的 git hook 就没法放进去。
+
+```bash
+npm i husky -D
+```
+
+##### 本地开发阶段增加 precommit 钩⼦。
+
+git 进行代码提交的时候，可以使用 precommit 的 git 钩子。在调用 git commit 的时候，触发 precommit 钩子，先运行 precommit 命令，"precommit": "npm run lint-fix"，自动帮我们去检测代码，如果代码不通过 eslint。没有办法提交代码。
+
+##### 增加 npm script，通过 lint-staged 增量检查修改的⽂件。
+
+```json
+"scripts": {
+	"precommit": "lint-staged"
+},
+"lint-staged": {
+  "linters": {
+  	"*.{js,scss}": ["eslint --fix", "git add"]
+  }
+}
+```
+
+#### 方案二：与webpack等构建工具集成
+
+webpack 构建的时候，遇见 eslint 的语法问题，直接中断构建，语法修改正确后才能构建成功。 
+
+比较适合新的，一开始就使用 eslint 的项目。不适合老的项目去接入，因为这种方案，webpack 构建的时候它会默认把所有的文件都会进行检查。
+
+##### 安装
+
+eslint 基础解析包
+
+```bash
+npm i eslint eslint-loader -D
+```
+
+比较好且流行的eslint书写规范，我们自己就不定义这个规范了。
+
+```bash
+npm i eslint-config-standard -D
+```
+
+上面官方推荐我们安装的，它的校验规则要依赖于这些plugin进行验证。
+
+```bash
+npm i eslint-plugin-standard eslint-plugin-promise eslint-plugin-import eslint-plugin-node -D
+```
+
+因为.vue文件类似于html的格式，不是标准的javascript文件。eslint没法直接识别.vue文件里面的javascript代码，这个插件够让 eslint 识别一个文件里 script 标签下面的javascript。所以就用这个工具去解析我们的.vue文件就可以了。官方的推荐也是这么去做。
+
+```bash
+npm i eslint-plugin-html -D
+```
+
+兼容 babel 和 eslint
+
+```bash
+npm i babel-eslint -D
+```
+
+##### 配置文件 .eslintrc
+
+```json
+{
+  "extends": "standard",    // 使用哪个eslint规范。
+  "plugins": ["html"],      // eslint检查.vue文件不报错。
+  "parser": "babel-eslint"  // 代码都是要经过babel去处理过的，会有一些语法对eslint不是特别支持，可能就会出现一些问题，所以一般使用webpack和babel开发的项目都会指定它的parser是babel-eslint。 
+}
+```
+
+##### 使⽤ eslint-loader，构建时检查 JS 规范。
+
+开发的过程中，每次修改代码，自动进行 eslint 检查。
+
+```js
+module.exports = {
+	module: {
+    rules: [
+      {
+				test: /\.(vue|js|jsx)$/,
+				loader: 'eslint-loader',
+				exclude: /node_modules/,
+				enforce: 'pre'
+			}
+    ]
+  }
+}
+
+```
+
+##### 使用 package.json scripts 手动检查代码规范
+
+```json
+{
+	"scripts": {
+    "lint": "eslint --ext .js --ext .jsx --ext .vue src/", // 检查代码是否符合规则
+    "lint-fix": "eslint --fix --ext .js --ext .jsx --ext .vue src/" // 修复代码
+  }
+}
+```
+
+
+
+## vue-loader
+
+vue-loader.config.js
+
+```js
+module.exports = (isDev) => {
+  return {
+    preserveWhitepace: true,
+    extractCSS: !isDev, // 将.vue文件里的css也通过extract-text-webpack-plugin这个插件单独打包到我们的那个大css文件中去，对于异步加载的.vue文件，这个作用就失效了。
+    cssModules: {}, // 实现css module的功能
+  }
+}
+```
+
+
+
+## 文件指纹策略
+
+什么是文件指纹：打包后输出的文件名后缀。
+
+文件指纹的好处：用来做版本的管理。
+
+### 常见的文件指纹有哪几种：
+
+* hash：每次打包后整个项目的 hash 值，每构建一次就会有一个新的 hash 值。
+* chunkhash：和 webpack 打包的 chunk 有关，不同的 entry 会⽣成不同的 chunkhash 值，根据不同入口 entry 进行依赖解析，构建对应的 chunk，生成相应的 hash，只要组成 entry 的模块没有内容改动，则对应的 hash 不变， 对于 js 文件的指纹，一般采用 chunkhash。
+* contenthash：根据⽂件内容来定义 hash ，⽂件内容不变，则 contenthash 不变。 一个页面既有 js 资源也有 css 资源，如果 css 资源也使用 chunkhash 的话，会有一个问题，就是我们修改了 js，但是 css 并没有变，由于 css 也使用了 chunkhash，就会导致 css 内容没有变，但是发布上去的文件指纹发生了变化。因此对于 css ，通常根据内容进行文件指纹的生成，采用 contenthash。
+
+### JS 的⽂件指纹设置
+
+设置 output 的 filename，使⽤ [chunkhash]。
+
+chunkhash是没办法和热更新的HotModuleReplacementPlugin一起使用的，所以只需设置在生产环境。
+
+```js
+module.exports = {
+  output: {
+    filename: '[name].[chunkhash:8].js',
+    path: __dirname + '/dist'
+  }
+}
+```
+
+### CSS 的⽂件指纹设置和 css 文件抽离
+
+使用 style-loader 和 css-loader 的话，那么这个 css 会由这个 style-loader 将这个 css 插入到 style 里面并且放到 head 头部。这时并没有独立的一个 css 文件，因此我们通常会采用插件把 css 提取成一个独立的文件。
+
+css/sass/less 等 css 相关文件经过对应的 loader 处理之后，最终处理必须为 style-loader 将 css 样式放到 style 标签中或者使用文件提取的插件将 css 单独提取成独立 css 文件。两者必须存在一个，这样样式才能有效。两者同时存在时，style-loader 在前，生成独立 css 文件，style-loader 失效；提取文件的插件 loader 在前，编译过不了。
+
+css 文件指纹也只需设置在生产环境。
+
+#### webpack4
+
+使用 MiniCssExtractPlugin 插件的 loader。
+
+设置 MiniCssExtractPlugin 的 filename，使⽤ [contenthash]。
+
+```js
+const MiniCssExtractPlugin = require('mini-css-extract-plugin')
+
+module.exports = {
+  module: {
+    rules: [
+      {
+        test: /\.css$/,
+        use: [
+          MiniCssExtractPlugin.loader,
+          'css-loader'
+        ]
+      },
+      {
+        test: /\.less$/,
+        use: [
+          MiniCssExtractPlugin.loader,
+          'css-loader',
+          'less-loader'
+        ]
+      }
+    ]
+  },
+	plugins: [
+    new MiniCssExtractPlugin({
+      filename: '[name].[contenthash:8].css'
+    })
+  ]
+}
+```
+
+#### webpack3
+
+使用 extract-text-webpack-plugin 把非 js 的代码，单独打包成一个静态资源文件。比如把css文件拎出来打包成一个单独的文件，因为这些文件可能是要做浏览器缓存。
+
+使用 ExtractTextPlugin 的 loader。
+
+设置 ExtractTextPlugin 的 filename，使⽤ [contenthash]。
+
+```js
+const ExtractTextPlugin = require('extract-text-webpack-plugin')
+
+module.exports = {
+  module: {
+    rules: [
+      {
+        test: /\.css$/,
+        use: [
+          ExtractTextPlugin.extract({
+            fallback: 'style-loader',
+            use: 'css-loader'
+          })
+        ]
+      },
+      {
+        test: /\.less/,
+        use: [
+          ExtractTextPlugin.extract({
+            fallback: 'style-loader',
+            use: [
+              'css-loader',
+              'less-loader'
+            ]
+          })
+        ]
+      }
+    ]
+  },
+	plugins: [
+    new ExtractTextPlugin('styles.[contentHash:8].css')
+  ]
+}
+```
+
+###  图片或字体的文件指纹设置
+
+设置 file-loader 或 url-loader 的 name，使⽤ [hash]。
+
+这里的 hash 也是指文件内容的 hash，这个 hash 是采用 md5 生成的。
+
+```js
+module.exports = {
+	module: {
+    rules: [
+      {
+        test: /\.(png|svg|jpg|gif)$/,
+        use: {
+          loader: 'file-loader',
+          options: {
+            name: 'img/[name].[hash:8].[ext]'
+          }
+        }
+      }
+    ]
+  }
+}
+```
+
+
+
 ## 静态资源内联
 
 ### 资源内联的意义
 
-#### 代码层面：
+代码层面：
 
 * ⻚⾯框架的初始化脚本：如上节中 rem 计算的 js 库，要在打开页面的时候就要去计算。
 
@@ -148,28 +564,32 @@ module.exports = {
 
 * css 内联避免⻚⾯闪动
 
-#### 请求层⾯：减少 HTTP ⽹络请求数
+请求层⾯：
 
-⼩图⽚或者字体内联 (url-loader)
+* 减少 HTTP ⽹络请求数
 
-### html和js的内联
+### ⼩图⽚或者字体内联使用 url-loader
 
-raw-loader的功能是读取一个文件，把这个文件的内容返回成一个string，把这个string插入到对应的位置。
-#### raw-loader内联html
+### html 和 js 的内联
+
+raw-loader 的功能是读取一个文件，把这个文件的内容返回成一个 string，把这个 string 插入到对应的位置。
+
+#### raw-loader 内联 html
+
 ```html
  <%= require('raw-loader!./meta.html') %>
 ```
 
-#### raw-loader内联js
+#### raw-loader 内联 js
 
 ```html
 <script>
   <%= require('raw-loader!babel-loader!../../node_modules/lib-flexible/flexible.js') %></script>
 ```
 
-### css内联
+### css 内联
 
-#### 方案一：借助style-loader
+#### 方案一：借助 style-loader
 
 ```js
 module.exports = {
@@ -196,7 +616,7 @@ module.exports = {
 
 #### 方案二：html-inline-css-webpack-plugin
 
-它针对打包好的css chunk的代码，把它内联到html的head中。
+它针对打包好的 css chunk 的代码，把它内联到 html 的 head 中。
 
 ```js
 const HTMLInlineCSSWebpackPlugin = require("html-inline-css-webpack-plugin").default;
@@ -268,411 +688,6 @@ const setMPA = () => {
   }
 }
 const {entry, htmlWebpackPlugins} = setMPA()
-```
-
-
-
-## 使用 source map
-
-作⽤：通过 source map 定位到源代码
-
-开发环境开启，线上环境关闭
-
-* 如果线上不关闭，会把我们的业务逻辑暴露出来，线上排查问题的时候可以将 sourcemap 上传到错误监控系统。
-
-### source map 关键字
-
-eval: 使⽤ eval 包裹模块代码
-
-source map: 产⽣ .map ⽂件
-
-cheap: 不包含列信息，只包含行信息
-
-inline: 将 .map 作为 DataURI 嵌⼊，不单独⽣成 .map ⽂件
-
-module:包含 loader 的 sourcemap
-
-### source map类型
-
-可以根据前面的关键字排列组合得到。
-
-![sourcemap类型](/Users/zhaoyang/tool/images/前端知识体系/前端工程实践/webpack/sourcemap类型.png)
-
-### 本地开发时使用 sourcemap 进行代码调试
-
-在webpack.dev.js devtool 中加入 sourcemap。
-
-
-
-## 提取页面公共资源
-
-### 使用 html-webpack-externals-plugin 分离基础包
-
-思路：将 react react-dom vue 基包包通过 cdn 引入，不打入 bundle 中。
-
-```js
-module.exports = {
-  plugins: [
-    new HtmlWebpackExternalsPlugin({
-      externals: [
-        {
-          module: 'react',
-          entry: 'https://cdn.bootcdn.net/ajax/libs/react/15.6.0/react.min.js', // 本地或cdn文件
-          global: 'React'
-        },
-        {
-          module: 'react-dom',
-          entry: 'https://cdn.bootcdn.net/ajax/libs/react/15.6.0/react-dom.min.js',
-          global: 'ReactDOM'
-        }
-      ]
-    })
-  ]
-}
-```
-
-然后手动在 html 中将 react 和 react-dom 脚本引入进来。
-
-### SplitChunksPlugin
-
-webpack4 内置的，替代 CommonsChunkPlugin 插件。
-
-```js
-module.exports = {
-  optimization: {
-    splitChunks: {
-      chunks: 'async',
-      minSize: 30000, // 抽离的公共包最小的大小，单位是字节
-      maxSize: 0,			// 抽离的公共包最大的大小，单位是字节
-      minChunks: 1,   // 使用的次数超过这个就提取成公共的文件
-      maxAsyncRequests: 5,
-      maxInitialRequests: 3, // 同时请求的异步资源的次数
-      automaticNameDelimiter: '~',
-      name: true,
-      cacheGroups: {
-        vendors: {
-          test: /[\\/]node_modules[\\/]/,
-          priority: -10
-        },
-        default: {
-          minChunks: 2,
-          priority: -20,
-          reuseExistingChunk: true
-        }
-      }
-    }
-  }
-}
-```
-
-chunks 参数说明：
-
-* async：只异步引入的库进行分离（默认） 
-*  initial：只同步引入的库进行分离
-* all：所有引入的库进行分析（推荐）
-
-### 利⽤ SplitChunksPlugin 分离基础包
-
-test：匹配出需要分离的包。
-
-把 react 和 react-dom 提取出来，名字为 vendors。
-
-```js
-module.exports = {
-  optimization: {
-    splitChunks: {
-      cacheGroups: {
-        commons: {
-          test: /(react|react-dom)/,
-          name: "vendors",
-          chunks: "all"
-        }
-      }
-    }
-  }
-}
-```
-
-使用时需要把 vendors 添加到 HtmlWebpackPlugin 的 chunks 里面。
-
-```js
-new HtmlWebpackPlugin({
-  template: path.join(__dirname, `./src/${pageName}/index.html`),
-  filename: `${pageName}.html`,
-  chunks: ['vendors', pageName],
-  inject: true,
-  minify: {
-    html5: true,
-    collapseWhitespace: true,
-    perserveLineBreaks: false,
-    minifyCSS: true,
-    minifyJS: true,
-    removeComments: false
-  }
-})
-```
-
-### 利用 SplitChunksPlugin 分离页面公共文件
-
-```js
-module.exports = {
-	optimization: {
-    splitChunks: {
-      minSize: 0,  // 分离的包体积的最小限制
-      cacheGroups: {
-        commons: {
-          name: "commons",
-          chunks: "all",
-          minChunks: 2  // 设置最⼩引⽤次数为2次
-        }
-      }
-    }
-  }
-}
-```
-
-使用时需要把 commons 添加到 HtmlWebpackPlugin 的 chunks 里面。
-
-```js
-new HtmlWebpackPlugin({
-  template: path.join(__dirname, `./src/${pageName}/index.html`),
-  filename: `${pageName}.html`,
-  chunks: ['vendors', 'commons', pageName],
-  inject: true,
-  minify: {
-    html5: true,
-    collapseWhitespace: true,
-    perserveLineBreaks: false,
-    minifyCSS: true,
-    minifyJS: true,
-    removeComments: false
-  }
-})
-```
-
-### 使用 CommonsChunkPlugin 分离基础包
-
-webpack3 使用。
-
-```js
-module.exports = {
-	entry: {
-    app: path(__dirname, 'src/index.js'),
-    vendor: ['vue']
-  }
-  plugins: [
-    new webpack.optimize.CommonsChunkPlugin({
-      name: 'vendor'
-    },
-  	// 分离 webpack 相关的代码
-  	new webpack.optimize.CommonsChunkPlugin({
-      name: 'runtime' // name指定一个在entry里面没有声明过的任何一个名字，一般会声明为runtime
-    })
-  ]
-}
-```
-
-
-
-## Tree Shaking的使用和原理分析
-
-### Tree Shaking（摇树优化）
-
-概念：1 个模块可能有多个⽅法，只要其中的某个⽅法使⽤到了，则整个⽂件都会被打到 bundle ⾥⾯去，tree shaking 就是只把⽤到的⽅法打⼊ bundle ，没⽤到的⽅法会在 uglify 阶段被擦除掉。
-
-使⽤：webpack4 默认⽀持，在 .babelrc ⾥设置 modules: false 即可，production mode 的情况下默认开启。
-
-要求：必须是 ES6 的语法，CJS 的⽅式不⽀持	
-
-### DCE (Dead code elimination)
-
-代码不会被执行，不可到达
-
-代码执行的结果不会被用到
-
-代码只会影响死变量（只写不读），前面定义改变了这个变量，最后并没有用到这个变量
-
-### Tree-shaking 原理
-
-Tree Shaking 利用 DCE 的特点来分析哪些代码是需要被删除掉的。
-
-代码擦除：Tree Shaking 将没有用到的代码加一些注释来标记，在 uglify 阶段删除无用代码。
-
-
-
-## Scope Hoisting使用和原理分析
-
-### 没有开启Scope Hoisting的现象：
-
-构建之后的代码存在大量的闭包代码。对于每一个模块打包出来是会有一个函数的包裹。
-
-### 会导致的问题：
-
-大量函数的闭包包裹代码，会导致打包出来的 bundle 文件体积增大（模块越多越明显）。
-
-通过函数闭包的形式包裹代码，运行代码时创建的函数作用域变多，内存开销变大。
-
-### 模块转换分析
-
-被 webpack 转换后的模块会带上⼀层包裹。
-
-import 会被转换成 __webpack_require，export也会做相应的转换。
-
-### 进⼀步分析 webpack 的模块机制
-
-打包出来的是⼀个 IIFE (匿名闭包)
-
-modules 是⼀个数组，每⼀项是⼀个模块初始化函数
-
-__webpack_require ⽤来加载模块，返回 module.exports
-
-通过 WEBPACK_REQUIRE_METHOD(0) 启动程序
-
-### scope hoisting 原理
-
-原理：将所有模块的代码按照引⽤顺序放在⼀个函数作⽤域⾥，然后适当的重命名⼀些变量以防⽌变量名冲突。
-
-对⽐：通过 scope hoisting 可以减少函数声明代码和内存开销。
-
-### scope hoisting 使⽤
-
-webpack3需要手动开启。
-
-```js
-module.exports = {
-  plugins: [
-    new webpack.optimize.ModuleConcatenationPlugin()
-  ]
-}
-```
-
-webpack4 mode 为 production 默认开启。
-
-必须是 ES6 语法，CJS 不⽀持。
-
-
-
-## 代码分割和动态import
-
-### 代码分割的意义
-对于大的 web 应用而言，将所有的代码都放在一个文件中显然是不够有效的，特别是你的代码在一些情况下才会用到，首屏加载不会用到的。这时候我们针对首屏会打出一个 js 文件，对于其他的页面或 tab 切换的场景可以通过按需加载，也就是js懒加载的形式，它和懒加载图片是一样的道理，我们用到了这个脚本再加载它。这就是webpack 里面提供的一个懒加载的功能，webpack 将你的代码库分割成 chunks（语块），当代码运行到需要它们的时候再进行加载。
-
-### 懒加载 JS 脚本的⽅式
-
-CommonJS：require.ensure
-
-ES6：动态 import（⽬前还没有原⽣⽀持，需要 babel 转换）
-
-### 如何使⽤动态 import?
-
-import xxx from 'xxx' 是静态的，动态的是我们使用到的时候再import，动态的import功能和require比较像，可以通过逻辑按需加载，而不是要一开始就把这个模块加载进来。
-
-安装 babel 插件
-
-```bash
-npm install @babel/plugin-syntax-dynamic-import -D
-```
-
-.babelrc
-
-```json
-{
-  "plugins": [
-    "@babel/plugin-syntax-dynamic-import"
-  ]
-}
-```
-
-然后就可以在我们的代码中使用动态的import语法了。
-
-```js
-import('./text.js') // 返回的是promise对象
-  .then(Text => {
-    // Text就是import的这个文件export出去的内容
-    console.log(Text)
-  })
-```
-
-### 代码分割的效果
-
-使用了动态import的文件会分割出去一个js文件，当你代码用到的时候再异步的请求加载这个js文件。
-
-### 原理
-webpack 使用 jsonp 的形式动态的添加一个 \<script\> 脚本进来。
-
-
-
-## 在webpack中使用ESLint
-
-### eslint的必要性
-
-代码检查，代码规范。写js代码时将明显的问题及时的暴露出来。
-
-### 行业里面优秀的eslint规范实践
-
-airbnb：eslint-config-airbnb eslint-config-airbnb-base
-
-### 制定团队的eslint规范，遵循以下原则
-
-* 不重复造轮子，基于eslint:recommend配置去改进
-
-* 能够帮助发现代码错误的规则，全部开启 
-* 帮助保持团队的代码风格统一，而不是限制开发体验
-
-![eslint规则](/Users/zhaoyang/tool/images/前端知识体系/前端工程实践/webpack/eslint规则.png)
-
-### ESLint 如何执⾏落地？
-
-#### ⽅案⼀：与CI/CD系统集成
-
-![eslint与CI:CD集成](/Users/zhaoyang/tool/images/前端知识体系/前端工程实践/webpack/eslint与CI:CD集成.png)
-
-把代码检查放在CI/CD的pipeline build里面去。
-
-本地开发阶段增加 precommit 钩⼦。
-
-安装husky
-
-```bash
-npm i husky -D
-```
-
-增加 npm script，通过 lint-staged 增量检查修改的⽂件。
-
-```json
-"scripts": {
-	"precommit": "lint-staged"
-},
-"lint-staged": {
-  "linters": {
-  	"*.{js,scss}": ["eslint --fix", "git add"]
-  }
-}
-```
-
-#### 方案二：与webpack等构建工具集成
-
-webpack 构建的时候，遇见 eslint 的语法问题，直接中断构建，语法修改正确后才能构建成功。 
-
-比较适合新的，一开始就使用 eslint 的项目。不适合老的项目去接入，因为这种方案，webpack 构建的时候它会默认把所有的文件都会进行检查。
-
-使⽤ eslint-loader，构建时检查 JS 规范
-
-```js
-module.exports = {
-	module: {
-    rules: [
-      {
-        test: /\.js$/,
-        exclude: /node_modules/,
-        use: {
-          'babel-loader',
-          'eslint-loader'
-        }
-      }
-    ]
-  }
-}
 ```
 
 

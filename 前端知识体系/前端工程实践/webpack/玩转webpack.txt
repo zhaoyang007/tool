@@ -1,17 +1,20 @@
 
 第六章：通过源代码掌握webpack打包原理
-1.webpack启动过程分析
-开始：从webpack命令行说起
-  通过npm scripts运行webpack
+源码分析，插件机制，启动流程，编译构建流程，资源输出流程
+
+1.webpack 启动过程分析
+开始：从 webpack 命令行说起，这个过程 webpack 到底做了什么事情
+  通过 npm scripts 运行 webpack
     开发环境：npm run dev
     生产环境：npm run build
-  通过webpack命令直接运行
+  通过 webpack 命令直接运行
     webpack entry.js bundle.js
-查找webpack入口文件
-  在命令行输入命令后，npm会让命令行工具进入node_modules/.bin目录，运行一个命令，如果是全局安装这个包，linux会从
-  user/local/bin这个目录去找，局部安装会在当前项目目录的node_modules/.bin目录去找，查找是否存在webpack.sh或
-  webpack.cmd文件。如果存在，就执行，不存在，就抛出错误。
-  实际的入口文件是：node_modules/webpack/bin/webpack.js
+查找 webpack 入口文件
+  运行 npm run dev 和 npm run build 本质上还是找 webpack，它是怎么找的呢，
+  在命令行输入命令后，npm 会让命令行工具进入 node_modules/.bin 目录，运行一个命令，如果是全局安装这个包，linux 会从
+  usr/local/bin 这个目录去找，局部安装会在当前项目目录的 node_modules/.bin 目录去找，查找是否存在 webpack.sh 或
+  webpack.cmd 文件。如果存在，就执行，不存在，就抛出错误。
+  经过寻找之后，我们会发现它的路径，实际的入口文件是：node_modules/webpack/bin/webpack.js
   局部安装，想再node_modules/.bin下面有命令，必须通过package.json中的bin字段进行指定。
   因此启动的过程最终会进入到webpack.js，执行里面的代码。
 分析webpack的入口文件：webpack.js

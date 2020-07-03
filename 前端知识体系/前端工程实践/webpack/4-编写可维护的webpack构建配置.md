@@ -54,7 +54,11 @@ ssr环境：webpack.ssr.js
 #### 通过webpack merge组合配置
 
 ```js
+const baseConfig = require('./webpack.base.js')
 const merge = require('webpack-merge')
+
+const devConfig = {}
+
 module.exports = merge(baseConfig, devConfig)
 ```
 
