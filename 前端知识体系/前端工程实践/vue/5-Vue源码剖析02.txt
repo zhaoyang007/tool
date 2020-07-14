@@ -1,0 +1,152 @@
+Vue源码剖析02
+预习内容
+  虚拟dom
+    情况1：上一节讲了初始化的过程，初始化的过程一开始其实虚拟dom这棵树是不存在的。意味着开始就是一棵树完整的创建，非常简单，就把
+          这棵树的所有dom节点全部创建即可。整个树级别这样的处理，完全的创建。
+    情况2：完全的删除，老的节点是存在的，新的节点是不存在的，整个节点对应的真实的dom就要全部的干掉了。这两种情况是最简单的。
+    情况3：新老两棵树都存在。就要进行对比的过程，就是diff算法。
+直播内容
+  学习目标
+    理解Vue批量异步更新策略
+    掌握虚拟DOM和Diff算法
+  异步更新队列
+    Vue高效的秘诀是一套批量、异步的更新策略。还有虚拟dom。
+    程序中可能有很多个组件，每个组件对应一个Watcher实例，在一次事件循环更新周期之内，可能有好多数据都发生变化了，这个组件也变，
+    那个组件也变，最好的方式就是把这些组件批量的一起更新，全部更新完之后在浏览器一下子刷新页面，这时候的效果是最好的最快的。这就
+    是vue的刷新策略。我有一个队列，我把这些watcher全部都放进去，然后一次性刷新这个队列处理这些watcher。这样一次性把这件事全部
+    做完就是最高的效率。
+    概念
+      我们之所以能做批量更新，而且在浏览器刷新之前的批量更新，我们是利用了浏览器的这个机制。
+      事件循环：浏览器为了协调事件处理、脚本执行、网络请求和渲染等任务而制定的一套工作机制。 
+      宏任务：宏就是一系列操作的小集合，代表一个个离散的、独立工作单元，它跟其他事情是不相干的，自己是一套，能完成一个组合的事情。
+            浏览器完成一个宏任务，在下一个宏任务执行开始前，会对页面进行重新渲染。主要包括创建主文档对象、解析HTML、执行主线JS
+            代码以及各种事件如页面加载、输入、网络事件和定时器等，这些事情都在一个队列里放着。任务队列就是保存的宏任务。浏览器每
+            次只执行一个宏任务，然后需要刷新一次。宏任务之间是有间隔的，每完成一个宏任务，浏览器就刷新一次。这里的浏览器刷新是指
+            它会重新渲染页面里所有UI的部分，重新去摆一摆，放一放，因为UI可能会发生变化。
+      微任务：微任务是更小的任务，是在当前宏任务执行结束后立即执行的任务。如果在微任务队列中存在微任务，浏览器会清空微任务之后再
+            重新渲染。微任务的例子有promise回调函数、DOM发生变化等。
+      执行代码的时候会有一个调用栈Call Stack，我们会把代码先进后出的方式把它推进去，然后在调用栈里去执行，比如函数里面又调用了
+      一个函数，是Call Stack这样的一个东西。
+      Vue里是怎么合理的利用这个事件循环这个规矩的，我只要把刷新队列这件事用一个微任务来做就可以了。
+        Promise.resolve().then(flushQueue)then里执行这个刷新队列的方法，这个方法里把watcher里的所有方法全部执行一遍。就
+        是用一个微任务去执行它，vue实际采取的异步更新的策略就是这样。实际上就是在所有代码执行完之后，会批量的把所有需要更新的
+        watcher的update函数放到一个微任务里头去执行，当它这些全部执行完之后，浏览器才会统一的刷新一次。这样就很好的利用了这个
+        机制。Watcher队列的刷新如果全部作为微任务去做的话是非常非常完美的，当这些Watcher中的更新函数把所有的dom操作dom更新全
+        部做完之后，浏览器一次性的去刷新多么高效啊，这就是我们期待的方式。这样在$nextTick().then中也就可以获取到更新后的dom了。
+    vue中的具体实现
+      异步：只要侦听到数据变化，Vue将开启一个队列，把要更新的事放到队列里头，主要是Watcher。如果同一个watcher被多次触发，只会
+          被推入到队列中一次。去重对于避免不必要的计算和DOM操作是非常重要的。
+      批量：在接下来的某个时刻，一次性的把刚才队列中的所有的这些Watcher执行一次。
+      异步策略：异步策略实现的选择会有优先级。Vue在内部对异步队列尝试使用原生的Promise.then、MutationObserver和setImmediate，
+              如果执行环境不支持，则会采用setTimeout(fn, 0)代替。换成宏任务做的体验就不好了，因为它只能到下一个循环才能看到
+              结果了。
+      update() core\observer\watcher.js
+        dep.notify()之后watcher执行更新，执行入队操作 
+      queueWatcher(watcher) core\observer\scheduler.js
+        执行watcher入队操作
+      nextTick(flushSchedulerQueue) core\util\next-tick.js
+        nextTick按照特定异步策略执行队列操作
+      测试代码:03-timerFunc.html
+      watcher中update执行三次，但run仅执行一次
+      宏任务和微任务相关知识补充：https://segmentfault.com/a/1190000014940904?utm_source=tag-newest
+      相关API: vm.$nextTick(cb)
+  虚拟DOM 
+    概念
+      虚拟DOM(Virtual DOM)是对DOM的JS抽象表示，它们是JS对象，能够描述DOM结构和关系。应用的各种状态变化会作用于虚拟DOM，最终
+      映射到DOM上。
+      我们希望js操作数据的时候，有一个中间层，这个中间层就是虚拟dom，当我们对中间层进行操作的时候，希望对它的操作直接转换成dom操
+      作。中间的两个步骤分别对应着数据响应式reactive和打补丁操作patch。我对数据的变更可以直接通过响应式的方式去修改虚拟dom，因
+      为我改了数据之后，setter调了更新，更新里调了watcher的run，run之后实际上是重新的计算了一次虚拟dom的新的值。这时就得到了一
+      个新的虚拟dom和一个老的虚拟dom，我要在两个虚拟dom之间做一个对比，通过对比得出我可以做的最小的dom操作就可以了。这就是整个
+      的工作流程。如果用户在界面中和界面有交互想改变值，它可能会通过事件一些交互的行为，触发事件的回调函数，这个回调函数又可以影
+      响这些数据的状态，从而形成一个闭环。单向数据流就转起来了。
+      vue里用的是snabbdom，虚拟dom最重要的作用是让你可以直接和数据打交道，而不是直接写dom操作，
+    优点
+      虚拟DOM轻量、快速:当它们发生变化时通过新旧虚拟DOM比对可以得到最小DOM操作量，从而提升性能。比如一个数据变化很多的列表，
+      以前使用jquery的时候我们可能就直接将原来的列表清空重新将整个变化的数据挨个生成元素push到列表中，因为变化多数据量大，
+      我们不会去做对比的算法，但是虚拟dom帮我们做了这件事，无论我们的数据做了多少变化，虚拟dom都会经过diff算法算出真正的dom
+      变化的地方，然后做最小的dom操作。
+        patch(vnode, h('div#app', obj.foo))
+      跨平台:将虚拟dom更新转换为不同运行时特殊操作实现跨平台
+        const patch = init([snabbdom_style.default])
+        patch(vnode, h('div#app', {style:{color:'red'}}, obj.foo))
+      兼容性:还可以加入兼容性代码增强操作的兼容性
+    必要性
+      vue1.0中有细粒度的数据变化侦测（watcher太多），它是不需要虚拟DOM的，但是细粒度造成了大量开销，这对于大型项目来说是
+      不可接受的。因此，vue 2.0选择了中等粒度的解决方案，每一个组件一个watcher实例，这样状态变化时只能通知到组件，不管组
+      件中哪个值变了都要通知Watcher做组件的渲染，但是又不能将整个组件都重新渲染一遍，那样的性能就比vue1.0更低了，所以只重
+      新渲染变了的那部分，想做到这点就需要引入虚拟DOM去进行比对和渲染。所以vue2.0由于Watcher粒度的变化，是必须要使用虚拟
+      dom这个角色的。
+    初始化的整体流程
+      mountComponent() core/instance/lifecycle.js
+        渲染、更新组件
+        render函数是计算出最新的虚拟dom，update则是把计算出来的虚拟dom变成真实dom
+        // 定义更新函数
+        const updateComponent = () => {
+        // 实际调用是在lifeCycleMixin中定义的_update和renderMixin中定义的_render
+          vm._update(vm._render(), hydrating)
+        }
+      _render core/instance/render.js
+        生成虚拟dom
+      _update core\instance\lifecycle.js
+        update负责更新dom，转换vnode为dom 
+      __patch__() platforms/web/runtime/index.js
+        __patch__是在平台特有代码中指定的
+        Vue.prototype.__patch__ = inBrowser ? patch : noop
+      测试代码，examples\test\04-vdom.html
+      总结数据更新的整个流程：
+        watcher.run() => componentUpdate() => render() => update() => patch()
+        数据发生变化，watcher执行run方法 => 导致watcher中的组件更新函数的执行 => 
+        组件更新函数里会先调render方法，计算最新的虚拟dom => 然后把最新的虚拟dom传到update方法里去做更新 => 
+        update里开始做patch，patch里根据参数的不同会执行初始化或更新这两件事，最终生成真实dom放到界面中 
+    patch获取
+      patch是createPatchFunction的返回值，传递nodeOps和modules是web平台特别实现
+        export const patch: Function = createPatchFunction({ nodeOps, modules })
+      platforms\web\runtime\node-ops.js
+        定义各种原生dom基础操作方法 
+      platforms\web\runtime\modules\index.js
+        modules 定义了属性更新实现
+    patch实现
+      patch core\vdom\patch.js
+        首先进行树级别比较，可能有三种情况:增删改。
+          new VNode不存在就删; 
+          old VNode不存在就增; 
+          都存在就执行diff执行更新
+      patchVnode
+        比较两个VNode，包括三种类型操作:属性更新、文本更新、子节点更新 
+        具体规则如下:
+          diff：深度优先，同级比较
+          1. 新老节点均有children子节点，则对子节点进行diff操作，调用updateChildren
+          2. 如果老节点没有子节点而新节点有子节点，先清空老节点的文本内容，然后为其新增子节点。 
+          3. 当新节点没有子节点而老节点有子节点的时候，则移除该节点的所有子节点。
+          4. 当新老节点都无子节点的时候，只是文本的替换。
+      updateChildren
+        1.updateChildren主要作用是用一种较高效的方式比对新旧两个VNode的children得出最小操作补丁。执行一个双循环是传统方
+          式，vue中针对web场景特点做了特别的算法优化，我们看图说话:
+        2.在新老两组VNode节点的左右头尾两侧都有一个变量标记，在遍历过程中这几个变量都会向中间靠拢。 当oldStartIdx > 
+          oldEndIdx或者newStartIdx > newEndIdx时结束循环。
+          下面是遍历规则:
+            1.首先，oldStartVnode、oldEndVnode与newStartVnode、newEndVnode两两交叉比较，共有4种比较 方法。
+            2.当 oldStartVnode和newStartVnode 或者 oldEndVnode和newEndVnode 满足sameVnode，直接将该 VNode节点
+              进行patchVnode即可，不需再遍历就完成了一次循环。如下图，
+            3.如果oldStartVnode与newEndVnode满足sameVnode。说明oldStartVnode已经跑到了oldEndVnode 后面去了，进
+              行patchVnode的同时还需要将真实DOM节点移动到oldEndVnode的后面。
+            4.如果oldEndVnode与newStartVnode满足sameVnode，说明oldEndVnode跑到了oldStartVnode的前 面，进行
+              patchVnode的同时要将oldEndVnode对应DOM移动到oldStartVnode对应DOM的前面。
+            5.如果以上情况均不符合，则在old VNode中找与newStartVnode满足sameVnode的vnodeToMove，若存在执行
+              patchVnode，同时将vnodeToMove对应DOM移动到oldStartVnode对应的DOM的前面。
+            6.当然也有可能newStartVnode在old VNode节点中找不到一致的key，或者是即便key相同却不是 sameVnode，这个时候
+              会调用createElm创建一个新的DOM节点。
+            7.至此循环结束，但是我们还需要处理剩下的节点。
+              1.当结束时oldStartIdx > oldEndIdx，这个时候旧的VNode节点已经遍历完了，但是新的节点还没有。说 明了新的
+                VNode节点实际上比老的VNode节点多，需要将剩下的VNode对应的DOM插入到真实DOM 中，此时调用addVnodes
+                (批量调用createElm接口)。
+              2.但是，当结束时newStartIdx > newEndIdx时，说明新的VNode节点已经遍历完了，但是老的节点还有 剩余，需要
+                从文档中删 的节点删除。
+作业
+1.patch函数式怎么获取的? 
+2.节点属性是如何更新的 
+3.组件化机制是如何实现的 
+  1.注册：Vue.component()
+  2.实例化
+4.口述diff
