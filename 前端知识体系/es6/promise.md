@@ -28,6 +28,8 @@ loadScript('./1.js', function (src) {
 
 ### Promise
 
+Promise 它就是个异步的结果。
+
 Promise 接收一个函数做为参数。这个函数有两个参数 resolve, reject，函数体里要去做我们异步的事，异步成功调用 resolve，失败调用 reject。
 
 写法上它不是一层一层去嵌套了，而是平行的结构，这样的话，在后期的维护以及在代码可读性上做了很大程度上的增强，这个在实际的业务开发中是非常重要的。

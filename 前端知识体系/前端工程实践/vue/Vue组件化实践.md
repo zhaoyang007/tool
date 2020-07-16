@@ -1,0 +1,891 @@
+## Vue 组件化实践学习目标
+
+* 掌握 Vue 组件化常用技术；
+* 通用组件库的设计与实现；
+  * 通用表单组件设计与实现
+    * 组件通信
+    * 组件分发
+  * 弹窗类组件设计与实现
+    * 加深对一些 Vue 原理和 Vue 的组件化机制的理解；
+  * 学会看开源组件库源码，有些功能遇到难处了，怎么从组件库的源码中找到解决办法；
+    * github 中搜索 element
+    * packages：几乎所有源码都在这里
+    * src 是暴露一些接口的地方，有一些通用方法，例如混入和指令等
+
+
+
+## Vue 组件化基础
+
+MVVM 框架里，一个比较重要的特性就是组件化，工作中用的最多的也是这一部分。
+
+Vue 组件系统提供了一种抽象，让我们可以使用独立可复用的组件来构建大型应用，任意类型的应用界面都可以抽象为一个组件树。组件化能提高开发效率，方便重复使用，简化调试步骤，提升项目可维护性，便于多人协同开发。
+
+组件化就是把我们应用程序中的一些比较独立的功能的模块或者单元，把它抽取出来，然后把它封装成组件。就像工程化过程中的一些零件。搭积木时候积木的零件。以后在开发后续程序的过程中，维护，复用都会得到进一步的提升。
+
+官方对组件的定义：组件是可复用的 Vue 实例，带有一个名字，我们可以在一个通过 new Vue 创建的 Vue 根实例中，把这个组件作为自定义元素来使用。
+
+### 组件的注册、使用
+
+#### 全局注册
+
+```js
+Vue.component('my-component-name', {
+  // ... 选项 ...
+})
+```
+
+它们在注册之后可以用在任何新创建的 Vue 根实例 (`new Vue`) 的模板中。比如：
+
+```js
+Vue.component('component-a', { /* ... */ })
+Vue.component('component-b', { /* ... */ })
+Vue.component('component-c', { /* ... */ })
+
+new Vue({ el: '#app' })
+```
+
+```vue
+<div id="app">
+  <component-a></component-a>
+  <component-b></component-b>
+  <component-c></component-c>
+</div>
+```
+
+在所有子组件中也是如此，也就是说这三个组件*在各自内部*也都可以相互使用。
+
+#### 局部注册
+
+你可以通过一个普通的 JavaScript 对象来定义组件：
+
+```js
+var ComponentA = { /* ... */ }
+var ComponentB = { /* ... */ }
+var ComponentC = { /* ... */ }
+```
+
+然后在 components 选项中定义你想要使用的组件：
+
+对于 components 对象中的每个 property 来说，其 property 名就是自定义元素的名字，其 property 值就是这个组件的选项对象。
+
+注意局部注册的组件在其子组件中不可用。
+
+```js
+new Vue({
+  el: '#app',
+  components: {
+    'component-a': ComponentA,
+    'component-b': ComponentB
+  }
+})
+```
+
+如果你通过 Babel 和 webpack 使用 ES2015 模块，那么代码看起来更像：
+
+```js
+import ComponentA from './ComponentA.vue'
+
+export default {
+  components: {
+    ComponentA
+  },
+  // ...
+}
+```
+
+
+
+## Vue 组件化常用技术
+
+### 组件之间的通信方式
+
+#### props
+
+父给子传值
+
+props 用于接收父组件传递过来的数据。
+
+```js
+// parent
+<HelloWorld msg="Welcome to Your Vue.js App"/>
+  
+// child
+props: { msg: String }
+```
+
+#### 自定义事件
+
+子给父传值
+
+当子组件需要和父级组件进行通信，可以派发并监听自定义事件。
+
+```js
+// parent
+<Cart @add="cartAdd($event)"></Cart>
+
+// child
+this.$emit('add', good)
+```
+
+#### eventbus
+
+事件总线
+
+任意两个组件之间传值常用事件总线或 Vuex 的方式。
+
+实践中通常用 Vue 代替 Bus，因为 Vue 已经实现了相应接口。
+
+Bus 只要实现事件派发和监听这两个接口，并且把用户关心的所有回调收集起来就行了，这是一个典型的发布订阅模式。
+
+```js
+class Bus {
+  constructor(){
+    this.callbacks = {}
+  }
+  $on(name, fn){
+    this.callbacks[name] = this.callbacks[name] || []
+    this.callbacks[name].push(fn)
+  }
+  $emit(name, args){
+    if(this.callbacks[name]){
+      this.callbacks[name].forEach(cb => cb(args))
+    }
+  } 
+}
+```
+
+```js
+// main.js
+Vue.prototype.$bus = new Bus()
+
+// child1
+this.$bus.$on('foo', handle)
+
+// child2
+this.$bus.$emit('foo')
+```
+
+#### Vuex
+
+创建唯一的全局数据管理者 Store，通过它管理数据并通知组件状态变更，它是组件通信的最佳实践。
+
+#### 边界情况（不太常用的）
+
+我们在做一些通用组件的时候这些不常用的方式就用得着了。Vuex 等常用的通信方式这么好，为什么还要用这些不常用的方式，最主要的原因是你不能强迫用户装 Vuex。因为我们现在要写的是通用组件，所以你能使用的是框架提供给你的最原始最基础的 API，不可以使用超出框架的其他东西，否则就有很强的侵入性，就不是一个很好的组件库了。
+
+##### $parent/$root
+
+子组件访问老爹可以用 $parent，访问根元素可以用 $root。
+
+兄弟组件之间通信可通过共同祖辈搭桥，$parent 或 $root。从原理上来讲跟总线模式是一样的，互相通信的组件之间有一个共同的中介人。
+
+发布订阅模式，事件它的派发和监听者必须是同一个，事件谁派发谁监听。
+
+```js
+// brother1
+this.$parent.$on('foo', handle)
+
+// brother2
+this.$parent.$emit('foo')
+```
+
+##### $children
+
+父组件可以通过 $children 访问子组件实现父子通信。
+
+老爹可以通过$children访问所有孩子元素。
+
+注意：$children 不能保证子元素顺序，比如孩子组件中有异步组件，那它将来注册在 children 里面的位置是在后面的，虽然它声明在前面。
+
+```js
+// parent
+this.$children[0].xx = 'xxx'
+```
+
+##### $attrs/$listeners（非prop（属性）特性）
+
+###### $attrs
+
+凡是子组件里没有通过 props 方式去声明，还通过老爹的方式给传进来了，它就会被收纳到 $attrs 里头( class 和 style 除外)。是通过 v-bind="$attrs" 传入内部组件——在创建高级别的组件时非常有用。
+
+用处：比如我在父组件中给子组件传入了很多属性，所有的属性都在子组件的 props 中声明就显得很啰嗦，通过 $attrs 就可以不用声明直接去用了。
+
+```js
+// parent
+<HelloWorld foo="foo"/>
+
+// child:并未在props中声明foo 
+<p>{{$attrs.foo}}</p>
+```
+
+###### $listeners
+
+$listeners 和 $attrs 是类似的。
+
+子组件的事件处理函数没有在当前子组件内部声明，而是老爹传进来的。
+
+用处：做比较高级的封装组件，你封了一个其他组件，还想给它传一个回调函数让它去调用，就可以用这种方式，回调函数是在老爹里声明的。
+
+```js
+// parent
+<HelloWorld @click="handle"/>
+methods: {
+	handle() {
+		console.log('来自老爹的回调', this)
+  }
+}
+
+// child
+// $listeners会被展开并监听
+<p v-on="$listeners"></p>
+```
+
+##### $refs
+
+获取子节点引用。
+
+可以通过 $refs 的方式找到当前老爹里面包含的所有的孩子，直接去访问。除了组件实例本身，还能访问一些 DOM 元素，平时用的还是挺多的。
+
+```js
+// parent
+<HelloWorld ref="hw"/>
+
+mounted() {
+  this.$refs.hw.xx = 'xxx'
+}
+```
+
+##### provide/inject
+
+实际工作中不常遇到，因为有 Vuex。比如祖宗组件里有一个值，想传给特别深的一个后代元素，这时候就能用到依赖注入这种方式，一个是提供，一个是注入。它可以跨层级的传参，如果没有 Vuex 可以使用的话，可以用这种方式。平时开发中很少用，只限于 UI 库的开发过程。
+
+这个通过这个方式设置的值不是响应式的，所以不要改它，不然会有警告。但是你要传一个引用类型进来，访问里面动态的值，然后修改它，也是完全可行的。但是很少这样做，一般都是单向的，就是从上往下传个值就完了。
+
+```js
+// ancestor
+provide() {
+  return {foo: 'foo'}
+}
+
+// descendant
+inject: ['foo']
+```
+
+### 复合组件
+
+在开发的过程中，我们经常会遇到一些这样的需求，比如说一个对话框要去组件化，这个对话框的内容在用的时候是在父组件中去指定的，但是这块内容将来是要把它显示在子组件内部的，这个就是内容分发。在外面去提供内容，将来分发到里面的指定位置，这就是内容分发技术。
+
+Vue 中组件的内容分发，我们用的是插槽，这个名字非常的形象，我留出这个位置，内容实际上是不确定的，通过父组件传递过来，我用插槽来接收。
+
+内容分发应该怎么做。就是插槽。
+
+插槽是另外一个非常重要的组件化技术，它其实是组件内容的分发。如果在老爹里面声明一些内容，想在子组件中去显示就要用到插槽。这就是插槽技术，它很常用。
+
+插槽语法是 Vue 实现的内容分发 API，用于复合组件开发。该技术在通用组件库开发中有大量应用。
+
+子组件中使用 \<slot>\</slot> 占据坑位。父组件中使用 \<template>\</template> 模版占位符填充坑位。
+
+#### 匿名插槽
+
+```vue
+<!-- parent -->
+<comp>hello</comp>
+
+<!-- comp1 -->
+<div>
+  <slot></slot>
+</div>
+```
+
+sync 修饰符：为了写法更简洁。:show.sync="isShow" 将来会展开成 :show="isShow" @update:show="show=$event" 的形式。所以将来子组件要派发的事件就是 update:show。
+
+#### 具名插槽
+
+如果存在多个独立内容要分发，可以使用具名插槽，把内容分发到指定的位置。
+
+```vue
+<!-- parent -->
+<Comp2>
+  <!-- 默认插槽用default做参数 -->
+  <template v-slot:default>具名插槽</template> 
+  <!-- 具名插槽用插槽名做参数 -->
+  <template v-slot:content>内容...</template>
+</Comp2> 
+
+<!-- comp2 -->
+<div>
+  <slot></slot>
+	<slot name="content"></slot>
+</div>
+```
+
+#### 作用域插槽 
+
+在你声明的 \<template>\</template> 里面的数据到底是用来自当前的父组件的还是来自于子组件的，如果分发内容要用到子组件中的数据就用作用域插槽，否则就用普通插槽。
+
+```vue
+<!-- parent -->
+<Comp3>
+  <!-- 把v-slot的值指定为一个作用域上下文对象 slotProps: {foo: 'xxxxx'}--> 
+  <template v-slot:default="slotProps">
+		来自子组件数据:{{slotProps.foo}} 
+  </template>
+</Comp3>
+
+<!-- comp3 -->
+<div>
+  <slot :foo="foo"></slot>
+</div>
+```
+
+### 在自定义组件上使用双向数据绑定
+
+v-model 是一个语法糖，v-model 最终会转换成一个属性的传递 :value="values" 和一个事件的监听 @input="onInput"。
+
+onInput 回调函数里具体的逻辑是，将内部派发事件传递的那个最新的要变更的值赋值给 values，就是 @input = "values=$event"，$event 是固定的名字，表示传递出来的参数。
+
+```vue
+<course-add v-model="values"></course-add> 
+// 相当于：
+<course-add :value="values" @input="values=$event"></course-add>
+```
+
+上面的事是 Vue 给我们做好了的，我们要做的事情是，在组件的内部，接受一个属性叫 value 把它绑定到 input 元素的 value 上并且在 input 上派发一个默认的 input 事件，把最新的值作为参数传递出来。
+
+```js
+Vue.component('course-add', {
+	props: ['value'],
+  template: `
+		<div>
+			<!-- 需要实现input的:value和@input --> 
+			<input :value="value" @input="onInput"/> 
+		</div> 
+	`,
+	methods: {
+    onInput(e) {
+      this.$emit('input', e.target.value)
+    }
+  }
+})
+```
+
+非自定义组件和表单元素的 v-model 做的事是一样的，只不过组件内部做的事 Vue 已经在绑定了 v-model 的表单元素上做好了。所以在表单元素上使用数据双向绑定只需写一个 v-model 就行了。
+
+
+
+## Vue 组件化实战
+
+### 通用表单组件
+
+#### 通用组件的注意事项
+
+1. 高内聚，低耦合，功能应该尽量单一，不应该附和其他乱七八糟的功能，功能越多复用性越差，也就不太内聚了。所以为了 KInput 功能较单一，我们在它的外面还要再设计一层 KFormItem，让它去做校验的事。KInput 只做一件事，就是双向绑定，能把数据管理起来就可以了。
+2. 接收数据的是 KForm，真正使用数据的是 KInput 或 KFormItem，所以就涉及到组件之间的传参的问题了。跨层级的传参，所以用 provide/inject 来进行数据的注入就是一个非常好的方式。
+
+#### 需求分析
+
+在开始之前要做一个需求分析，到底要什么什么样的功能，为了实现这些功能要做一些什么事情。
+
+功能分析：收集数据、校验数据并提交。
+
+* KForm 
+  * 接收数据
+  * 指定校验规则
+* KformItem
+  * 执行校验
+  * 显示错误信息
+* KInput
+  * 维护数据 
+
+#### 实现 KInput.vue
+
+components/form/KInput.vue
+
+```vue
+<template>
+  <div>
+    <!-- 自定义组件双向绑定：:value  @input -->
+    <!-- v-bind="$attrs"展开$attrs，每一项单独设置上去 -->
+    <input :type="type" :value="value" @input="onInput" v-bind="$attrs">
+  </div>
+</template>
+
+<script>
+  export default {
+    inheritAttrs: false, // 设置为false避免传入的属性继承到根元素上
+    props: {
+      value: {
+        type: String,
+        default: ''
+      },
+      type: {
+        type: String,
+        default: 'text'
+      }
+    },
+    methods: {
+      onInput(e) {
+        // 派发一个input事件即可
+        this.$emit('input', e.target.value)
+
+        // 通知父级执行校验
+        this.$parent.$emit('validate')
+      }
+    },
+  }
+</script>
+```
+
+#### 实现 KFormItem
+
+components/form/KFormItem.vue
+
+```vue
+<template>
+  <div>
+    <!-- label -->
+    <label v-if="label">{{label}}</label>
+
+    <!-- KInput的坑位 -->
+    <slot></slot>
+
+    <!-- 校验信息显示 -->
+    <p v-if="error">{{error}}</p>
+  </div>
+</template>
+
+<script>
+// Asyc-validator
+import Schema from "async-validator";
+
+export default {
+  inject: ["form"],
+  data() {
+    return {
+      error: "" // error是空说明校验通过
+    };
+  },
+  props: {
+    label: {
+      type: String,
+      default: ""
+    },
+    prop: {
+      type: String
+    }
+  },
+  mounted() {
+    this.$on("validate", () => {
+      this.validate();
+    });
+  },
+  methods: {
+    validate() {
+      // 规则
+      const rules = this.form.rules[this.prop];
+      // 当前值
+      const value = this.form.model[this.prop];
+
+      // 校验描述对象
+      const desc = { [this.prop]: rules };
+      // 创建Schema实例
+      const schema = new Schema(desc);
+      return schema.validate({ [this.prop]: value }, errors => {
+        if (errors) {
+          this.error = errors[0].message;
+        } else {
+          // 校验通过
+          this.error = "";
+        }
+      });
+    }
+  }
+};
+</script>
+```
+
+#### 实现 KForm
+
+components/form/KForm.vue
+
+```vue
+<template>
+  <div>
+    <slot></slot>
+  </div>
+</template>
+
+<script>
+export default {
+  provide() {
+    return {
+      form: this
+    };
+  },
+  props: {
+    model: {
+      type: Object,
+      required: true
+    },
+    rules: {
+      type: Object
+    }
+  },
+  methods: {
+    validate(cb) {
+      // 获取所有孩子KFormItem
+      // [resultPromise]
+      const tasks = this.$children
+        .filter(item => item.prop) // 过滤掉没有prop属性的Item
+        .map(item => item.validate());
+
+      // 统一处理所有Promise结果
+      Promise.all(tasks)
+        .then(() => cb(true))
+        .catch(() => cb(false));
+    }
+  }
+};
+</script>
+```
+
+#### 使用 KInput/KFormItem/KForm
+
+components/form/index.vue
+
+```vue
+<template>
+  <div>
+    <!-- KForm -->
+    <KForm :model="userInfo" :rules="rules" ref="loginForm">
+      <!-- 用户名 -->
+      <KFormItem label="用户名" prop="username">
+        <KInput v-model="userInfo.username" placeholder="请输入用户名"></KInput>
+      </KFormItem>
+      <!-- 密码 -->
+      <KFormItem label="密码" prop="password">
+        <KInput type="password" v-model="userInfo.password" placeholder="请输入用户名"></KInput>
+      </KFormItem>
+      <!-- 提交按钮 -->
+      <KFormItem>
+        <button @click="login">登录</button>
+      </KFormItem>
+    </KForm>
+  </div>
+</template>
+
+<script>
+import KInput from "@/components/form/KInput.vue";
+import KFormItem from "@/components/form/KFormItem.vue";
+import KForm from "@/components/form/KForm.vue";
+import Notice from "@/components/Notice.vue";
+
+export default {
+  data() {
+    return {
+      userInfo: {
+        username: "tom",
+        password: ""
+      },
+      rules: {
+        username: [{ required: true, message: "请输入用户名称" }],
+        password: [{ required: true, message: "请输入密码" }]
+      }
+    };
+  },
+  components: {
+    ElementTest,
+    KInput,
+    KFormItem,
+    KForm
+  },
+  methods: {
+    login() {
+      this.$refs["loginForm"].validate(valid => {
+        const notice = this.$create(Notice, {
+          title: "社会你杨哥喊你来搬砖",
+          message: valid ? "请求登录!" : "校验失败!",
+          duration: 2000
+        });
+        notice.show();
+        // if (valid) {
+        //   alert("submit");
+        // } else {
+        //   console.log("error submit!");
+        //   return false;
+        // }
+      });
+    }
+  }
+};
+</script>
+```
+
+### 弹窗组件
+
+对于组件的构造函数和实例，平时的工作中几乎不会和它有接触。但是写底层的通用组件库时，我们可能就要接触到构造函数。
+
+其他的所有组件所有内容都是在 app 里头的，而弹窗这类组件已经脱离出当前 Vue 管理的实例了，单独存在。这样做的好处是比较好控制弹窗的位置等东西。
+
+它们在当前 Vue 根实例之外独立存在，通常挂载于 body，而不是 app，所以不能将它声明在任何一个 app 组件下的 compunents 选项作为当前 app 的组件从而使用 Vue 内部来创建构造函数和实例的能力，我们需要自己去创建实例，完成 Vue 替我们做的关于创建构造函数和实例的过程。
+
+这时就涉及到一些问题了，这个组件实例怎么创建，又怎么脱离当前的 Vue 根实例去单独的挂载到 body 上，这就涉及到一些相对较底层的 API 了。
+
+需求：我现在有一个 Notice.vue 这样的组件，要用函数的方式去创建这个组件的实例，并且将来还能把它挂在到 body 上面去。
+
+可以考虑把它改成 Vue 插件的形式，用起来更舒服。
+
+#### 实现 create 函数
+
+这个 create 方法将来接收一个组件（其实就是组件的配置）和一些参数，通过 JS 的方式创建这个组件的实例，不需要在任何组件中通过 components 选项声明，并将其挂载到 body 上去，最终返回这个组件实例。
+
+那现在有几个问题要思考：
+
+这个 Component 组件怎么能够变成构造函数，组件构造函数如何获取？我们平常写的组件，它只是一个 export 出去的一个配置对象，它不是构造函数。这个配置对象将来必须要变成实例，那它凭什么变成实例啊，它必须得有构造函数，所以我们平常写的这些组件的配置需要变成构造函数，然后才能创建它的实例。
+
+* 方法一：使用 Vue.extend() 方法，可以得到构造函数，然后创建组件的实例。Vue.extend 开发中很少接触，它是框架本身调的方法。
+* 方法二：借助 Vue 来创建根实例，使用 render 方法，直接把传入的组件渲染出来，整个过程会有组件实例的创建，然后我们从中获取组件的实例就可以了。
+
+方法一： 
+
+Vue.extend 的用法：
+
+extend 方法时 Vue 的一个静态方法，它里面将 Vue 设置为超类，又创建了一个子类 Sub，名字叫 VueComponent，Sub 继承 Vue，也就是说所有组件的类型都是 VueComponent，它们都是 Vue 构造函数的子类。
+
+```js
+// 我们有一个组件的配置，一般是一个对象
+const comp = {data: {}, props: {}} 
+// 如果想得到这个组件的构造函数，就用Vue.extend方式把这个组件的配置对象传进去，就会得到一个构造函数
+const Ctor = Vue.extend(comp)
+// new一下这个构造函数，就可以得到这个组件的实例了。
+// 接下来的问题是怎么传参，官方给的接口是用propsDate的方式去传递参数，就相当于使用模版时父组件传过来的props参数
+new Ctor({propsDate: {}})
+// 既然得到组件实例了，后面的写法就跟之前的比较类似了
+```
+
+utils/create.js
+
+```js
+import Vue from 'vue'
+
+function create(Component, props) {
+  // 获得组件构造函数
+  const Ctor = Vue.extend(Component)
+  // 获得组件实例，组件实例创建之后得到虚拟DOM
+  cosnt comp = new Ctor({propsDate: props})
+  
+  // 组件实例挂载后得到真实DOM
+  comp.$mount()
+  
+  // 获取真实DOM后，做手动挂载
+  document.body.appendChild(comp.$el)
+
+  // 清除自己，因为作为一个组件，不停的往界面中去追加而不去淘汰，将来内存就爆了。
+  comp.remove = function() {
+    document.body.removeChild(comp.$el)
+    comp.$destroy()
+  }
+
+  return comp
+
+}
+
+export default create
+```
+
+方法二：
+
+utils/create.js
+
+```js
+import Vue from 'vue'
+
+function create(Component, props) {
+  // 组件的构造函数如何获取？
+  // 1.Vue.extend()
+  // 2.render
+  // 这个实例会把这个组件作为根组件把它渲染出来了，所以我们就能得到虚拟DOM，挂载后得到真实DOM
+  const vm = new Vue({
+    // h是createElement, 返回VNode虚拟DOM
+    // 挂载后变成真实DOM，最终把真实DOM放到宿主元素上去。
+    render: h => h(Component, {props}),
+  }).$mount() // 不指定宿主元素，则会创建真实DOM，但是不会做追加操作，因为没有目标对象可追加，也不可以使用body
+
+  // 获取真实DOM后，做手动挂载
+  document.body.appendChild(vm.$el)
+	
+  // 获取传入的组件的实例
+  const comp = vm.$children[0]
+
+  // 清除自己，因为作为一个组件，不停的往界面中去追加而不去淘汰，将来内存就爆了。
+  comp.remove = function() {
+    document.body.removeChild(vm.$el)
+    vm.$destroy()
+  }
+
+  return comp
+
+}
+
+export default create
+```
+
+#### 实现 Notice.vue
+
+components/Notice.vue
+
+```vue
+<template>
+  <div class="box" v-if="isShow">
+    <h3>{{title}}</h3>
+    <p class="box-content">{{message}}</p>
+  </div>
+</template>
+
+<script>
+export default {
+  props: {
+    title: {
+      type: String,
+      default: ""
+    },
+    message: {
+      type: String,
+      default: ""
+    },
+    duration: {
+      type: Number,
+      default: 1000
+    }
+  },
+  data() {
+    return {
+      isShow: false
+    };
+  },
+  methods: {
+    show() {
+      this.isShow = true;
+      setTimeout(this.hide, this.duration);
+    },
+    hide() {
+      this.isShow = false;
+      this.remove();
+    }
+  }
+};
+</script>
+
+<style>
+.box {
+  position: fixed;
+  width: 100%;
+  top: 16px;
+  left: 0;
+  text-align: center;
+  pointer-events: none;
+  background-color: #fff;
+  border: grey 3px solid;
+  box-sizing: border-box;
+}
+.box-content {
+  width: 200px;
+  margin: 10px auto;
+  font-size: 14px;  
+  padding: 8px 16px;
+  background: #fff;
+  border-radius: 3px;
+  margin-bottom: 8px;
+}
+</style>
+```
+
+#### 项目入口文件中引入 create 并挂载到 Vue 原型上
+
+main.js
+
+```js
+import create from './utils/create'
+
+Vue.prototype.$create = create
+```
+
+#### 使用
+
+传一个组件，传一些参数，然后让它显示，大概就是这样。
+
+```js
+this.$create(Notice, { 
+  title: '社会你杨哥喊你来搬砖',
+  message: '提示信息',
+  duration: 1000
+}).show();
+```
+
+
+
+## Vue 组件化探讨
+
+Vue 应用就是由一个个组件构成的。Vue 的组件化涉及到的内容非常多。
+
+组件化是 Vue 的最精髓的特性，也是体现使用 Vue 的熟练程度，精通程度的一个非常重要的参考。于是在面试的过程中经常被问到：谈一下你对 Vue 组件化的理解，这时候有可能无从下手，组件化这个问题很大，怎么能够把它具体的落地去回答到这个问题中，可以从以下几点进行阐述，由浅入深来说：
+
+* 首先遵循的原则是先要介绍下组件化含义是什么：组件是可复用的 Vue 实例，准确讲它们是 VueComponent 的实例，继承自 Vue。
+
+* 组件化其实是软件工程中的一些原则性的践行，软件工程中一个最重要的原则就是**高内聚，低耦合**，从而增强程序的复用性，可维护性，可测试性，这些优点在 Vue 程序中就是用组件化去实现的。
+
+* 组件化的使用场景：什么时候使用组件？组件用到什么地方去？以下分类可作为参考：
+
+  * 通用组件：实现最基本的功能，具有通用性、复用性，例如按钮组件、输入框组件、布局组件等，类似 elementUI 等组件库的功能，这些组件库共同的特点是基本上就是最小的功能单元了，不可能再区分了。
+  * 业务组件：它们完成具体业务，具有一定的复用性，例如登录组件、轮播图组件。可以把这些通用组件做一个有机的组合来完成一个功能。
+  * 页面组件：组织应用各部分独立内容，需要时在不同页面组件间切换，例如列表页、详情页组件
+
+* 如何使用组件
+
+  * 定义：全局定义 Vue.component()，局部定义 components 选项，sfc
+  * 分类：
+    * 有状态组件
+    * functional（函数式组件，无状态组件）
+    * abstract（抽象组件，完成一些特定的功能，它不管视图，可能实现一个特别的逻辑控制，逻辑功能，比如一个防抖组件，keep-alive，transition 加上这些组件去包装）
+  * 组件化过程中一些常见的通信手段：props，$emit()/$on()，$parent/$root，$children，$attrs/$listeners，$refs，provide/inject，eventbus，Vuex
+  * 内容分发：\<slot>，\<template>，v-slot
+  * 使用及优化：动态组件 is，keep-alive，异步组件
+
+* 组件的本质
+
+  组件到底是什么，组件的本质是什么，组件最终的输出目标是什么。
+
+  Vue 中的组件经历如下过程：
+
+  组件配置 => VueComponent 实例 => render() => Virtual DOM => DOM
+
+  所以组件最终的输出目标是虚拟 DOM。
+
+  组件大家平常写的只是配置对象，但是这个过程中 Vue 内部到底做了什么事情呢，是中间这三步，因为你写了配置最后希望看到 DOM，但实际上 Vue 内部为你做了三件事。
+
+  * 首先它把你写的组件配置转换成了 VueComponent 实例。
+  * 实例里面会有 render 方法，render 方法是我们写的模版转换的，render 方法在合适的时间去执行获得虚拟 DOM。
+  * 虚拟 DOM 又通过更新的过程转换成真实 DOM。
+
+  最后我们需要知道组件的本质就是产生虚拟 DOM。
+
+
+
+## 遗漏问题
+
+### 修正 input 中 $parent 写法的问题
+
+想跨层级的去传参，还不能使用 $parent/$root/$children 等，element 官方用的是混入的方式，在 src/mixins 写了一个
+emitter.js 派发器。它可以做两件事，一个叫广播一个叫冒泡派发事件，这个东西在 vue1.0 里是有的，2.0 之后删了。element 觉得它有用，所以自己实现了，这个东西可以隔层的去派事件，比如在 input 里可以不停的向上去找我想要的组件让它去派发事件。这个东西是作为一个混入被引入的，主要是为了复用。
+
+1.mixin emitter
+2.声明 componentName
+3.dispatch()
+
+### 树形（递归）组件的设计与实现
+
+循环引用，在做树形组件的时候，会用到递归组件
+
+### Vue 组件化知识点思维导图
+
+https://www.processon.com/view/link/5d430271e4b01ed2c6aa4171#map
