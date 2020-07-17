@@ -561,7 +561,7 @@ MyPlugin.install = function (Vue, options) {
 
 #### 插件使用
 
-使用Vue.use即可引入插件
+使用 Vue.use 即可引入插件
 
 ```js
 Vue.use(MyPlugin)

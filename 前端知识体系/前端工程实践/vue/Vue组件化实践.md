@@ -633,8 +633,6 @@ export default {
 
 需求：我现在有一个 Notice.vue 这样的组件，要用函数的方式去创建这个组件的实例，并且将来还能把它挂在到 body 上面去。
 
-可以考虑把它改成 Vue 插件的形式，用起来更舒服。
-
 #### 实现 create 函数
 
 这个 create 方法将来接收一个组件（其实就是组件的配置）和一些参数，通过 JS 的方式创建这个组件的实例，不需要在任何组件中通过 components 选项声明，并将其挂载到 body 上去，最终返回这个组件实例。
@@ -820,6 +818,36 @@ this.$create(Notice, {
   message: '提示信息',
   duration: 1000
 }).show();
+```
+
+#### 封装成 Vue 插件的形式，便于使用。
+
+utils/create.js
+
+```js
+import Vue from 'vue'
+import Notice from 'Notice.vue'
+
+function create() {
+  //...
+}
+
+export default {
+  install(Vue) {
+    Vue.prototype.$notice = function(options) {
+      return create(Notice, options)
+    }
+  }
+}
+```
+
+main.js
+
+```js
+import Vue from 'vue'
+import create from './utils/create'
+
+Vue.use(create)
 ```
 
 
