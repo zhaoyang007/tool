@@ -198,9 +198,32 @@ let Vue;
 class Store {
   constructor(options) {
     // this.$options = options;
-    // 保存mutations、actions选项
+    // 保存mutations、actions、getters选项
     this._mutations = options.mutations;
     this._actions = options.actions;
+    this._getters = options.getters;
+    
+    // 定义computed选项
+    const computed = {}
+    // 给用户暴露一个getters
+    this.getters = {}
+    
+    const store = this
+    
+    Object.keys(this._getters).forEach(key => {
+      // 获取用户定义个getters
+      const fn = store._getters[key]
+      // 转换为computed使用的无参数的形式，做一个高阶封装
+      computed[key] = function() {
+        return fn(store.state)
+      }
+      // 将getters设置为只读属性
+      Object.defineProperty(store.getters, key, {
+				get() {
+          return store._vm[key]
+        }
+      })
+    })
 
     // 响应化处理state 
     // this.state = new Vue({
@@ -211,7 +234,14 @@ class Store {
       data: {
         // 加两个$，Vue不做代理
         $$state: options.state
+      },
+      // 把getters当成一个计算属性去实现就可以了。注意computed的函数是无参数的。
+      computed: {
+      	a: function() {
+          return this.state.a + this.state.b
+        }
       }
+      
     })
 		
     // 绑定commit、dispatch的上下文为store实例
@@ -279,22 +309,20 @@ export default {
 
 ## 遗漏问题
 
-### 尝试去看看 VueRouter 的源码，并解答:嵌套路由的解决方式
+### 尝试去看看 VueRouter 的源码，并解答：嵌套路由的解决方式
 
  GitHub，所有代码在 src
 
- 1.做router-view的深度标记
- 2.路由匹配时获取代表深度层级的matched数组
+* 做 router-view 的深度标记
+* 路由匹配时获取代表深度层级的 matched 数组
 
-### 尝试去看看 Vuex 的源码，并实现 getters
+### 尝试去看看 Vuex 的源码
 
-GitHub，所有代码在 src
-
-要研究的主要目标是入口 index.js 和 store 实例的地方 store.js
+GitHub，所有代码在 src，要研究的主要目标是入口 index.js 和 store 实例的地方 store.js。
 
 ### 了解 Vue 数据响应原理 
 
-Vue 常见的数据响应式的实现
+Vue 常见的数据响应式的实现：
 
 ```js
 Object.defineProperty() // 这是最底层的
@@ -307,7 +335,9 @@ new Vue({
 ```
 
 这些东西的内部是怎么去做数据修改的追踪拦截的。
+
 像数组这样的不支持 Object.defineProperty() 的应该怎么去做。
+
 界面中视图的更新函数到底从哪来，怎么这个数据变了那个部分就要去更新呢，就会涉及到依赖收集这样的概念。
 
 ### Vue 全家桶知识点思维导图
