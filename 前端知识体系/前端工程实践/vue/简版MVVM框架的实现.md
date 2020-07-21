@@ -25,6 +25,25 @@ Vue1.0 中，即我们今天实现的简版 MVVM 框架中这个渲染指的就�
 ## 最简单的数据响应式
 
 ```js
+// 数组响应式
+// 思路：找到数组原型，覆盖那七个修改数组的方法，让它除了做原来的事情之外，还能够额外做更新通知，这样就实现了数组的响应式操作。并将得到的新的原型设置到data中的数组实例原型上，这样这个数组执行调用这些方法的时候就会以我们添加的方法为准。
+// 1.替换数组原型中那7个方法
+// 拿到数组原型
+const originalProto = Array.prototype
+// 备份一份，修改备份
+const arrayProto = Object.create(originalProto)
+
+// splice,reverse,sort
+['push', 'pop', 'shift', 'unshift'].forEach(method => {
+  arrayProto[method] = function() {
+    // 原始操作
+    arrayProto[method].apply(this, arguments)
+    // 覆盖操作：通知更新（对象响应式里的setter操作dep.notify）
+    console.log('数组执行 ' + method + '操作');
+    
+  }
+})
+
 // 数据响应式
 function defineReactive(obj, key, val) {
   // 递归
@@ -55,9 +74,21 @@ function observe(obj) {
     // 希望传入的是obj
     return
   }
-  Object.keys(obj).forEach(key => {
-    defineReactive(obj, key, obj[key])
-  })
+  
+  // 数组数据响应化
+  if (Array.isArray(obj)) {
+    // 覆盖该数组的原型
+    obj.__proto__ = arrayProto
+    // 对数组内部的元素做响应化处理
+    for (let i = 0; i < obj.length; i++) {
+      observe(obj[i])
+    }
+  } else {
+    Object.keys(obj).forEach(key => {
+      defineReactive(obj, key, obj[key])
+    })
+  }
+  
 }
 
 function set(obj,key,val) {
@@ -323,10 +354,18 @@ class Compiler {
       // 规定：指令以k-xx="oo"定义 k-text="counter"
       const attrName = attr.name // k-xx k-text
       const exp = attr.value // xx counter
+      // 指令处理
       if (this.isDirective(attrName)) {
         const dir = attrName.substring(2) // xx text
         // 执行指令
         this[dir] && this[dir](node, exp)
+      }
+      // 事件处理
+      if (this.isEvent(attrName)) {
+        // @click="onClick"
+        const dir = attrName.substring(1) // 得到click
+        // 事件监听
+        this.eventHandler(node, exp, dir)
       }
     })
   }
@@ -336,14 +375,33 @@ class Compiler {
     return attr.indexOf('k-') === 0
   }
   
+  // 是否是事件
+  isEvent(attr) {
+    return attr.indexOf('@') === 0
+  }
+  
   // k-text
   text(node, exp) {
     this.update(node, exp, 'text')
   }
 
+  
   // k-html
+  // 双向绑定，语法糖，它实际上做了两个事，value 值的设定和事件的监听。设置 v-model 就是要实现这两个事情，因此在代码的实现层面实现这两件事情就可以了。
   html(node, exp) {
     this.update(node, exp, 'html')
+  }
+  
+  // k-model
+  model(node, exp) {
+    // update方法只完成赋值操作，是单向的
+    // value赋值
+    this.update(node, exp, 'model')
+    // 事件监听
+    node.addEventListener('input', e => {
+      // 将新的值赋值给数据
+      this.$vm[exp] = e.target.value
+    })
   }
 
   // 编译函数
@@ -368,6 +426,17 @@ class Compiler {
     node.innerHTML = value
   }
   
+  modelUpdater(node, value) {
+    // 表单元素赋值
+    node.value = value
+  }
+  
+  // 事件监听处理
+  eventHandler(node, exp, dir) {
+    const fn = this.$vm.$options.methods && this.$vm.$options.methods[exp]
+    node.addEventListener(dir, fn.bind(this.$vm))
+  }
+  
 }
 ```
 
@@ -375,25 +444,8 @@ class Compiler {
 
 ## 遗漏问题
 
-### 实现数组响应式
-
-思路：
-
-1.找到数组原型，因为在数组的原型中存在着我们希望覆盖的方法
-
-2.覆盖那些能够修改数组的更新方法，使其可以通知更新
-
-我们把这些方法给覆盖掉，让它除了做之前的事情之外，还能额外的做上一个更新通知。数据发生变化之后，可以让它发送一个update这样的通知，视图中就可以做响应了，这样就实现了数组的响应式操作。
-
-3.将得到的新的原型设置到数组实例原型上
-
-### 完成后续 k-model、@xx
-
-@xx
-
-k-model：双向绑定，语法糖，它实际上做了两个事，value值的设定和事件的监听。
-
 ### 问题
+
 vue 的 vdom + diff + 操作 dom 就比直接原生或 jquery 直接操作 dom 的性能更高吗
 
 ### Vue1.0 和 Vue2.0
