@@ -36,7 +36,7 @@ extend(Vue.options.components, platformComponents)
 // install platform patch function
 //zy 1.指定了一个补丁方法，这个方法非常重要，它其实就是diff算法要发生的地方，patch的意思就是更新升级打补丁
 //zy   这个打补丁的方法主要做的事情是就是把用户传入的虚拟dom转换为真实dom。
-//zy   vue中patch有两种功能，一个是初始化时第一次的赋值，一个是以后的更新。
+//zy   Vue中patch有两种功能，一个是初始化时第一次的赋值，一个是以后的更新。
 //zy   它跟我们写的vue1.0实现的编译器的逻辑有点像，但它是基于虚拟dom实现的操作
 Vue.prototype.__patch__ = inBrowser ? patch : noop
 
@@ -48,7 +48,7 @@ Vue.prototype.$mount = function (
 ): Component {
   //zy 用户在$mount方法中传入的宿主el查到
   el = el && inBrowser ? query(el) : undefined
-  //zy 这里就是执行初始化呢，将首次渲染的结果替换el
+  //zy 初始化执行挂载，将首次渲染的结果替换el
   return mountComponent(this, el, hydrating)
 }
 
