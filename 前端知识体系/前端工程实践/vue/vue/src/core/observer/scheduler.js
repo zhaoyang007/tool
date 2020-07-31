@@ -185,7 +185,7 @@ export function queueWatcher (watcher: Watcher) {
         flushSchedulerQueue()
         return
       }
-      //zy 异步刷新队列，就是在一个Promise执行这个队列中的所有Watcher
+      //zy 异步刷新队列，在一个Promise里执行这个队列中的所有Watcher
       nextTick(flushSchedulerQueue)
     }
   }
