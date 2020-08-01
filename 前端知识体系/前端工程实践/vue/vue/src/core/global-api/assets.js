@@ -35,6 +35,6 @@ export function initAssetRegisters (Vue: GlobalAPI) {
         this.options[type + 's'][id] = definition
         return definition
       }
-    }
+    } 
   })
 }
