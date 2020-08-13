@@ -179,7 +179,7 @@ export function defineReactive (
         if (childOb) {
           childOb.dep.depend()
           if (Array.isArray(value)) {
-            dependArray(value)
+            dependArray(value) 
           }
         }
       }

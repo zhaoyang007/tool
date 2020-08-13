@@ -103,12 +103,12 @@ Vue.prototype.$mount = function (
 
       /* istanbul ignore if */
       if (process.env.NODE_ENV !== 'production' && config.performance && mark) {
-        mark('compile end')
+        mark('compile end')   
         measure(`vue ${this._name} compile`, 'compile', 'compile end')
       }
     }
   }
-  //zy 当这个render函数出现之后，我就可以执行挂载了。真正的挂载是父级的那个原始的那个mount方法，所有我们下一步肯定要去研究那个父级的mount方法。
+  //zy 当这个render函数出现之后，我就可以执行挂载了。真正的挂载是父级的那个原始的那个mount方法，所以我们下一步肯定要去研究那个父级的mount方法。
   return mount.call(this, el, hydrating)
 }
 

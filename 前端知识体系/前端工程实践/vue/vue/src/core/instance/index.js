@@ -22,5 +22,6 @@ stateMixin(Vue) //zy 状态相关api的混入 $data,$props,$set,$delete,$watch
 eventsMixin(Vue) //zy 事件相关api的混入 $on,$once,$off,$emit
 lifecycleMixin(Vue) //zy 跟生命周期相关的更新，渲染等事情 _update,$forceUpdate,$destroy
 renderMixin(Vue) //zy 和渲染函数相关的渲染api _render,$nextTick
+// $nextTick：更改数据想立刻看到dom更改的结果。在这行代码的下面看的话，这个结果并没有，因为vue做的是异步更新的操作，想要看到dom变化必须写在$nextTick的回调中。
 
 export default Vue

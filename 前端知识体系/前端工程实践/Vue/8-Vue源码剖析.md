@@ -18,11 +18,11 @@ Vue 源码学习使我们能够深入理解原理，解答很多开发中的疑�
 
 4. 修改开发脚本：添加代码映射，调试的过程中能够直接调试和研究源码。
 
-   修改 package.json 中的打包脚本：
+   修改 package.json 中的 dev 打包脚本：
 
    "dev": "rollup -w -c scripts/config.js --sourcemap --environment TARGET:web-full-dev"
 
-5. 打包，执行开发脚本：npm run dev
+5. 打包，执行开发脚本，输出最终我们要用的 vue.js：npm run dev
 
    打包成功之后 dist 下会生成一个全新的 vue.js，和它的 map 文件 vue.js.map
 
@@ -30,17 +30,17 @@ Vue 源码学习使我们能够深入理解原理，解答很多开发中的疑�
 
    创建一个测试脚本来看看我们打包的东西是否正常。在任何地方写都可以，vue 有些案例在 examples 里，我们就可以在这来编写测试文件。
 
-   test/01-test.html
+   examples/test/01-test.html
 
    把刚才打包的 vue.js 引进来，剩下的就正常的写一个 vue 程序就行了。
 
-   浏览器打开不报错的跑起来，并且有 vue 初始化的一些输出就可以了。
+   浏览器打开不报错的跑起来，并且有 vue 初始化的一些输出就可以了，接下来就可以调试了。
 
 ### 调试技巧
 
 * 打开指定文件：ctrl+p
 
-* 断点：想知道某个地方到底发生了什么事情
+* 断点：想知道某个地方到底发生了什么事情，让浏览器执行到这个地方的时候停下来，继不继续向下执行由我们调试控制。
 
 * 单步执行
 
@@ -49,7 +49,7 @@ Vue 源码学习使我们能够深入理解原理，解答很多开发中的疑�
 
 * 查看调用栈
 
-  研究代码的过程中，想搞清楚先后之间的调用关系，有时函数进入过深的时候，往往就搞不清楚了。这时就可以好好的研究这个 Call Stack，可以很有效的把你的思路去理顺，是谁调用的谁，整个过程会显得很清晰。调用栈中就可以很好的看到整个的函数执行的流程。
+  研究代码的过程中，想搞清楚先后之间的调用关系，有时函数进入过深的时候，往往就搞不清楚了。这时就可以好好的研究这个 Call Stack，可以很有效的帮你把思路理顺，是谁调用的谁，整个过程会显得很清晰，调用栈中可以很好的看到整个的函数执行的流程。
 
 * 定位当前源文件所在位置
 
@@ -70,7 +70,7 @@ Vue 源码学习使我们能够深入理解原理，解答很多开发中的疑�
 /src                               源码，我们就是要研究这里面的所有东西
     /compiler                  编译器相关
     /core                         核心代码，要常来这里看看啊
-    	/components        通用组件，keep-alive，为什么只有这一个组件，因为它是所有平台通用的。weex 或 web 平台会									 有特殊的像 transition 这样的组件，它会写到其他的目录去。就会写到 platforms 这个目录的 									 weex或 web 里头单独去组织，所以代码的分工是非常清楚的。很值得去借鉴。
+    	/components        通用组件，keep-alive，为什么只有这一个组件，因为它是所有平台通用的。weex 或 web 平台会									 有特殊的像 transition 这样的组件，它会写到其他的目录去。就会写到 platforms 这个目录的 									 weex 或 web 里头单独去组织，所以代码的分工是非常清楚的，很值得去借鉴。
     	/instance     		 构造函数等，在核心代码中，最应该关心的目录应该是这个。Vue 的构造函数就会在这里头。查找									 的思路是什么呢，怎么会找到这里。
    	 /global-api            全局 API
         /observer              响应式相关
@@ -79,148 +79,104 @@ Vue 源码学习使我们能够深入理解原理，解答很多开发中的疑�
 ### 输出的各个发布版本的含义
 
 * runtime：仅包含运行时，不包含编译器，意味着写程序的时候不能使用 template 这个配置项去写字符串的模版。
-* common：只能用于像 nodejs 那边的 require 的方式称为 commonjs，用 cjs 规范来进行打包的，用于像 webpack1，broswerfiy 等老旧版本打包工具。
-* esm：ES（ECMA Script）模块，主要用于 webpack2+ 这些打包工具。
-* umd：universal module definition，就是什么都不加的，如 vue.js，兼容 cjs 和 amd 规范（异步模块），浏览器里面加载模块都希望是异步的啊，所以 amd 规范特别适合在浏览器里使用，浏览器里面直接用不经过打包工具打包的一般会用这个版本。
+* common：只能用于像 nodejs 的 require 的方式称为 commonjs，用 cjs 规范来进行打包的，用于像 webpack1，broswerify 等老旧版本打包工具，现在很少用到。
+* esm：ES（ECMA Script）模块规范，主要用于 webpack2+ 这些打包工具。
+* umd：universal module definition，就是什么都不加的，如 vue.js。浏览器里面直接引，不经过打包工具打包的一般会用这个版本。兼容 cjs 和 amd 规范（异步模块），浏览器里面加载模块都希望是异步的啊，所以 amd 规范特别适合在浏览器里使用。
+
+### 找入口
+
+使用打包工具的项目的源码入口文件怎么找，一般先从 package.json 开始，找到我们打包的脚本命令 dev，是 rollup 打包的，-c 指明了配置文件在哪，然后根据打包脚本命令的参数和打包工具配置文件的代码逻辑就能够找到你想要那个输出版本的入口文件到底是谁。
+
+从这个源码入口文件开始研究源码，我们要多次与这个入口文件打交道，尤其是初始化过程。
 
 
+
+## Vue 初始化过程
 
 ![Vue流程](/Users/zhaoyang/tool/images/前端知识体系/前端工程实践/Vue/Vue流程.png)
 
+### 文件作用
 
+从入口文件开始，根据文件或模块的引用路径寻找 Vue 构造函数。发现每个文件模块的作用，最后根据一个简单的 new Vue() 程序，断点调试，串联整理整个初始化流程。
 
-## 找入口
+**src/platforms/web/entry-runtime-with-compiler.js 入口文件：**
 
-使用打包工具的项目的源码入口文件怎么找。
+保存一份原型上的 $mount，然后针对该平台的特点对 $mount 做扩展。这里是 web 平台，所以扩展的就是跟编译相关的事，处理 render，template，el 选项。选项中有 render 直接调用 mount 执行挂载；有 template 或 el，将它们进行一定处理最后变成 template，然后将这个 template 执行模版解析和编译工作，最终得到 render 函数并将其放到选项中去，然后调用 mount 执行挂载。所以不管是 render，template 还是 el，最终都是要得到 render 渲染函数。 
 
-从这个源码入口文件开始研究源码。
+**src/platforms/web/runtime/index.js：**
 
-入口怎么找，一般先从 package.json 开始，找到我们打包的脚本命令 dev，是 rollup 打包的，-c 指明了配置文件在哪，然后根据打包脚本命令的参数和打包工具配置文件就能够找到你想要那个输出版本的入口文件到底是谁。
+* 安装 web 平台特有指令和组件；
+* 在 Vue 原型上定义了补丁方法 Vue.prototype.\__patch__ 把虚拟 DOM 转换成真实 DOM，初始化的赋值和以后的更新都会用到这个 patch；
+* 实现了 $mount，它只做了一件事，就是把传过来的宿主 el 做 DOM 查询，然后调用 mountComponent 执行初始化挂载，将首次渲染的结果替换 el。
 
-研究源码我们要多次与这个入口文件打交道，尤其是初始化过程。
+**src/core/index.js：**
 
+开始进入到核心代码里了。定义全局 API。
 
+**src/core/instance/index.js：**
 
-## Vue 初始化过程研究
+* 定义 Vue 构造函数，构造函数内部只执行了一行代码，就是初始化方法 this._init()，这个方法是通过混入的方式混入进来的，具体是通过 initMixin(Vue) 方法给 Vue 原型添加 \_init 方法，将来 new Vue() 的时候执行这个初始化方法；
+* 使用 混入的方式定义 Vue 实例 API：initMixin(Vue)，状态相关api stateMixin(Vue)，事件相关api eventsMixin(Vue)，跟生命周期相关的更新渲染等 lifecycleMixin(Vue)，渲染函数相关api renderMixin(Vue)
 
-从入口文件开始，根据文件或模块的引用路径寻找 Vue 构造函数。发现每个文件模块的作用。最后通过调试 new Vue() 的程序来整理出整个初始化流程。
+**src/core/instance/init.js：**
 
-### src/platforms/web/entry-runtime-with-compiler.js
-
-扩展 $mount，处理 template 或 el 选项，执行模版解析和编译工作。
-
-### src/platforms/web/runtime/index.js
-
-安装 web 平台特有指令和组件 
-
-定义 \__patch__
-
-定义 $mount
-
-### src/core/index.js
-
-定义全局 API
-
-### src/core/instance/index.js
-
-定义 Vue 构造函数
-
-定义 Vue 实例 API
+* 初始化方法 _init 定义的地方；
+* _init 方法做的事情是创建组件实例，初始化其数据、属性、事件等，然后执行挂载 $mount。
 
 ```js
-initMixin(Vue)       // 实现init函数
-stateMixin(Vue)      // 状态相关api $data,$props,$set,$delete,$watch 
-eventsMixin(Vue)     // 事件相关api $on,$once,$off,$emit 
-lifecycleMixin(Vue)  // 生命周期api _update,$forceUpdate,$destroy 
-renderMixin(Vue)     // 渲染api _render,$nextTick
-// $nextTick：更改数据想立刻看到dom更改的结果。在这行代码的下面看的话，这个结果并没有，因为vue做的是异步更新的操作，想要看到dom变化必须写在$nextTick的回调中。
-```
+initLifecycle(vm)     // 声明组件实例的$parent $root $children $refs，组件创建的顺序是自上而下的，挂载的顺序是自下而上的，当我创建完毕之后，立刻执行挂载，找到老爹执行一次挂载。
+initEvents(vm)       // 处理父组件传入的事件和回调，就是对父组件传入的事件添加监听，事件的派发和监听是一个人
+initRender(vm)       // 跟渲染相关的东西，也就是跟虚拟dom相关的东西。声明了$slots,$createElement就是那个h
 
-### src/core/instance/init.js
-
-初始化方法 _init 定义的地方
-
-创建组件实例，初始化其数据、属性、事件等
-
-```js
-initLifecycle(vm)     // 声明$parent $root $children $refs，组件创建的顺序是自上而下的，挂载的顺序是自下而上的，因为当我创建完毕之后，我要立刻执行挂载，找到老爹执行一次挂载。
-initEvents(vm)        // 处理父组件传入的事件和回调，就是对父组件传入的事件添加监听
-initRender(vm)        // 跟渲染相关的东西，渲染相关那肯定也就是跟虚拟dom相关的东西。声明了$slots, 		  
-											// $createElement
-
-// 完成了上面三件事之后，会调一个beforeCreate，所以beforeCreate里面可以用上面声明的所有的东西
-callHook(vm, 'beforeCreate') // 调用beforeCreate钩子
+callHook(vm, 'beforeCreate') // 完成了上面三件事之后，会调一个beforeCreate，所以beforeCreate里面可以用上面声明的所有的东西
 
 initInjections(vm)    // 注入数据 resolve injections before data/props
 initState(vm)         // 重要：数据的初始化props，methods，data，computed，watch，数据响应式
 initProvide(vm)       // 提供数据 resolve provide after data/props
 
-// 上面的事情都做完后，会有一个created这个生命周期，这个时候所有的初始化全部完成了，你可以放心大胆做你任何想做的事情了。
-callHook(vm, 'created')
+callHook(vm, 'created') // 上面的事情都做完后，会有一个created这个生命周期，这个时候所有的初始化全部完成了，你可以放心大胆做你任何想做的事情了。
 ```
-
-### src/core/instance/lifecycle.js
-
-mountComponent：执行挂载，获取 VDOM 并转换为 DOM
-
-### src/core/instance/render.js
-
-render()：渲染组件，获取 VDOM
-
-### src/core/instance/lifecycle.js
-
-update()：执行更新，将传入 VDOM 转换为 DOM，初始化时执行的是 DOM 创建操作
 
 ### 初始化总体流程
 
-根据一个简单的 Vue 程序，断点调试，串联整个初始化流程。
-
 构建组件实例的时候创建 Watcher
 
-1. new Vue() 进入到构造函数，调用 init()
-2. init 里执行一系列的初始化工作
-3. $mount()，执行挂载 
-   * mountComponent()，执行挂载转换，渲染更新组件
-     * 声明 updateComponent，更新函数
-       * \_render()：调用 render 函数获取最新的虚拟 DOM
-       * \_update()：
-         * \__patch__()：把虚拟 DOM 转换为真实 DOM
-           * patchVnode：Diff 算法真正发生的地方。
-     * 创建 Watcher，传入更新函数：这个 watcher 和组件绑定，管理这个组件实例。
-       * 初始化执行一次 updateComponent
-       * 每次这个组件实例的数据变化再次执行 updateComponent，这就是虚拟 DOM 的存在价值，这个组件可能有很多数据发生变化，所以必须通过比对得出哪个地方变了。
-
-
-
-## 深入数据响应式
-
-数据响应式是在 Vue 初始化工作 init 里面的 initState 方法里做的。
-
-initState 这个方法来自于 src/core/instance/state.js，这里面做了一系列数据的初始化，包括 props、methods、data、computed 和 watch。
-
-#### data 响应式
-
-initData：获取 data，设置代理，启动响应式 observe。
-
-#### observe
-
-src/core/observer/index.js，跟响应式所有有关的代码都在这个 observer 文件夹中。
-
-#### observer 方法
-
-判断出入的对象数据是不是响应式的，是的话直接返回 Observer 实例。不是的话创建 Observer 实例。
-
-也就是说一个对象数据要进行一次响应式观察处理。一次只处理一个对象数据和里面的一层。
-
-#### Observer 类
-
-* 为每一个对象数据创建一个 Dep 实例，当这个对象数据发生变化的时候能够通知界面更新。
-* 分别做数组和对象的响应化处理
-  * defineReactive 
-    * 创建每一个 key 对应的 dep，然后为每个 key 做响应化拦截。这个细粒度的 dep 是为用户 Watcher 准备的，而不是为了整个组件的渲染 Watcher。
-    * 收集依赖的时候，会考虑到要响应化的数据中存在对象数据，要把该数据和它里面的对象数据中的每个 key 都做依赖收集起来，利用的就是之前创建的 ob。这样值变化能做到通知界面。如果要做响应化的数据是数据要把数组中的每一项都做依赖收集起来。它们最终收集的 Watcher 都是一个，就是该组件实例对应的那个 Watcher。
-
 一个组件实例只有一个 Watcher。
+
+1. new Vue() 进入到构造函数，调用 _init()
+2. _init 里执行一系列的初始化工作。最后判断有 el 执行 $mount，使用 template 或 render 需要手动执行 $mount。
+   * initState(vm)：数据响应式，这里做了一系列数据的初始化，包括 props、methods、data、computed 和 watch。
+     * initData(vm)：data 响应式，获取 data，设置代理，启动响应式 observe。
+       * observe(value)：判断传入的数据 value 是不是对象，不是直接 return。然后尝试从 value 中获取一个 Observer 实例 ob = value.\__ob__，如果该对象数据是响应式的，就会有这个 ob，不是的话，就创建 Observer 实例，进行响应化处理，最后返回 Observer 实例 ob。也就是说一个对象类型的数据要进行一次响应式观察处理，每次只处理一个对象数据和里面的一层，然后递归把所有深层次的数据都处理到。
+         * Observer(value)：做数据响应化，它只处理对象类型的数据。
+           * 为每一个对象类型的数据的 ob 创建一个 dep。object 里面新增($set)或者删除属性，array 那七个变更数组方法时会使用到这个的 dep 中存放的依赖来做通知更新。
+           * 给 value 设置 \__ob__ 的属性，值为当前的 Observer 实例 this，就是为每个对象类型的数据都附加一个 Observer 实例。
+           * 分别做数组和对象的响应化处理：
+             * 数组
+               * 替换数组原型。
+                 * 执行原来的方法功能
+                 * 通知更新：使用 ob 中的 dep 来通知更新。
+               * 如果数组里面的元素是对象，还需要对其做响应化处理，对其执行 observe
+             * 对象
+               * defineReactive：对每个 key 做数据响应化。
+                 * 创建每个 key 对应的 dep，这个细粒度的 dep 是为用户 Watcher 准备的，而不是为了整个组件的渲染 Watcher。
+                 * 使用 observe(val) 做递归处理，因为 val 有可能是对象，并且 observe 可以返回 ob，依赖收集时会用到。
+                 * Object.defineProperty：数据劫持，为每个 key 做响应化拦截。
+                   * get：收集依赖，最终收集的 Watcher 都是一个，就是该组件实例对应的那个 Watcher。
+                     * 对每个 key 对应的 dep 做收集。
+                     * 如果要做响应化的数据是对象，也就是说存在 ob，还要对他们中的 ob 对应的 dep 做收集。
+                     * 如果要做响应化的数据是数组，要把数组中的对象或数组，还要对他们中的 ob 对应的 dep 做收集。
+                   * set：
+                     * 如果赋的新值是对象，也要做响应化处理。
+                     * 通知更新
+3. vm.$mount()，执行挂载，只做了 mountComponent 这一个事
+   * mountComponent()，执行挂载转换
+     * 声明 updateComponent 更新函数，并没有调用，里面执行下面两个方法
+       * vm.\_render()：调用 render 函数获取最新的虚拟 DOM，并把虚拟 DOM 传入 \_update() 中
+       * vm.\_update()：执行更新
+         * \__patch__()：把虚拟 DOM 转换为真实 DOM，这里执行完，页面就会有显示了，初始化过程就结束了。
+           * patchVnode：Diff 算法真正发生的地方。
+     * 创建了一个和组件实例相关的 Watcher，传入更新函数，初始化过程会 Watcher 会执行一次更新函数，以后有更新，Watcher 会让更新函数再次执行。
 
 ### Vue2.0 中响应式的缺点
 
@@ -235,6 +191,8 @@ API 不统一，对于数组和 object 是两套方案。所以这两套方案�
 ## Vue 批量异步更新策略
 
 Vue 高效的秘诀是一套批量、异步的更新策略，还有虚拟 DOM。
+
+既然是异步更新，显然要涉及一个概念就是队列 Queue，将来 vue 会创建一个队列，每一次提交更新的时候不会立刻做这件事，而是尝试把这个Watcher直接往队列里面放，如果这个Watcher已经在队列里了，会做去重，不让它再进去了。所以一个Watcher在一个队列中只可能出现一次，同时对组件里的n个key做了修改，最终进入到队列的Watcher只有一个。
 
 在一次事件循环周期之内，可能有很多数据发生变化，导致很多组件发生变化，最好的方式就是把这些组件批量的放在一起做 DOM 的更新操作，全部更新完之后浏览器一下子刷新页面，这时候的效果是最好的最快的，这就是 Vue 的批量异步更新策略。
 
@@ -266,7 +224,7 @@ Vue 高效的秘诀是一套批量、异步的更新策略，还有虚拟 DOM。
 
 ### 概念
 
-虚拟 DOM 就是 JS 对象，能够描述 DOM 结构和关系，它是一棵树，和 DOM 树是完全对应的。
+虚拟 DOM  vnode 就是表示一个 DOM 元素的 JS 对象，跟 DOM 一样都是一棵树。
 
 ![虚拟DOM](/Users/zhaoyang/tool/images/前端知识体系/前端工程实践/Vue/虚拟DOM.png) 
 
@@ -423,41 +381,9 @@ _createElement() 根据标签名称 tag 做相应操作生成虚拟 DOM：
 
 ## 遗漏问题
 
-### 数组响应化
-
-这也反映了一个问题，我们平常写代码的时候，有些方式是不可以的，必须通过方法或 set 去改变数组。
-
-```js
-items = [1, 3]
-item[0] = 'abc' // no ok
-Vue.set(itme, 0, 'abc') // ok
-```
-
-### 数据响应式里的源码具体实现问题
-
-dep，watcher，observer 之间的关系。
-
-### 自己尝试编写测试案例调试
-
-编写测试案例，找一些断点把自己的想法想要观察的地方动手调试一下。这个技能非常重要，它是学习源码深入理解这些问题的一个非常重要的手段。
-
 ### 自己研究一下 Vue.set/delete/$watch 等 API
 
-你在研究这些东西的时候，从哪开始呢，它在哪个文件，但是一开始根本不知道它在哪，不太容易找，怎么办呢，可以写上一个测试的页面，在里面调一下你要研究的api接口，一调试不就知道它在哪了吗。这是一个最简单的方式，在我们刚开始学习的阶段是很有效的。
-
-### 尝试看看 Vue 异步更新队列是如何实现的
-
-1.Queue
-
-既然是异步更新，显然要涉及一个概念就是队列 Queue，将来 vue 会创建一个队列，每一次提交更新的时候不会立刻做这件事，而是尝试把这个Watcher直接往队列里面放，如果这个Watcher已经在队列里了，会做去重，不让它再进去了。所以一个Watcher在一个队列中只可能出现一次，同时对组件里的n个key做了修改，最终进入到队列的Watcher只有一个。
-
-2.批量异步
-
-### Vue 初始化流程和数据响应式知识点思维导图
-
-理清整体的流程，每个文件从哪开始怎么进去，它们是做什么的，有什么作用，把整个过程流程给理顺理通。 
-
-https://www.processon.com/view/link/5d1eb5a0e4b0fdb331d3798c
+你在研究这些东西的时候，不知道从哪开始，在哪个文件，可以写上一个测试页面，在里面调一下你要研究的 API，一调试就知道它在哪了。
 
 
 

@@ -48,7 +48,7 @@ Vue.prototype.$mount = function (
 ): Component {
   //zy 用户在$mount方法中传入的宿主el查到
   el = el && inBrowser ? query(el) : undefined
-  //zy 初始化执行挂载，将首次渲染的结果替换el
+  //zy  
   return mountComponent(this, el, hydrating)
 }
 
