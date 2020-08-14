@@ -83,7 +83,7 @@ export class Observer {
     for (let i = 0, l = items.length; i < l; i++) {
       observe(items[i])
     }
-  }
+  } 
 }
 
 // helpers

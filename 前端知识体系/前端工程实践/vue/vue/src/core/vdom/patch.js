@@ -721,7 +721,7 @@ export function createPatchFunction (backend) {
   }
 
   return function patch (oldVnode, vnode, hydrating, removeOnly) {
-    //zy 如果新的虚拟dom树不存在，怎删除
+    //zy 如果新的虚拟dom树不存在，就删除
     if (isUndef(vnode)) {
       if (isDef(oldVnode)) invokeDestroyHook(oldVnode)
       return
@@ -729,7 +729,7 @@ export function createPatchFunction (backend) {
 
     let isInitialPatch = false
     const insertedVnodeQueue = []
-
+ 
     //zy 如果老的vdom树不存在，新增
     if (isUndef(oldVnode)) {
       // empty mount (likely as component), create new root element
