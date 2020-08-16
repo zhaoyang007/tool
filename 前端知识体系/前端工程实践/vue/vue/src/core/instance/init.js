@@ -58,7 +58,7 @@ export function initMixin (Vue: Class<Component>) {
     initRender(vm) //zy 跟渲染相关的东西，渲染相关那肯定也就是跟虚拟dom相关的东西。声明了$slots, $createElement
     //zy 完成了上面三件事之后，会调一个beforeCreate，所以beforeCreate里面可以用上面声明的所有的东西
     callHook(vm, 'beforeCreate') //zy 调用beforeCreate钩子
-    initInjections(vm) //zy 注入数据 // resolve injections before data/props
+    initInjections(vm) //zy 注入数据  // resolve injections before data/props
     initState(vm) //zy 重要：数据的初始化，数据响应式
     initProvide(vm) //zy 提供数据 // resolve provide after data/props
     //zy 上面的事情都做完后，会有一个created这个生命周期，这个时候所有的初始化全部完成了，你可以放心大胆做你任何想做的事情了。
@@ -70,7 +70,7 @@ export function initMixin (Vue: Class<Component>) {
       mark(endTag)
       measure(`vue ${vm._name} init`, startTag, endTag)
     }
-    
+
     if (vm.$options.el) {
       vm.$mount(vm.$options.el)
     }

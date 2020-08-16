@@ -93,7 +93,7 @@ Vue 源码学习使我们能够深入理解原理，解答很多开发中的疑�
 
 ## Vue 总体流程
 
-![Vue流程](/Users/zhaoyang/tool/images/前端知识体系/前端工程实践/Vue/Vue流程.png)
+Vue 控制的其实只是这些 data 数据，跟数据相关的东西。它并不控制 DOM 节点，你随便怎么做操作 DOM。
 
 从入口文件开始，根据文件或模块的引用路径寻找 Vue 构造函数。发现每个文件模块的作用，最后根据一个简单的 new Vue() 程序，断点调试，串联整理整个初始化流程。
 
@@ -137,7 +137,7 @@ callHook(vm, 'created') // 上面的事情都做完后，会有一个created这�
 
 1. new Vue() 进入到构造函数，调用 _init()
 
-2. _init 里执行一系列的初始化工作。最后判断有 el 执行 $mount，使用 template 或 render 需要手动执行 $mount。
+2. _init() 里执行一系列的初始化工作。最后判断有 el 执行 $mount，使用 template 或 render 需要手动执行 $mount。
 
    * initState(vm)：数据响应式，这里做了一系列数据的初始化，包括 props、methods、data、computed 和 watch。
      * initData(vm)：data 响应式，获取 data，设置代理，启动响应式 observe。
@@ -156,7 +156,7 @@ callHook(vm, 'created') // 上面的事情都做完后，会有一个created这�
                  * 创建每个 key 对应的 dep，这个细粒度的 dep 是为用户 Watcher 准备的，而不是为了整个组件的渲染 Watcher。
                  * 使用 observe(val) 做递归处理，因为 val 有可能是对象，并且 observe 可以返回 ob，依赖收集时会用到。
                  * Object.defineProperty：数据劫持，为每个 key 做响应化拦截。
-                   * get：收集依赖，最终收集的 Watcher 都是一个，就是该组件实例对应的那个 Watcher。
+                   * get：收集依赖，最终收集的 Watcher 都是一个，就是该组件实例对应的那个 Watcher。render 函数里有动态的值需要去访问，这时就触发了 getter，然后做依赖收集。
                      * 对每个 key 对应的 dep 做收集。
                      * 如果要做响应化的数据是对象，也就是说存在 ob，还要对他们中的 ob 对应的 dep 做收集。
                      * 如果要做响应化的数据是数组，要把数组中的对象或数组，还要对他们中的 ob 对应的 dep 做收集。
@@ -173,108 +173,78 @@ callHook(vm, 'created') // 上面的事情都做完后，会有一个created这�
                                      * updateComponent()
                                        * 跟初始化一样的操作...
 
-3. vm.$mount()，执行挂载，只做了 mountComponent 这一个事
-   * mountComponent()，执行挂载转换
-     * 声明 updateComponent() 更新函数，并没有调用，里面执行下面两个方法
-       * vm.\_render()：调用 render 函数获取当前组件对应的最新的虚拟 DOM，并把虚拟 DOM 传入 \_update() 中
+   * vm.$mount()，执行挂载，只做了 mountComponent 这一个事
+     * mountComponent()，执行挂载转换
 
-         * render()：返回 vnode
+       * 声明 updateComponent() 更新函数，并没有调用，里面执行下面两个方法
 
-       * vm.\_update()：执行更新
-         * vm.\__patch__()：它就是 patch 函数，传入新老 vnode，做对比找出最小变化，执行 DOM 操作，返回 vnode。把 vnode 转换为真实 DOM，这里执行完，页面就会有显示了，初始化过程就结束了。这里的 vnode 就是组件对应的整棵虚拟 DOM 树，首先进行组件的整棵 vnode 树的比较，可能有三种情况：
+         * vm.\_render()：调用 render 函数获取当前组件对应的最新的虚拟 DOM，并把虚拟 DOM 传入 \_update() 中
 
-           * 组件的 new vnode 树不存在就删
+           * render()：返回 vnode
+             * createElement()：h 方法
+               * 如果编译后生成的 render 函数的 tag 是字符串
+                 * tag 是保留标签直接创建 vnode
+                   * vnode = new VNode()
+                 * tag 是自定义组件
+                   * resolveAsset()：获取组件构造函数
+                   * vnode = createComponent()：把构造函数，props，事件等作为参数传进去，根据用户写的组件的所有配置创建一个与之相对应的 vnode。
+                     * 处理传递的数据，属性，事件等。
+                     * installComponentHooks()：安装自定义组件管理钩子到该组件的 vnode 上，涉及到组件如何实例化创建和挂载的地方。
+                       * componentVNodeHooks：默认的组件管理钩子
+                         * init：将来的某个时刻会执行这个初始化
+                           * 如果是 keep-alive 组件，就不需要再创建组件实例，直接从缓存中拿出来就行了。
+                           * 不是 keep-alive，组件需要重新创建。这个组件创建和挂载的过程是在 patch 中执行的。
+                             * child = createComponentInstanceForVnode()：创建组件实例
+                             * child.$mount()：创建完实例后挂载，然后接着执行该组件的 _init watcher render update createComponent... 等一系列的这个组件下的那些事情，递归向下创建它下面的那些组件和 DOM 的那棵树。
+                         * prepatch
+                         * insert
+                         * destroy
+                     * new VNode()：创建 vnode 并返回，自定义组件的 vnode 中会有一个特别的属性 componentInstance，将来组件实例创建完成之后，这个属性会被填充，patch 的时候执行组件管理钩子 init，创建组件实例。
+               * tag 是选项或构造函数
+               * vnode = createComponent()
 
-           * 组件的 old vnode 树不存在就增
+         * vm.\_update()：执行更新
 
-             * createElm：把 vnode 变成真实 DOM
+           * vm.\__patch__()：它就是 patch 函数，传入新老 vnode，做对比找出最小变化，执行 DOM 操作，返回 vnode。把 vnode 转换为真实 DOM，这里执行完，页面就会有显示了，初始化过程就结束了。这里的 vnode 就是组件对应的整棵虚拟 DOM 树，首先进行组件的整棵 vnode 树的比较，可能有三种情况：
 
-           * 都存在就执行 diff 执行更新。
+             * 组件的 new vnode 树不存在就删
 
-             * patchVnode：diff 算法发生的地方。对组件的整棵 vnode 树中的每个 vnode 节点进行比较。自顶向下，从最顶层的根节点开始比较，判断是一个节点，对这个节点本身做打补丁操作，这个操作主要是该节点本身的属性更新操作。深度优先：有孩子先比孩子调用 updateChildren，updateChildren 中还会调用 patchVnode，一直向下递归，直到该分支上没有孩子为止，将每个 vnode 节点都 patch 一遍。
+             * 组件的 old vnode 树不存在就增：虚拟 DOM 创建完成了，就要开始执行 patch 了，patch 里发现以前没有现在有，所以要执行一次创建元素，要把 vnode 批量创建成 DOM 元素，在创建 DOM 树的过程中就要做组件实例的创建和挂载。
 
-               * isPatchable(vnode)：节点属性更新，根据平台特性拿出属性的更新函数并传入新老 vnode 去执行属性的更新。
+               * createElm：把 vnode 变成真实 DOM，根组件执行更新函数时，会递归创建子元素和子组件，首次执行_update()时，patch() 会通过 createEle() 创建根元素，子元素创建研究从这里开始
+                 * createComponent()：把之前得到的 vnode 转换为真实的 DOM
+                   * 获取创建组件 vnode 时安装的组件管理钩子并执行，创建组件实例并挂载
+                   * initComponent()：组件实例的属性，事件，样式等初始化
+                     * invokeCreateHooks()：执行属性相关的钩子，如事件监听 updateDOMListeners()
+                   * insert()：该组件对应的 DOM 树枝插入父组件的 DOM 树上的操作
+                 * 原生标签的创建，DOM 操作
+                   * createChildren()：递归创建子元素
 
-               * 当新老节点都无子节点的时候，只是文本的替换。
+             * 都存在就执行 diff 执行更新。
 
-               * 如果老节点没有子节点而新节点有子节点，先清空老节点的文本内容，然后为其新增子节点。 
+               * patchVnode：diff 算法发生的地方。对组件的整棵 vnode 树中的每个 vnode 节点进行比较。自顶向下，从最顶层的根节点开始比较，判断是一个节点，对这个节点本身做打补丁操作，这个操作主要是该节点本身的属性更新操作。深度优先：有孩子先比孩子调用 updateChildren，updateChildren 中还会调用 patchVnode，一直向下递归，直到该分支上没有孩子为止，将每个 vnode 节点都 patch 一遍。
 
-               * 当新节点没有子节点而老节点有子节点的时候，则移除该节点的所有子节点。
+                 * isPatchable(vnode)：节点属性更新，根据平台特性拿出属性的更新函数并传入新老 vnode 去执行属性的更新。
 
-               * 新老节点均有子节点，则对子节点进行 Diff 操作，调用 updateChildren。
+                 * 当新老节点都无子节点的时候，只是文本的替换。
 
-                 * updateChildren：同级比较，深度优先的递归走完后，再比同一级别数组的下一个节点，直到全部比较完成。
+                 * 如果老节点没有子节点而新节点有子节点，先清空老节点的文本内容，然后为其新增子节点。 
 
-                   比较的过程同时做了 DOM 操作，DOM 操作也是微任务，所以浏览器会等这些 Diff 过程中的 DOM 操作都做完后才统一刷新。
+                 * 当新节点没有子节点而老节点有子节点的时候，则移除该节点的所有子节点。
 
-                   updateChildren 主要作用是用一种较高效的方式比对新旧两个 VNode 的 children 得出最小操作补丁。
+                 * 新老节点均有子节点，则对子节点进行 Diff 操作，调用 updateChildren。
 
-                   两个数组的比较方式：大部分操作都是有规律的，前后插入或正序倒序等。所以为了提高效率，会做一些假设，就是在新老孩子数组的首尾很有可能找到相同的节点，这样就避免做循环了，方法是设置双指针，首尾都没有找到相同的节点还是要做双循环。
+                   * updateChildren：同级比较，深度优先的递归走完后，再比同一级别数组的下一个节点，直到全部比较完成。
 
-                   找到相同的节点做该节点本身的打补丁操作，移动节点位置，移动指针做下一个节点的对比。
+                     比较的过程同时做了 DOM 操作，DOM 操作也是微任务，所以浏览器会等这些 Diff 过程中的 DOM 操作都做完后才统一刷新。
 
-               
-     * 创建了一个和组件实例相关的 Watcher，传入更新函数，初始化过程会 Watcher 会执行一次更新函数，以后有更新，Watcher 会让更新函数再次执行。
+                     updateChildren 主要作用是用一种较高效的方式比对新旧两个 VNode 的 children 得出最小操作补丁。
 
-![Vnode](/Users/zhaoyang/tool/images/前端知识体系/前端工程实践/Vue/Vnode.png)
+                     两个数组的比较方式：大部分操作都是有规律的，前后插入或正序倒序等。所以为了提高效率，会做一些假设，就是在新老孩子数组的首尾很有可能找到相同的节点，这样就避免做循环了，方法是设置双指针，首尾都没有找到相同的节点还是要做双循环。
 
-![Diff](/Users/zhaoyang/tool/images/前端知识体系/前端工程实践/Vue/Diff.png)
+                     找到相同的节点做该节点本身的打补丁操作，移动节点位置，移动指针做下一个节点的对比。
 
-
-
-## 组件化机制
-
-组件，组件实例，配置项，template，render，虚拟 DOM 到底是什么关系。
-
-### 组件的注册声明
-
-使用 Vue.component('comp', {})
-
-initAssetRegisters 方法中定义了 Vue['component'] = function(id, definition) {}，里面使用 Vue.extend 的方式将传进来的组件配置 definition 变成了组件构造函数。然后在根配置选项里面注册这个组件 this.options['components']\['id'] = Ctor，所有的组件实例继承于这个根选项，所以每一个组件实例里其实就已经有了这个配置选项的定义，所以可以随便的去用。
-
-### 组件实例的创建及挂载
-
-组件声明了之后，接下来一定会去创建实例 new Ctor 和挂载 $mount。
-
-创建组件和创建元素比并没有什么特殊之处，编译出来的 render 函数显示它们只是名称不同而已。
-
-/src/core/instance/init.js 组件初始化的地方，所以从这里开始。有几个组件 _init 就会执行几次。从根组件开始向下一次执行。
-
-首先创建的是根实例，然后是根组件，然后是里面的自定义组件，首次 render 时，会得到整棵树的 VNode 结构。
-
-根组件的构造函数是 Vue，组件的构造函数是 VueComponent。
-
-new Vue()  =>  $mount()  =>  vm._render()  =>  $createElement()  =>  createElement() h方法  =>  
-
-_createElement() 根据标签名称 tag 做相应操作生成虚拟 DOM：
-
-* tag 是字符串 
-  * tag 是保留标签：vnode = new VNode()
-  * 自定义组件：
-    * resolveAsset()：获取组件构造函数
-    * vnode = createComponent()：把构造函数，props，事件等作为参数传进去，创建自定义组件虚拟 DOM，就是根据用户写的组件的所有配置创建一个与之相对应的 VNode 对象。
-      * 处理传递的数据，属性，事件等。
-      * installComponentHooks() 安装自定义组件管理钩子到该组件的 vnode 上：涉及到组件如何实例化创建和挂载的地方。
-        * componentVNodeHooks 默认的组件管理钩子
-          * init：将来的某个时刻会执行这个初始化
-            * createComponentInstanceForVnode 传入 vnode 创建组件实例，因为 vnode 中有构造函数 Ctor
-            * 将得到的组件实例执行挂载 $mount，然后接着执行该组件的 render update watcher  createComponent... 等一些列的这个组件下的那些事情。这个自定义组件这棵子树它的创建过程。递归向下。
-          * prepatch
-          * insert
-          * destroy
-      * 虚拟 DOM 的创建
-      * 最终返回虚拟 DOM，自定义组件的 vnode 中会有一个特别的属性 componentInstance，将来组件实例创建完成之后，这个属性会被填充，patch 的时候执行组件管理钩子 init，创建组件实例。
-* tag 是选项或构造函数：vnode = createComponent(tag, data, context, children)
-* 最终返回 vnode
-
-=>  虚拟 DOM 创建完成了，就要开始执行 patch 了，patch 里发现以前没有现在有，所以要执行一次创建元素，要把虚拟 DOM 批量创建成 DOM 元素，在创建 DOM 树的过程中就要做组件实例的创建  =>  
-
-* createElm 根组件执行更新函数时，会递归创建子元素和子组件，首次执行_update()时，patch()会通过createEle()创建根元素，子元素创建研究从这里开始
-  * createComponent()：把之前得到的虚拟 DOM vnode 转换为真实的 DOM
-    * 获取组件管理钩子并执行，创建组件实例并挂载
-    * initComponent()：上步创建的组件实例的属性，事件，样式等初始化，元素引用指定 vnode.elm，元素属性创建等
-    * insert()：该组件对应的 DOM 树枝插入父组件的 DOM 树上的操作
-  * 原生标签的创建
+       * 构建组件实例的时候，创建了一个和组件实例相关的 Watcher，传入更新函数，初始化过程会 Watcher 会执行一次更新函数，以后有更新，Watcher 会让更新函数再次执行。
 
 
 
@@ -356,31 +326,32 @@ processFor 用于解析 v-for 指令，genFor 用于生成相应代码。
 
 v-if，v-for 这些指令只能在编译器阶段处理，如果我们要在 render 函数处理条件或循环只能使用 if 和 for，然后生成VNode。
 
+### 组件化机制
+
+全局组件的注册：在 global-api 里，根据传进来的配置使用 extend 方法创建组件的构造函数，并将这个组件名和其对应的构造函数注册到 Vue.options.components 中去。所有的组件实例继承于这个根选项，所以每个组件实例里就有了这个组件配置选项的定义，所以可以随便的去用。全局声明的组件就是相当于在每个组件实例都声明了一遍该组件。
+
+组件就是组件实例，配置项就是组件的配置项，template 是带有配置项的模版，render 是带有配置项的函数，vnode 是 描述 DOM 的 JS 对象。
+
+组件声明了之后，接下来一定会去创建实例和挂载。创建实例了才能够走 Vue 中的流程，挂载了才能跟 DOM 有联系。
+
+有几个组件 _init 就会执行几次了，从根组件开始向下依次执行。
+
+首先创建根组件实例，然后是里面的自定义组件，首次 render 时，会得到整棵树的 VNode 结构。
+
+根组件的构造函数是 Vue，组件的构造函数是 VueComponent。
+
+组件创建和挂载顺序：组件创建顺序自上而下，组件挂载顺序自下而上。
+
 
 
 ## 遗漏问题
 
 ### 自己研究一下 Vue.set/delete/$watch 等 API
 
-你在研究这些东西的时候，不知道从哪开始，在哪个文件，可以写上一个测试页面，在里面调一下你要研究的 API，一调试就知道它在哪了。 
+你在研究这些东西的时候，不知道从哪开始，在哪个文件，可以写上一个测试页面，在里面调一下你要研究的 API，一调试就知道它在哪了。 尝试去看源码，解答你的疑惑。
 
-### 事件处理
+### 代码研究
 
-思路：注意编译的结果
+事件处理：原生事件，自定义事件。在 render 函数上，事件会绑定到属性上的 on。
 
-原生事件
-自定义事件 
-
-### 双向绑定
-
-思路：注意编译的结果
-
-赋值、事件监听
-
-### 尝试去看源码，解答你的疑惑
-
-### 组件创建和挂载顺序？
-
-组件创建顺序自上而下
-
-组件挂载顺序自下而上
+双向绑定：赋值、事件监听
