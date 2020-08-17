@@ -189,7 +189,7 @@ callHook(vm, 'created') // 上面的事情都做完后，会有一个created这�
                    * resolveAsset()：获取组件构造函数
                    * vnode = createComponent()：把构造函数，props，事件等作为参数传进去，根据用户写的组件的所有配置创建一个与之相对应的 vnode。
                      * 处理传递的数据，属性，事件等。
-                     * installComponentHooks()：安装自定义组件管理钩子到该组件的 vnode 上，涉及到组件如何实例化创建和挂载的地方。
+                     * installComponentHooks()：安装它体内的自定义组件管理钩子到该组件的 vnode 上，涉及到组件如何实例化创建和挂载的地方。
                        * componentVNodeHooks：默认的组件管理钩子
                          * init：将来的某个时刻会执行这个初始化
                            * 如果是 keep-alive 组件，就不需要再创建组件实例，直接从缓存中拿出来就行了。
@@ -209,16 +209,19 @@ callHook(vm, 'created') // 上面的事情都做完后，会有一个created这�
 
              * 组件的 new vnode 树不存在就删
 
-             * 组件的 old vnode 树不存在就增：虚拟 DOM 创建完成了，就要开始执行 patch 了，patch 里发现以前没有现在有，所以要执行一次创建元素，要把 vnode 批量创建成 DOM 元素，在创建 DOM 树的过程中就要做组件实例的创建和挂载。
+             * 组件的 old vnode 树不存在就增：从上到下，创建挂载创建挂载，最后把整棵树创建完毕后一起放到页面中去，然后删除之前的宿主。虚拟 DOM 创建完成了，就要开始执行 patch 了，patch 里发现以前没有现在有，所以要执行一次创建元素，要把 vnode 批量创建成 DOM 元素，在创建 DOM 树的过程中就要做组件实例的创建和挂载。
 
-               * createElm：把 vnode 变成真实 DOM，根组件执行更新函数时，会递归创建子元素和子组件，首次执行_update()时，patch() 会通过 createEle() 创建根元素，子元素创建研究从这里开始
-                 * createComponent()：把之前得到的 vnode 转换为真实的 DOM
+               * createElm：把 vnode 变成真实 DOM，根组件执行更新函数时，会递归创建子元素和子组件，首次执行_update()时，patch() 会通过 createElm() 创建根元素，子元素创建研究从这里开始。
+                 * createComponent()：如果要创建的是组件，走这个流程
                    * 获取创建组件 vnode 时安装的组件管理钩子并执行，创建组件实例并挂载
                    * initComponent()：组件实例的属性，事件，样式等初始化
                      * invokeCreateHooks()：执行属性相关的钩子，如事件监听 updateDOMListeners()
                    * insert()：该组件对应的 DOM 树枝插入父组件的 DOM 树上的操作
-                 * 原生标签的创建，DOM 操作
+                 * 原生标签的创建，把之前得到的 vnode 转换为真实的 DOM
                    * createChildren()：递归创建子元素
+                   * invokeCreateHooks()：执行属性相关的钩子，如事件监听 updateDOMListeners()
+                     * addEventListener()：原生的事件监听
+                   * insert()：该组件对应的 DOM 树枝插入父组件的 DOM 树上的操作
 
              * 都存在就执行 diff 执行更新。
 
@@ -328,7 +331,7 @@ v-if，v-for 这些指令只能在编译器阶段处理，如果我们要在 ren
 
 ### 组件化机制
 
-全局组件的注册：在 global-api 里，根据传进来的配置使用 extend 方法创建组件的构造函数，并将这个组件名和其对应的构造函数注册到 Vue.options.components 中去。所有的组件实例继承于这个根选项，所以每个组件实例里就有了这个组件配置选项的定义，所以可以随便的去用。全局声明的组件就是相当于在每个组件实例都声明了一遍该组件。
+组件化机制就是从 new Vue().$mount() 创建根组件实例和挂载的过程开始，先处理组件自身的 DOM 元素和属性，然后创建子组件，然后子组件会在组件的 patch 过程中实例化和挂载，再走一遍子组件的上述的过程，就这样一层一层的向下创建，直到完成整个树的创建。自定义组件创建有两个关键的过程，一个是 vnode 的创建过程，一个是 vnode 转真实 DOM 的过程，这两个过程的关键方法都叫3创建组件 createComponent。一个是安装组件的实例化和挂载的，一个是调用组件的实例化和挂载的。
 
 组件就是组件实例，配置项就是组件的配置项，template 是带有配置项的模版，render 是带有配置项的函数，vnode 是 描述 DOM 的 JS 对象。
 
@@ -336,11 +339,13 @@ v-if，v-for 这些指令只能在编译器阶段处理，如果我们要在 ren
 
 有几个组件 _init 就会执行几次了，从根组件开始向下依次执行。
 
-首先创建根组件实例，然后是里面的自定义组件，首次 render 时，会得到整棵树的 VNode 结构。
+首次 render 时，会得到整棵树的 VNode 结构。
 
 根组件的构造函数是 Vue，组件的构造函数是 VueComponent。
 
 组件创建和挂载顺序：组件创建顺序自上而下，组件挂载顺序自下而上。
+
+全局组件的注册：在 global-api 里，根据传进来的配置使用 extend 方法创建组件的构造函数，并将这个组件名和其对应的构造函数注册到 Vue.options.components 中去。所有的组件实例继承于这个根选项，所以每个组件实例里就有了这个组件配置选项的定义，所以可以随便的去用。全局声明的组件就是相当于在每个组件实例都声明了一遍该组件。
 
 
 
@@ -354,4 +359,13 @@ v-if，v-for 这些指令只能在编译器阶段处理，如果我们要在 ren
 
 事件处理：原生事件，自定义事件。在 render 函数上，事件会绑定到属性上的 on。
 
-双向绑定：赋值、事件监听
+自定义事件的监听就是把父组件中的事件回调传入 updateComponentListeners() 中，在里面用组件自己 vm.$on() 进行监听。 
+
+双向绑定：赋值、事件监听，在元素属性上绑定一个 value 和事件，事件里面做的事就是把事件回调收到的变化的参数赋值给 value。
+
+```js
+// input 
+_c('input',{ directives:[{ name:"model", rawName:"v-model", value:(foo), expression:"foo"}], attrs:{"type":"text"}, domProps:{"value":(foo)}, on:{"input":function($event){ if($event.target.composing) return; foo=$event.target.value } } })
+// comp 
+_c('comp',{ model:{ value:(foo), callback:function ($$v) {foo=$$v}, expression:"foo" } })
+```

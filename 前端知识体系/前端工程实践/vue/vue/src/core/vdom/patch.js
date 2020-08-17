@@ -209,7 +209,6 @@ export function createPatchFunction (backend) {
     }
   }
 
-  //zy 这里的createComponent是把前面的那个执行结果vnode转换为真实的dom
   function createComponent (vnode, insertedVnodeQueue, parentElm, refElm) {
     //zy 获取管理钩子函数
     et i = vnode.data
@@ -729,7 +728,7 @@ export function createPatchFunction (backend) {
 
     let isInitialPatch = false
     const insertedVnodeQueue = []
- 
+
     //zy 如果老的vdom树不存在，新增
     if (isUndef(oldVnode)) {
       // empty mount (likely as component), create new root element
