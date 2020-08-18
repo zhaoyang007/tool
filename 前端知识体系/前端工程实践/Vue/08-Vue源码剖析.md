@@ -1,13 +1,5 @@
 ## 源码剖析准备
 
-我们的目标是除了学习知识之外，还要学会学习方法，比如代码的基本的组织方式，怎么去调试，看到源码之后应该有怎样的策略去拆解它学习它。
-
-看完官方的实现之后，自己动手琢磨琢磨，反复的去试，思维就逐渐形成了，这样训练能力。
-
-理顺一下 Vue 整个源码的学习流程，以后怎么自己去掌握它。
-
-Vue 源码学习使我们能够深入理解原理，解答很多开发中的疑惑，规避很多潜在的错误，写出更好的代码。学习大神的代码，能够学习编程思想，设计模式，训练基本功，提升内力。  
-
 ### 搭建调试环境
 
 1. clone 源码，地址：https://github.com/vuejs/vue.git  版本:2.6.10
@@ -99,7 +91,7 @@ Vue 控制的其实只是这些 data 数据，跟数据相关的东西。它并�
 
 **src/platforms/web/entry-runtime-with-compiler.js 入口文件：**
 
-保存一份原型上的 $mount，然后针对该平台的特点对 $mount 做扩展。这里是 web 平台，所以扩展的就是跟编译相关的事，处理 render，template，el 选项。选项中有 render 直接调用 mount 执行挂载；有 template 或 el，将它们进行一定处理最后变成 template，然后将这个 template 执行模版解析和编译工作，最终得到 render 函数并将其放到选项中去，然后调用 mount 执行挂载。所以不管是 render，template 还是 el，最终都是要得到 render 渲染函数。 
+保存一份原型上的 $mount，然后针对该平台的特点对 $mount 做扩展。这里是 web 平台，所以扩展的就是跟编译相关的事，处理 render，template，el 选项。选项中如果有 render 直接调用 mount 执行挂载；如果有 template 或 el，将它们进行一定处理最后变成 template，然后将这个 template 执行模版解析和编译工作，最终得到 render 函数并将其放到选项中去，然后调用 mount 执行挂载。所以不管是 render，template 还是 el，最终都是要得到 render 渲染函数。 
 
 **src/platforms/web/runtime/index.js：**
 
@@ -114,7 +106,7 @@ Vue 控制的其实只是这些 data 数据，跟数据相关的东西。它并�
 **src/core/instance/index.js：**
 
 * 定义 Vue 构造函数，构造函数内部只执行了一行代码，就是初始化方法 this._init()，这个方法是通过混入的方式混入进来的，具体是通过 initMixin(Vue) 方法给 Vue 原型添加 \_init 方法，将来 new Vue() 的时候执行这个初始化方法；
-* 使用 混入的方式定义 Vue 实例 API：initMixin(Vue)，状态相关api stateMixin(Vue)，事件相关api eventsMixin(Vue)，跟生命周期相关的更新渲染等 lifecycleMixin(Vue)，渲染函数相关api renderMixin(Vue)
+* 使用混入的方式定义 Vue 实例 API：initMixin(Vue)，状态相关api stateMixin(Vue)，事件相关api eventsMixin(Vue)，跟生命周期相关的更新渲染等 lifecycleMixin(Vue)，渲染函数相关api renderMixin(Vue)
 
 **src/core/instance/init.js：**
 
@@ -173,7 +165,7 @@ callHook(vm, 'created') // 上面的事情都做完后，会有一个created这�
                                      * updateComponent()
                                        * 跟初始化一样的操作...
 
-   * vm.$mount()，执行挂载，只做了 mountComponent 这一个事
+   * vm.$mount()，执行挂载，只做了 mountComponent 这一个事。
      * mountComponent()，执行挂载转换
 
        * 声明 updateComponent() 更新函数，并没有调用，里面执行下面两个方法
@@ -350,6 +342,14 @@ v-if，v-for 这些指令只能在编译器阶段处理，如果我们要在 ren
 
 
 ## 遗漏问题
+
+我们的目标是除了学习知识之外，还要学会学习方法，比如代码的基本的组织方式，怎么去调试，看到源码之后应该有怎样的策略去拆解它学习它。
+
+看完官方的实现之后，自己动手琢磨琢磨，反复的去试，思维就逐渐形成了，这样训练能力。
+
+理顺一下 Vue 整个源码的学习流程，以后怎么自己去掌握它。
+
+Vue 源码学习使我们能够深入理解原理，解答很多开发中的疑惑，规避很多潜在的错误，写出更好的代码。学习大神的代码，能够学习编程思想，设计模式，训练基本功，提升内力。  
 
 ### 自己研究一下 Vue.set/delete/$watch 等 API
 
