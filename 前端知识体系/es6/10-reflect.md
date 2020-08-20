@@ -1,17 +1,17 @@
-
-
-### es 6新增的知识点，反射的意思。
+### es6 新增的知识点，反射的意思。
 
 java 的反射机制是在编译阶段不知道是哪个类被加载，java 是以类为单元的，而是在运行的时候才加载、执行。
 
 ### 反射机制的意义
 
-在你静态扫描的时候，你不知道是哪个方法在用 apply，因为你直接是用的 Reflect，这个 apply 没有绑定到某个方法上。当你真正执行 apply 的时候，这个方法是做为一个参数传进来的，才去调 Reflect这个方法，在静态扫描的时候 Math.floor 这个方法是并没有被执行的。
+在你静态扫描的时候，你不知道是哪个方法在用 apply，因为你直接是用的 Reflect，这个 apply 没有绑定到某个方法上。当你真正执行 apply 的时候，这个方法是做为一个参数传进来的，才去调 Reflect 这个方法，在静态扫描的时候 Math.floor 这个方法是并没有被执行的。
 
 ```js
 Math.floor.apply(null, [1.72])
 Reflect.apply(Math.floor, null, [1.72])
 ```
+
+
 
 ### 反射机制的用途
 
@@ -30,6 +30,8 @@ let price = 91.5
 Reflect.apply(price > 100 ? Math.floor : Math.ceil, null, [price])
 ```
 
+
+
 ### Reflect.construct
 
 有的时候会根据不同的场景来实例化不同的子类。之前的做法是用 if else 去 new 不同的类。现在我们可以用更加简洁的方式，也就是反射的方式去实现类的实例。
@@ -46,6 +48,8 @@ Reflect.construct(Date, []) // 这里的这个空数组的参数必须传
 ```
 
 通过apply和construct这两个方法，你要明白，什么是反射机制，什么样的场景下用反射机制比直接用更加的简单更加的动态化。
+
+
 
 ### Reflect.defineProperty
 
