@@ -28,16 +28,3 @@ https://meyerweb.com/eric/tools/css/reset/
 https://yuilibrary.com/yui/docs/cssreset
 
 https://necolas.github.io/normalize.css/
-
-
-
-
-
-
-
-
-
-
-
-
-
