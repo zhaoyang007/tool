@@ -1,62 +1,5 @@
 
-vue如何实现数据的reactive的
-就是在js数据劫持的api里面做了一些逻辑操作来实现我们想要的结果，get是数据被访问时的劫持，set是数据被赋值时的劫持。
-1.js中支持的数据劫持
-Object.defineProperty(data, key, {
-	enumerable: false,
-	configurable: true,
-	get: function () {
-
-	},
-	set: function () {
-
-	}
-})
-get, set里面都可以做一些事情
-get: 是一个变量被读取的时候触发的，里面return的值即为读取到的值
-set: 是一个变量被赋值的时候触发的，会接收到一个参数，这个参数就是当前被赋值时的值
-2.observer
-在拿到传进来的data之后，使用数据劫持，在get中维护一个观察者列表，是在complie时生成watcher后，在watcher中触发的；set
-时遍历观察者列表，调用观察者列表中每一个成员也就是watcher，而调用watcher中的update函数中的在compile时传过来的回调来
-实现更新view中的值的。
-3.compile
-进行模版编译，将指令事件和文本分别进行处理，将data中的值赋到view中去后，添加一个watcher，每个watcher上传入一个事件监听
-的回调以供未来在data中的值发生变化时调用这个回调，这个回调再调用compile中的更行view的操作。
-4.watcher
-在compile时，遇到的指令或者文本中的值，会自动生成一个watcher，这个watcher会读取data中的值，这时会触发观察者中的get将这
-个watcher放到观察者列表中。并提供data中的值更新时的一个update函数来调用compile时传过来的回调并将vulue值传过去实现data
-变化view也跟着变化的reactive功能。
-
-
-
-
-vue,react的数据绑定的核心都是通过render方法
-	一个组件里面有任何数据变化的时候，它都会重新调用render方法，让后产生新的html，以这种方式来更新我们html的内容
-vue
-	1.render方法
-		理解vue的重点不是它的api和指令，而是它整个应用渲染的过程，其实从理解整个vue开发的方式来讲，我们学习jsx会更好的帮助
-		我们去理解它。学习jsx的时候会知道它有一个render方法，每次我们调用这个render方法才能得到真正想要的结果，其实.vue文件
-		的template部分最终也是用vue-loader去解析成一个render方法然后放到我们这个对象里面去，而每次vue里面有数据更新的时候，
-		它都会去重新调用这个render方法生成一个新的html结构然后最终插到dom里面去，最终显示出来这样一个结果。所以你理解了整个
-		vue渲染的过程之后，自然而然会了解它的api是什么作用。它的指令里面做了哪些操作。
-		vue2之后它的核心实现也变成了虚拟dom，它也提供了render方法，render方法是什么概念呢，一个组件里面有任何数据
-		变化的时候，它都会重新调用render方法，让后产生新的html，以这种方式来更新我们html的内容。.vue文件的template
-		最终都会转化成javascript里面的一个render方法。
-		render方法里面通过vue的createElement()一层一层的去遍历我们写的html的标签上面的属性以及内部的值，以这样的
-		方式去创建一个一个的节点，最终得到我们整个组件所有节点的一个树，真正的理解vue的开发模式，我们要理解它的render
-		方法，深入理解vue需要掌握的知识。
-		render () { 
-			createElement()
-		}
-	2.生命周期方法：
-		因为它是一个组件，这个组件它什么时候开始被编译，它什么时候开始加载到真正的dom里面，它什么时候被销毁，都是有
-		对应的生命周期方法的。这个也是跟react学习的，react组件就有这些生命周期方法。生命周期方法能很好的帮我们处理
-		一些事情，比如我们的组件即将要挂载到dom上之前，我们发起一个api请求，去获取一部分我们想要显示的数据。所以生命
-		周期方法对于我们去写一个组件的理解是有非常大的好处的。 
-	3.vue钩子函数
-		它是一种事件劫持机制，也就是说它会比你的事件更早进行执行处理。
-		你可以简单地把它理解为vue的内置事件，但是这个内置事件是由你去配置的。
-
+	3.vue生命周期钩子函数
 		vue钩子函数在什么时候用
 		beforecreate : 举个栗子：可以在这加个loading事件 
 		created ：在这结束loading，还做一些初始化，实现函数自执行 
@@ -68,113 +11,17 @@ vue
 		created:完成了 data 数据的初始化，el没有
 		beforeMount：完成了 el 和 data 初始化 
 		mounted ：完成挂载
-
-		1、beforeCreate 此时$el、data 的值都为undefined
-		2、创建之后，此时可以拿到data的值，但是$el依旧为undefined
-		3、mount之前，$el的值为“虚拟”的元素节点
-		4、mount之后，mounted之前，“虚拟”的dom节点被真实的dom节点替换，并将其插入到dom树中，于是在触发mounted时，可以获取到$el为真实的dom元素()
-		myVue.$el===document.getElementById("app-8")  // true
 	4.vue组件
-		我们new vue({})的时候它就是一个组件
-		定义组件然后使用组件
-		分好组件后，组件的内部该怎么写就怎么写，但是要理清数据的关系
-
-		组件的定义
-			Vue.component('comp-name', {})
-			new Vue({
-				components: {
-					comp1: {},
-					comp2: {}
-				}
-			})
-		prop
-			Prop 是你可以在组件上注册的一些自定义特性
-		parent
-			new Vue的时候才可以指定他的parent是什么
-			组件的parent就是使用这个组件的父组件或vue实例
 		组件的继承extend
 			用vue.extend()来扩展我们的vue, 可以简单理解为extend之后得到的是vue这个类的一个子类
-		组件高级
-			一些通用的组建使用api调用的方式做，而不是定义，引用，使用组件的这种方式去做。类似于vue插件的使用方法。
-		vue.use源码解析
-			https://www.cnblogs.com/dupd/p/6716386.html
-		组件间通信
-			1.props, this.$emit()用于父子组件
-			2.this.$parent, this.$children, this.$refs 用于父子组件
-			3.通过一个空的Vue实例作为中央事件总线（事件中心），用它来触发事件和监听事件,巧妙而轻量地实现了任何组件间
-			  的通信，包括父子、兄弟、跨级。
-				var Event = new Vue();
-				Event.$emit(事件名, 数据);
-				Event.$on(事件名, data => {});
-			4.vuex
 vue全家桶
 	vue-router
-		vue-router它就是一个路由的功能。
-		我们现在做webapp，路由是一个必不可缺的功能。
-		相对于以前的老的网站开发来讲，一个链接输入之后，然后跳转到后端进行一个模版渲染产生一个新的html然后返回给浏览器端。然后浏览器把这个
-		内容显示出来，这是一次路由跳转。
-		做为单页应用来说，我们的页面跳转肯定是不经过我们的后端服务器了。我们页面渲染的内容全部是来自于我们的javascript，既然我们的路由跳转
-		是在前端去做，我们肯定要有一个称职合理的工具来帮我们去更好的处理我们的前端路由。
-		1.部署路由
-			cd client
-			mkdir config
-			cd config
-			touch router.js
-			touch routes.js
-			在我们项目变得更庞大之后，我们的路哟配置可能会非常的多。那我们就单独去配置一个路由映射关系的一个文件，就是我们的routes.js。
-			router.js这个文件主要是router的一些设置还有它里面的一些内容。
-				1.routes.js
-					import Todo from '../views/todo/todo.vue'
-					import Login from '../views/login/login.vue'
-					export default [
-						{
-							path: '/', // /是默认路由的意思
-							redirect: '/app' // 进到这个页面之后，如果vue-router发现我们的路由是默认路由那么它会自动redirect到/app，因为这是我们的主页
-						}
-						{
-							path: '/app',
-							component: Todo
-						},
-						{
-							path: '/login',
-							component: Login
-						}
-					]
-				2.router.js
-					import Router from 'vue-router'
-					import routes from './routes'
-					export default () = {
-						return new Router({
-							routes,
-							mode: 'history' // 使用history的路由形式
-						})
-					}
-				3.index.js
-					import VueRouter from 'vue-router'
-					// vue插件的使用方式，然后我们vue-router会在里面去做一系列的事情让我们可以通过挂载到我们根结点上面的router对象，
-					// 让我们在每一个我们写的组件里面都可以去拿到这个对象。
-					Vue.use(VueRouter)
-					// 把router加到整个应用里面去
-					import createRouter from './config/router'
-					const router = createRouter()
-					// 然后在最外层的应用，也就是我们new Vue({})的过程当中，把它注入到我们的这个应用里面，这是vue-router的一个使用方法，
-					它会通过我们在根结点的vue实例上面去挂载了这个router对象之后，然后通过provider或者其他的一些类似的方式让我们在每一个
-					我们写的组件里面都可以拿到这个router对象
-					new Vue({
-						router,
-						render: (h) => h(App)
-					}).$mount('#root')
-				4.页面中使用<router-view />这个vue-router内置的组件来承载我们的路由组件。
-				使用<router-link></router-link>进行路由跳转
-			这样我们的路由配置基本就部署好了。
 		2.在new一个Router的时候我们有哪些配置参数可以去使用，它们分别有什么用。
 			1.vue-router的一些设置
 			new Router({
 				routes,
-				mode: 'history' // 使用history的路由形式
-				base: '/base/' // 它在我们routes里配置的所有path前面都会给它加上一个/base/，这段路径作为整个应用的基路径，我们所有
-								// 的路径都要在这个基础之上，然后在应用里面使用router对象去跳转还是使用router-link去跳转，只要你通过
-								// 的是vue-router的api进行的跳转，那么它都会自动加上这个/base/
+				mode: 'history'
+				base: '/base/' 
 				linkActiveClass: 'active-link', // 配置<router-link></router-link>的class名称。给全局写一些样式的时候会用到的东西。当前页面路由和router-link要跳转的路由一致的话，router-link实际的a标签上就会显示这两个类名。
 												// 我们在页面上可点击的使用vue-router的路由，我们一般都会使用router-link去做。因为我们使用router-link它里面是a标签，a标签的href会有利于我们整个网站去做seo的。
 				linkExactActiveClass: 'exact-active-link',
@@ -399,13 +246,6 @@ vue全家桶
 					2.在正式环境的webpack配置中加一个插件
 						new webpack.NamedChunksPlugin()
 	vuex
-		vuex是vue体系当中的一个store，store这个概念呢最先是由react提出来的，他们提出了一个叫flux的数据流结构。flux就是所谓的单向
-		数据流。我们在做前端webapp的时候，我们把所有应用的数据结构都可以放在这个store里面，由store去单独的维护这个数据结构。然后下面
-		的应用就是我们的view层。也就是vue或者是react它们写的这些代码都是通过store里面的数据的更改然后进行view层的一个变化。然后在数
-		据变化之后展示出一个新的内容。通过这种方式去维护数据呢，有一个非常大的好处，那就是整个应用的数据全部放在了一起。然后每个人的修改
-		数据都要通过一个特定的操作，比如说去触发一个action，在vue里面我们还可以直接触发一个mutation。但是我们的操作只有这两种。一个
-		是action，一个是mutation。在这种情况下，那么数据的修改就被限制的非常死。我们不能很随意的去修改整个应用的数据，让我们的应用的
-		规范性就会变得非常的高。
 
 		1.在项目里面加入vuex
 			1.新建store.js

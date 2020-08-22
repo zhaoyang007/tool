@@ -70,7 +70,10 @@ promise.then(onFulfilled, onRejected)
 
 #### .then().then() 这种链式调用的工作原理
 
-then 传入的函数如果返回了 promise 实例，那 then 函数返回就是这个 promise 实例；如果返回的不是 promise 实例，那 then 函数会返回一个全新的 promise 实例并 resolve 这个	返回的数据；如果什么都没返回，那 then 函数也是会返回一个全新的 promise 实例并 resolve undefined。then 传入的是非函数，那 then 函数返回的是该 then 前面的那个的 promise 实例。
+* then 传入的函数返回了 promise 实例，那 then 函数返回就是这个 promise 实例；
+* then 传入的函数返回的不是 promise 实例，那 then 函数会返回一个全新的 promise 实例并 resolve 这个返回的数据；
+* then 传入的函数什么都没返回，那 then 函数也是会返回一个全新的 promise 实例并 resolve undefined。
+* then 传入的是非函数，那 then 函数返回的是该 then 前面的那个的 promise 实例。
 
 所以不管怎么样，then() 最终都会返回一个 promise 对象，这样就能保证我们能连续的使用链式调用。
 
