@@ -667,6 +667,7 @@ utils/create.js
 import Vue from 'vue'
 
 function create(Component, props) {
+  // 组件的继承vue.extend()来扩展我们的vue, 可以简单理解为extend之后得到的是vue这个类的一个子类。
   // 获得组件构造函数
   const Ctor = Vue.extend(Component)
   // 获得组件实例，组件实例创建之后得到虚拟DOM

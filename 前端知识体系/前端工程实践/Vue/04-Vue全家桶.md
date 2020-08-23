@@ -1,31 +1,32 @@
 ## 路由 - Vue Router
 
-vue-router 主要完成的任务是路由的问题。因为我们单页面应用程序需要在不同的页面内容之间来进行切换，所以我们就需要路由这样的一个库。
+vue-router 主要完成的任务是路由的问题，因为我们单页面应用程序需要在不同的页面内容之间来进行切换，所以我们就需要路由这样的一个库。
 
-Vue Router 是 Vue.js 官方的路由管理器。它和 Vue.js 的核心深度集成，让构建单页面应用变得易如反掌。包含的功能有：
+Vue Router 是 Vue.js 官方的路由管理器。它和 Vue.js 的核心深度集成，让构建单页面应用变得易如反掌。
 
-- 嵌套的路由/视图表
-- 模块化的、基于组件的路由配置
-- 路由参数、查询、通配符
-- 基于 Vue.js 过渡系统的视图过渡效果
-- 细粒度的导航控制
-- 带有自动激活的 CSS class 的链接
-- HTML5 历史模式或 hash 模式，在 IE9 中自动降级
-- 自定义的滚动条行为
+详情查看官网。
 
-### 安装
+* 起步
+* 动态路由匹配
+* 嵌套路由
+* 编程式导航
+* 命名路由
+* 命名视图
+* 重定向和别名
+* 路由组件传参
+* HTML5 History 模式
+* 导航守卫
+* 路由元信息
+* 过渡动效
+* 数据获取
+* 滚动行为
+* 路由懒加载
+* 动态添加路由
+* 路由组件缓存
 
-vue-cli 环境下
+### 起步
 
-```bash
-vue add router
-```
-
-### 基础
-
-#### 起步
-
-路由规划、配置，src/router/index.js。
+src/router/index.js。
 
 ```js
 import Vue from 'vue'
@@ -59,7 +60,7 @@ export default router
 
 入口文件 src/main.js：
 
-将 router 加入到程序根组件的配置选项中去，这样的话将来在组件中就可以通过 this.$route 的方式来访问全局的 VueRouter 的单实例。
+将 router 加入到程序根组件的配置选项中去，这样的话将来在组件中就可以通过 this.$router 的方式来访问全局的 VueRouter 的单实例。
 
 ```js
 import Vue from  'vue'
@@ -74,7 +75,7 @@ new Vue({
 
 路由出口、导航 App.vue：
 
-一般来讲在根组件上加。将来我们路由的内容就会在这里去显示了。
+一般来讲在根组件上加，将来我们路由的内容就会在这里去显示了。
 
 ```vue
 <template>
@@ -88,189 +89,11 @@ new Vue({
 </template>
 ```
 
-#### 动态路由匹配
+### 导航守卫
 
-我们经常需要把某种模式匹配到的所有路由，全都映射到同个组件。例如，我们有一个 User 组件，对于所有 ID 各不相同的用户，都要使用这个组件来渲染。那么，我们可以在 vue-router 的路由配置中加上一个占位符，官方叫“动态路径参数”(dynamic segment) 来达到这个效果：它的特点是在前面加上一个冒号，表明这是将来的参数，
+#### 全局守卫
 
-```js
-{ path: '/user/:id', component: User }
-```
-
-范例：查看课程详情：
-
-路由配置，router/index.js
-
-```js
-{
-  path: '/course/:name',
-  component: () => import('../views/Detail.vue')
-}
-```
-
-参数传递，views/List.vue
-
-```vue
-<template>
-	<div>
-    <router-link :to="`/course/${c.name}`">
-      {{ c.name }}
-    </router-link>
-  </div>
-</template>
-```
-
-参数获取，views/Detail.vue
-
-```vue
-<template>
-  <div>
-    <h2>detail page</h2>
-    <p>{{$route.params.name}} ...</p>
-  </div>
-</template>
-```
-
-通过上面的例子知道，我们可以匹配一个模式，所以我们可以更加广泛和通用的做一个通配符匹配：适合做404页面路由，将来这个配置会作为没有任何匹配的处理，匹配顺序是按路由配置表从上往下的，如果前面都没有任何匹配，那就只能会走到这里，这个一定会匹配，匹配之后会有一个 404 的组件。
-
-```js
-{
-  // 会匹配所有路径
-  path: '*', // 
-  component: () => import('../views/404.vue')
-}
-```
-
-#### 嵌套路由
-
-实际生活中的应用界面，通常由多层嵌套的组件组合而成。同样地，URL 中各段动态路径也按某种结构对应嵌套的各层组件。
-
-因为组件实际是有嵌套的，所以路由上也用嵌套的形式去把它展现出来是最佳方式。
-
-路由其实做到跳转的路径和配置的路径相匹配就可以了。
-
-范例：嵌套方式显示课程详情。
-
-路由配置，router/index.js
-
-```js
-{
-  path: '/about',
-  name: 'about',
-  component: () => import(/* webpackChunkName: "about" */'../views/About.vue'),
-  children: [
-    {
-      path: '/about/course/:name', // 基于父路由的相对路径
-      name: 'detail',
-      component: () => import('../views/Detail.vue')
-    }
-  ]
-}
-```
-
-views/List.vue
-
-```vue
-<template>
-	<div>
-    <router-link :to="`/about/course/${c.name}`">
-      {{ c.name }}
-    </router-link>
-    // 嵌套内容的出口
-    <router-view></router-view>
-  </div>
-</template>
-```
-
-实现嵌套路由之后会有一个隐藏的，很容易出现错误的地方，假设我需要根据详情页的 name 参数发送一个 AJXA 请求，来获取课程的详情，这时我会在 Detail.vue 的 created 钩子里去发送这个请求，但是你会发现，这个请求只有在这个组件创建的时候发送了，以后每次切换路由的时候不再发送了，内在的原因其实是组件的复用，因为为了提高程序的效率，它会发现虽然路由发生了变化，但是这个 Detail 组件根本就不需要重新创建了，它只是复用就可以了，在这种情况下这个组件不会销毁并且重新创建了，于是我们没有机会让它去多次执行 created 这个生命周期，那怎么办呢，一般来讲，解决这个问题的方式是大家可以写一个关于当前路由对象 $route 的监听器。监听路由的变化，这样就满足了我们平常工作中的一些特别的情况。
-
-响应路由参数变化，views/Detail.vue
-
-```js
-export default {
-  watch: {
-    $route: {
-      handler: () => {
-        console.log("$route change");
-        // 在这重新发请求
-      },
-      immediate: true
-    }
-  }
-}
-```
-
-#### 编程导航
-
-路由的导航跳转除了上面使用的 router-link 的方式，我们还有一种编程式的导航，可以用 JS 代码的方式进行跳转，这种方式更加灵活方便，借助路由器的实例 router 的方法，可编写 JS 代码来实现编程式导航。
-
-router 方法的名字来自于底层具体的实现，H5 里面有一个 History API，这里有些方法叫 push pop，它可以往历史记录的堆栈中去添加新的记录或弹出记录。
-
-```js
-router.push(location, onComplete?, onAbort?)
-```
-
-```js
-// 字符串
-router.push('home')
-// 对象
-router.push({ path: 'home' })
-// 命名的路由
-router.push({ name: 'user', params: { userId: '123' }})
-// 带查询参数，变成 /register?plan=private
-router.push({ path: 'register', query: { plan: 'private' }})
-```
-
-范例：修改为课程详情跳转为编程导航
-
-```vue
-<template>
-  <div @click="selectedCourse = c; $router.push(`/course/${c.name}`)">
-    {{ c.name }}
-  </div>
-</template>
-```
-
-命名路由
-
-通过一个名称来标识一个路由显得更方便一些，特别是在链接一个路由，或者是执行一些跳转的时候。你可以在创建 Router 实例的时候，在 routes 配置中给某个路由设置名称。
-
-```js
-const router = new VueRouter({
-  routes: [
-    {
-      path: '/user/:userId',
-      name: 'user',
-      component: User
-    }
-  ]
-})
-```
-
-要链接到一个命名路由，可以给 router-link 的 to 属性传一个对象：
-
-```vue
-<router-link :to="{ name: 'user', params: { userId: 123 }}">User</router-link>
-```
-
-调用 router.push() 时：
-
-```js
-router.push({ name: 'user', params: { userId: 123 }})
-```
-
-### 进阶
-
-#### 路由守卫
-
-vue-router 提供一个守卫的方式，主要是来保护用户的路由的安全，主要通过跳转或取消的方式守卫导航，比如我现在有一些路由，如果用户没有权限的话，他不应当看到这个路由所对应的内容，这个时候我们对这个路由进行保护就显得比较重要了。
-
-我们对路由的保护有几种方式，有多种机会植入路由导航过程中，主要是在进入路由之前进行一个拦截，拦截的时间点有三种：全局的，单个路由独享的，或者组件级的。
-
-##### 全局守卫
-
-全局守卫是所有的路由在进行导航之前必定会经过的关卡，我们在这里就可以做一个统一的验证，这是范围最大的一种守卫。
-
-在 router/index.js 里可以对这个路由器定义一个全局守卫。
+全局守卫是所有的路由在进行导航之前必定会经过的关卡，在这里可以做一个统一的验证，这是范围最大的一种守卫。
 
 ```js
 const router = new VueRouter({ 
@@ -298,6 +121,7 @@ const router = new VueRouter({
   ] 
 })
 
+// 在每一次路由跳转的时候，这3个钩子都会被触发
 router.beforeEach((to, from, next) => {
   // to: Route: 即将要进入的目标 路由对象，我要去哪的路由
   // from: Route: 当前导航正要离开的路由，我来自于哪的路由
@@ -320,11 +144,17 @@ router.beforeEach((to, from, next) => {
     next()
   }
 })
+router.beforeResolve((to, from, next) => {
+  console.log('before resolve invoked')
+  next()
+})
+// 每次导航跳转之后会触发，所以就不需要next了
+router.afterEach((to, from) => {
+  console.log('after each invoked')
+})
 ```
 
-##### 路由独享的守卫
-
-守卫的规模影响范围可以变得更小，可以在某个路由的配置上直接定义 beforeEnter 守卫：
+#### 路由独享的守卫
 
 ```js
 const router = new VueRouter({ 
@@ -345,6 +175,7 @@ const router = new VueRouter({
           component: () => import('../views/Detail.vue')
   			}
       ],
+     	// 这个钩子只有在我们进入这个路由之前，才会被调用
 			beforeEnter(to, from, next) {
         if (window.isLogin) {
           next()
@@ -357,13 +188,7 @@ const router = new VueRouter({
 })
 ```
 
-##### 组件内守卫
-
-守卫最小的级别，就是组件级，就只守卫一个组件。可以在路由组件内直接定义以下路由导航守卫：
-
-* beforeRouteEnter
-* beforeRouteUpdate
-* beforeRouteLeave
+#### 组件内守卫
 
 ```vue
 // Admin.vue
@@ -375,55 +200,30 @@ export default {
     } else {
       next("/login?redirect=" + to.fullPath);
     }
+    // 这里获取不到组件实例this，因为进入组件路由之前组件实例还没有创建，想要使用组件实例，需要在next的回调中获取。
+    // next(vm => {
+    //   console.log(vm.id)
+    // })
+  },
+  
+  // 不同的路由下使用同一个组件时触发，例如params变化时，可以在这个时候重新获取数据，避免了使用watch来观察params中的id变化。因为使用的是同一个组件所以mounted只会触发一次，所以数据的获取不能在mounted里做，只能使用beforeRouteUpdate这个路由钩子或者使用watch来获取数据
+  beforeRouteUpdate (to, from, next) {
+    console.log('todo update enter')
+    next()
+  },
+  
+  // 路由离开的时候，这时可以做提醒用户是否要离开的操作，用来控制页面离开的行为
+  beforeRouteLeave (to, from, next) {
+    console.log('todo leave enter')
+    if (global.confirm('are you sure?')) {
+      next()
+    }	
   }
 }
 </script>
 ```
 
-#### 数据获取时机
-
-关于路由的数据获取我们也有一个讨论的必要。主要是因为路由在激活的时候，我们有可能有一些异步数据的获取。
-
-以前我们用的比较多的是 created 或 mounted，创建或者挂载的时候，但是涉及到路由的时候呢，这个行为就需要多考虑一下了。因为你会发现当我每次切换路由的时候，数据又重新的加载了一次，这意味着我们实际上在切换路由的时候，这个组件默认情况下总是会重新创建，这就有一个问题了，我有没有这个必要去频繁的获取数据，或者说我在获取这个数据的时候到底是在什么时间点比较合适。
-
-如果需要获取异步数据，我们要考虑在什么时机获取数据比较合适，有两个时机：
-
-获取时机的问题：官方的例子
-
-在路由导航前，去做获取数据和数据处理的过程：
-
-```js
-// 在进入路由之前，组件未渲染，通过给next传递回调访问组件实例
-beforeRouteEnter (to, from, next) {
-  getPost(to.params.id, post => {
-    next(vm => vm.setData(post))
-  })
-},
-// 在做更新操作的时候，组件已渲染，因为组件复用了，组件不会重新创建，可以访问this直接赋值
-beforeRouteUpdate (to, from, next) {
-  // 既然组件不会重新创建，它会不停的走这个beforeRouteUpdate，这时组件实例已经存在且不会销毁，我们可以把数据至		 空，然后重新获取，获取完后再重新设置为最新的，这样就可以实现数据的更新了。
-  this.post = null
-  getPost(to.params.id, post => {
-    this.setData(post)
-    next()
-  })
-}
-```
-
-在组件创建之后，路由导航完成之后：
-
-```js
-// 在created直接获取数据
-created () {
-  this.fetchData()
-},
-// 观察路由的变化，重新获取数据
-watch: {
-	'$route': 'fetchData'
-}
-```
-
-#### 动态路由
+### 动态添加路由
 
 通过 router.addRoutes(routes) 方式动态添加路由， 可以用编程的方式在运行时动态的添加路由。这个就在一些场景有应用价值了。
 
@@ -462,7 +262,7 @@ login() {
 }
 ```
 
-#### 路由组件缓存
+### 路由组件缓存
 
 前面有一个场景就是页面路由切换的时候数据反复的加载，因为组件每次都会重新加载，如果确定数据加载之后不会变化，就没必要让它频繁的加载，浪费资源，这时可以把组件缓存下来，不要让它去重置状态，重新创建，这样它就不会重新去获取请求数据了。
 
@@ -480,20 +280,6 @@ login() {
 
 两个特别的生命周期：activated、deactivated。这个组件它活着，它不再被删除了，那它的显示和隐藏其实只是激活和取消激活这两者，所以 keepalive 的组件只是在这两个生命周期之间来回切换。
 
-#### 路由懒加载
-
-路由组件的懒加载能把不同路由对应的组件分割成不同的代码块，然后当路由被访问的时候才加载对应组件，这样就更加高效了。
-
-```js
-() => import("../views/About.vue")
-```
-
-把组件按组分块
-
-```js
-() => import(/* webpackChunkName: "group-about" */ "../views/About.vue")
-```
-
 
 
 ## 统一状态管理 - Vuex
@@ -509,12 +295,6 @@ login() {
 那我怎么做到这一点呢，每次用户想要改变数据的时候，不能有改变数据的权利，组件想要改 Vuex 里面的状态的时候，它不能直接去设置这个状态，我们可以做到它只要设置就报错，我们就很好的保存了这个状态，我只能去派发一个动作或者提交一个 Mutation 之类的方式，总之我要传递一个信号去告诉 Vuex 说，我想更新这个状态，这时 Vuex 才会接受这个更新，做相应状态的变更，这个状态变更之后，还要把最新改变的状态反馈到视图中，Vuex 的做法是怎样的，它和 Vue 之间做了一个紧耦合，它利用了 Vue 的数据响应式，一旦某个数据发生变化之后，我可以立刻做响应，我的响应方式是把数据的变化传递到组件中，使之重新渲染。其实就是因为我们利用了数据响应式，所以界面中的这些绑定的数据自动的就会重新刷新了。这样一个非常简单的单向数据流就形成了。这样的话，整个系统的结构会变得非常健康，简单，出了问题一定可以找出来，因为每个人在提交状态变更之前，是可以拦截做变更的，所以我完全可以在这做任何事情，只要有消息进来，我就可以判断这个消息是谁发的，它想干什么，我可以做记录，把之前的状态和现在的状态都记录下来，这是个典型的记录器模式，我们做事件漫游等等都可以完成，所以有了这种可预测的方式，程序变得更好了。软件工程里面强调的一个思想，就把它实践和践行了。这是 Vuex 的必要性。
 
 ![Vuex](/Users/zhaoyang/tool/images/前端知识体系/前端工程实践/Vue/Vuex.png)
-
-### 安装
-
-```bash
-vue add vuex
-```
 
 ### 起始
 
@@ -675,7 +455,7 @@ export default new Vuex.Store({
 移动先前登录状态相关代码到 user.js
 
 ```js
-export default new Vuex.Store({
+export default {
   namespaced: true, // 设置独立的命名空间，避免命名冲突，副作用是访问的时候稍微麻烦一点 
   state: {
     isLogin: false
@@ -886,6 +666,33 @@ export default store => {
     } else if (mutation.type === 'user/logout') {
       localStorage.removeItem('user')
     }
+  })
+}
+```
+
+### 给 vuex 加上热更替的功能
+
+store.js
+
+```js
+if (module.hot) {
+  module.hot.accept([
+    // 这个数组里面的列表对应的就是我们去引用的那几个文件它的地址
+    './state/state',
+    './mutations/mutations',
+    './getters/getters',
+    './actions/actions'
+  ], () => {
+    const newState = require('./state/state').default
+    const newMutations = require('./mutations/mutations').default
+    const newGetters = require('./getters/getters').default
+    const newActions = require('./actions/actions').default
+    store.hotUpdate({
+      state: newState,
+      mutations: newMutations,
+      getters: newGetters,
+      actions: newActions
+    })
   })
 }
 ```

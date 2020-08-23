@@ -92,6 +92,10 @@ module.exports = {
 				target: 'http://localhost:9092'
       }
     },
+    // 防止我们没有使用vue-router的api进行跳转，比如在地址栏直接输入我们的路由，这时就会请求到我们本地服务器，由于这个路由是前端路由，服务器是不认识这个路径的，所以会返回找不到页面。加了这个配置就可以在这种情况下，让服务器去找我们htmlPlugin生成的index.html，这样就可以进到我们前端的页面来了。只要进到我们前端的页面，那么路由就由我们前端来掌控了，就不会有问题了。
+    historyApiFallback: { 
+			index: '/public/index.html' // 这个index它的写法跟我们在webpack.config.base.js中output里的publicPath是有关系是对应的，这个publicPath就是作为historyApiFallback里index的基路径。如果你不这么写它是找不到的。
+		}
     // mock数据，跟wds中间件机制有关。wds中间件给我们提供了两个钩子，加载中间件之前和之后的概念。
     before(app, server) {
       // 就相当于在这里做服务器接口的工作

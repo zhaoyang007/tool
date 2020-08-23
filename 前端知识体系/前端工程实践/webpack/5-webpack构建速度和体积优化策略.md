@@ -886,6 +886,14 @@ npm install @babel/plugin-syntax-dynamic-import -D
 }
 ```
 
+webpack3 正式环境配置中需要加一个插件
+
+```js
+plugins: [
+	new webpack.NamedChunksPlugin()
+]
+```
+
 然后就可以在我们的代码中使用动态的import语法了。
 
 ```js

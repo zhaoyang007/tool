@@ -628,6 +628,13 @@ vue create my-vue-test
 vue ui
 ```
 
+##### vue-cli 2.x（对应的是 webpack3.x）
+
+* npm install -g vue-cli 安装
+* vue init webpack my-project 新建基于webpack模版的新项目
+* npm install 安装项目依赖
+* 搞定，可以进行项目开发了
+
 #### Vue CLI 插件
 
 Vue CLI 使用了一套基于插件的架构，插件可以修改 webpack 的内部配置，也可以向 vue-cliservice 注入命令，插件的架构可以很方便的扩展一些功能。在项目创建的过程中，绝大部分列出的特性都是通过插件来实现的。 
