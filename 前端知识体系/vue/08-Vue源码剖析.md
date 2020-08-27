@@ -136,7 +136,7 @@ callHook(vm, 'created') // 上面的事情都做完后，会有一个created这�
        * observe(value)：判断传入的数据 value 是不是对象，不是直接 return。然后尝试从 value 中获取一个 Observer 实例 ob = value.\__ob__，如果该对象数据是响应式的，就会有这个 ob，不是的话，就创建 Observer 实例，进行响应化处理，最后返回 Observer 实例 ob。也就是说一个对象类型的数据要进行一次响应式观察处理，每次只处理一个对象数据和里面的一层，然后递归把所有深层次的数据都处理到。
          * Observer(value)：做数据响应化，它只处理对象类型的数据。
            * 为每一个对象类型的数据的 ob 创建一个 dep。object 里面新增($set)或者删除属性，array 那七个变更数组方法时会使用到这个的 dep 中存放的依赖来做通知更新。
-           * 给 value 设置 \__ob__ 的属性，值为当前的 Observer 实例 this，就是为每个对象类型的数据都附加一个 Observer 实例。
+           * 给这个要做响应化处理的对象类型的数据设置 \__ob__ 的属性，值为当前的 Observer 实例 this，就是为每个对象类型的数据都附加一个 Observer 实例。
            * 分别做数组和对象的响应化处理：
              * 数组
                * 替换数组原型。
@@ -144,7 +144,7 @@ callHook(vm, 'created') // 上面的事情都做完后，会有一个created这�
                  * 通知更新：使用 ob 中的 dep 来通知更新。
                * 如果数组里面的元素是对象，还需要对其做响应化处理，对其执行 observe
              * 对象
-               * defineReactive：遍历对每个 key 做数据响应化。
+               * defineReactive：遍历，对每个 key 做数据响应化。
                  * 创建每个 key 对应的 dep，这个细粒度的 dep 是为用户 Watcher 准备的，而不是为了整个组件的渲染 Watcher。
                  * 使用 observe(val) 做递归处理，因为 val 有可能是对象，并且 observe 可以返回 ob，依赖收集时会用到。
                  * Object.defineProperty：数据劫持，为每个 key 做响应化拦截。
@@ -192,8 +192,8 @@ callHook(vm, 'created') // 上面的事情都做完后，会有一个created这�
                          * insert
                          * destroy
                      * new VNode()：创建 vnode 并返回，自定义组件的 vnode 中会有一个特别的属性 componentInstance，将来组件实例创建完成之后，这个属性会被填充，patch 的时候执行组件管理钩子 init，创建组件实例。
-               * tag 是选项或构造函数
-               * vnode = createComponent()
+                 * tag 是选项或构造函数
+                   * vnode = createComponent()
 
          * vm.\_update()：执行更新
 
@@ -239,7 +239,7 @@ callHook(vm, 'created') // 上面的事情都做完后，会有一个created这�
 
                      找到相同的节点做该节点本身的打补丁操作，移动节点位置，移动指针做下一个节点的对比。
 
-       * 构建组件实例的时候，创建了一个和组件实例相关的 Watcher，传入更新函数，初始化过程会 Watcher 会执行一次更新函数，以后有更新，Watcher 会让更新函数再次执行。
+       * 构建组件实例的时候，创建了一个和组件实例相关的 Watcher，传入更新函数，初始化过程 Watcher 会执行一次更新函数，以后有更新，Watcher 会让更新函数再次执行。
 
 
 

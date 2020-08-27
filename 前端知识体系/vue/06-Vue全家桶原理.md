@@ -183,7 +183,7 @@ export default {
 
 ### 需求设计思路
 
-有一个视图 view，有一个 Vuex 的 Store 实例，Store 里有一个 state 属性，在 view 里使用 $store.state.xx 来访问 Store 里的数据。我们现在要实现一个 view 和 Store 之间的单向数据流，我想改 state，必须通过 Store 提供的 commit 方法提交一个 mutation 去改，所以 Store 里面还要实现一个 commit 方法，根据 type 参数可以从用户配置的那些 mutations 里找到对应的修改方法，然后用这个方法对state做修改，但是这个单向数据流还是没有打通，这个 state 状态的变化怎么能够通知界面去重新的 render 呢？这是我们要实现 store 的核心，要想办法让这个 state 能够是一个响应式的数据，Vue 最重要的功能就是实现数据响应式，所以我们利用 Vue 来做 state 的数据响应式。这样 state 发生变化的时候，可以让界面重新 render 渲染，也就起到了更新的作用。所以 Vuex 是跟 Vue 强耦合的，只能用在 Vue 里面就是这个原因。 
+有一个视图 view，有一个 Vuex 的 Store 实例，Store 里有一个 state 属性，在 view 里使用 $store.state.xx 来访问 Store 里的数据。我们现在要实现一个 view 和 Store 之间的单向数据流，我想改 state，必须通过 Store 提供的 commit 方法提交一个 mutation 去改，所以 Store 里面还要实现一个 commit 方法，根据 type 参数可以从用户配置的那些 mutations 里找到对应的修改方法，然后用这个方法对 state 做修改，但是这个单向数据流还是没有打通，这个 state 状态的变化怎么能够通知界面去重新的 render 呢？这是我们要实现 store 的核心，要想办法让这个 state 能够是一个响应式的数据，Vue 最重要的功能就是实现数据响应式，所以我们利用 Vue 来做 state 的数据响应式。这样 state 发生变化的时候，可以让界面重新 render 渲染，也就起到了更新的作用。所以 Vuex 是跟 Vue 强耦合的，只能用在 Vue 里面就是这个原因。 
 
 要实现一个 Store 类，里面有一个 state 属性，还有两个方法，commit 和 dispath。commit 可以直接改 state，dispatch是给它传个上下文，让它通过调 commit 的方式来改 state。这是写 store 之前的一个思路想法。还有一个数据响应式的问题，是通过 new Vue({data: options.state}) 的方式将 state 变成响应式数据的，这样 state 发生变化，使用 state 数据的组件就会重新 render。
 
@@ -211,7 +211,7 @@ class Store {
     const store = this
     
     Object.keys(this._getters).forEach(key => {
-      // 获取用户定义个getters
+      // 获取用户定义的getters
       const fn = store._getters[key]
       // 转换为computed使用的无参数的形式，做一个高阶封装
       computed[key] = function() {
@@ -320,7 +320,7 @@ export default {
 
 GitHub，所有代码在 src，要研究的主要目标是入口 index.js 和 store 实例的地方 store.js。
 
-### 了解 Vue 数据响应原理 
+### 了解 Vue 数据响应原理
 
 Vue 常见的数据响应式的实现：
 
