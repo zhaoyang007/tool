@@ -4,7 +4,7 @@
 
 #### 2.forEach
 
-跟 for 相比，forEach的写法更加简洁，但是它不支持 break 和 continue，它所遍历的就是从头到尾，每个元
+跟 for 相比，forEach 的写法更加简洁，但是它不支持 break 和 continue，它所遍历的就是从头到尾，每个元
 素必须遍历到。
 
 #### 3.every

@@ -235,7 +235,7 @@ module.exports = {
 
 ### 解析 less 和 sass
 
-less-loade r的作用就是将 less 转换成 css。
+less-loader 的作用就是将 less 转换成 css。
 
 #### 安装 less 和 less-loader
 
@@ -245,7 +245,7 @@ less-loader 是依赖于 less 的。
 npm i less less-loader -D
 ```
 
-#### 配置less
+#### 配置 less
 
 ```js
 module.exports = {
