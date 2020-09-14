@@ -296,6 +296,8 @@ login() {
 
 ![Vuex](/Users/zhaoyang/tool/images/前端知识体系/前端工程实践/Vue/Vuex.png)
 
+
+
 ### 起始
 
 Vuex 里面核心的概念：
@@ -433,6 +435,8 @@ export default {
 }
 </script>
 ```
+
+
 
 ### 最佳实践
 
@@ -619,6 +623,8 @@ const store = new Vuex.Store({
 })
 ```
 
+
+
 ### 插件
 
 Vuex 也是有插件机制的，我们什么时候用插件呢，当你要做一些很额外的业务的时候，和你的状态本身之间没有一个很直接的关系，如果你把这个东西写到状态管理里面去，可能会导致一些情况。
@@ -669,6 +675,8 @@ export default store => {
   })
 }
 ```
+
+
 
 ### 给 vuex 加上热更替的功能
 

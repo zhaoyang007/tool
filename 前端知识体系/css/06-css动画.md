@@ -363,13 +363,12 @@ function createBall() {
 
 
 
+### 过渡和动画的区别
 
+使用：通过js或者hover之后，改变dom元素的状态，可以用transition来添加过渡，防止突兀的变化
 
+在做复杂的动画效果的时候可以用animation
 
+transition需要手动触发
 
-
-
-
-
-
-
+animation只要设置了之后就7会马上执行，不需要触发

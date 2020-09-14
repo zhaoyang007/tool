@@ -1,16 +1,16 @@
-## 项目最佳实践
+### 项目最佳实践
 
-最佳实践有：代码规范，项目配置，权限，导航，数据 mock，环境变量，测试，优化、告警、发布和部署等。
+最佳实践有：项目配置，权限控制，请求封装，数据 mock，环境变量，代码规范，测试，告警，优化，发布和部署等。
 
-Vue 社区里一个比较成功的项目 [vue-element-admin](https://github.com/PanJiaChen/vue-element-admin)，里面有很多项目的最佳实践，做项目的方式，能够给我们提供一些做项目的特性和思路。
+Vue 社区的最佳实践项目：vue-element-admin。
 
 
 
-## 项目配置策略
+### 项目配置策略
 
-在项目的根目录创建 vue.config.js，这里的代码时一些 nodejs 代码，最终导出一个配置对象，会被 vue-cli 去解析，并且在这里还可以和 webpack、devServer 去打交道。因为 vue-cli3 中我们不能直接接触到 webpack 了。
+在项目的根目录创建 vue.config.js，这里的代码是 nodejs 代码，最终导出一个配置对象，会被 vue-cli 去解析，并且在这里还可以和 webpack、devServer 去打交道。因为 vue-cli3 中不能直接接触到 webpack。
 
-### 项目本身的基础配置：指定应用上下文、开发服务器等。
+##### 项目本身的基础配置：指定应用上下文、开发服务器等。
 
 ```js
 const port = 7070;
@@ -23,7 +23,7 @@ module.exports = {
 };
 ```
 
-### 基础的 webpack 配置： configureWebpack
+##### 基础的 webpack 配置： configureWebpack
 
 底层是用了 webpack-merge 把我们在 configureWebpack 里的配置解析成 webpack 的配置项并且跟 vue-cli 原有的配置合并起来。所有的 webpack 的配置项在这里都是可以配置的。
 
@@ -43,7 +43,7 @@ module.exports = {
 <title><%= webpackConfig.name %></title>
 ```
 
-### 高级的链式 webpack 配置：chainWebpack
+##### 高级的链式 webpack 配置：chainWebpack
 
 webpack-chain 称为链式操作，可以更细粒度控制 webpack 内部配置。可以修改已经存在的配置，也可以添加新的配置。
 
@@ -73,27 +73,15 @@ chainWebpack(config) {
 
 
 
-## 权限控制
-
-页面权限：就是根据是否登录和用户角色信息来动态设置相应路由。
-
-按钮权限。
-
-导航菜单生成：导航菜单是根据路由信息并结合权限判断而动态生成的。它需要对应路由的多级嵌套，所以要用到递归组件。组件里面还使用了自己。
-
-递归：自己里面调用自己，有条件跳出。
-
-
-
-## 数据交互
+### 数据交互
 
 axios 请求 => 本地 mock / 线上 mock / 服务器 api
 
-### 封装 request
+##### 封装 request
 
-对 axios 做一次封装，统一处理配置、请求和响应拦截。
+对 axios 做一次封装，统一处理配置，请求和响应拦截。
 
-封装请求：@/utils/request.js
+封装请求：src/utils/request.js
 
 ```js
 import Axios from "axios";
@@ -102,7 +90,7 @@ import store from "@/store";
 
 // 创建axios实例
 const axios = Axios.create({
-  baseURL: process.env.VUE_APP_BASE_API, // url基础地址，解决不同数据源url变化问题。vue-cli3里就给我们加了一个模式的东西，我们可以利用模式配置一批环境变量，它可以根据当前环境的不同动态的切换，解决我们请求时的url的变化的问题，在根目录下创建一个叫.env.development的文件，这个文件就是模式，默认有三种模式development,production,test 分别对应在package.json里面的dev,build,test这三个命令，可以在这个模式文件中定义环境变量。也可以在打包命令中使用--mode xxx结合.env.xxx模式文件，就可以使用该文件中的配置了，其实这个就是一个环境变量的参数。
+  baseURL: process.env.VUE_APP_BASE_API, // url基础地址，解决不同数据源url变化问题。vue-cli3里提供了一个模式的东西，可以利用模式配置一批环境变量，它可以根据当前环境的动态的切换，解决我们请求时的url的变化的问题，在根目录下创建一个叫.env.development的文件，这个文件就是模式，默认有三种模式development,production,test 分别对应在package.json里面的dev,build,test这三个命令，可以在这个模式文件中定义环境变量。也可以在打包命令中使用--mode xxx结合.env.xxx模式文件，就可以使用该文件中的配置了，它就是一个环境变量的参数。
   // withCredentials: true, // 跨域时若要发送cookies需设置该选项
   timeout: 5000 // 超时
 });
@@ -178,7 +166,7 @@ axios.interceptors.response.use(
 export default axios;
 ```
 
-.env.development
+设置环境变量：.env.development
 
 ```
 # axios base api
@@ -199,7 +187,7 @@ export function getInfo() {
 }
 ```
 
-使用请求：@/store/user.js
+使用请求：src/store/user.js
 
 ```js
 import {login, getInfo} from '@/api/user';
@@ -226,19 +214,27 @@ export default {
 };
 ```
 
-### 数据 mock
+##### 数据 mock
 
-本地 mock：利用 webpack-dev-server 提供的 before 钩子可以访问 express 实例，从而定义接口。修改 vue.confifig.js，给 devServer 添加相关代码。本地 mock 的问题是需要了解 express，还有就是接口代码太多了。
+本地 mock：利用 webpack-dev-server 提供的 before 钩子可以访问 express 实例，从而定义接口。修改 vue.config.js，给 devServer 添加相关代码。本地 mock 的问题是需要了解 express，还有就是接口代码太多了。
 
 线上 easy-mock：诸如 easy-mock 这类线上 mock 工具优点是使用简单，mock 工具库也比较强大，还能根据 swagger 规范生成接口。
 
-### 解决跨域
-
-添加开发服务器代理配置，vue.confifig.js
 
 
+### 权限控制
 
-## 项目测试
+页面权限：就是根据是否登录和用户角色信息来动态设置相应路由。
+
+按钮权限。
+
+导航菜单生成：导航菜单是根据路由信息并结合权限判断而动态生成的。它需要对应路由的多级嵌套，所以要用到递归组件。组件里面还使用了自己。
+
+递归：自己里面调用自己，有条件跳出。
+
+
+
+### 项目测试
 
 单元测试
 
