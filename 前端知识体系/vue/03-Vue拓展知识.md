@@ -207,6 +207,69 @@ Vue.component('message', {
 
 
 
+## 生命周期
+
+每个 Vue 实例在被创建时都要经过一系列的过程。例如，初始化、更新过程、销毁过程、需要设置数据监听、编译模板、将实例挂载到 DOM 并在数据变化时更新 DOM 等，这一系列的过程统称为 Vue 实例的生命周期。
+
+### 生命周期钩子
+
+既然组件它将来要实例化，它会有生命周期，为了我们方便去写程序，Vue 为我们准备了一些叫做生命周期钩子的函数。
+
+* created：组件实例已创建，它自己的所有的数据以及父组件传下来的所有数据都可以访问到了。由于没有挂载，所以当前这些数据还没有转换成真实的 DOM 元素，DOM 元素还不存在。
+* mounted：mounted 的时间点更靠后，它做了挂载，挂载实际上做的操作是将所有渲染函数执行之后得到的虚拟 DOM 转换成真实 DOM。所以 mounted 里已经可以访问到 DOM 元素了。
+
+created 到 mounted 的这个过程是很快的，所以 created 和 mounted 本质上是没有差别的。
+
+### 使用场景分析
+
+生命周期分为三阶段：初始化、更新、销毁。
+
+* 初始化：beforeCreate、created、beforeMount、mounted
+* 更新：beforeUpdate、updated
+* 销毁：beforeDestroy、destroyed
+
+### 探讨生命周期
+
+#### 生命周期图示
+
+* new Vue()：我们 new Vue 的时候创建了整个应用程序的根实例。
+* 初始化事件&生命周期：接下来是一系列子组件和子实例的创建和挂载，首先要做的事情是一些数据的准备，包括事件的监听和生命周期等，这个生命周期主要是一些特别的属性的创建，像老爹的引用 $parent，孩子的引用 $children 等等一些跟生命有关的，因为出生了就肯定知道老爹是谁了，但是还不知道孩子是谁，但是这些变量的初始化已经做好了。
+* beforeCreate：接下来是 beforeCreate 这个生命周期钩子，这个时间点是非常早的，所以我们开发项目的过程中，可能很少会用到它，可以在这加个loading事件。el 和 data 并未初始化。
+* 初始化 注入&校验：这是一些数据的传入，在这个阶段会有一些来自父组件注入的特别的数据，父辈祖辈传过来的，Vue 还做了一些相关的校验工作，比如说这些数据有没有冲突，跟我组件当前的 data 或 props 有没有冲突。
+* created：这些所有数据全部准备就绪了，才会 created。所以我们平时获取异步数据为什么要放到这呢，因为现在所有数据都准备好了，特别安全合理可靠。于情于理都应该写在这。所以这获取异步数据就挺合适的。在这结束loading，还做一些初始化，实现函数自执行。data 数据的初始化，el没有。
+* 接下来会执行挂载逻辑，这是 Vue 内部去执行的，大家不用去关心，我们只要找着这个宿主了，把当前这个数据结合着我写的模版变成 DOM，就算完成了，完成之后呢，就要执行挂载，其实是 DOM 的追加操作了。我希望把我的内容追加到宿主元素上。
+* beforeMount：在执行一些列的转换过程之前，会先 beforeMount 一下，通知一下我准备去干这个事了，但现在实际上还没有开始做转换。完成了 el 和 data 初始化
+* mounted：当我把转换的事情都做完后，vm.$el 就是这个 DOM 元素已经转换完成了，它转换完成后会触发 mounted，会通知用户现在已经可以访问 DOM 了，可以放心的访问和更新 DOM 了。到这挂载是完毕的，初始化流程结束了。在这发起后端请求，拿回数据，配合路由钩子做一些事情。完成了挂载。
+* beforeUpdate：只要这个组件不死，不被删除掉，那它就处于这个循环过程，就不停的监控数据的更新，一旦数据发生更新，准备做更新之前，先 beforeUpdate。
+* updated：等我把所有的更新操作做完，DOM 操作更新完了，再通知用户 updated。如果你要再更新之前，想记录一下状态，你要在 beforeUpdate，反之，你要希望看到更新之后的结果，你要在 updated 这个钩子里面去做事情。
+* beforeDestory：如果用户手动的去调 $detory() 去销毁当前的组件实例，也不是立刻销毁，在销毁之前给用户一个机会再做点事，这里还可以访问组件实例，比如把程序中的定时器销毁掉，解除一些绑定，销毁子组件，事件监听等等一系列可能造成内存泄露的东西把它先解除掉，防止出问题。你确认删除XX吗？
+* destoryed：真正销毁完毕的事件是这个 destoryed，这个时候组件实例都没有了，灰飞烟灭。当前组件已被删除，清空相关内容和引用。
+
+![Vue生命周期图示](/Users/zhaoyang/tool/images/前端知识体系/前端工程实践/Vue/Vue生命周期图示.png)
+
+#### 生命周期列表
+
+除了上面的生命周期图示的理解，我们还要完整的掌握生命周期列表。在 API 中，关于生命周期会有一个详细的列表展示。[生命周期图示](https://cn.vuejs.org/v2/api/#%E9%80%89%E9%A1%B9-%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F%E9%92%A9%E5%AD%90)
+
+### 生命周期钩子使用场景分析
+
+一般情况下，这些带 before 的，我们在实际开发中用的都会少。因为在这些 before 的状态中，要么数据还没准备好，要么元素还没准备好，总是少了那么点东西。
+
+```js
+{
+  beforeCreate(){} // 执行时组件实例还未创建，这个时间点非常之早，各种各样的数据还不齐全，所以大家在做操作的时候，不要随意的访问各种各样的数据，可能根本就访问不到，通常用于插件开发中执行一些初始化任务
+  created(){} // 组件初始化完毕，各种数据可以使用，常用于异步数据获取
+  beforeMounted(){} // 未执行渲染、更新，dom未创建
+  mounted(){} // 初始化结束，dom已创建，可用于获取访问数据和dom元素
+  beforeUpdate(){} // 更新前，可用于获取更新前各种状态，比如有一个列表更新了，你要记录它更新之前滚动条的位置，显然是在这个时候去保存是最合理的。
+  updated(){} // 更新后，所有状态已是最新，得到上列滚动条最新的高度，位置可能都有变化，这个时候可以做一些更新之后的操作。
+  beforeDestroy(){} // 销毁前，可用于一些定时器或订阅的取消，防止内存泄露，这个时候组件实例还在
+  destroyed(){} // 组件已销毁，作用同上，组件实例已经不在了
+}
+```
+
+
+
 ## 可复用性
 
 ### 过滤器
@@ -483,6 +546,41 @@ Vue.component('heading', {
   } 
 })                                                       
 ```
+
+
+
+### 模版和函数渲染
+
+模版语法是如何实现的。
+
+我们编写的模版，看起来像 HTML 代码的内容它到底是什么呢。
+
+实际上，将来 Vue 会将我们编写的这些模版转换成渲染函数，渲染函数最终的目标是要为了能够生成虚拟 DOM，再结合着 Vue 的响应式系统，Vue 就能够根据将来值发生变化之后，再次执行渲染函数，得到一个全新的虚拟 DOM，在新旧虚拟 DOM 之间经过比对，就可以知道我们真正要做的 DOM 操作。
+
+这个渲染函数将来执行之后，它能够 return 一个结果，return 的这个结果就是虚拟 DOM。
+
+```js
+// 输出vue替我们生成的渲染函数一窥究竟 
+console.log(app.$options.render)
+
+// 它长这个样子 
+(function anonymous( ) { with(this){return _c('div',{attrs:{"id":"app"}},[_c('h2',{attrs: {"title":title}},[_v("\n "+_s(title)+"\n ")]),_v(" "),_c('input',{directives:[{name:"model",rawName:"v-model",value: (course),expression:"course"}],attrs:{"type":"text"},domProps:{"value": (course)},on:{"keydown":function($event) {if(!$event.type.indexOf('key')&&_k($event.keyCode,"enter",13,$event.key,"Enter" ))return null;return addCourse($event)},"input":function($event) {if($event.target.composing)return;course=$event.target.value}}}),_v(" "),_c('button',{on:{"click":addCourse}},[_v("新增课程")]),_v(" "),(courses.length == 0)?_c('p',[_v("没有任何课程信息")]):_e(),_v(" "),_c('ul',_l((courses),function(c){return _c('li',{class:{active: (selectedCourse === c)},on:{"click":function($event){selectedCourse = c}}}, [_v(_s(c))])}),0)])} })
+```
+
+改写为渲染函数版本：
+
+```js
+const app = new Vue({ 
+  // 引入上面的render函数 
+  render() { 
+    with (this) { return ... } 
+  } 
+})
+```
+
+所以实际上我们在编写模版的时候其实我们不是在写 HTML，在 Vue 的内部其实是把它转换成了一个 JS 的函数，这个才是真正的模版技术的工作机制。
+
+
 
 ### 混入
 

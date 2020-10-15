@@ -120,7 +120,7 @@ KVueRouter.install = function (_Vue) {
   // 怎么获取根实例中的router选项
   // 我只要混入一个生命周期的钩子或者是任何一个方法，我在钩子或方法里面就可以拿到组件的实例了。
   // 加上一个全局的混入，这里写的生命周期的钩子将来会在所有的组件中都执行一遍。
-  // 为什么要用混入方式写？主要原因是use代码在前，Router实例创建在后，而install逻辑又需要用到该实例
+  // 为什么要用混入方式写？主要原因是use代码在前，Router实例创建在后，install中还不能直接拿到创建好的router实    		 例，所以要用mixin的方式在Vue实例创建的时候在钩子函数中将router放到Vue.prototype上。
   Vue.mixin({
     beforeCreate() {
       // 确保根实例的时候才执行
@@ -183,9 +183,9 @@ export default {
 
 ### 需求设计思路
 
-有一个视图 view，有一个 Vuex 的 Store 实例，Store 里有一个 state 属性，在 view 里使用 $store.state.xx 来访问 Store 里的数据。我们现在要实现一个 view 和 Store 之间的单向数据流，我想改 state，必须通过 Store 提供的 commit 方法提交一个 mutation 去改，所以 Store 里面还要实现一个 commit 方法，根据 type 参数可以从用户配置的那些 mutations 里找到对应的修改方法，然后用这个方法对 state 做修改，但是这个单向数据流还是没有打通，这个 state 状态的变化怎么能够通知界面去重新的 render 呢？这是我们要实现 store 的核心，要想办法让这个 state 能够是一个响应式的数据，Vue 最重要的功能就是实现数据响应式，所以我们利用 Vue 来做 state 的数据响应式。这样 state 发生变化的时候，可以让界面重新 render 渲染，也就起到了更新的作用。所以 Vuex 是跟 Vue 强耦合的，只能用在 Vue 里面就是这个原因。 
+有一个视图 view，有一个 Vuex 的 Store 实例，Store 里有一个 state 属性，在 view 里使用 $store.state.xx 来访问 Store 里的数据。我们现在要实现一个 view 和 Store 之间的单向数据流，我想改 state，必须通过 Store 提供的 commit 方法提交一个 mutation 去改，所以 Store 里面还要实现一个 commit 方法，根据 type 参数可以从用户配置的那些 mutations 里找到对应的修改方法，然后用这个方法对 state 做修改，让这个 state 是一个响应式的数据，state 状态的变化就能够通知界面去重新的 render，我们利用 Vue 来做 state 的数据响应式。所以 Vuex 是跟 Vue 强耦合的，只能用在 Vue 里面。
 
-要实现一个 Store 类，里面有一个 state 属性，还有两个方法，commit 和 dispath。commit 可以直接改 state，dispatch是给它传个上下文，让它通过调 commit 的方式来改 state。这是写 store 之前的一个思路想法。还有一个数据响应式的问题，是通过 new Vue({data: options.state}) 的方式将 state 变成响应式数据的，这样 state 发生变化，使用 state 数据的组件就会重新 render。
+要实现一个 Store 类，里面有一个 state 属性，还有两个方法，commit 和 dispath。commit 可以直接改 state，dispatch是给它传个上下文，让它通过调 commit 的方式来改 state。这是写 store 的思路。还有一个数据响应式的问题，是通过 new Vue({data: options.state}) 的方式将 state 变成响应式数据的，这样 state 发生变化，使用 state 数据的组件就会重新 render。
 
 ### 源码实现
 

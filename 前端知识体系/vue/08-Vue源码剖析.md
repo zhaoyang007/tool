@@ -135,7 +135,7 @@ callHook(vm, 'created') // 上面的事情都做完后，会有一个created这�
      * initData(vm)：data 响应式，获取 data，设置代理，启动响应式 observe。
        * observe(value)：判断传入的数据 value 是不是对象，不是直接 return。然后尝试从 value 中获取一个 Observer 实例 ob = value.\__ob__，如果该对象数据是响应式的，就会有这个 ob，不是的话，就创建 Observer 实例，进行响应化处理，最后返回 Observer 实例 ob。也就是说一个对象类型的数据要进行一次响应式观察处理，每次只处理一个对象数据和里面的一层，然后递归把所有深层次的数据都处理到。
          * Observer(value)：做数据响应化，它只处理对象类型的数据。
-           * 为每一个对象类型的数据的 ob 创建一个 dep。object 里面新增($set)或者删除属性，array 那七个变更数组方法时会使用到这个的 dep 中存放的依赖来做通知更新。
+           * 为每一个对象类型的数据本身的 ob 创建一个 dep。object 里面新增($set)或者删除属性，array 那七个变更数组方法时会使用到这个的 dep 中存放的依赖来做这个对象本身变化的通知更新。
            * 给这个要做响应化处理的对象类型的数据设置 \__ob__ 的属性，值为当前的 Observer 实例 this，就是为每个对象类型的数据都附加一个 Observer 实例。
            * 分别做数组和对象的响应化处理：
              * 数组
