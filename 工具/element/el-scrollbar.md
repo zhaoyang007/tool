@@ -1,4 +1,4 @@
-设置外层容器高度。并且要设置el-scrollbar 的高度为100%
+设置 el-scrollbar 父级为固定高度，设置 el-scrollbar 的高度为100%，el-scrollbar 的高度为自由高度。
 
 ```vue
 <template>

@@ -418,11 +418,26 @@ axios.all([getUserAccount(), getUserPermissions()])
 
 ### 使用 application/x-www-form-urlencoded format
 
-默认情况下，axios 将 JavaScript 对象序列化为 JSON。 要想以 application / x-www-form-urlencoded 格式发送数据，可以使用 qs 库编码数据。
+默认情况下，axios 将 JavaScript 对象序列化为 JSON。 想要以 application / x-www-form-urlencoded 格式发送数据，要使用这种方式：
 
 ```js
-import qs from 'qs'
-axios.post('/foo', qs.stringify({ 'bar': 123 }), {
-  headers: { 'content-type': 'application/x-www-form-urlencoded' }
-})
+import qs from 'qs';
+const data = { 'bar': 123 };
+const options = {
+  method: 'POST',
+  headers: { 'content-type': 'application/x-www-form-urlencoded' },
+  data: qs.stringify(data),
+  url,
+};
+axios(options);
 ```
+
+
+
+### 传递无参数名的参数
+
+```js
+const tableData = [{id: 1, a: 1, b: 1},{id: 2, a: 2, b: 2}]
+axios.post('/services/v1/platformPriceMarket/updateMarket', tableData)
+```
+
