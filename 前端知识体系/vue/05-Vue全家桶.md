@@ -519,12 +519,14 @@ export default new Vuex.Store({
 export default {
   methods: {
 		login() {
-      this.$store.dispatch('login', 'admin').then(() => {
-        const redirect = this.$route.query.redirect || '/'
-        this.$router.push(redirect)
-      }).catch(() => {
-        alert('用户名或密码错误')
-      })
+      this.$store.dispatch('login', 'admin')
+        .then(() => {
+          const redirect = this.$route.query.redirect || '/'
+          this.$router.push(redirect)
+        })
+        .catch(() => {
+          alert('用户名或密码错误')
+        })
     }
   }
 }
@@ -535,9 +537,7 @@ export default {
 
 ### 最佳实践
 
-##### 模块化
-
-程序变得很大之后，程序的状态会非常庞大，它是一棵完整的树，为了能够很好的维护这棵树，一个最好的方式是模块化，Vuex 模块化的方式其实就是在创建 Store 的时候，加上一个 modules 这样的选项就可以了。
+##### 模块
 
 使用 modules 定义多个子模块利于组件复杂状态
 
@@ -610,11 +610,27 @@ export default {
 </script>
 ```
 
+模块之间的调用：
+
+```js
+// 1. 在actions中使用
+commit('a/getList', {}, { root: ture })
+dispatch('a/getList', {}, { root: ture })
+// 可以从actions接收的store对象中解构出rootState和rootGetters，使用这两个对象就可以获取其他模块的state和ge tters
+commit: {
+  a({ rootState, rootGetters}, params) {
+    console.log(rootState.a.data)
+    console.log(rootGetters['a/getterData'])
+	}
+}
+// 2.在任何地方使用，直接把相应模块文件引入
+```
+
 ##### 映射方法 mapState()/mapMutation()/mapAction()
 
-现在我们要解决的是访问 store 的状态过长的问题，于是我们就想到怎么能够偷懒，在 Vuex 中提供了一些帮助方法，我们叫映射方法，用这些映射方法，我们可以很巧妙的把它映射到当前组件实例上，加上一些方法或加上一些计算属性，这样我们在访问的时候就比较轻松了，可以少敲几个字，而且避免了对 $store 的直接访问，减少耦合的问题。
+用这些映射方法，我们可以很巧妙的把它映射到当前组件实例上，这样我们在访问的时候就比较轻松了，而且避免了对 $store 的直接访问，减少耦合。
 
-state相关修改：
+state 相关修改：
 
 mapState 返回的是一个对象键值对的形式，键是 isLogin，值是将来要生成的 function，这个 function 返回的值就是 Store 中 isLogin 的值。所以在使用这些 map 的时候，前面要加上属性展开运算符，把它变成 key:value 的形式放到组件实例的属性或方法中去。
 
@@ -655,7 +671,7 @@ export default {
     ...mapMutations(['user/login']),
     ...mapActions(['user/login']),
     login() {
-      // this['user/login']()
+      // this['login']()
       this['user/login']('admin').then(() => {
         const redirect = this.$route.query.redirect || '/'
         this.$router.push(this.$route.query.redirect)

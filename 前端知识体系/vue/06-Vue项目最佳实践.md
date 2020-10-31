@@ -195,8 +195,8 @@ import {login, getInfo} from '@/api/user';
 const actions = {
   // 模拟用户登录
   login({ commit }, userInfo) {
-    return login(userInfo).then((res) => {
-      
+    return login(userInfo).then(res => {
+      commit('login', res)
     });
   },
   getInfo({ commit, state }) {
