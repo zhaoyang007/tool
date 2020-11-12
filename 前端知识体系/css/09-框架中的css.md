@@ -5,6 +5,8 @@
 * 逻辑上的一个 DOM
 * 结构上存在子集结构
 
+
+
 ### scoped css
 
 scoped css 是跟 shadowDOM 同时代提出来的东西，因为 shadowDOM 是有内部结构的，但是对外这个结构又是不能暴露的，那结构的样式怎么办呢，既然不能对外暴露就不能通过外部样式给它写样式，所以样式只能写在 shadowDOM 的内部，不对外暴露，所以你内部的样式也不可以影响外部的。
@@ -14,6 +16,8 @@ scoped css 是跟 shadowDOM 同时代提出来的东西，因为 shadowDOM 是�
 * 外部样式一般不影响内部
 * 可以通过 /deep/ 或 >>> 穿透：在 shadowDOM 最后定稿的时候，留了一些余地，可以通过这样的方式去做选择器的穿透，在这种情况下，外部样式是可以影响内部样式的。
 
+
+
 ### 模拟 scoped css
 
 因为 shadowDOM 和 scoped css 的兼容性都不是很理想，所以想要达到组件样式封装的效果可能还是通过模拟的方式。模拟 scoped css 主要是模拟它的特性，就是内部和外部样式尽量隔离，互相不影响。
@@ -22,3 +26,4 @@ scoped css 是跟 shadowDOM 同时代提出来的东西，因为 shadowDOM 是�
 * 方案二：随机属性
   * \<div abcdefg> 
   * div[abcdefg] { }
+

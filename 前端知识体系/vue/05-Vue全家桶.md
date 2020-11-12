@@ -1,6 +1,8 @@
 ## 路由 - Vue Router
 
-vue-router 主要完成的任务是路由的问题，因为我们单页面应用程序需要在不同的页面内容之间来进行切换，所以我们就需要路由这样的一个库。
+因为我们单页面应用程序需要在不同的页面内容之间来进行切换，所以我们就需要路由这样的一个库。
+
+
 
 ### 起步
 
@@ -41,9 +43,7 @@ const router = new VueRouter({
 export default router
 ```
 
-入口文件 src/main.js：
-
-将 router 加入到程序根组件的配置选项中去，这样的话将来在组件中就可以通过 this.$router 的方式来访问全局的 VueRouter 的单实例。
+src/main.js：
 
 ```js
 import Vue from  'vue'
@@ -57,8 +57,6 @@ new Vue({
 ```
 
 路由出口、导航 App.vue：
-
-一般来讲在根组件上加，将来我们路由的内容就会在这里去显示了。
 
 ```vue
 <template>
@@ -174,7 +172,8 @@ router.push({ path: '/user', params: { userId }}) // -> /user
 
     一个 key/value 对象，表示 URL 查询参数。例如，对于路径 `/foo?user=1`，则有 `$route.query.user == 1`，如果没有查询参数，则是个空对象。
 
-    
+
+
 
 ### Router 实例 $router
 
@@ -379,29 +378,14 @@ login() {
 
 ## 统一状态管理 - Vuex
 
-统一状态管理 Vuex 具体的使用，以及它存在的价值。
-
-工作机制：Vuex 是一个专为 Vue.js 应用程序开发的状态管理模式。它采用**集中式**存储和管理应用的所有组件的状态，并以相应的规则保证状态以**可预测**的方式发生变化。 
-
-**集中式**存储和管理的好处，组件之间更方便的通信，测试性，维护性等。要是分散到各个组件里头就极容易出问题。因为组件之间要有同步的问题。也是为了程序的稳定。而且这样统一的管理很有利有同构开发，服务端渲染 ssr 只需要在服务器上跑一个 Vue 的实例，然后把当前 Store 里存的状态渲染出来，然后把渲染出来这个页面的 html 信息直接返回给前端就行了。
-
-**可预测**的方式的好处，让程序更健壮，出了问题更容易反查。将来调试的时候任何状态变化有问题很容易查出来是谁在尝试着变更新的状态。数据变更之前也可以做很多事情，做日志记录，统计分析等。主要是错误的排查和可追溯。遵循单向数据流。
-
-那我怎么做到这一点呢，每次用户想要改变数据的时候，不能有改变数据的权利，组件想要改 Vuex 里面的状态的时候，它不能直接去设置这个状态，我们可以做到它只要设置就报错，我们就很好的保存了这个状态，我只能去派发一个动作或者提交一个 Mutation 之类的方式，总之我要传递一个信号去告诉 Vuex 说，我想更新这个状态，这时 Vuex 才会接受这个更新，做相应状态的变更，这个状态变更之后，还要把最新改变的状态反馈到视图中，Vuex 的做法是怎样的，它和 Vue 之间做了一个紧耦合，它利用了 Vue 的数据响应式，一旦某个数据发生变化之后，我可以立刻做响应，我的响应方式是把数据的变化传递到组件中，使之重新渲染。其实就是因为我们利用了数据响应式，所以界面中的这些绑定的数据自动的就会重新刷新了。这样一个非常简单的单向数据流就形成了。这样的话，整个系统的结构会变得非常健康，简单，出了问题一定可以找出来，因为每个人在提交状态变更之前，是可以拦截做变更的，所以我完全可以在这做任何事情，只要有消息进来，我就可以判断这个消息是谁发的，它想干什么，我可以做记录，把之前的状态和现在的状态都记录下来，这是个典型的记录器模式，我们做事件漫游等等都可以完成，所以有了这种可预测的方式，程序变得更好了。软件工程里面强调的一个思想，就把它实践和践行了。这是 Vuex 的必要性。
-
-![Vuex](/Users/zhaoyang/tool/images/前端知识体系/前端工程实践/Vue/Vuex.png)
+Vuex 是一个专为 Vue.js 应用程序开发的状态管理模式。采用**集中式**存储和管理应用的所有组件的状态，并以相应的规则保证状态以**可预测**的方式发生变化。 
 
 
 
 ### 起始
 
-Vuex 里面核心的概念：
-
-在 **Vuex** 里面抽象出来了一个存储状态的一个**容器 Store**，可以理解为它是一个数据仓库来存储我们的状态。我们的**状态是 State**，这个状态将来有可能会变更，**能变更状态的只有一种方式就是 Mutation**，用户可以提交变更来更新状态。但是为什么还有一个 Actions 呢，因为在实际的工作中，很多操作根本不是同步的，所以我们需要一个前置的东西，也就是这些 **Action 去做这些异步的复杂的业务逻辑**，完成异步的复杂的任务之后才真正的提交本地状态的更新。**所以就引出了这么三个概念，分别是 Actions、Mutations 和 State，当然还有它们共同的容器叫 Store。**
-
-那我们现在要玩这个东西的话，我们首先要创建 Store，并且在 Store 中间设置这三个状态。
-
-创建 Store：
+* 创建 store，并且在 store 中间设置 state、mutations 和 actions 这三个状态。
+* 将 store 实例放入 Vue 根组件配置中。
 
 src/store/index.js
 
@@ -423,9 +407,7 @@ export default new Vuex.Store({
 })
 ```
 
-入口文件 src/main.js：
-
-将 store 加入到程序根组件的配置选项中去，这样的话将来在组件中就可以通过 this.$store 的方式来访问咱们全局的 Store 的单实例。
+src/main.js：
 
 ```js
 import Vue from  'vue'
@@ -450,7 +432,7 @@ export default new Vuex.Store({
 }
 ```
 
-##### Mutation
+##### Mutations
 
 一旦出现了状态，就一定会有状态配套的修改的 mutations。
 
@@ -489,7 +471,7 @@ export default {
 </script>
 ```
 
-##### Action
+##### Actions
 
  Action 类似于 mutation，不同在于：Action 提交的是 Mutation，而不是直接变更状态。Action 可以包含任意异步操作。
 
@@ -533,11 +515,47 @@ export default {
 </script>
 ```
 
+##### Getters
+
+可以对已有的 state 状态做一些处理操作，得到一些新的状态，Getter 的好处是，一旦跟我相关的那个状态发生变化了，我派生的这个状态也会跟着发生变化，它其实是计算属性在 Vuex 中的一个迁移和实现，可以使用 getters 从 store 的 state 中派生出一些状态。
+
+```js
+export default new Vuex.Store({
+  namespaced: true,
+  state: {
+    username: '' // 用户名
+  },
+  getters: { // 派生出欢迎信息
+    welcome: state => {
+      return state.username + ',欢迎回来';
+    }
+  },
+  mutations: {
+    setUsername(state, username) {
+      state.username = username
+    }
+  },
+  actions: {
+    login({ commit }, username) {
+      return new Promise((resolve, reject) => {
+        setTimeout(() => {
+          if (username === 'admin') {
+            // 登录成功，设置用户名
+            commit('setUsername', username)
+            resolve()
+          } else {
+            reject()
+          }
+        }, 1000);
+      })
+    }
+  }
+}
+```
 
 
-### 最佳实践
 
-##### 模块
+### 模块
 
 使用 modules 定义多个子模块利于组件复杂状态
 
@@ -626,7 +644,9 @@ commit: {
 // 2.在任何地方使用，直接把相应模块文件引入
 ```
 
-##### 映射方法 mapState()/mapMutation()/mapAction()
+
+
+### 映射方法
 
 用这些映射方法，我们可以很巧妙的把它映射到当前组件实例上，这样我们在访问的时候就比较轻松了，而且避免了对 $store 的直接访问，减少耦合。
 
@@ -684,45 +704,9 @@ export default {
 </script>
 ```
 
-##### 派生状态 Getter
 
-可以对已有的 state 状态做一些处理操作，得到一些新的状态，Getter 的好处是，一旦跟我相关的那个状态发生变化了，我派生的这个状态也会跟着发生变化，它其实是计算属性在 Vuex 中的一个迁移和实现，可以使用 getters 从 store 的 state 中派生出一些状态。
 
-```js
-export default new Vuex.Store({
-  namespaced: true,
-  state: {
-    username: '' // 用户名
-  },
-  getters: { // 派生出欢迎信息
-    welcome: state => {
-      return state.username + ',欢迎回来';
-    }
-  },
-  mutations: {
-    setUsername(state, username) {
-      state.username = username
-    }
-  },
-  actions: {
-    login({ commit }, username) {
-      return new Promise((resolve, reject) => {
-        setTimeout(() => {
-          if (username === 'admin') {
-            // 登录成功，设置用户名
-            commit('setUsername', username)
-            resolve()
-          } else {
-            reject()
-          }
-        }, 1000);
-      })
-    }
-  }
-}
-```
-
-##### 严格模式
+### 严格模式
 
 严格模式主要是为了防止用户直接去改 Store 里的状态。
 
@@ -732,6 +716,35 @@ export default new Vuex.Store({
 const store = new Vuex.Store({
   strict: true
 })
+```
+
+
+
+### 给 vuex 加上热更替的功能
+
+store.js
+
+```js
+if (module.hot) {
+  module.hot.accept([
+    // 这个数组里面的列表对应的就是我们去引用的那几个文件它的地址
+    './state/state',
+    './mutations/mutations',
+    './getters/getters',
+    './actions/actions'
+  ], () => {
+    const newState = require('./state/state').default
+    const newMutations = require('./mutations/mutations').default
+    const newGetters = require('./getters/getters').default
+    const newActions = require('./actions/actions').default
+    store.hotUpdate({
+      state: newState,
+      mutations: newMutations,
+      getters: newGetters,
+      actions: newActions
+    })
+  })
+}
 ```
 
 
@@ -783,35 +796,6 @@ export default store => {
     } else if (mutation.type === 'user/logout') {
       localStorage.removeItem('user')
     }
-  })
-}
-```
-
-
-
-### 给 vuex 加上热更替的功能
-
-store.js
-
-```js
-if (module.hot) {
-  module.hot.accept([
-    // 这个数组里面的列表对应的就是我们去引用的那几个文件它的地址
-    './state/state',
-    './mutations/mutations',
-    './getters/getters',
-    './actions/actions'
-  ], () => {
-    const newState = require('./state/state').default
-    const newMutations = require('./mutations/mutations').default
-    const newGetters = require('./getters/getters').default
-    const newActions = require('./actions/actions').default
-    store.hotUpdate({
-      state: newState,
-      mutations: newMutations,
-      getters: newGetters,
-      actions: newActions
-    })
   })
 }
 ```
