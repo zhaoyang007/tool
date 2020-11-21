@@ -73,7 +73,7 @@ webpack 给 css 提供了相当多的能力和处理方式。
 * ExtractTextWebpackPlugin 将 css 从 js 中提取出来
 * css modules 解决 css 命名冲突的问题
 * less-loader sass-loader 等各类预处理器
-* postcss-loader postcss处理
+* postcss-loader postcss 处理
 
 
 

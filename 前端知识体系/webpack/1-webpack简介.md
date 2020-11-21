@@ -1,52 +1,18 @@
-## 目 录
+### 为什么需要构建工具
 
-01 基础篇：webpack 与构建发展简史
-
-02 基础篇：webpack 基础用法
-
-03 基础篇：webpack 进阶用法
-
-04 进阶篇：编写可维护的 webpack 构建配置
-
-05 进阶篇：webpack 构建速度和体积优化策略
-
-06 原理篇：通过源码掌握 webpack 打包原理
-
-07 原理篇：编写 Loader 和插件
-
-08 实战篇：React 全家桶 和 webpack 开发商城项目
-
-
-
-## 为什么需要构建工具
-
-前端发展迅速，而浏览器对新出现的语言支持不好，为了我们能够在本地开发使用新的语言和技术来提高我们的开发效率，就需要一个构建工具来把浏览器不支持的语言转换成浏览器支持的。
-
-转换 ES6 语法
-
-转换 JSX
-
-CSS 前缀补全/预处理器
-
-压缩混淆
-
-图片压缩
-
-![es6支持情况](/Users/zhaoyang/tool/images/前端知识体系/前端工程实践/webpack/es6支持情况.png)
-
-​																ES6 module 主流浏览器支持情况
+前端发展迅速，浏览器对新出现的语言支持不好，我们想在本地开发使用新的语言和技术来提高开发效率，就需要一个构建工具来把浏览器不支持的语言转换成浏览器支持的。
 
  
 
-## 为什么选择 webpack
+### 为什么选择 webpack
 
-|              | ***\*webpack\**** | ***\*grunt\**** | ***\*gulp\**** |
-| ------------ | ----------------- | --------------- | -------------- |
-| 定义         | Module bundler    | Task runner     | Task runner    |
-| 语言         | JavaScript        | Node.js         | Node.js        |
-| 发布时间     | 2012.3            | 2012.6          | 2013.7         |
-| GitHub stars | 40766             | 11796           | 29427          |
-| 周下载量     | 3,385,392         | 478,876         | 816,228        |
+|              | **webpack **   | **grunt**   | **gulp**    |
+| ------------ | -------------- | ----------- | ----------- |
+| 定义         | Module bundler | Task runner | Task runner |
+| 语言         | JavaScript     | Node.js     | Node.js     |
+| 发布时间     | 2012.3         | 2012.6      | 2013.7      |
+| GitHub stars | 40766          | 11796       | 29427       |
+| 周下载量     | 3,385,392      | 478,876     | 816,228     |
 
 社区生态丰富
 
@@ -56,48 +22,48 @@ CSS 前缀补全/预处理器
 
 
 
-## 前端构建演变之路
+### 前端构建演变之路
 
-无代码压缩和混淆  ——》 通过在线工具压缩混淆代码  ——》 ant + YUI Toll 在本地对代码压缩混淆 ——》 requirejs commonjs 模块化概念的出现，前端模块化的编写方式也越来越复杂，演变出了grunt ——》 gulp fis3 ——》 rollup webpack parcel
+无代码压缩和混淆  —》 通过在线工具压缩混淆代码  —》 ant + YUI Toll 在本地对代码压缩混淆 —》 requirejs commonjs 模块化概念的出现，前端模块化的编写方式也越来越复杂，演变出了grunt —》 gulp fis3 —》 rollup webpack parcel
 
 
 
-## webpack
+### webpack
 
 webpack is a module bundler（模块打包⼯具），是⼯程化、⾃动化思想在前端开发中的体现。
 
 模块化开发，当前流行的单页面应用是只有一个入口的，那怎么把整个项目给串起来呢，就是通过模块化语句 require import 等来引入模块，形成依赖。
 
-进入入口文件 index.js，webpack 会借助 babel 来分析页面里面的内容，哪些是依赖，哪些是语句，然后对代码处理成浏览器能够正确执行的 js。分析完入口文件后，会进入依赖的模块里面去，同样分析这个模块中的依赖和语句，对代码进行转义和处理。通过一个入口模块，递归地找出⼊⼝⽂件的所有依赖，不断的处理编译，将⼊⼝和其所有的依赖打包到⼀个单独的⽂件中，最终它会形成一个代码块。    
+进入入口文件 index.js，webpack 会借助 babel 来分析页面里面的内容，哪些是依赖，哪些是语句，然后把代码处理成浏览器能够正确执行的 js。分析完入口文件后，会进入依赖的模块里面去，同样分析这个模块中的依赖和语句，对代码进行转义和处理。通过一个入口模块，递归地找出⼊⼝⽂件的所有依赖，不断的处理编译，将⼊⼝和其所有的依赖打包到⼀个单独的⽂件中，最终它会形成一个代码块。    
 
 一个 chunk 对应一个 bundle，bundle 是打包构建生成的资源文件，chunk 是代码块的意思。一个 chunk 代码块可能是多个模块组成的，nodejs 里，万物皆模块，就是文件。
 
-chunk：⼀个⼊⼝肯定是⼀个chunk，但是⼀个chunk不⼀定只有⼀个依赖。
+chunk：⼀个⼊⼝肯定是⼀个 chunk，但是⼀个 chunk 不⼀定只有⼀个依赖。
 
 
 
-## 环境搭建
+### 环境搭建
 
-### 安装 Node.js 和 NPM
+##### 安装 Node.js 和 NPM
 
-#### 安装 nvm（https://github.com/nvm-sh/nvm）
+安装 nvm（https://github.com/nvm-sh/nvm）
 
 * 通过 curl 安装：curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.34.0/install.sh | bash
 * 通过 wget 安装：wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/v0.34.0/install.sh | bash
 
-#### 将nvm添加到环境变量里面
+将 nvm 添加到环境变量里面
 
 * source ~/.bash_profile
 
-#### 安装 Node.js 和 NPM
+安装 Node.js 和 NPM
 
 * nvm install v10.15.3
 
 * 检查是否安装成功：node -v, npm -v
 
-### 安装 webpack 和 webpack-cli
+##### 安装 webpack 和 webpack-cli
 
-#### 创建空目录和 package.json
+创建空目录和 package.json
 
 * mkdir 
 
@@ -105,7 +71,7 @@ chunk：⼀个⼊⼝肯定是⼀个chunk，但是⼀个chunk不⼀定只有⼀�
 
 * npm init -y
 
-#### 全局安装 webpack
+全局安装 webpack
 
 全局安装 webpack，这会将你项⽬中的 webpack 锁定到指定版本，造成不同的项⽬中因为 webpack 依赖不同版本⽽导致冲突，构建失败，所以不推荐全局安装。
 
@@ -118,7 +84,7 @@ webpack -v
 npm uninstall webpack webpack-cli -g
 ```
 
-#### 项目安装 webpack
+项目安装 webpack
 
 ```bash
 # 安装最新的稳定版本
@@ -135,17 +101,17 @@ npx webpack -v # npx会生成一个软链接path指向到当前目录的node_mod
 
 
 
-## 初识 webpack
+### 初识 webpack
 
-webpack 配置就是一个对象。
+webpack 配置是一个对象。
 
-### 配置文件名称
+##### 配置文件名称
 
 webpack 执行构建会默认找 webpack.config.js 这个默认的配置文件。
 
 也可以通过 webpack --config 指定配置文件。
 
-### webpack 配置组成
+##### webpack 配置组成
 
 ```js
 // webpack 是基于 nodejs 的
@@ -170,7 +136,7 @@ module.exports = {
 }
 ```
 
-### 零配置 webpack 包含哪些内容？
+##### 零配置 webpack 包含哪些内容？
 
  ```js
 const path = require("path");
@@ -186,15 +152,15 @@ module.exports = {
 
 
 
-## 运行打包
+### 运行打包
 
-### 直接运行
+##### 直接运行
 
 ./node_modules/.bin/webpack 
 
 npx webpack
 
-### 通过 npm script 运⾏ webpack
+##### 通过 npm script 运⾏ webpack
 
 ```json
 {
@@ -214,3 +180,131 @@ npx webpack
 通过 npm run build 运行构建
 
 原理：局部安装的依赖，如果有创建一些命令，会通过 shell 脚本在 node_modules/.bin 目录下创建一个软链接，package.json 是可以默认的读取到 .bin 目录下的这些命令的。
+
+
+
+### webpack 核心概念
+
+##### entry
+
+entry ⽤来指定 webpack 打包的⼊⼝。
+
+单入口：entry 是一个字符串或数组。
+
+```js
+module.exports = {
+	entry: './src/index.js'
+  // entry: ['./src/index.js', './src/index2.js']
+}
+```
+
+多入口：entry 是一个对象
+
+```js
+module.exports = {
+  entry: {
+    // main: './src/index.js', // 默认值就是main，等价于上面字符串的写法
+    app: './src/app.js',
+    adminApp: './src/adminApp.js'
+  }
+}
+```
+
+##### output
+
+output 用来告诉 webpack 如何将编译后的文件输出到磁盘。
+
+单入口配置
+
+```js
+module.exports = {
+  output: {
+    path: __dirname + '/dist',
+    filename: 'bundle.js'
+  }
+}
+```
+
+多入口配置
+
+```js
+module.exports = {
+  output: {
+    path: __dirname + '/dist',
+    filename: '[name].js' // 多出口不可以指定名称
+  }
+}
+```
+
+##### loaders
+
+webpack 开箱即用只支持 JS 和 JSON 两种文件类型，对于其他的文件如 css less jsx vue 指令，webpack 并不了解，就需要通过 loader处理，去支持其它文件类型并且把它们转化成有效的模块，并且可以添加到依赖图中，loader 就是模块转换器。loaders 本身是一个函数，接受源文件作为参数，返回转换的结果。⼀个loader只处理⼀件事情。
+
+一个 webpack 配置里面可能会存在多个 loader，这些 loader 是需要放在配置根节点下的 module，module 是一个对象，这个对象里面有一个 rules，rules 是一个数组，我们只需要把需要用的 loader 放到 rules 数组里面就可以了。对于每一个 rule，通过 test 指定匹配规则，使用 use 指定当前使用的 loader 的名称。
+
+```js
+module.exports = {
+  module: {
+    rules: [
+      {
+        test: /\.txt$/,
+        use: 'raw-loader'
+      }
+    ]
+  }
+}
+```
+
+##### plugins
+
+plugin 作用是用来增强 webpack 的功能，plugin 通常用于打包输出的 js 文件的优化，资源的管理和环境变量的注入，任何 loader 没办法做到的事情都可以通过 plugin 去完成。比如构建之前需要手动的去删除打包目录，像这种操作都是可以通过 plugins 很灵活的完成，plugin 是作用于整个构建过程，就是从构建开始到构建结束整个阶段都是可以使用 plugin 的，webpack的打包过程是有（⽣命周期概念）钩⼦，plugin 可以在webpack运⾏到某个阶段的时候，帮你做⼀些事情，类似于⽣命周期的概念。 plugin 本身是一个类。
+
+在 plugins 数组里面将定义好的插件放进去就可以了。
+
+```js
+module.exports = {
+  plugins: [
+    new HtmlWebpackPlugin({
+      template: './src/index.htmls'
+    })
+  ]
+}
+```
+
+##### mode
+
+mode 是用来指定当前构建环境：production development none。
+
+设置 mode 的好处是可以自动的触发 webpack 内置的函数，比如你设置成 development，webpack 会默认的去开启在开发阶段的一些比较实用的参数和插件。设置成 production 会默认开启在生产阶段的参数和插件的一些功能，设置成 none 就什么都不会帮你做。默认值为 production。
+
+```js
+module.exports = {
+  mode: 'production'
+}
+```
+
+Mode 的内置函数功能：
+
+![Mode的内置函数功能](file:///Users/zhaoyang/tool/images/%E5%89%8D%E7%AB%AF%E7%9F%A5%E8%AF%86%E4%BD%93%E7%B3%BB/%E5%89%8D%E7%AB%AF%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/webpack/Mode%E7%9A%84%E5%86%85%E7%BD%AE%E5%87%BD%E6%95%B0%E5%8A%9F%E8%83%BD.png?lastModify=1605661313)
+
+DefinePlugin：
+
+mode 其实就是设置的这个插件。
+
+定义了这个，就可以在业务 js 代码中引用到 process.env.NODE_ENV。
+
+使用 vue, react 这些框架时，一定要用的 plugin，webpack 会根据环境变量选择不同的 vue 或 react 版本打包。
+
+```js
+const isDev = process.env.NODE_ENV === 'development'
+
+module.exports = {
+	plugins: [
+		new webpack.DefinePlugin({
+      'process.env': {
+        NODE_ENV: isDev ? '"development"' : '"production"'
+      }
+    })  
+	]
+}
+```
