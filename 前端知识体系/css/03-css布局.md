@@ -340,7 +340,7 @@ css 规范中，可以设定一个元素长得像表格。
 
 ###### 圣杯布局：
 
-浮动之后，center 占 100%，然后使用 margin 把被挤下去的左右定宽挪到相应位置即可。
+三列都左浮动之后，center 占 100%，然后使用 margin 把被挤下去的左右定宽挪到相应位置即可。
 
 ```html
 <!-- 当原有的html结构没有办法很好的解决的时候，就在现有结构中增加父级结构或子级元素，改变其结构 -->
@@ -705,7 +705,7 @@ https://github.com/randyviandaputra/flexbox-playground
 
 flex 
 
-@media 
+media 
 
 rem 
 

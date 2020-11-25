@@ -76,13 +76,10 @@ let Vue;
 class KVueRouter {
   constructor(options) {
     this.$options = options
-    console.log(this.$options);
-
     // 需要创建响应式的current属性
     // 利用Vue提供的defineReactive做响应化
     // 变成响应式的好处是，在任何组件的template或render函数中用到current就会把它收集起来，将来只要我变了，就			 会通知用到的组件做更新，就是重新render
     Vue.util.defineReactive(this, 'current', '/')
-		
     // 还可以使用这种方式实现current的响应式
     // this.app = new Vue({
     //   data() {
@@ -91,7 +88,7 @@ class KVueRouter {
     //     }
     //   }
     // })
-    
+ 
     // 监控url变化
     window.addEventListener('hashchange', this.onHashChange.bind(this))
     window.addEventListener('load', this.onHashChange.bind(this))
@@ -102,10 +99,7 @@ class KVueRouter {
       this.routeMap[route.path] = route
     })
   }
-
   onHashChange() {
-    console.log(window.location.hash);
-
     this.current = window.location.hash.slice(1)
   }
 }
@@ -115,12 +109,11 @@ class KVueRouter {
 KVueRouter.install = function (_Vue) {
   // 保存构造函数，在KVueRouter里面使用
   Vue = _Vue;
-
   // 任务1：挂载$router
   // 怎么获取根实例中的router选项
   // 我只要混入一个生命周期的钩子或者是任何一个方法，我在钩子或方法里面就可以拿到组件的实例了。
   // 加上一个全局的混入，这里写的生命周期的钩子将来会在所有的组件中都执行一遍。
-  // 为什么要用混入方式写？主要原因是use代码在前，Router实例创建在后，install中还不能直接拿到创建好的router实    		 例，所以要用mixin的方式在Vue实例创建的时候在钩子函数中将router放到Vue.prototype上。
+  // 为什么要用混入方式写？主要原因是use代码在前，Router实例创建在后，install中还不能直接拿到创建好的router实例，所以要用mixin的方式在Vue实例创建的时候在钩子函数中将router放到Vue.prototype上。
   Vue.mixin({
     beforeCreate() {
       // 确保根实例的时候才执行
@@ -131,7 +124,7 @@ KVueRouter.install = function (_Vue) {
   })
 
   // 任务2：注册两个全局组件router-link和router-view
-  // 这里不能使用template的方式去描述标签的原因是我们使用的是纯运行时的Vue版本，因为是webpack环境，最终的编译		 版本中是不存在编译器的，所以没有办法编译template。
+  // 这里不能使用template的方式去描述标签的原因是我们使用的是纯运行时的Vue版本，因为是webpack环境，最终的编译版本中是不存在编译器的，所以没有办法编译template。
   // 所以这里要用到render函数，纯运行时环境只能用render函数来描述你的组件。
   Vue.component('router-link', Link) 
   Vue.component('router-view', View)
@@ -168,10 +161,8 @@ krouter/router-view.js
 export default {
   render(h) {
     // 获取path对应的component
-    const {routeMap, current} = this.$router;
-    console.log(routeMap, current);
-    
-    const component = routeMap[current].component || null;
+    const {routeMap, current} = this.$router
+    const component = routeMap[current].component || null
     return h(component)
   }
 }

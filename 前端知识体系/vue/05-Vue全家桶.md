@@ -2,8 +2,6 @@
 
 因为我们单页面应用程序需要在不同的页面内容之间来进行切换，所以我们就需要路由这样的一个库。
 
-
-
 ### 起步
 
 * 创建路由表
@@ -70,8 +68,6 @@ new Vue({
 </template>
 ```
 
-
-
 ### 动态路由匹配
 
 我们经常需要把某种模式匹配到的所有路由，全都映射到同个组件。我们可以在 `vue-router` 的路由路径中使用“动态路径参数”(dynamic segment) 来达到这个效果：
@@ -96,8 +92,6 @@ const User = {
 | :---------------------------: | :-----------------: | :----------------------------------: |
 |        /user/:username        |     /user/evan      |         { username: 'evan' }         |
 | /user/:username/post/:post_id | /user/evan/post/123 | { username: 'evan', post_id: '123' } |
-
-
 
 ### 编程式导航
 
@@ -150,8 +144,6 @@ router.push({ path: '/user', params: { userId }}) // -> /user
 
 这个方法的参数是一个整数，意思是在 history 记录中向前或者后退多少步，类似 `window.history.go(n)`。
 
-
-
 ### 路由对象 $route
 
 一个路由对象 (route object) 表示当前激活的路由信息，包含了当前 URL 解析得到的信息，还有 URL 匹配到的路由记录 (route records)。
@@ -173,11 +165,7 @@ router.push({ path: '/user', params: { userId }}) // -> /user
     一个 key/value 对象，表示 URL 查询参数。例如，对于路径 `/foo?user=1`，则有 `$route.query.user == 1`，如果没有查询参数，则是个空对象。
 
 
-
-
 ### Router 实例 $router
-
-
 
 ### 导航守卫
 
@@ -313,8 +301,6 @@ export default {
 </script>
 ```
 
-
-
 ### 动态添加路由
 
 通过 router.addRoutes(routes) 方式动态添加路由， 可以用编程的方式在运行时动态的添加路由。这个就在一些场景有应用价值了。
@@ -354,8 +340,6 @@ login() {
 }
 ```
 
-
-
 ### 路由组件缓存
 
 前面有一个场景就是页面路由切换的时候数据反复的加载，因为组件每次都会重新加载，如果确定数据加载之后不会变化，就没必要让它频繁的加载，浪费资源，这时可以把组件缓存下来，不要让它去重置状态，重新创建，这样它就不会重新去获取请求数据了。
@@ -379,8 +363,6 @@ login() {
 ## 统一状态管理 - Vuex
 
 Vuex 是一个专为 Vue.js 应用程序开发的状态管理模式。采用**集中式**存储和管理应用的所有组件的状态，并以相应的规则保证状态以**可预测**的方式发生变化。 
-
-
 
 ### 起始
 
@@ -553,8 +535,6 @@ export default new Vuex.Store({
 }
 ```
 
-
-
 ### 模块
 
 使用 modules 定义多个子模块利于组件复杂状态
@@ -634,8 +614,8 @@ export default {
 // 1. 在actions中使用
 commit('a/getList', {}, { root: ture })
 dispatch('a/getList', {}, { root: ture })
-// 可以从actions接收的store对象中解构出rootState和rootGetters，使用这两个对象就可以获取其他模块的state和ge tters
-commit: {
+// 可以从actions接收的store对象中解构出rootState和rootGetters，使用这两个对象就可以获取其他模块的state和getters
+actions: {
   a({ rootState, rootGetters}, params) {
     console.log(rootState.a.data)
     console.log(rootGetters['a/getterData'])
@@ -643,8 +623,6 @@ commit: {
 }
 // 2.在任何地方使用，直接把相应模块文件引入
 ```
-
-
 
 ### 映射方法
 
@@ -704,8 +682,6 @@ export default {
 </script>
 ```
 
-
-
 ### 严格模式
 
 严格模式主要是为了防止用户直接去改 Store 里的状态。
@@ -717,8 +693,6 @@ const store = new Vuex.Store({
   strict: true
 })
 ```
-
-
 
 ### 给 vuex 加上热更替的功能
 
@@ -746,8 +720,6 @@ if (module.hot) {
   })
 }
 ```
-
-
 
 ### 插件
 

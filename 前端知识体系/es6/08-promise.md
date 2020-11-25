@@ -185,3 +185,7 @@ Promise.race([p1(), p2()])
     console.log(value) // 1
   })
 ```
+
+
+
+### Promise 原理
