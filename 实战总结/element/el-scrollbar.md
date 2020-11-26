@@ -1,4 +1,6 @@
-设置 el-scrollbar 父级为固定高度，设置 el-scrollbar 的高度为100%，el-scrollbar 的高度为自由高度。
+* 设置 el-scrollbar 父级为固定高度
+* 设置 el-scrollbar 的高度设为100%，就是等于父级的固定高度
+* el-scrollbar 的内容为自由的超出父级的高度
 
 ```vue
 <template>

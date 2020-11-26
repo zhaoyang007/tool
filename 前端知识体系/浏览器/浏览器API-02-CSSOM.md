@@ -17,7 +17,7 @@ DOM 中的所有的属性都是用来表现语义的属性，CSSOM 的则都是�
 <link rel="stylesheet" title="x" href="data:text/css,p%7Bcolor:blue%7D">
 ```
 
-CSSOM API 的基本用法，获取文档中所有的样式表：
+获取文档中所有的样式表：
 
 ```js
 document.styleSheets
@@ -75,17 +75,21 @@ document.addEventListener("scroll", function(event){
 
 ##### 元素滚动 API
 
-在 Element 类（参见 DOM 部分），为了支持滚动，加入了以下 API，元素部分的 API 设计与视口滚动命名风格上略有差异，你在使用的时候不要记混。
+形成滚动的要素：
 
-* scrollTop 元素的属性，表示 Y 方向上的当前滚动距离。
-* scrollLeft 元素的属性，表示 X 方向上的当前滚动距离。
-* scrollWidth 元素的属性，表示元素内部的滚动内容的宽度，一般来说会大于等于元素宽度。
-* scrollHeight 元素的属性，表示元素内部的滚动内容的高度，一般来说会大于等于元素高度。
-* scroll(x, y) 使得元素滚动到特定的位置，有别名 scrollTo，支持传入配置型参数 {top, left}。
-* scrollBy(x, y) 使得元素滚动到特定的位置，支持传入配置型参数 {top, left}。
-* scrollIntoView(arg) 滚动元素所在的父元素，使得元素滚动到可见区域，可以通过 arg 来指定滚到中间、开始或者就近。
+* 父容器有固定高度
+* 父容器设置 `overflow: scroll; `
+* 子元素高度超出父元素高度
 
-可滚动的元素也支持 scroll 事件，我们在元素上监听它的事件即可：
+下面的所有属性和方法都是设置在滚动的父容器身上的：
+
+* scrollTop：Y 方向上的滚动距离。
+* scrollLeft：X 方向上的当前滚动距离。
+* scrollWidth：可滚动区域的宽度，没有滚动时就为父容器的宽度。
+* scrollHeight：可滚动区域的高度，没有滚动时就为父容器的高度。
+* scroll(x, y)：使元素滚动到特定的位置，有别名 scrollTo，scrollBy，支持传入配置型参数 {top, left}。
+
+可在元素上监听它的滚动事件 scroll：
 
 ```js
 element.addEventListener("scroll", function(event){
