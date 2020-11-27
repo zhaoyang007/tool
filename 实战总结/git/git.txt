@@ -1,51 +1,7 @@
-
-
-安装git
-
-
-配置用户信息
-$ git config --global user.name "username"
-$ git config --global user.email "email"
-$ git config --global color.ui true  让Git显示颜色
-查看本机 Git 配置信息
-$ git config --list
-
-
-ssh key
-创建SSH Key
-ssh-keygen -t rsa -C "zhaoy@jryghq.cn"
-将公钥放到远程库中
-
-
-当你从远程仓库克隆时，实际上Git自动把本地的master分支和远程的master分支对应起来了，并且，远程仓库的默认名称是origin。
-要查看远程库的信息，用git remote，或者，用git remote -v显示更详细的信息
-
-
-1.从远程仓库克隆
-git clone url
-2.已有本地文件夹或本地库，本地关联远程库
-git init
-本地关联远程库：git remote add origin git@code.aliyun.com:jryg/jryg-api.git
-第一次推送master分支的所有内容：git push -u origin master
-
-
-常用命令
-git status  查看状态
-git diff  查看改动
-git add .  add所有
-git commit -m ""  提交到本地库
-git pull 相当于从远程获取最新版本并merge到本地
-git fetch origin  拉取所在分支代码
-git rebase origin/master  合并远程和本地代码
-git merge origin/master  合并远程和本地代码
-git push origin master  推送到远程库
-手动解决冲突，然后再次add,commit,push就可以了
-
-
 分支管理
 git branch  查看本地分支
 git branch -r  查看远程分支
-git branch -a  查看所有分支（有时别人新加的远程分支要先git pull一下才能看到）  
+git branch -a  查看所有分支（有时别人新加的远程分支要先git pull一下才能看到） 
 git branch <name>  创建分支
 git checkout <name>  切换分支
 git checkout -b <name>  创建并切换分支
@@ -57,26 +13,10 @@ git push origin local_branchname  把本地分支推送到远程
 git checkout -b local_branchname origin/remote_branchname  将远程分支拉取到本地
 git fetch origin remote_branchname:local_branchname  将远程分支拉取到本地
 git checkout remote_branchname  将远程分支拉取到本地
-
 git push origin :remote_branchname  删除远程分支
 
 git stash 储藏工作现场
 git stash pop 恢复工作现场，并删除之前储藏的内容
-
-
-
-时光机穿梭
-    git log 查看提交历史
-    git reflog 查看命令历史
-    工作区 暂存取(add后的) 分支(commit后的)
-    版本回退
-        1.撤回工作区的内容，也就是还没add和commit
-            git checkout -- readme.txt 让这个文件回到最近一次git commit或git add时的状态
-        2.撤回暂存区的内容，也就是已经add了
-            git reset HEAD readme.txt
-        3.撤回分支上的版本，也就是已经commit
-            git reset --hard HEAD^ 退回到上一个提交的版本
-            git reset --hard 1094adb 回退到指定版本
 
 标签
     tag就是一个让人容易记住的有意义的名字，它跟某个commit绑在一起

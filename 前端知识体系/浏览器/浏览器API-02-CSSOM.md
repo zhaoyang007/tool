@@ -145,3 +145,4 @@ var offsetX = document.documentElement.getBoundingClientRect().x - element.getBo
 如这段代码所示，我们只需要获取文档跟节点的位置，再相减即可得到它们的坐标。
 
 这两个 API 的兼容性非常好，定义又非常清晰，建议你如果是用 JavaScript 实现视觉效果时，尽量使用这两个 API。
+
