@@ -1,7 +1,5 @@
 ## DOM
 
-文档对象模型：顾名思义，文档对象模型是用来描述文档，这里的文档，是特指 HTML 文档，同时它又是一个“对象模型”，这意味着它使用的是对象这样的概念来描述 HTML 文档。
-
 HTML 文档是一个由标签嵌套而成的树形结构，因此，DOM 也是使用树形的对象模型来描述一个 HTML 文档。
 
 DOM API 大致会包含 4 个部分：
@@ -12,6 +10,8 @@ DOM API 大致会包含 4 个部分：
 * 遍历：遍历 DOM 需要的 API。
 
 document.documentElement 表示的是整个 html。
+
+document.body 
 
 ### 节点
 
@@ -33,7 +33,7 @@ ProcessingInstruction: <?a 1?>
 
 这里我们每天都需要用到，要重点掌握的是：Document、Element、Text 节点。
 
-DocumentFragment 也非常有用，它常常被用来高性能地批量添加节点。因为 Comment、DocumentType 和 ProcessingInstruction 很少需要运行时去修改和操作，所以有所了解即可。
+DocumentFragment 也非常有用，它常常被用来高性能地批量添加节点。
 
 #### Node
 
@@ -59,19 +59,15 @@ Node 是 DOM 树继承关系的根节点，它定义了 DOM 节点在 DOM 树上
 * removeChild
 * replaceChild
 
-到此为止，Node 提供的 API 已经可以很方便地对树进行增、删、遍历等操作了。
-
 ##### 除此之外，Node 还提供了一些高级 API。
 
-* compareDocumentPosition 是一个用于比较两个节点中关系的函数。
 * contains 检查一个节点是否包含另一个节点的函数。
+* cloneNode 复制一个节点，如果传入参数 true，则会连同子元素做深拷贝。
 * isEqualNode 检查两个节点是否完全相同。
 * isSameNode 检查两个节点是否是同一个节点，实际上在 JavaScript 中可以用“===”。
-* cloneNode 复制一个节点，如果传入参数 true，则会连同子元素做深拷贝。
+* compareDocumentPosition 比较两个节点中关系的函数。
 
 ##### 创建 DOM 节点
-
-DOM 标准规定了节点必须从文档的 create 方法创建出来，不能够使用原生的 JavaScript 的 new 运算。这些方法都是用于创建对应的节点类型。
 
 * createElement
 * createTextNode
@@ -80,6 +76,21 @@ DOM 标准规定了节点必须从文档的 create 方法创建出来，不能�
 * createProcessingInstruction
 * createDocumentFragment
 * createDocumentType
+
+#### 查找元素
+
+document 节点提供了查找元素的能力。
+
+* querySelector
+* querySelectorAll
+* getElementById
+* getElementsByName
+* getElementsByTagName
+* getElementsByClassName
+
+getElementById、getElementsByName、getElementsByTagName、getElementsByClassName 这几个 API 的性能高于 querySelector。
+
+getElementsByName、getElementsByTagName、getElementsByClassName 获取的是一个能够动态更新的集合。所以，尽管 querySelector 系列的 API 非常强大，我们还是应该尽量使用 getElement 系列的 API。
 
 #### Attribute
 
@@ -99,21 +110,6 @@ Node 提供了树形结构上节点相关的操作。而大部分时候，我们
 像 property 一样的访问 attribute，还可以使用 attributes 对象，比如 document.body.attributes.class = “a” 等效于 document.body.setAttribute(“class”, “a”)。
 
 attribute 和 property 的区别是 property 不能修改和获取节点的自定义属性，attribute 可以。
-
-#### 查找元素
-
-document 节点提供了查找元素的能力。
-
-* querySelector
-* querySelectorAll
-* getElementById
-* getElementsByName
-* getElementsByTagName
-* getElementsByClassName
-
-getElementById、getElementsByName、getElementsByTagName、getElementsByClassName 这几个 API 的性能高于 querySelector。
-
-getElementsByName、getElementsByTagName、getElementsByClassName 获取的是一个能够动态更新的集合。所以，尽管 querySelector 系列的 API 非常强大，我们还是应该尽量使用 getElement 系列的 API。
 
 ### 事件
 
@@ -361,27 +357,34 @@ element.addEventListener("scroll", function(event){
 * window.outerWidth, window.outerHeight：浏览器窗口占据的大小。
 * window.screen：设备的屏幕尺寸相关信息。
 
-##### 元素的布局信息
+##### 元素的布局信息（都是只读信息）
 
 * clientRect 系列
+
   * element.getClientRects()：返回一个包含元素对应的每一个盒所占据的客户端矩形区域的列表。
   * element.getBoundingClientRect()：返回元素对应的盒的布局信息对象。
     * x, y：顶点坐标，相对于视口。
-    * width, height：宽高。
+    * width, height：宽高，包括 content, padding, border。跟 offset 系列的宽高一样。
     * top, right, bottom, left：四个边的坐标，相对于视口。
+
 * offset 系列
-  * element.offsetParent：返回一个最近的包含该元素的定位元素或者最近的 `table,` `td,` `th,` `body`元素，只读。
-  * element.offsetTop：当前元素相对于其 `offsetParent` 元素的顶部距离。只读。
-  * element.offsetLeft：当前元素相对于其 `offsetParent` 元素的左部距离。只读。
-  * element.offsetWidth：
-  * element.offsetHeight：
+
+  document.documentElement.offsetHeight：html 的宽高
+
+  * element.offsetParent：返回一个最近的包含该元素的定位元素或者最近的 `table,` `td,` `th,` `body`元素
+  * element.offsetTop：当前元素相对于其 `offsetParent` 元素的顶部距离
+  * element.offsetLeft：当前元素相对于其 `offsetParent` 元素的左部距离
+  * element.offsetWidth：盒子的宽度，包括 content, padding, border，不包括 margin 和滚动条的尺寸
+  * element.offsetHeight：盒子的高度，包括 content, padding, border，不包括 margin 和滚动条的尺寸
+
 * client 系列
-  * element.clientTop：
-  * element.clientLeft：
-  * clientWidth：
-  * clientHeight：
 
+  document.documentElement.clientHeight：视口的宽高
 
+  * element.clientTop：盒子的上边框的宽度
+  * element.clientLeft：盒子的左边框的宽度
+  * element.clientWidth：盒子的宽度，包括 content, padding 的尺寸，不包括 border, margin 和滚动条的尺寸
+  * element.clientHeight：盒子的高度，包括 content, padding 的尺寸，不包括 border, margin 和滚动条的尺寸
 
 
 
