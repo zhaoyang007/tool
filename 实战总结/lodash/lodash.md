@@ -64,7 +64,7 @@ function differenceWith(array, ...values) {
 
 ##### _.isEqual
 
-比较两个值是否相等，如果是对象类型，比较对象的 key/value 是否相等。
+深比较两者是否相等
 
 ```js
 var object = { 'a': 1 }
@@ -83,7 +83,7 @@ function isObject(obj) {
   return typeof obj === 'object' && obj !== null
 }
 
-function isEqual(obj1,obj2) {
+function isEqual(obj1, obj2) {
   // 两个数据有任何一个不是对象或数组
   if (!isObject(obj1) || !isObject(obj2)) {
     // 值类型(注意：参与equal的一般不会是函数)
@@ -102,7 +102,6 @@ function isEqual(obj1,obj2) {
     return false
   }
 
-  // 如果key的个数相等,就是第二步
   // 2.以obj1为基准，和obj2依次递归比较
   for (let key in obj1) {
     // 比较当前key的value  --- 递归
@@ -130,24 +129,29 @@ console.log(isEqual(obj1,obj2)) // false
 ##### 基础通用
 
 ```js
-// isArrayLikeObject
-function isArrayLikeObject(value) {
-  return isObjectLike(value) && isArrayLike(value)
-}
-// isObjectLike 是否是非空对象类型数据
+// 是否为非空的对象类型数据
 function isObjectLike(value) {
   return typeof value === 'object' && value !== null
 }
-// isArrayLike 是否是集合或者数组
+// 是否为数组，集合，字符串
 function isArrayLike(value) {
   return value != null && typeof value !== 'function' && isLength(value.length)
 }
-// isLength
-const MAX_SAFE_INTEGER = 9007199254740991
-function isLength(value) {
-  return typeof value === 'number' &&
-    value > -1 && value % 1 == 0 && value <= MAX_SAFE_INTEGER
+
+// 获取详细的数据类型
+const toString = Object.prototype.toString
+function getTag(value) {
+  if (value == null) {
+    return value === undefined ? '[object Undefined]' : '[object Null]'
+  }
+  return toString.call(value)
 }
+
+// 是否为函数
+function isFunction(value) {
+  return typeof value === 'function'
+}
+
 ```
 
 

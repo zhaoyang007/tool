@@ -54,25 +54,26 @@ git clone url
 # 查看分支
 git branch  查看本地分支
 git branch -r  查看远程分支
-git branch -a  查看所有分支（有时别人新加的远程分支要先git pull一下才能看到） 
+git branch -a  查看所有分支（有时别人新加的远程分支要先git pull一下才能看到）
+
 # 分支本地操作
 git branch <name>  创建分支
 git checkout <name>  切换分支
 git checkout -b <name>  创建并切换分支
-git branch -d <name>  删除本地分支
-git branch -D <name> 强行删除
 git merge <name>  合并某分支到当前分支
+git branch -d <name>  删除本地分支，该分支被合入其他分支后才能被删除
+git branch -D <name> 强行删除没有合入其他分支的的分支
 git log --graph 查看分支合并图
-# 本地分支和远程分支关联
-git push origin local_branchname:remote_branchname  把本地分支推送到远程
-git push origin :local_branchname  把本地分支推送到远程
-git push origin local_branchname  把本地分支推送到远程
-git checkout -b local_branchname origin/remote_branchname  将远程分支拉取到本地
-git fetch origin remote_branchname:local_branchname  将远程分支拉取到本地
-git checkout remote_branchname  将远程分支拉取到本地
-git push origin :remote_branchname  删除远程分支
 
-git branch --set-upstream-to=origin/dev dev # 提示 If you wish to set tracking information for this branch you can do so with:，git pull失败，原因是没有指定本地dev分支与远程origin/dev分支的链接，根据提示，设置dev和origin/dev的链接
+# 本地分支和远程分支关联
+git checkout -b local_branchname origin/remote_branchname  将远程分支拉取到本地
+git push origin local_branchname  把本地分支推送到远程
+git push origin --delete remote_branchname 删除远程分支
+git branch -vv 查看设置的所有跟踪分支
+
+# 建立本地分支与远程分支的映射关系
+git branch -u origin/dev
+git branch --set-upstream-to origin/dev
 
 # 储藏工作区内容
 git stash 储藏工作现场

@@ -71,20 +71,20 @@ for(var i = 0; i < objects.length; i++) {
 
 ### JavaScript 所有固有对象
 
-mac系统：Google Chrome：版本 79.0.3945.130（正式版本） （64 位）：总共989个JavaScript固有对象。
+mac系统：Google Chrome：版本 79.0.3945.130（正式版本） （64 位）：总共 989 个 JavaScript 固有对象。
 
-主要使用Object.getOwnPropertyNames, Object.getOwnPropertyDescriptor两种方法。
+主要使用 Object.getOwnPropertyNames, Object.getOwnPropertyDescriptor 两种方法。
 
-全部的JavaScript固有对象基本包含：
+全部的 JavaScript 固有对象基本包含：
 
 * 函数
-* 函数中的prototype属性
+* 函数中的 prototype 属性
 * 构造器
-* 构造器中的object和functions还有get set的属性，一般就是function属性和get set属性
+* 构造器中的 object 和 functions 还有 get set 的属性，一般就是 function 属性和 get set 属性
 * 构造器原型
-* 构造器原型中的object和function还有get set的属性，一般就是function属性和get set属性
+* 构造器原型中的 object 和 function 还有 get set 的属性，一般就是 function 属性和 get set 属性
 * Atomics, JSON, Math, Reflect
-* Atomics, JSON, Math, Reflect中的 object 和 function 还有 get set 的属性，一般就是 function 属性和 get set 属性
+* Atomics, JSON, Math, Reflect 中的 object 和 function 还有 get set 的属性，一般就是 function 属性和 get set 属性
 
 #### 1.三个值：（3）
 
@@ -687,3 +687,65 @@ encodeURIComponent
       function metadata() { [native code] }
         metadata.prototype: {constructor: ƒ metadata()}
 ```
+
+
+
+
+
+##### sort(sortBy)
+
+用于数组排序。
+
+参数：可选，规定排序顺序，必须是函数。
+
+如果没有使用参数，把数组的元素都转换成字符串（如有必要），按照字符编码的顺序进行排序。
+
+如果想按照其他标准进行排序，需要提供比较函数，该函数接收要比较的两个值 a 和 b，返回一个用于说明这两个值的相对顺序的数字：
+
+* a 小于 b，返回负数，升序
+* a 大于 b，返回正数，升序
+* a 小于 b，返回正数，降序
+* a 大于 b，返回负数，降序
+* a 等于 b，返回 0
+
+```js
+// 对象型数组，按某个对象的key做升降序排列
+function compare(prop, order) {
+  return function (obj1, obj2) {
+    var val1 = obj1[prop];
+    var val2 = obj2[prop];
+    if (!isNaN(Number(val1)) && !isNaN(Number(val2))) {
+      val1 = Number(val1);
+      val2 = Number(val2);
+    }
+    if (val1 < val2) {
+      if (order === 'ascending') {
+        return -1
+      } else {
+        return 1
+      }
+    } else if (val1 > val2) {
+      if (order === 'ascending') {
+        return 1
+      } else {
+        return -1
+      }
+    } else {
+      return 0;
+    }
+  }
+}
+const arr = [
+  {a: 1, b: 2, c: 3},
+  {a: 3, b: 2, c: 3},
+  {a: 2, b: 2, c: 3},
+]
+arr.sort(compare('a', 'ascending'))
+```
+
+##### 会改变原数组的方法
+
+```js
+push, pop, shift, unshift, reverse, sort, splice
+```
+
