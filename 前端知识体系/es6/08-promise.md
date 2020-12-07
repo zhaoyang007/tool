@@ -128,6 +128,12 @@ loadScript('./1.js')
 
 
 
+### finally
+
+finally 始终都会被执行。
+
+
+
 ### Promise.resolve & Promise.reject
 
 Promise 有两个静态方法，是用来帮你做类型转换的。比如我想把一个数据转换成一个 promise 对象。

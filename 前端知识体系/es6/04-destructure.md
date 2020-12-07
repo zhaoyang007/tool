@@ -2,7 +2,7 @@
 
 如何从一个复杂的数据结构中提取数据。
 
-在 es5 中从复杂的数据结构中去挑数据是需要层层的遍历或者是引用，相当麻烦。
+在 es5 中从复杂的数据结构中去挑数据是需要层层的遍历或者是引用。
 
 ```js
 let arr = ['hello', 'world']
@@ -15,17 +15,13 @@ console.log(firstName, surName)
 
 es6 中所谓的更优雅更便捷的方式就是解构赋值。
 
+解构就是说把数据给拆解开，赋值就是把拆解出的数据赋值给一些变量。
+
 ```js
 let arr = ['hello', 'world']
 let [firstName, surName] = arr
 console.log(firstName, surName)
 ```
-
-es5 的时候是通过 let 两次声明变量，而 es6 只用了一个 let。
-
-左面是你变量的集合，右面是你的数据。这样的话就轻松的拿到了数据和变量的对应。相当于是一次集体的赋值。
-
-解构就是说把数据给你拆解开，然后把拆解出的数据赋值给一些变量。这就是解构赋值的意思。越复杂的数据解构就越会体现出解构赋值的优越性。
 
 
 
@@ -166,5 +162,3 @@ let options = {
 let {size: {width: width2, height}, items: [item1]} = options
 console.log(width2, height, item1)  
 ```
-
-#### 函数参数复杂的时候也可以用解构赋值

@@ -2,6 +2,8 @@
 
 ##### 数组
 
+push pop shift unshift reverse sort splice forEach some every reduce 会改变原数组
+
 ```js
 Array: function Array() { [native code] }（共65个）
   function isArray() { [native code] }
@@ -32,7 +34,7 @@ Array: function Array() { [native code] }（共65个）
     function reverse() { [native code] }
     function reduceRight() { [native code] }
     function flat() { [native code] }
-    function flatMap() { [native code] }
+    function flatMap() { [native code] } // 相当于先map再flat
     function toString() { [native code] }
 ```
 
@@ -42,8 +44,8 @@ Array: function Array() { [native code] }（共65个）
 Object: function Object() { [native code] }
 	function keys() { [native code] } // 返回一个对象自身可枚举属性组成的数组
 	function values() { [native code] } // 返回一个对象自身可枚举属性值组成的数组
-  function entries() { [native code] } // 返回一个对象自身可枚举属性的键值对数组
-	function fromEntries() { [native code] } // 把键值对列表转换为一个对象
+  function entries() { [native code] } // 返回一个对象自身可枚举属性的键值对数组，object转数组
+	function fromEntries() { [native code] } // 把键值对列表转换为一个对象，数组转object
   function assign() { [native code] } // 将所有可枚举属性的值从一个或多个源对象分配到目标对象。返回目标对象。
 	function create() { [native code] } // 创建一个对象，可以设置其__proto__和自身属性。
 	function is() { [native code] } // 判断两个值是否为同一个值
@@ -54,6 +56,25 @@ Object: function Object() { [native code] }
     function hasOwnProperty() { [native code] } // 判断指定属性是否为该对象自身的属性
     function propertyIsEnumerable() { [native code] } // 判断指定属性是否为该对象可枚举的属性
 ```
+
+利用 entries 和 fromEntries 来使用数组的 api 操作 object
+
+```js
+// 过滤出key的长度为3的的项
+const obj = {
+  abc: 1,
+  def: 2,
+  ghijk: 3
+}
+let res = Object.fromEntries(
+  Object.entries(obj).filter(([key, val]) => key.length === 3)
+)
+console.log(res)
+```
+
+
+
+
 
 ##### 字符串 & 正则 & 数字
 
