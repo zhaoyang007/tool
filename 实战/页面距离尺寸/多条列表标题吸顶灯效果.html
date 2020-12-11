@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      padding-top: 50px;
+    }
+    .wrapper {
+      height: 600px;
+      outline: 1px solid #333;
+      position: relative;
+    }
+    .head-list {
+      position: absolute;
+      top: 0px;
+      left: 0;
+      padding-left: 20px;
+    }
+    #scroll-wrapper {
+      height: 100%;
+      overflow: scroll;
+    }
+    .head-item {
+      height: 30px;
+      line-height: 30px;
+      background-color: #fff;
+      border: 1px solid #ddd;
+    }
+    .content-item h3,
+    .content-item ul li {
+      height: 30px;
+      line-height: 30px;
+      background-color: #ccc;
+      padding-left: 20px;
+      border-bottom: 1px solid #ddd;
+      box-sizing: border-box;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrapper" id="wrap">
+    <div class="head-list">
+      <!-- <div class="head-item">2020-03-04</div>
+      <div class="head-item">2020-03-04</div>
+      <div class="head-item">2020-03-04</div> -->
+    </div>
+    <div id="scroll-wrapper">
+      <div class="content-list">
+        <div class="content-item">
+          <h3>标题1</h3>
+          <ul>
+            <li>2020-03-04</li>
+            <li>2020-03-04</li>
+            <li>2020-03-04</li>
+            <li>2020-03-04</li>
+          </ul>
+        </div>
+        <div class="content-item">
+          <h3>标题2</h3>
+          <ul>
+            <li>2020-03-04</li>
+            <li>2020-03-04</li>
+            <li>2020-03-04</li>
+            <li>2020-03-04</li>
+          </ul>
+        </div>
+        <div class="content-item">
+          <h3>标题3</h3>
+          <ul>
+            <li>2020-03-04</li>
+            <li>2020-03-04</li>
+            <li>2020-03-04</li>
+            <li>2020-03-04</li>
+          </ul>
+        </div>
+        <div class="content-item">
+          <h3>标题4</h3>
+          <ul>
+            <li>2020-03-04</li>
+            <li>2020-03-04</li>
+            <li>2020-03-04</li>
+            <li>2020-03-04</li>
+          </ul>
+        </div>
+        <div class="content-item">
+          <h3>标题5</h3>
+          <ul>
+            <li>2020-03-04</li>
+            <li>2020-03-04</li>
+            <li>2020-03-04</li>
+            <li>2020-03-04</li>
+          </ul>
+        </div>
+        <div class="content-item">
+          <h3>标题6</h3>
+          <ul>
+            <li>2020-03-04</li>
+            <li>2020-03-04</li>
+            <li>2020-03-04</li>
+            <li>2020-03-04</li>
+          </ul>
+        </div>
+        <div class="content-item">
+          <h3>标题7</h3>
+          <ul>
+            <li>2020-03-04</li>
+            <li>2020-03-04</li>
+            <li>2020-03-04</li>
+            <li>2020-03-04</li>
+          </ul>
+        </div>
+        <div class="content-item">
+          <h3>标题8</h3>
+          <ul>
+            <li>2020-03-04</li>
+            <li>2020-03-04</li>
+            <li>2020-03-04</li>
+            <li>2020-03-04</li>
+          </ul>
+        </div>
+        <div class="content-item">
+          <h3>标题9</h3>
+          <ul>
+            <li>2020-03-04</li>
+            <li>2020-03-04</li>
+            <li>2020-03-04</li>
+            <li>2020-03-04</li>
+          </ul>
+        </div>
+        <div class="content-item">
+          <h3>标题10</h3>
+          <ul>
+            <li>2020-03-04</li>
+            <li>2020-03-04</li>
+            <li>2020-03-04</li>
+            <li>2020-03-04</li>
+          </ul>
+        </div>
+        <div class="content-item">
+          <h3>标题11</h3>
+          <ul>
+            <li>2020-03-04</li>
+            <li>2020-03-04</li>
+            <li>2020-03-04</li>
+            <li>2020-03-04</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const contentItem = document.getElementsByClassName('content-item')
+    let arr = []
+    let scrollTop = 0
+    document.getElementById('scroll-wrapper').addEventListener('scroll', function(e) {
+      // 内容向上滚动
+      if (e.target.scrollTop > scrollTop) {
+        let currentElem = Array.from(contentItem).slice().reverse().find(item => e.target.scrollTop + document.getElementsByClassName('head-list')[0].clientHeight > item.offsetTop)
+        // 拿到当前元素的h3的内容
+        let date = currentElem.getElementsByTagName('h3')[0].innerHTML
+        if (!arr.includes(date)) {
+          // 把内容放入要生成head-item元素的数组
+          arr.push(date)
+        }
+      // 内容向下滚动
+      } else {
+        let currentElem = Array.from(contentItem).slice().find(item => e.target.scrollTop + document.getElementsByClassName('head-list')[0].clientHeight < item.offsetTop + document.getElementsByTagName('h3')[0].clientHeight)
+        // 拿到当前元素的h3的内容
+        let date = currentElem.getElementsByTagName('h3')[0].innerHTML
+        if (arr.includes(date)) {
+          // 把内容从数组中移除
+          arr.splice(arr.findIndex(item => item === date), 1)
+        }
+        if (e.target.scrollTop <= 30) {
+          arr = []
+        }
+      }
+      // 将得到的arr生成元素插入到head-list
+      document.getElementsByClassName('head-list')[0].innerHTML = ''
+      if (arr.length > 0) {
+        arr.forEach(item => {
+          let headItem = document.createElement('div')
+          headItem.setAttribute("class", "head-item")
+          headItem.innerHTML = item
+          document.getElementsByClassName('head-list')[0].appendChild(headItem)
+        })
+      }
+      // 记录每次滚动结束的位置
+      scrollTop = e.target.scrollTop
+    })
+  </script>
+</body>
+</html>

@@ -1,0 +1,73 @@
+1.echarts配置项详解
+https://www.cnblogs.com/chenjunsheng/p/9908058.html
+2.echarts初始化
+  获取dom初始化echarts
+  根据数据设置选项来渲染echarts图表
+3.操作echarts图做复杂业务的要点
+  1.处理数据
+    1.首先你得了解echarts渲染一个图需要什么数据结构，每个数据都是什么含义，渲染到哪里的。
+    2.根据业务对渲染echarts的数据进行截取，变换，过滤，添加等处理得到想要的数据或是我们的业务跟echarts对应的数据，
+      然后再来渲染echarts
+  2.结合echarts提供的事件和方法
+  3.逻辑判断
+  4.x轴，y轴，series的数据怎么设置
+    1.x轴，y轴
+      type: 坐标轴类型
+        1.通常为数值轴'value'和类目轴'category'，默认为类目轴
+      data: 类目数据，在类目轴中有效
+        1.如果没有设置type，但是设置了axis.data，则认为type是'category'
+        2.如果设置了type是'category'，但没有设置axis.data，则axis.data的内容会自动从series.data中获取，这会比较方便
+        小结：1.类目轴一定要设置data，设置了data的轴一定就是类目轴
+             2.如果类目轴中没有data，那么就去series.data中去找。
+             3.数值轴不需要设置data，会自动使用series.data中的值。
+    2.series: 图表的数据内容，也就是点
+      type: 'bar', 'line'等，使图表展示成什么类型的图
+      data: 系列中的数据内容数组。数组项通常为具体的数据项
+        1.通常来说，数据用一个二维数组表示。如下，每一列被称为一个『维度』
+          series: [{
+            data: [
+              // 维度X   维度Y   其他维度 ...
+              [  3.4,    4.5,   15,   43],
+              [  4.2,    2.3,   20,   91],
+              [  10.8,   9.5,   30,   18],
+              [  7.2,    8.8,   18,   57]
+            ]
+          }]
+          在直角坐标系(grid)中『维度X』和『维度Y』会默认对应于xAxis和yAxis。
+          在极坐标系(polar)中『维度X』和『维度Y』会默认对应于radiusAxis和angleAxis。
+          后面的其他维度是可选的，可以在别处被使用，例如：
+            在visualMap中可以将一个或多个维度映射到颜色，大小等多个图形属性上。
+            在series.symbolSize中可以使用回调函数，基于某个维度得到symbolSize值。
+            使用tooltip.formatter或series.label.formatter可以把其他维度的值展示出来。
+        2.特别地，当只有一个轴为类目轴（axis.type为'category'）的时候，数据可以简化用一个一维数组表示。例如：
+          xAxis: {
+            data: ['a', 'b', 'm', 'n']
+          },
+          series: [{
+            // 与 xAxis.data 一一对应。
+            data: [23,  44,  55,  19]
+            // 它其实是下面这种形式的简化：
+            // data: [[0, 23], [1, 44], [2, 55], [3, 19]]
+          }]
+        3.『值』与轴类型的关系：
+          1.当某维度对应于数值轴（axis.type为'value'或者'log'）的时候：
+            其值可以为number（例如 12）。（也可以兼容string形式的number，例如'12'）
+          2.当某维度对应于类目轴（axis.type为'category'）的时候：
+            其值须为类目的『序数』（从0开始）或者类目的『字符串值』。例如：
+              xAxis: {
+                type: 'category',
+                data: ['星期一', '星期二', '星期三', '星期四']
+              },
+              yAxis: {
+                type: 'category',
+                data: ['a', 'b', 'm', 'n', 'p', 'q']
+              },
+              series: [{
+                data: [
+                  // xAxis    yAxis
+                  [  0,        0,    2  ], // 意思是此点位于 xAxis: '星期一', yAxis: 'a'。
+                  [  '星期四',  2,    1  ], // 意思是此点位于 xAxis: '星期四', yAxis: 'm'。
+                  [  2,       'p',   2  ], // 意思是此点位于 xAxis: '星期三', yAxis: 'p'。
+                  [  3,        3,    5  ]
+                ]
+              }]
