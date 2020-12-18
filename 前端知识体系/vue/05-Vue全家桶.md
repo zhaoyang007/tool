@@ -95,77 +95,60 @@ const User = {
 
 ### 编程式导航
 
-借助 router 的实例方法，通过编写代码来实现路由的导航链接。
+在 Vue 实例内部，可以通过 $router 访问路由实例。
 
-在 Vue 实例内部，你可以通过 `$router` 访问路由实例。
+`<router-link>` 实现的功能和编程式导航是相同的。`router.push` 等效于 `<router-link :to="...">` ，`router.replace` 等效于 `<router-link :to="..." replace>` 。
 
-<router-link> 上实现的功能和编程式导航实现的功能是相同的。
+`router.replace` 用法跟  `router.push` 一样，但是会替换掉当前的 history 记录。
 
 ##### router.push(location, onComplete?, onAbort?)
 
-这个方法会向 history 栈添加一个新的记录，所以，当用户点击浏览器后退按钮时，则回到之前的 URL。
-
-当你点击 `<router-link>` 时，这个方法会在内部调用，所以说，点击 `<router-link :to="...">` 等同于调用 `router.push(...)`。
-
-该方法的参数可以是一个字符串路径，或者一个描述地址的对象。例如：
+参数是字符串路径或一个描述地址的对象。
 
 ```js
 // 字符串
-router.push('home')
-// 对象
-router.push({ path: 'home' })
-// 命名的路由
+router.push('user') // 字符串路径
+router.push('/user') // 字符串路径
+router.push(`/user/${userId}`) // 带params参数的字符串路径
+router.push(`/user?userId=${userId}`) // 带query参数的字符串路径
+// 对象 path
+router.push({ path: 'user' })
+router.push({ path: '/user' })
+router.push({ path: `/user/${userId}` })
+router.push({ path: `/user?userId=${userId}` })
+router.push({ path: '/user', params: { userId: '123' }}) // 失效 -> /user
+router.push({ path: '/user', query: { userId: '123' }})
+// 对象 name
+router.push({ name: 'user' })
 router.push({ name: 'user', params: { userId: '123' }})
-// 带查询参数，变成 /register?plan=private
-router.push({ path: 'register', query: { plan: 'private' }})
+router.push({ name: 'user', query: { userId: '123' }})
 ```
 
-注意：如果提供了 `path`，`params` 会被忽略，上述例子中的 `query` 并不属于这种情况。取而代之的是下面例子的做法，你需要提供路由的 `name` 或手写完整的带有参数的 `path`：
+##### router.resolve()
 
 ```js
-const userId = '123'
-router.push({ name: 'user', params: { userId }}) // -> /user/123
-router.push({ path: `/user/${userId}` }) // -> /user/123
-// 下面的 params 不生效
-router.push({ path: '/user', params: { userId }}) // -> /user
+// this.$router.push(url)
+// 跳转新页面
+const routeUrl = this.$router.resolve(url)
+window.open(routeUrl.href, '_blank')
 ```
-
-同样的规则也适用于 `router-link` 组件的 `to` 属性。
-
-##### router.replace(location, onComplete?, onAbort?)
-
-跟 `router.push` 很像，唯一的不同就是，它不会向 history 添加新记录，而是跟它的方法名一样 —— 替换掉当前的 history 记录。
-
-|              声明式               |        编程式         |
-| :-------------------------------: | :-------------------: |
-| `<router-link :to="..." replace>` | `router.replace(...)` |
 
 ##### router.go(n)
 
-这个方法的参数是一个整数，意思是在 history 记录中向前或者后退多少步，类似 `window.history.go(n)`。
+参数是一个整数，意思是在 history 记录中向前或者后退多少步，类似 `window.history.go(n)`。
 
-### 路由对象 $route
+### $route
 
-一个路由对象 (route object) 表示当前激活的路由信息，包含了当前 URL 解析得到的信息，还有 URL 匹配到的路由记录 (route records)。
+表示当前激活的路由信息。
 
 每次成功的导航后都会产生一个新的对象。
 
-这个属性是只读的，里面的属性是 immutable (不可变) 的，不过你可以 watch (监测变化) 它。
+只读属性，可以 watch 它。
 
 - $route.params
 
-  - 类型: `Object`
-
-    一个 key/value 对象，包含了动态片段和全匹配片段，如果没有路由参数，就是一个空对象。
-
 - $route.query
 
-  - 类型: `Object`
-
-    一个 key/value 对象，表示 URL 查询参数。例如，对于路径 `/foo?user=1`，则有 `$route.query.user == 1`，如果没有查询参数，则是个空对象。
-
-
-### Router 实例 $router
 
 ### 导航守卫
 
