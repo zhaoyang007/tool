@@ -351,7 +351,7 @@ sync 修饰符：为了写法更简洁。:show.sync="isShow" 将来会展开成 
 
 <!-- comp3 -->
 <div>
-  <slot :foo="foo"></slot>
+  <slot :foo="data"></slot>
 </div>
 ```
 

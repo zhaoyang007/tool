@@ -69,8 +69,7 @@ $grep
 $which  查找命令位置
  which nginx  
 $whereis 
-$locate 
-
+$locate
 
 $ifconfig  显示网卡信息
 $ping网址得到ip
@@ -86,12 +85,3 @@ $lsof  列出打开文件,你可以使用它来获得你系统上设备的信息
 $netstat  用于显示linux中各种网络相关信息。如网络链接 路由表  接口状态链接 多播成员等等。
 $ps  进程查看命令
  ps aux|grep nginx
-
-
-待研究 
-
-
-
-
-
-

@@ -51,3 +51,4 @@ every 遍历数组，能不能继续向下遍历取决于参数函数的返回�
 ##### 2.every
 
 可以使用条件判断的方式实现 continue。使用条件判断加上 return false 的方式实现 break。
+

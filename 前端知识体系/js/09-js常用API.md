@@ -72,10 +72,6 @@ let res = Object.fromEntries(
 console.log(res)
 ```
 
-
-
-
-
 ##### 字符串 & 正则 & 数字
 
 ```js
@@ -87,7 +83,7 @@ String.prototype:
   function includes() { [native code] } // 判断一个字符串是否包含另外一个字符串
   function indexOf() { [native code] } // 第一次出现的指定值的索引
   function lastIndexOf() { [native code] } // 最后一次出现的指定值的索引
-  function match() { [native code] }
+  function match() { [native code] } // 识别出正则匹配到的东西组成一个数组 
   function matchAll() { [native code] }
   function replace() { [native code] }
   function search() { [native code] }

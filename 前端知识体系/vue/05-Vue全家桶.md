@@ -1,7 +1,5 @@
 ## 路由 - Vue Router
 
-因为我们单页面应用程序需要在不同的页面内容之间来进行切换，所以我们就需要路由这样的一个库。
-
 ### 起步
 
 * 创建路由表
@@ -68,31 +66,6 @@ new Vue({
 </template>
 ```
 
-### 动态路由匹配
-
-我们经常需要把某种模式匹配到的所有路由，全都映射到同个组件。我们可以在 `vue-router` 的路由路径中使用“动态路径参数”(dynamic segment) 来达到这个效果：
-
-```js
-const router = new VueRouter({
-  routes: [
-    // 动态路径参数，使用冒号标记
-    { path: '/user/:id', component: User }
-  ]
-})
-
-// 当匹配到一个路由时，参数值会被设置到 this.$route.params，可以在每个组件内使用。
-const User = {
-  template: '<div>User {{ $route.params.id }}</div>'
-}
-```
-
-你可以在一个路由中设置多段“路径参数”，对应的值都会设置到 `$route.params` 中。例如：
-
-|             模式              |      匹配路径       |            $route.params             |
-| :---------------------------: | :-----------------: | :----------------------------------: |
-|        /user/:username        |     /user/evan      |         { username: 'evan' }         |
-| /user/:username/post/:post_id | /user/evan/post/123 | { username: 'evan', post_id: '123' } |
-
 ### 编程式导航
 
 在 Vue 实例内部，可以通过 $router 访问路由实例。
@@ -100,6 +73,8 @@ const User = {
 `<router-link>` 实现的功能和编程式导航是相同的。`router.push` 等效于 `<router-link :to="...">` ，`router.replace` 等效于 `<router-link :to="..." replace>` 。
 
 `router.replace` 用法跟  `router.push` 一样，但是会替换掉当前的 history 记录。
+
+query 设置了 url 上就会有，params 需要在路由配置的时候做动态路由匹配 url 上才会有。
 
 ##### router.push(location, onComplete?, onAbort?)
 
@@ -116,7 +91,7 @@ router.push({ path: 'user' })
 router.push({ path: '/user' })
 router.push({ path: `/user/${userId}` })
 router.push({ path: `/user?userId=${userId}` })
-router.push({ path: '/user', params: { userId: '123' }}) // 失效 -> /user
+router.push({ path: '/user', params: { userId: '123' }}) // 失效，页面拿不到params的信息
 router.push({ path: '/user', query: { userId: '123' }})
 // 对象 name
 router.push({ name: 'user' })
@@ -136,19 +111,6 @@ window.open(routeUrl.href, '_blank')
 ##### router.go(n)
 
 参数是一个整数，意思是在 history 记录中向前或者后退多少步，类似 `window.history.go(n)`。
-
-### $route
-
-表示当前激活的路由信息。
-
-每次成功的导航后都会产生一个新的对象。
-
-只读属性，可以 watch 它。
-
-- $route.params
-
-- $route.query
-
 
 ### 导航守卫
 
