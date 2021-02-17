@@ -1,16 +1,4 @@
-### codepen
-
-可以做兼容、可以找效果、可以在线编辑代码   
-
-
-
-### bootstrap
-
-简洁、直观、强悍的前端开发框架，让web开发更迅速、简单。可以用来搭建响应式网站
-
-
-
-### 移动端 meta 标签
+##### 移动端 meta 标签
 
 只要网页要在移动端显示，要做移动端的项目，或者是响应式的项目
 
@@ -18,17 +6,13 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
 ```
 
-
-
-### input 属性 disabled 和 readonly 的区别
+##### input 属性 disabled 和 readonly 的区别
 
 disabled 彻底禁用，用户不能输入、更改  表单也不会提交这个字段 
 
-readonly ui禁用，用户不能输入、更改  表单会提交这个字段
+readonly ui禁用，用户不能输入、更改  表单会提交这个字
 
-
-
-### 弹性图片  img-responsive
+##### 弹性图片  img-responsive
 
 图片本身是有一个大小的，在做项目的过程中应该让他根据屏幕的宽度去缩放，但是不能超过自己的本身一个最大值。
 
@@ -41,9 +25,7 @@ readonly ui禁用，用户不能输入、更改  表单会提交这个字段
 }
 ```
 
-
-
-### rem  根据根元素的字体大小搞来搞去
+##### rem  根据根元素的字体大小搞来搞去
 
 ```css
 html {
@@ -66,9 +48,7 @@ html {
 }
 ```
 
-
-
-### vw vh
+##### vw vh
 
 vw：viewpoint width，视窗宽度，1vw等于视窗宽度的1%。
 
@@ -80,9 +60,7 @@ vmax：vw和vh中较大的那个。
 
 IE9+局部支持，chrome/firefox/safari/opera支持，ios safari 8+支持，android browser4.4+支持，chrome for android39支持
 
-
-
-### viewport 视图
+##### viewport 视图
 
 1.页面不是直接放在屏幕里，是放到viewport里  $(window).width()获取到的其实不是浏览器的宽度，是viewport的宽度
 
@@ -102,9 +80,7 @@ IE9+局部支持，chrome/firefox/safari/opera支持，ios safari 8+支持，and
 
 其实这个时候的处理就是要把整个页面给放到一个叫做viewport的东西里面，然后再把viewport给缩放一下，最后再渲染到手机屏幕中。
 
-
-
-### 移动端事件
+##### 移动端事件
 
 touch    touchstart  touchmove touchend touchcancel
 
@@ -116,15 +92,11 @@ touch事件对象：
 
 touches   targetTouches   changedTouches（touchend事件里面只有这个能用）
 
-
-
-### height
+##### height
 
 * height 不会继承
 * 在所有元素都不设置高度的情况下，如果想给某个元素设置 height: 100% 需要从 html 开始，每一层都要设置 height: 100%，才会有效。
 * 父级元素的高度会被设置了高度的子元素撑开，高度就为子元素的高度。
-
-
 
 ### 字体
 

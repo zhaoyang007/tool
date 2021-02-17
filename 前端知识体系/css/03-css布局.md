@@ -1,11 +1,3 @@
-### 布局发展历程
-
-* 早期以 table 为主的表格布局。
-* 后来以技巧性布局为主的经典布局。
-* 现在有 flexbox / grid，正统的专门用来布局的。
-
-
-
 ### 经典布局
 
 正常流排版：依次排列，排不下了换行。
@@ -667,10 +659,6 @@ align-self: baseline;   // 子元素会以内容区域去互相对齐
 codepen: https://codepen.io/peiqun/pen/WYzzYX
 
 https://github.com/randyviandaputra/flexbox-playground
-
-
-
-### 网格布局
 
 
 
