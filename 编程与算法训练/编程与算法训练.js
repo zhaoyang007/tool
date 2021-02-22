@@ -184,4 +184,42 @@ function cardGroup2(arr) {
 }
 // console.log(cardGroup2([1,1,2,2]))
 
+/**
+ * 3.种花问题(605)
+ * 假设有一个很长的花坛，一部分地块种植了花，另一部分却没有。可是，花不能种植在相邻的地块上，它们会争
+ * 夺水源，两者都会死去。
+ * 给你一个整数数组  flowerbed 表示花坛，由若干 0 和 1 组成，其中 0 表示没种植花，1 表示种植了花。
+ * 另有一个数 n ，能否在不打破种植规则的情况下种入 n 朵花？能则返回 true ，不能则返回 false。
+ * 输入：flowerbed = [1,0,0,0,1], n = 1
+ * 输出：true
+ * 输入：flowerbed = [1,0,0,0,1], n = 2
+ * 输出：false
+ */
+[1,0,1,0,1,0,1,0,1]
+function growFlower(arr, n) {
+  let num = 0;
+  // for (let i = 0; i < arr.length; i++) {
+  //   if (i === 0 && arr[0] === 0 && arr[1] === 0) {
+  //     num++;
+  //   } else if (arr[i] === 0 && arr[i+1] === 0 & arr[i+2] === 0) {
+  //     num++;
+  //     i += 1;
+  //   } else if (i === arr.length - 2 && arr[arr.length-1] === 0 && arr[arr.length-2] === 0) {
+  //     num++;
+  //   }
+  // }
+  for (let i = 0; i < arr.length - 1; i++) {
+    if (arr[i] === 0) {
+      if (i === 0 && arr[1] === 0) {
+        num++;
+        i++;
+      } else if (arr[i-1] === 0 && arr[i+1] === 0) {
+        num++;
+        i++;
+      }
+    }
+  }
+  return num >= n;
+}
+console.log(growFlower([0,0,0,0,0,0],1))
 
