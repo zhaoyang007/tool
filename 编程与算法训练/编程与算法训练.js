@@ -22,7 +22,7 @@ function reverseWord3(str) {
   }).join(' ');
   return result;
 }
-console.log(reverseWord3("Let's take LeetCode contest"))
+// console.log(reverseWord3("Let's take LeetCode contest"))
 
 /**
  * 2.计数二进制子串(696)
@@ -38,7 +38,7 @@ console.log(reverseWord3("Let's take LeetCode contest"))
 function getBinarySubString(str) {
   let result = [];
   let match = (str) => {
-    let j = str.match(/^(0+|1+)/)[0]; // 取出最前面的连续的0或连续的1
+    let j = str.match(/^0+|1+/)[0]; // 取出最前面的连续的0或连续的1
     let o = (j[0] ^ 1).toString().repeat(j.length);
     let reg = new RegExp(`^(${j}${o})`);
     if (reg.test(str)) {
@@ -56,4 +56,3 @@ function getBinarySubString(str) {
   return result;
 }
 console.log(getBinarySubString("00110011"))
-
