@@ -76,7 +76,6 @@ function phoneCombination(str) {
   let map = ['', 1, 'abc', 'def', 'ghi', 'jkl', 'mno', 'pqrs', 'tuv', 'wxyz'];
   let num = str.split('');
   let code = num.map(item => map[item]);
-  console.log(code)
   let combination = (arr) => {
     let tmp = [];
     for (let i = 0; i < arr[0].length; i++) {
@@ -95,6 +94,30 @@ function phoneCombination(str) {
   return combination(code);
 }
 // console.log(phoneCombination("23"))
+function phoneCombination2(str) {
+  let map = ['', 1, 'abc', 'def', 'ghi', 'jkl', 'mno', 'pqrs', 'tuv', 'wxyz'];
+  let arr = str.split('').map(item => map[item]);
+  let comb = (arr) => {
+    let tmp = [];
+    let arr0 = arr.shift();
+    let arr1 = arr.shift();
+    for (let i = 0; i < arr0.length; i++) {
+      for (let j = 0; j < arr1.length; j++) {
+        tmp.push(`${arr0[i]}${arr1[j]}`);
+      }
+    }
+    arr.unshift(tmp);
+    if (arr.length < 2) {
+      return arr[0];
+    } else {
+      return comb(arr);
+    }
+    // return arr[0];
+  }
+  return comb(arr);
+}
+// console.log(phoneCombination2('234'))
+
 
 /**
  * 2.卡牌分组(914)
@@ -119,22 +142,46 @@ function gcd(a, b) {
 function cardGroup(arr) {
   let str = arr.sort().join('');
   let group = str.match(/(\d)\1+|\d/g);
-  // while(group.length > 1) {
-  //   let a = group.shift().length;
-  //   let b = group.shift().length;
-  //   let v = gcd(a, b);
-  //   if (v === 1) {
+  while(group.length > 1) {
+    let a = group.shift().length;
+    let b = group.shift().length;
+    let v = gcd(a, b);
+    if (v === 1) {
+      return false;
+    } else {
+      group.unshift('0'.repeat(v));
+    }
+  }
+  // for (let i = 0; i < group.length - 1; i++) {
+  //   if (gcd(group[i].length, group[i+1].length) === 1) {
   //     return false;
-  //   } else {
-  //     group.unshift('0'.repeat(v));
   //   }
   // }
+  return group.length ? group[0].length > 1 : false;
+}
+// console.log(cardGroup([1,2])) // [1,1,2,2,3,3,4,4]
 
-  for (let i = 0; i < group.length - 1; i++) {
-    if (gcd(group[i].length, group[i+1].length) === 1) {
-      return false;
+function cardGroup2(arr) {
+  let str = arr.sort().join('');
+  let group = str.match(/\d\1+|\d/g); // \1 表示与小括号中要匹配的内容相同。
+  function getToF(arr) {
+    if (group.length > 1) {
+      let a = arr.shift().length;
+      let b = arr.shift().length;
+      let v = gcd(a, b);
+      if (v === 1) {
+        return false;
+      } else {
+        arr.unshift('0'.repeat(v));
+        return getToF(arr)
+      }
     }
+  }
+  if (group.length > 1) {
+    getToF(group);
   }
   return group.length ? group[0].length > 1 : false;
 }
-// console.log(cardGroup([1,1]))
+// console.log(cardGroup2([1,1,2,2]))
+
+
