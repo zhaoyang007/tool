@@ -195,31 +195,44 @@ function cardGroup2(arr) {
  * 输入：flowerbed = [1,0,0,0,1], n = 2
  * 输出：false
  */
-[1,0,1,0,1,0,1,0,1]
+// 问题抽象
+// 边界考虑
 function growFlower(arr, n) {
   let num = 0;
-  // for (let i = 0; i < arr.length; i++) {
-  //   if (i === 0 && arr[0] === 0 && arr[1] === 0) {
-  //     num++;
-  //   } else if (arr[i] === 0 && arr[i+1] === 0 & arr[i+2] === 0) {
-  //     num++;
-  //     i += 1;
-  //   } else if (i === arr.length - 2 && arr[arr.length-1] === 0 && arr[arr.length-2] === 0) {
-  //     num++;
-  //   }
-  // }
+  for (let i = 0; i < arr.length; i++) {
+    if (i === 0 && arr[0] === 0 && arr[1] === 0) {
+      num++;
+    } else if (arr[i] === 0 && arr[i + 1] === 0 & arr[i + 2] === 0) {
+      num++;
+      i += 1;
+    } else if (i === arr.length - 2 && arr[arr.length - 1] === 0 && arr[arr.length - 2] === 0) {
+      num++;
+    }
+  }
+  return num;
+}
+// console.log(growFlower([1,0,0,0,1,0,0,1,0,1,0,0,0,0,0,0,0]))
+
+function growFlower2(arr, n) {
+  let num = 0;
   for (let i = 0; i < arr.length - 1; i++) {
     if (arr[i] === 0) {
       if (i === 0 && arr[1] === 0) {
         num++;
         i++;
-      } else if (arr[i-1] === 0 && arr[i+1] === 0) {
+      } else if (i === arr.length - 2 && arr[arr.length - 1] === 0) {
         num++;
+      } else if (arr[i-1] === 0 && arr[i+1] === 0) {
         i++;
+        num++;
+        if (i === arr.length - 2 && arr[arr.length - 2] === 0 && arr[arr.length - 1] === 0) {
+          num++;
+        }
       }
     }
   }
-  return num >= n;
+  return num;
 }
-console.log(growFlower([0,0,0,0,0,0],1))
+// console.log(growFlower2([0,0,0,0,1,0,0,1,0,1,0,0,0,0,0,0]))
+
 
