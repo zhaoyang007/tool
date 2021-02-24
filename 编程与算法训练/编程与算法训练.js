@@ -290,21 +290,23 @@ function grayCode(n) {
 };
 // console.log(grayCode(0));
 
-function grayCode2(n) {
-  let getNext = (prev) => {
-    let next = [];
-    debugger;
-    for (let i = 0; i < prev.length; i++) {
-      next[i] = `0${prev[i]}`;
-      next[2 ** prev.length - i - 1] = `1${prev[i]}`;
-    }
-    debugger;
-    if (next.length === 2 ** n) {
-      return next;
-    } else {
-      getNext(next);
-    }
-  }
-  return getNext([0, 1]);
-};
-console.log(grayCode2(5));
+
+
+// function grayCode2(n) {
+//   let getNext = (prev) => {
+//     let next = [];
+//     debugger;
+//     for (let i = 0; i < prev.length; i++) {
+//       next[i] = `0${prev[i]}`;
+//       next[2 ** prev.length - i - 1] = `1${prev[i]}`;
+//     }
+//     debugger;
+//     if (next.length === 2 ** n) {
+//       return next;
+//     } else {
+//       getNext(next);
+//     }
+//   }
+//   return getNext([0, 1]);
+// };
+// console.log(grayCode2(5));
