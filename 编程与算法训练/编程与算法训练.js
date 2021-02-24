@@ -196,7 +196,8 @@ function cardGroup2(arr) {
  * 输出：false
  */
 // 问题抽象
-// 边界考虑
+// for循环索引边界考虑
+// 索引前进
 function growFlower(arr, n) {
   let num = 0;
   for (let i = 0; i < arr.length; i++) {
@@ -265,23 +266,45 @@ function growFlower2(arr, n) {
  * @param {number} n
  * @return {number[]}
  */
-var grayCode = function(n) {
-  let arr = [0, 1];
-  let symmetric = (arr) => {
-    let newArr = [];
+function grayCode(n) {
+  let prevArr = [];
+  let getNext = (prev, j) => {
+    let next = [];
     for (let i = 0; i < prev.length; i++) {
-      newArr[i] = `0${prev[i]}`;
-      newArr[2 ** n - i - 1] = `1${prev[i]}`;
+      next[i] = `0${prev[i]}`;
+      next[2 ** j - i - 1] = `1${prev[i]}`;
+    }
+    prevArr = next;
+  }
+  for (let i = 1; i <= n; i++) {
+    if (i === 1) {
+      prevArr = [0, 1];
+    } else {
+      getNext(prevArr, i);
     }
   }
-  if (n === 1) {
-    return [0, 1];
-  } else {
-
+  if (n === 0) {
+    return [0];
   }
-
-  symmetric(arr)
-  
+  return prevArr;
 };
-console.log(grayCode(3));
+// console.log(grayCode(0));
 
+function grayCode2(n) {
+  let getNext = (prev) => {
+    let next = [];
+    debugger;
+    for (let i = 0; i < prev.length; i++) {
+      next[i] = `0${prev[i]}`;
+      next[2 ** prev.length - i - 1] = `1${prev[i]}`;
+    }
+    debugger;
+    if (next.length === 2 ** n) {
+      return next;
+    } else {
+      getNext(next);
+    }
+  }
+  return getNext([0, 1]);
+};
+console.log(grayCode2(5));
