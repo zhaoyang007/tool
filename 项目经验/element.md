@@ -1,4 +1,6 @@
-el-table 结构
+### el-table
+
+##### el-table 结构
 
 ```scss
 div.el-table {
@@ -31,9 +33,7 @@ div.el-table {
 }
 ```
 
-
-
-el-table 默认样式
+##### el-table 默认样式
 
 ```scss
 // el-table中的元素都是用的：box-sizing: border-box;
@@ -66,9 +66,7 @@ table {
 }
 ```
 
-
-
-常用属性
+##### 常用属性
 
 ```js
 data // 要显示的数据列表
@@ -81,26 +79,20 @@ empty-text // 空数据时显示的文本内容
 show-header	// 是否显示表头
 ```
 
-
-
-常用事件
+##### 常用事件
 
 ```js
 @row-click="rowClick" // 当某一行被点击时会触发该事件，参数会收到 row, column, event
 @sort-change="sortChange" // 当表格的排序条件发生变化的时候会触发该事件，参数会收到 { column, prop, order }
 ```
 
-
-
-常用方法
+##### 常用方法
 
 ```js
 this.$refs.myTable.setCurrentRow(tableData[0]) // 用于单选表格，设定某一行为选中行，如果调用时不加参数，则会取消目前高亮行的选中状态。
 ```
 
-
-
-列常用属性
+##### 列常用属性
 
 ```js
 label	// 显示的标题
@@ -115,9 +107,7 @@ fixed	// 列是否固定在左侧或者右侧
 render-header // 列标题 Label 区域渲染使用的 Function
 ```
 
-
-
-改变 table 滚动条样式
+##### 改变 table 滚动条样式
 
 ```scss
 .el-table__body-wrapper {
@@ -154,9 +144,7 @@ render-header // 列标题 Label 区域渲染使用的 Function
 }
 ```
 
-
-
-在 <el-table> 上加的 class 和 style 等属性，最终会加到 div.el-table 身上。
+##### 在 <el-table> 上加的 class 和 style 等属性，最终会加到 div.el-table 身上。
 
 ```vue
 <!-- el-table中的height等属性写法：height="100" :height="100" height="100px" :height="100+'px'"都可以 -->
@@ -173,9 +161,7 @@ render-header // 列标题 Label 区域渲染使用的 Function
 </div>
 ```
 
-
-
-禁用 table 横向滚动条
+##### 禁用 table 横向滚动条
 
 ```css
 .el-table--scrollable-x .el-table__body-wrapper {
@@ -183,9 +169,7 @@ render-header // 列标题 Label 区域渲染使用的 Function
 }
 ```
 
-
-
-设置 table 行高度
+##### 设置 table 行高度
 
 ```css
 .el-table__header tr, .el-table__header th {
@@ -198,9 +182,7 @@ render-header // 列标题 Label 区域渲染使用的 Function
 }
 ```
 
-
-
-将 el-table 滚动到某一行的位置
+##### 将 el-table 滚动到某一行的位置
 
 思路：
 
@@ -228,9 +210,7 @@ function scrollOneRow(row) {
 }
 ```
 
-
-
-自定义表头 render-header
+##### 自定义表头 render-header
 
 渲染的内容会放到 .cell 中。
 
@@ -443,4 +423,258 @@ export default {
 };
 </script>
 ```
+
+
+
+### el-select
+
+```vue
+<el-table :data="tableList">
+  <el-table-column prop="tableName"></el-table-column>
+	<el-table-column>
+    <template scope-slot="scope">
+    	<el-select v-model="scope.row.value" @change="handleChange(scope)">
+        <el-option
+          v-for="(item, index) in selectList" :key="index"
+          :label="item.selectName+item.version" :value="item.value">
+        </el-option>
+      </el-select>
+    </template>
+  </el-table-column>
+  <el-table-column>
+    <template scope-slot="scope">
+    	<el-select v-model="scope.row.subValue" @change="handleSubChange(scope)">
+        <el-option
+          v-for="(item, index) in subSelectList" :key="index"
+          :label="item.selectName+item.version" :value="item.subValue">
+        </el-option>
+      </el-select>
+    </template>
+  </el-table-column>
+</el-table>
+
+<script>
+export default {
+  data() {
+    return {
+      tableList: [
+        { tableName: 'tableName1', value: 1, subValue: 11 },
+        { tableName: 'tableName2', value: 2, subValue: 21 },
+        { tableName: 'tableName3', value: 3, subValue: 31 },
+      ],
+      selectList: [
+        { value: 1, selectName: 'selectName1', version: 'v1' },
+        { value: 2, selectName: 'selectName2', version: 'v2' },
+        { value: 3, selectName: 'selectName3', version: 'v3' },
+      ],
+      subSelectList: [
+        { subValue: 11, selectName: 'subSelectName1', version: 'v1' },
+        { subValue: 21, selectName: 'subSelectName2', version: 'v2' },
+        { subValue: 31, selectName: 'subSelectName3', version: 'v3' },
+      ]
+    }
+  },
+  methods: {
+    handleChange(scope) {
+      // 修改这个值，该行的subSelect就会回显21对应的o ption的信息。
+      this.tableList[scope.$index].subValue = 21; 
+    },
+    handleSubChange(scope) {
+      
+    }
+  }
+}
+</script>
+```
+
+select 绑定的 v-model 的值是和 option 绑定的 value 值所对应的。有对应的时候根据 v-model 对应的 option 项做回显，没有对应的直接显示当前 v-model 的值。
+
+切换 select 的时候，可以通过 scope 拿到当前行的 table 数据，然后可以修改该行其他的 select 绑定的 v-model 的值，从而改变该 select 的回显信息。
+
+
+
+### el-scrollbar
+
+* 设置 el-scrollbar 父级为固定高度
+* 设置 el-scrollbar 的高度设为100%，就是等于父级的固定高度
+* el-scrollbar 的内容为自由的超出父级的高度
+
+```vue
+<template>
+  <div style="height:600px;">
+    <el-scrollbar style="height:100%">
+      <div style="width:700px;height:700px;border:solid;" >
+        .......
+      </div>
+    </el-scrollbar>
+  </div>
+</template>
+
+<style>
+.el-scrollbar__wrap{
+  overflow-x: hidden;
+}
+</style>
+```
+
+##### el-scrollbar 的属性
+
+```vue
+<template>
+ <div>
+  <el-scrollbar :native="false" wrapStyle="" wrapClass="" viewClass="" viewStyle="" noresize="false" tag="section">
+   <div>
+    <p v-for="(item, index) in 200" :key="index">{{index}} 这里是一些文本。</p>
+   </div>
+  <el-scrollbar>
+ </div>
+</template>
+
+<script>
+export default {
+  props: {
+    native: Boolean, // 是否使用本地，设为true则不会启用element-ui自定义的滚动条
+    wrapStyle: {}, // 包裹层自定义样式
+    wrapClass: {}, // 包裹层自定义样式类
+    viewClass: {}, // 可滚动部分自定义样式类
+    viewStyle: {}, // 可滚动部分自定义样式
+    noresize: Boolean, // 如果 container 尺寸不会发生变化，最好设置它可以优化性能
+    tag: { // 生成的标签类型，默认使用 `div`标签包裹
+      type: String,
+      default: 'div'
+    }
+  }
+}
+</script>
+```
+
+##### el-scrollbar 默认是隐藏的，需要设置未默认显示，颜色，宽度可以自行 DIY。
+
+```vue
+<template>
+	<el-scrollbar style="height:300px;width:200px;">
+    <div style="height:500px">
+      你好，同学！！！
+    </div>
+  </el-scrollbar>
+</template>
+
+<style>
+/* css设置默认显示滚动条 */
+.el-scrollbar__bar {
+  opacity: 1;
+}
+</style>
+```
+
+##### 只显示纵向滚动条
+
+```css
+.el-scrollbar__wrap{
+	overflow-x: hidden;
+}
+.el-scrollbar__bar.is-horizontal {
+	display: none;
+}
+```
+
+##### 只显示横向滚动条
+
+```css
+.el-scrollbar__wrap{
+	overflow-y: hidden;
+}
+.el-scrollbar__bar.is-vertical {
+	display: none;
+}
+```
+
+##### 滚动条置底
+
+```vue
+<template>
+	<el-scrollbar ref="selfScrollbar"  style="height: 600px"></el-scrollbar>
+</template>
+
+<script>
+export default {
+  methods: {
+    selfScrollDown() {
+      this.$refs['selfScrollbar'].wrap.scrollTop =this.$refs['myScrollbar'].wrap.scrollHeight;
+ 		}
+  },
+  // 页面渲染结束时调用，或者自己加延时
+  updated: function() {
+    this.selfScrollDown()
+  }
+}
+</script>
+```
+
+##### el-table 中使用 el-scrollbar
+
+思路：写两个 el-table，一个当作头，一个当作体。第二个 table 使用 :show-header="false" 隐藏头部，用 el-scrollbar 将第二个 table 整个包起来。
+
+```vue
+<template>
+  <div class="table-wrapper">
+    <el-table
+      class="table-head"
+      style="width: 100%"
+      ref="tableHead"
+      :data="sortTableData"
+    >
+      <el-table-column
+        v-for="(item, index) in tableArr"
+        :key="index"
+        :prop="item.prop"
+        :label="item.label"
+        :align="item.align"
+        :render-header="labelHead"
+        :width="item.width"
+      ></el-table-column>
+    </el-table>
+    <div class="scroll-table-wrapper" :class="needBorder ? 'border-bottom' : ''">
+      <el-scrollbar style="height: 100%;" :class="!needBorder ? 'has-bottom' : ''">
+        <el-table
+          class="trend-table"
+          style="width: 100%"
+          ref="trendTable"
+          :data="sortTableData"
+          :show-header="false"
+          @row-click="rowClick"
+          @sort-change="sortChange">
+          <el-table-column
+            v-for="(item, index) in tableArr"
+            :key="index"
+            :prop="item.prop"
+            :label="item.label"
+            :align="item.align"
+            :render-header="labelHead"
+            :width="item.width"
+          >
+            <template slot-scope="scope">
+              <div v-if="item.prop==='dealNum'">
+                <span>{{scope.row[item.prop]}}</span>
+                <i class="seedetail-btn iconfont icon-arrowright" style="cursor:pointer;" @click.stop="seeDetail(scope.row.dataDate)" v-if="tabs !== 3"></i>
+              </div>
+              <div v-else>
+                <span>{{scope.row[item.prop]}}</span>
+              </div>
+            </template>
+          </el-table-column>
+        </el-table>
+      </el-scrollbar>
+    </div>
+  </div>
+</template>
+```
+
+
+
+
+
+
+
+
 
