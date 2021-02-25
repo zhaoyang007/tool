@@ -304,7 +304,7 @@ function grayCode3(n) {
       next[i] = `0${prev[i]}`;
       next[2 ** (num + 1) - i - 1] = `1${prev[i]}`;
     }
-    if (next.length >= 2 ** n) {
+    if (next.length === 2 ** n) {
       return next;
     } else {
       return getNext(next);
@@ -312,4 +312,4 @@ function grayCode3(n) {
   }
   return getNext([0, 1]);
 };
-console.log(grayCode3(4));
+console.log(grayCode3(2));
