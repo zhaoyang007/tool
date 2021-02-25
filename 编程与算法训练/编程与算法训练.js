@@ -252,25 +252,8 @@ function growFlower2(arr, n) {
  */
 // 递归
 // 对称处理 n-i-1
-function grayCode(n) {
-  let make = (n) => {
-    if (n === 1) {
-      return [0, 1];
-    } else {
-      let prev = make(n - 1);
-      let result = [];
-      for (let i = 0; i < prev.length; i++) {
-        result[i] = `0${prev[i]}`;
-        result[2 ** n - i - 1] =`1${prev[i]}`;
-      }
-      return result;
-    }
-  }
-  return make(n);
-}
-// console.log(grayCode(3));
 
-function grayCode2(n) {
+function grayCode(n) {
   let prevArr = [];
   let getNext = (prev, j) => {
     let next = [];
@@ -292,17 +275,34 @@ function grayCode2(n) {
   }
   return prevArr;
 };
-// console.log(grayCode2(0));
+// console.log(grayCode(0));
+
+function grayCode2(n) {
+  let make = (n) => {
+    if (n === 1) {
+      return [0, 1];
+    } else {
+      let prev = make(n - 1);
+      let result = [];
+      for (let i = 0; i < prev.length; i++) {
+        result[i] = `0${prev[i]}`;
+        result[2 ** n - i - 1] =`1${prev[i]}`;
+      }
+      return result;
+    }
+  }
+  return make(n);
+}
+// console.log(grayCode2(3));
 
 function grayCode3(n) {
   let num = 0;
   let getNext = (prev) => {
     num++;
-    let prevCopy = JSON.parse(JSON.stringify(prev))
     let next = [];
-    for (let i = 0; i < prevCopy.length; i++) {
-      next[i] = `0${prevCopy[i]}`;
-      next[2 ** (num + 1) - i - 1] = `1${prevCopy[i]}`;
+    for (let i = 0; i < prev.length; i++) {
+      next[i] = `0${prev[i]}`;
+      next[2 ** (num + 1) - i - 1] = `1${prev[i]}`;
     }
     if (next.length >= 2 ** n) {
       return next;
@@ -312,4 +312,4 @@ function grayCode3(n) {
   }
   return getNext([0, 1]);
 };
-console.log(grayCode3(2));
+console.log(grayCode3(4));
