@@ -312,4 +312,43 @@ function grayCode3(n) {
   }
   return getNext([0, 1]);
 };
-console.log(grayCode3(2));
+// console.log(grayCode3(2));
+
+// 正则
+/**
+ * 1.重复的子字符串(459)
+ * 给定一个非空的字符串，判断它是否可以由它的一个子串重复多次构成。给定的字符串只含有小写英文字母，并且长度不超过10000。
+ * 输入: "abab"
+ * 输出: True
+ * 解释: 可由子字符串 "ab" 重复两次构成。
+ * 输入: "aba"
+ * 输出: False
+ * 输入: "abcabcabcabc"
+ * 输出: True
+ * 解释: 可由子字符串 "abc" 重复四次构成。 (或者子字符串 "abcabc" 重复两次构成。)
+ */
+function repeatedSubstringPattern(str) {
+  let reg = /^(\w+)\1+$/;
+  return reg.test(str);
+}
+console.log(repeatedSubstringPattern("ababc"));
+
+/**
+ * 2.正则表达式匹配(10)
+ * 给你一个字符串 s 和一个字符规律 p，请你来实现一个支持 '.' 和 '*' 的正则表达式匹配。
+ *   '.' 匹配任意单个字符
+ *   '*' 匹配零个或多个前面的那一个元素
+ * 所谓匹配，是要涵盖 整个 字符串 s的，而不是部分字符串。
+ * 输入：s = "aa" p = "a"
+ * 输出：false
+ * 解释："a" 无法匹配 "aa" 整个字符串。
+ * 输入：s = "aa" p = "a*"
+ * 输出：true
+ * 解释：因为 '*' 代表可以匹配零个或多个前面的那一个元素, 在这里前面的元素就是 'a'。因此，字符串 "aa" 可被视为 'a' 重复了一次。
+ */
+function isMatch() {
+  
+}
+
+
+
