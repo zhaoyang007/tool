@@ -398,8 +398,8 @@ function regexp2(s, p) {
  */
 function bubbleSort(arr) {
   for (let i = arr.length - 1; i > 0; i--) { // 控制每次遍历的范围
-    let tmp;
-    for (let j = 0; j < i; j++) { // 比较大小，两两交换
+    let tmp;6
+    for (let j = 0; j < i; j++) { // 遍历规定范围内的所有数。两两比较，做交换
       tmp = arr[j];
       if (tmp > arr[j + 1]) {
         arr[j] = arr[j + 1];
