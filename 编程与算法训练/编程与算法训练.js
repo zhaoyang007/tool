@@ -331,24 +331,64 @@ function repeatedSubstringPattern(str) {
   let reg = /^(\w+)\1+$/;
   return reg.test(str);
 }
-console.log(repeatedSubstringPattern("ababc"));
+// console.log(repeatedSubstringPattern("ababc"));
 
 /**
  * 2.正则表达式匹配(10)
  * 给你一个字符串 s 和一个字符规律 p，请你来实现一个支持 '.' 和 '*' 的正则表达式匹配。
  *   '.' 匹配任意单个字符
  *   '*' 匹配零个或多个前面的那一个元素
- * 所谓匹配，是要涵盖 整个 字符串 s的，而不是部分字符串。
+ * 所谓匹配，是要涵盖整个字符串s的，而不是部分字符串。
  * 输入：s = "aa" p = "a"
  * 输出：false
  * 解释："a" 无法匹配 "aa" 整个字符串。
  * 输入：s = "aa" p = "a*"
  * 输出：true
  * 解释：因为 '*' 代表可以匹配零个或多个前面的那一个元素, 在这里前面的元素就是 'a'。因此，字符串 "aa" 可被视为 'a' 重复了一次。
+ * 输入：s = "mississippi" p = "mis*is*p*."
+ * 输出：false
  */
-function isMatch() {
-  
+function regexp(s, p) {
+  const isMatch = (s, p) => {
+    // 边界，是否匹配完
+    if (p.length <= 0) {
+      return !s.length;
+    }
+    // 第一个字符是否相等
+    let match = false;
+    if (s.length > 0 && (p[0] === s[0] || p[0] === '.')) {
+      match = true;
+    }
+    if (p.length > 1 && p[1] === '*') {
+      // 有模式
+      // *匹配0个，然后递归 || *匹配1个，然后递归
+      return isMatch(s, p.slice(2)) || (match && isMatch(s.slice(1), p));
+    } else {
+      // 无模式
+      return match && isMatch(s.slice(1), p.slice(1));
+    }
+  }
+  return isMatch(s, p);
 }
-
+function regexp2(s, p) {
+  const isMatch = (s, p) => {
+    if (s.length === 0 && p.length === 0) {
+      return true;
+    }
+    let firstIsEqual = s[0] === p[0];
+    if (!firstIsEqual) {
+      return false;
+    }
+    if (p[1] !== '*') {
+      // 无模式
+      return isMatch(s.slice(1), p.slice(1));
+    } else {
+      // 有模式
+      return isMatch(s, p.slice(2));
+    }
+  }
+  return isMatch(s, p);
+}
+console.log(regexp("mississippi", "mis*is*ip*i"));
 
 
