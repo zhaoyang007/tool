@@ -370,6 +370,7 @@ function regexp(s, p) {
   }
   return isMatch(s, p);
 }
+// console.log(regexp("mississippi", "mis*is*ip*i"));
 function regexp2(s, p) {
   const isMatch = (s, p) => {
     if (s.length === 0 && p.length === 0) {
@@ -389,6 +390,32 @@ function regexp2(s, p) {
   }
   return isMatch(s, p);
 }
-console.log(regexp("mississippi", "mis*is*ip*i"));
+// console.log(regexp2("mississippi", "mis*is*ip*i"));
 
+// 排序
+/**
+ * 1.冒泡排序：两两比较，大的放后面去。每循环一次会把最大的数放到最后。
+ */
+function bubbleSort(arr) {
+  for (let i = arr.length - 1; i > 0; i--) { // 控制每次遍历的范围
+    let tmp;
+    for (let j = 0; j < i; j++) { // 比较大小，两两交换
+      tmp = arr[j];
+      if (tmp > arr[j + 1]) {
+        arr[j] = arr[j + 1];
+        arr[j + 1] = tmp;
+      }
+    }
+  }
+  return arr;
+}
+// console.log(bubbleSort([1,9,3,6,5,4]));
+
+/**
+ * 2.选择排序
+ */
+function selectSort(arr) {
+
+  return arr;
+}
 
