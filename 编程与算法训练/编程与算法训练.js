@@ -398,7 +398,7 @@ function regexp2(s, p) {
  */
 function bubbleSort(arr) {
   for (let i = arr.length - 1; i > 0; i--) { // 控制每次遍历的范围
-    let tmp;6
+    let tmp;
     for (let j = 0; j < i; j++) { // 遍历规定范围内的所有数。两两比较，做交换
       tmp = arr[j];
       if (tmp > arr[j + 1]) {
@@ -423,13 +423,50 @@ function bubbleSort2(arr) {
   } 
   return arr;
 }
-console.log(bubbleSort2([1,9,3,20,6,5,4,10]));
+// console.log(bubbleSort2([9,1,3,20,6,5,4,10]));
 
 /**
  * 2.选择排序
  */
 function selectSort(arr) {
-
+  for (let i = 0; i < arr.length; i++) {
+    let min = arr[i];
+    for (let j = i + 1; j < arr.length; j++) {
+      if (arr[j] < min) {
+        let c = min;
+        min = arr[j];
+        arr[j] = c;
+      }
+    }
+    arr[i] = min;
+  }
   return arr;
 }
+// console.log(selectSort([9,1,3,20,6,5,4,10,11]))
 
+/**
+ * 3.按奇偶排序数组 II(922)
+ * 给定一个非负整数数组 A， A 中一半整数是奇数，一半整数是偶数。
+ * 对数组进行排序，以便当 A[i] 为奇数时，i 也是奇数；当 A[i] 为偶数时， i 也是偶数。
+ * 你可以返回任何满足上述条件的数组作为答案
+ * 输入：[4,2,5,7]
+ * 输出：[4,5,2,7]
+ * 解释：[4,7,2,5]，[2,5,4,7]，[2,7,4,5] 也会被接受。
+ */
+function oddEvenSort(arr) {
+  // arr.sort();
+  let res = [];
+  let evenIndex = 0;
+  let oddIndex = 1;
+  for (let i = 0; i < arr.length; i++) {
+    if (arr[i] % 2 === 0) {
+      res[evenIndex] = arr[i];
+      evenIndex += 2;
+    } else {
+      res[oddIndex] = arr[i];
+      oddIndex += 2;
+    }
+  }
+  return res;
+}
+// console.log(oddEvenSort([4,2,5,7,3,6]))
