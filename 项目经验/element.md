@@ -424,6 +424,112 @@ export default {
 </script>
 ```
 
+##### 合并单元格示例
+
+```vue
+<template>
+    <div class="calculate-result">
+        <p>计算结果</p>
+        <el-table
+            class="calculate-result-table"
+            style="margin-bottom: 15px;"
+            v-for="(item, index) in calculateResultTableList"
+            :key="index"
+            :data="item"
+            :span-method="objectSpanMethod">
+            <el-table-column prop="variableName">
+                <template slot="header" slot-scope="scope">
+                    <el-checkbox style="margin-right: 10px;" :data-index="scope.$index" v-model="tableChecked" :label="index" @change="tableCheckedChange"></el-checkbox>变量键名
+                </template>
+            </el-table-column>
+            <el-table-column label="分段" prop=""></el-table-column>
+            <el-table-column label="总人数" prop=""></el-table-column>
+            <el-table-column label="everm2_mob6" prop=""></el-table-column>
+            <el-table-column label="授信通过人数" prop=""></el-table-column>
+            <el-table-column label="总额度" prop=""></el-table-column>
+            <el-table-column label="平均额度" prop=""></el-table-column>
+            <el-table-column label="平均IRR" prop=""></el-table-column>
+            <el-table-column label="总额度" prop=""></el-table-column>
+        </el-table>
+    </div>
+</template>
+
+<script>
+    export default {
+        data() {
+            return {
+                calculateResultTableList: [
+                    [
+                        {variableName: 'exp'},{variableName: 'exp'},{variableName: 'online'},{variableName: 'online'},{variableName: 'online'},{variableName: '变动'}
+                    ],
+                    [
+                        {variableName: 'exp'},{variableName: 'exp'},{variableName: 'online'},{variableName: 'online'},{variableName: 'online'},{variableName: '变动'}
+
+                    ]
+                ],
+                tableChecked: [],
+            }
+        },
+        mounted() {
+            this.calculateResultTableList.forEach(item => {
+                this.getRowspan(item);
+            });
+        },
+        methods: {
+            tableCheckedChange() {
+                console.log(this.tableChecked)
+            },
+            // 计算合并单元格
+            getRowspan(data) {
+                let pos = 0;
+                for (var i = 0; i < data.length; i++) {
+                    if (i === 0) {
+                        data[0].rowspan = 1;
+                    } else {
+                        // 判断当前元素与上一个元素是否相同
+                        if (data[i].variableName === data[i - 1].variableName) {
+                            data[pos].rowspan += 1;
+                            data[i].rowspan = 0;
+                        } else {
+                            data[i].rowspan = 1;
+                            pos = i;
+                        }
+                    }
+                }
+            },
+            objectSpanMethod({ row, column, rowIndex, columnIndex }) {
+                if (columnIndex === 0) {
+                    const _row = row.rowspan;
+                    const _col = _row > 0 ? 1 : 0;
+                    return {
+                        rowspan: _row,
+                        colspan: _col
+                    };
+                }
+            }
+        }
+    }
+</script>
+
+<style lang="less" scoped>
+.calculate-result {
+    p {
+        margin-top: 15px;
+    }
+    .batch-download {
+        margin: 15px 0;
+    }
+}
+</style>
+<style lang="less">
+.calculate-result-table {
+    .el-checkbox__label {
+        display: none;
+    }
+}
+</style>
+```
+
 
 
 ### el-select
