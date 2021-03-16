@@ -471,6 +471,23 @@ function oddEvenSort(arr) {
 }
 // console.log(oddEvenSort([4,2,5,7,3,6]))
 
+function oddEvenSort2(arr) {
+  let res = [];
+  let even = 0;
+  let odd = 1;
+  arr.forEach(item => {
+    if (item % 2 === 0) {
+      res[even] = item;
+      even += 2;
+    } else {
+      res[odd] = item;
+      odd += 2;
+    }
+  });
+  return res;
+}
+// console.log(oddEvenSort2([1,3,5,6,9,4,8,2]))
+
 /**
  * 4.数组中的第K个最大元
  * 在未排序的数组中找到第 k 个最大的元素。请注意，你需要找的是数组排序后的第 k 个
@@ -499,3 +516,4 @@ function maxK2(arr, k) {
   return arr[arr.length - k];
 }
 console.log(maxK2([1,2,5,6,4,3], 2))
+
