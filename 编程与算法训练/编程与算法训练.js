@@ -470,3 +470,21 @@ function oddEvenSort(arr) {
   return res;
 }
 // console.log(oddEvenSort([4,2,5,7,3,6]))
+function oddEvenSort2(arr) {
+  let res = [];
+  let even = 0;
+  let odd = 1;
+  arr.forEach(item => {
+    if (item % 2 === 0) {
+      res[even] = item;
+      even += 2;
+    } else {
+      res[odd] = item;
+      odd += 2;
+    }
+  });
+  return res;
+}
+// console.log(oddEvenSort2([1,3,5,6,9,4,8,2]))
+
+
