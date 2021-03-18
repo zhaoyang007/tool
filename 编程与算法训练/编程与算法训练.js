@@ -515,5 +515,57 @@ function maxK2(arr, k) {
   }
   return arr[arr.length - k];
 }
-console.log(maxK2([1,2,5,6,4,3], 2))
+console.log(maxK2([1,2,5,6,4,3], 2));
+
+/**
+ * 5.最大间距(164)
+ * 给定一个无序的数组，找出数组在排序之后，相邻元素之间最大的差值。
+ * 如果数组元素个数小于 2，则返回 0。
+ * 输入: [3,6,9,1]
+ * 输出: 3
+ * 解释: 排序后的数组是 [1,3,6,9], 其中相邻元素 (3,6) 和 (6,9) 之间都存在最大差值 3。
+ * 输入: [10]
+ * 输出: 0
+ * 解释: 数组元素个数小于 2，因此返回 0。
+ */
+function maxDiff(arr) {
+  if (arr.length < 2) {
+    return 0;
+  }
+  arr.sort();
+  let max = 0;
+  for (let i = 0; i < arr.length - 1; i++) {
+    let diff = arr[i + 1] - arr[i];
+    if (diff > max) {
+      max = diff;
+    }
+  }
+  return max;
+}
+
+function maxDiff2(arr) {
+  if (arr.length < 2) {
+    return 0;
+  }
+  let max = 0;
+  for (let i = arr.length - 1; i > 0; i--) {
+    for (let j = 0; j < i; j++) {
+      if (arr[j] > arr[j + 1]) {
+        let c = arr[j];
+        arr[j] = arr[j + 1];
+        arr[j + 1] = c;
+      }
+    }
+    if (i < arr.length - 1) {
+      let diff =  arr[i + 1] - arr[i];
+      if (diff > max) {
+        max = diff;
+      }
+    }
+  }
+  let tmp = arr[1] - arr[0];
+  return tmp > max ? tmp : max;
+}
+
+console.log(maxDiff2([13, 16, 19, 1]));
 
