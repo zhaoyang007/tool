@@ -432,13 +432,13 @@ function selectSort(arr) {
   for (let i = 0; i < arr.length; i++) {
     let min = arr[i];
     for (let j = i + 1; j < arr.length; j++) {
-      if (arr[j] < min) {
+      if (arr[j] < min) { // 找下一个最小值跟当前的最小值交换
         let c = min;
         min = arr[j];
         arr[j] = c;
       }
     }
-    arr[i] = min;
+    arr[i] = min; // 把第一个位置换成最终的最小值
   }
   return arr;
 }
@@ -515,7 +515,7 @@ function maxK2(arr, k) {
   }
   return arr[arr.length - k];
 }
-console.log(maxK2([1,2,5,6,4,3], 2));
+// console.log(maxK2([1,2,5,6,4,3], 2));
 
 /**
  * 5.最大间距(164)
@@ -567,5 +567,64 @@ function maxDiff2(arr) {
   return tmp > max ? tmp : max;
 }
 
-console.log(maxDiff2([13, 16, 19, 1]));
+// console.log(maxDiff2([13, 16, 19, 1]));
+
+/**
+ * 6.缺失的第一个正数(41)
+ * 给你一个未排序的整数数组 nums ，请你找出其中没有出现的最小的正整数。
+ * 输入：nums = [1,2,0]
+ * 输出：3
+ * 输入：nums = [3,4,-1,1]
+ * 输出：2
+ */
+
+function getFirstMin(arr) {
+  arr = arr.filter(item => item > 0);
+  if (arr.length) {
+    arr.sort((a, b) => a - b);
+    if (arr[0] !== 1) {
+      return 1;
+    } else {
+      for (let i = 0; i < arr.length - 1; i++) {
+        if (arr[i + 1] - arr[i] > 1) {
+          return arr[i] + 1;
+        }
+      }
+      return arr.pop() + 1;
+    }
+  } else {
+    return 1;
+  }
+}
+[2,3,1,7,5,6]
+function getFirstMin2(arr) {
+  arr = arr.filter(item => item > 0);
+  if (arr.length) {
+    for (let i = 0; i < arr.length; i++) {
+      let min = arr[i];
+      for (let j = i + 1; j < arr.length; j++) {
+        if (arr[j] < min) {
+          let c = arr[j];
+          arr[j] = min;
+          min = c;
+        }
+      }
+      arr[i] = min;
+      if (i > 0) {
+        if (arr[i] - arr[i - 1] > 1) {
+          return arr[i - 1] + 1;
+        }
+      } else {
+        if (min !== 1) {
+          return 1;
+        }
+      }
+    }
+    return arr.pop() + 1;
+  } else {
+    return 1;
+  }
+}
+
+console.log(getFirstMin2([3,7,2,1,5,4,8]))
 
