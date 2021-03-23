@@ -596,7 +596,6 @@ function getFirstMin(arr) {
     return 1;
   }
 }
-[2,3,1,7,5,6]
 function getFirstMin2(arr) {
   arr = arr.filter(item => item > 0);
   if (arr.length) {
@@ -625,6 +624,50 @@ function getFirstMin2(arr) {
     return 1;
   }
 }
+// console.log(getFirstMin2([3,7,2,1,5,4,8]))
 
-console.log(getFirstMin2([3,7,2,1,5,4,8]))
+/**
+ * 7.快速排序
+ * 数组中指定一个元素，比它大的放放它后面，比它小的放它前面。将前面和后面的元素再进行如上步骤，
+ * 直至全部正序排列。
+ */
+// [5,1,3,4,2,8,6,7,9]
+// [1,3,4,2] [5] [8,6,7,9]
+// [][1][3,4,2] [5] [6,7][8][9]
+
+function quickSort(arr) {
+  if (arr.length < 2) {
+    return arr;
+  }
+  let tmp = arr[0];
+  let left = [];
+  let right = [];
+  arr.forEach(item => {
+    if (item < tmp) {
+      left.push(item);
+    } else if (item > tmp) {
+      right.push(item);
+    }
+  });
+  return quickSort(left).concat([tmp]).concat(quickSort(right));
+}
+console.log(quickSort([5,1,3,4,2,8,6,7,9]))
+function quickSort2(arr) {
+  if (arr.length < 2) {
+    return arr;
+  } else {
+    let tmp = arr[0];
+    let left = [];
+    let right = [];
+    for (let i = 1; i < arr.length; i++) {
+      if (arr[i] < tmp) {
+        left.push(arr[i]);
+      } else {
+        right.push(arr[i]);
+      }
+    }
+    return quickSort2(left).concat(tmp, quickSort2(right));
+  }
+}
+console.log(quickSort2([5,1,3,4,2,8,6,7,9]))
 
