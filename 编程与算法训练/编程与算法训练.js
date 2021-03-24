@@ -670,4 +670,32 @@ function quickSort2(arr) {
   }
 }
 console.log(quickSort2([5,1,3,4,2,8,6,7,9]))
-
+// in-place 利用交换不再带来新的内存的增加
+function quickSort3(arr) {
+  function swap(arr, i, j) {
+    let tmp = arr[i];
+    arr[i] = arr[j];
+    arr[j] = tmp;
+  }
+  function findCenter(arr, left, right) {
+    let flag = arr[left];
+    let idx = left + 1;
+    for (let i = idx; i <= right; i++) {
+      if (arr[i] < flag) {
+        swap(arr, i, idx);
+        idx++;
+      }
+    }
+    swap(arr, left, idx - 1);
+    return idx;
+  }
+  function sort(arr, left, right) {
+    if (right > left) {
+      let center = findCenter(arr, left, right);
+      sort(arr, left, center - 1);
+      sort(arr, center, right);
+    }
+  }
+  sort(arr, 0, arr.length - 1);
+  return arr;
+}
