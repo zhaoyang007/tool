@@ -679,6 +679,7 @@ function quickSort3(arr) {
   }
   function findCenter(arr, left, right) {
     let flag = arr[left];
+    // 核心：用小的把大的全部换掉放在一起。
     let idx = left + 1;
     for (let i = idx; i <= right; i++) {
       if (arr[i] < flag) {
@@ -699,3 +700,32 @@ function quickSort3(arr) {
   sort(arr, 0, arr.length - 1);
   return arr;
 }
+// [5,3,2,6,9,1,4,7]
+function quickSort4(arr) {
+  function change(arr, i, j) {
+    let c = arr[i];
+    arr[i] = arr[j];
+    arr[j] = c;
+  }
+  function findCenter(arr, left, right) {
+    let flag = arr[left];
+    let index = left + 1;
+    for (let i = left + 1; i <= right; i++) {
+      if (arr[i] < flag) {
+        change(arr, i, index);
+        index++;
+      }
+    }
+    change(arr, left, index - 1);
+    return index - 1;
+  }
+  function sort(arr, left, right) {
+    if (right > left) {
+      let center = findCenter(arr, left, right);
+      sort(arr, left, center - 1);
+      sort(arr, center + 1, right);
+    }
+  }
+  sort(arr, 0, arr.length - 1);
+}
+
