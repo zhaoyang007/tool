@@ -729,3 +729,33 @@ function quickSort4(arr) {
   sort(arr, 0, arr.length - 1);
 }
 
+// 递归
+/**
+ * 1.复原IP地址(93)
+ * 给定一个只包含数字的字符串，用以表示一个 IP 地址，返回所有可能从 s 获得的 有效 IP 地址 。
+ * 你可以按任何顺序返回答案。有效 IP 地址 正好由四个整数（每个整数位于 0 到 255 之间组成，
+ * 且不能含有前导 0），整数之间用 '.' 分隔。
+ * 输入：s = "25525511135"
+ * 输出：["255.255.11.135","255.255.111.35"]
+ * 输入：s = "0000"
+ * 输出：["0.0.0.0"]
+ */
+// 25525511135
+function getIP(str) {
+  let res = [];
+  function search(cur, sub) {
+    if (cur.length === 4 && cur.join('') === str) {
+      res.push(cur.join('.'));
+    } else {
+      for (let i = 0; i < Math.min(3, sub.length); i++) {
+        let tmp = sub.substr(0, i + 1);
+        if (tmp < 256) {
+          search(cur.concat([tmp]), sub.substr(i + 1));
+        }
+      }
+    }
+  }
+  search([], str);
+  return res;
+}
+
