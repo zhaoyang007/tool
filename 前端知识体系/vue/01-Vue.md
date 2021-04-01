@@ -75,22 +75,4 @@ vue-awesome
 
 ### 经验总结
 
-获取不到dom的，可以在mounted或nextTick里做，或者可以在setTimeout延迟里做。或者两者结合着做。
-
-在父组件mouted里，不一定能获取到子组件的dom，必须要在子组件本身的mounted里才能获取到子组件的dom。
-
-
-
-### vue 线上打包
-
-根据环境变量来区分开发环境的请求地址还是线上的请求地址
-
-可以在打包后，通过修改配置文件来更换线上请求地址，修改完配置文件后刷新页面即可。https://www.cnblogs.com/webhmy/p/9517680.html
-
-vue-cli工程详解
-
-https://www.cnblogs.com/zhaowy/p/9542369.html
-
-https://www.jianshu.com/p/7006a663fb9f
-
-
+在父组件 mouted 里，不一定能获取到子组件的 dom，必须要在子组件本身的 mounted 里才能获取到子组件的 dom。
