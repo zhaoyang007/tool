@@ -1,5 +1,3 @@
-## Vue 组件化常用技术
-
 ### 组件间通信
 
 ##### props
@@ -164,8 +162,6 @@ methods: {
 
 大多数从外部提供给组件的 attribute 的值会替换掉组件内部设置好的值。class 和 style attribute 的值会被合并起来。
 
-
-
 ##### 自定义事件
 
 子给父传值
@@ -179,8 +175,6 @@ methods: {
 // child
 this.$emit('add', good)
 ```
-
-
 
 ##### eventbus
 
@@ -222,13 +216,9 @@ this.$bus.$on('foo', handle)
 this.$bus.$emit('foo')
 ```
 
-
-
 ##### Vuex
 
 创建唯一的全局数据管理者 Store，通过它管理数据并通知组件状态变更，它是组件通信的最佳实践。
-
-
 
 ##### 边界情况
 
@@ -435,10 +425,6 @@ export default {
 
 
 
-
-
-## Vue 组件化实践
-
 ### Vue 组件化实践
 
 配合路由创建相应组件，组件里搭建整体结构，然后在相应位置插入子组件，一层一层向下写。
@@ -484,7 +470,61 @@ export default {
 
 
 
-## Vue 通用组件编写
+### vue 高级组件开发
+
+#### notification 全局通用性通知组件
+
+Vue 是基于组件化的形式进行开发，它本身的组件是要通过我们在模版里面去声明然后再去用的，这种方法其实比较的不适合于我们去使用像一些notification这种组件的，那么我们有什么办法去让它变成我们api调用的方式呢。
+
+##### notification.vue
+
+这是一个基本组件，就是我们这个组件长的样式以及它的一些基础的内容。
+
+##### index.js
+
+通过它将notification制作成一个vue的插件，并将notification这个组件注册到全局，让每个页面都能都使用这个组件。
+
+将api调用的方法加到Vue.prototype中去。
+
+##### func-notification.js
+
+扩展notification.vue这个组件
+
+通过vue的extends的功能扩展notification这个组件
+
+##### function.js
+
+实现我们的notification通过fucniton去调用的这种方式。主要的方法调用涉及到的逻辑都在这里写。
+
+我们要通过js的方法调用去创建一个vue的组件，这个组件我们怎么去创建最方便呢，我们肯定是通过去new一下，我们可以直接通过new Vue()然后去创建一个组件，那么同样我们可以通过Vue的extend它返回的这个方法然后我们去创建一个组件。
+
+这就是我们的notification的全局通用性组件，这里面会涉及到一些最主要的内容就是我们如何去通过js方法调用的形式动态的创建一个组件，并且动态的把它渲染到我们的dom里面，然后再经过一系列的操作之后呢，我们又动态的去把它删除掉，那么这些内容其实相对来说是跟vue的组件化不太配套的一个内容，但是呢它会在我们日常的代码开发里面非常的有用。
+
+#### tabs 组件
+
+
+
+### js组件化设计原则
+
+* 复用
+* 高内聚低耦合：一个组件内不要依赖任何其他组件，组件的功能尽量不要收页面其他组件的控制
+* 周期性迭代，长期打造一个越来越好的代码设计，让组件越来越完美，最适合自己的业务场景。
+* 参数传递
+* 不断抽象出一个跟业务没有关系的模块，而这些业务模块对它是可以继承的，那么这种抽象的设计就是组件化设计思维非常大的一个转换。
+* 抽象组件不涉及业务，是抽象的最高层，但是你必须要支持各种配置怎么传进去，这个抽象组件在最上层，业务组件去用的时候，我怎么继承你的默认这个框架，还要把我自己想要的东西定制进去，说白了就是一个传参的过程
+* 组件抽象是要抽象到一个通用性较强的架子，并且还要有相对可以的功能，不能只是一个什么都没有的架子。
+* 一个组件的复杂度不能太高，也不能太低(除非这个复杂度特别低的组件的复用性特别高)
+* 组件抽象时不要考虑里面的具体内容，而是抽象出大致的框架
+
+
+
+### vue 第三方组件
+
+vue轮子工厂：http://www.wheelsfactory.cn
+
+vue-awesome
+
+
 
 ### 通用表单组件
 
@@ -992,3 +1032,203 @@ https://www.processon.com/view/link/5d430271e4b01ed2c6aa4171#map
 * github 中搜索 element
 * packages：几乎所有源码都在这里
 * src 是暴露一些接口的地方，有一些通用方法，例如混入和指令等
+
+
+
+### 组件封装总结
+
+常见基础组件封装
+
+* tab
+* 表单
+* 表格
+* 弹窗
+* 提示框
+* 树形组件
+* menu
+* 分页
+
+组件二次封装：将 elment-ui 进行二次封装，主要是为了样式风格。
+
+
+
+### 表单业务组件封装
+
+* 组件外部
+
+  * 传入遍历数据
+    * 表单的类型
+    * label 
+    * 是否展示 label
+    * 当前表单需要绑定的 v-model 变量名
+    * model 的默认值（非必须）
+    * 一些其他属性的传递
+  * 绑定所有表单对应的 v-model 对象集合
+  * 接收内部触发出来的事件，主要是内部提交表单的事件，外部做列表的刷新
+
+  ```vue
+  <template>
+    <div>
+      <div class="searchHeader">
+        <sel-header-component
+          :sel-header-list="search.selHeaderList"
+          v-model="search.selHeaderModelObj"
+          @submit="searchResult"
+        />
+      </div>
+    </div>
+  </template>
+  <script>
+  import SelHeaderComponent from '@/components/configSelHeader'
+  
+  export default {
+    components: {
+      SelHeaderComponent
+    },
+    data () {
+      return {
+        // 查询条件
+        search: {
+          selHeaderList: [ // header可选项的初始化list
+            {
+              key: 'nameCn',
+              label: '请输入目录的中文名称',
+              showLabel: false,
+              selType: 'input',
+              width: 300
+            },
+            {
+              key: 'nameEn',
+              label: '请输入目录的英文名称',
+              showLabel: false,
+              selType: 'input',
+              width: 300
+            },
+            {
+              key: 'creator',
+              label: '请输入创建人',
+              showLabel: false,
+              selType: 'input',
+              width: 300
+            }
+          ],
+          selHeaderModelObj: {} // model
+        }
+      }
+    },
+    created() {
+      const obj = {}
+      this.search.selHeaderList.forEach(td => {
+        if (td.defaultValue) {
+          obj[td.key] = td.defaultValue
+        } else {
+          obj[td.key] = ''
+        }
+      })
+      this.selHeaderModelObj = obj
+    }
+  }
+  </script>
+  ```
+
+* 组件内部
+
+  * 根据数据遍历出所有表单
+    * 将所有表单类型写出来，根据传入的数据判断哪个显示
+    * 是否展示 label
+    * 当前表单需要绑定的 v-model 变量名
+    * 一些其他属性的传递
+  * 表单上绑定的事件，使用 $emit 触发出来
+  * v-model 的处理
+    * 使用 prop value 接收传进来的 v-model 对象集合，并绑定到每个表单元素上。
+    * 当值变化时，触发 @input 事件把组件上 v-model 对象集合传出去
+      * 可以使用 @input 事件
+      * 使用 watch
+
+  ```vue
+  <template>
+    <div class="selHeaderWrap">
+      <el-form :inline="true">
+        <el-form-item
+          v-for="(item,index) in selHeaderList"
+          :key="index"
+          :label="item.showLabel ? item.label : ''"
+        >
+          <el-input
+            v-if="item.selType==='input'"
+            v-model="value[item.key]"
+            :placeholder="item.label"
+            size="small"
+            clearable
+            @keyup.enter.native="submit"
+            @clear="submit"
+            :style="{width: item.width+'px'}"
+            @input="input($event, item.key)"
+          >
+            <i slot="prefix" class="el-input__icon el-icon-search" />
+          </el-input>
+        </el-form-item>
+      </el-form>
+    </div>
+  </template>
+  <script>
+  export default {
+    props: {
+      selHeaderList: {
+        type: Array,
+        default: () => []
+      },
+      value: {
+        type: Object,
+        default: () => {}
+      }
+    },
+    methods: {
+      submit (val) {
+        this.$emit('submit', val)
+      },
+      input(e, key) {
+        this.value[key] = e
+        this.$emit('input', this.value)
+      }
+    }
+  }
+  </script>
+  ```
+
+select 的 options 的数据可以放在每个数据中，也可以像 modelObj 一样做一个映射。
+
+
+
+### 拖拽表单组件
+
+##### 需求
+
+后台管理：左侧固定列表中有一些表单，例如文本框，下拉框。可以将这些表单元素拖拽到右侧的自适应的区域，将表单以原来的宽度放入一行，放不下换行。保存右侧的表单信息和顺序到后端。
+
+用户界面：将来可以在用户端按顺序显示后台操作保存的表单。
+
+##### 根据需求寻找适合的组件
+
+先到 vue 社区搜索 drag 相关的组件。
+
+根据需求最终筛选出的组件：
+
+* vuedraggable 
+* vue-smooth-dnd 
+* vue-drag-and-drop-kanban 基于 cue-smooth-dnd
+* vue-formbuilder 基于 vuedraggable
+
+##### 设计思路
+
+1. 首先要实现样式操作上的符合：两个列表之间的双向拖拽，能够满足自适应的两列布局，拖拽过去后一行显示超出换行并且保持元素拖拽之前的宽度。
+2. 可以将内容也拖拽过去。
+3. 可以记录右侧列表的所有元素和顺序。
+
+##### 遇见的问题
+
+单纯使用 vuedraggable 的双列表进行的拖拽
+
+1. 内容是元素或组件的时候，元素和组件无法复制过去。需要封装一个组件，使拖拽和被拖拽的列表内容都使用这个组件进行渲染，配合 list 数据判断渲染的元素类型。
+2. list 数据只能接收 name, id 两个内容，无法接收其他内容。
+
