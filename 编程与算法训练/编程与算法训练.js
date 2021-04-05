@@ -852,5 +852,25 @@ function recordScore(arr) {
   score.forEach(item => res += Number(item));
   return res;
 }
-console.log(recordScore(["5","2","C","D","+"]))
+// console.log(recordScore(["5","2","C","D","+"]))
+
+/**
+ * 2.最大矩形(85)
+ * 给定一个仅包含 0 和 1 、大小为 rows x cols 的二维二进制矩阵，找出只包含 1 的最大矩形，并返回其面积。
+ */
+function maxRect(arr) {
+  let result = [];
+  let reg = /1{2,}/g;
+  arr = arr.map(item => {
+    let str = item.join('');
+    let r = reg.exec(str);
+    let rs = [];
+    while (r) {
+      rs.push([r.index, r.index + r[0].length - 1]);
+      r = reg.exec(str);
+    }
+    return rs;
+  });
+  return 0;
+}
 
