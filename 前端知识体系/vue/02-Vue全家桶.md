@@ -164,16 +164,6 @@ export default {
 
 ##### 模块
 
-```js
-import user from './user'
-
-export default new Vuex.Store({
-  modules: {
-    user
-  }
-})
-```
-
 user.js
 
 ```js
@@ -204,7 +194,17 @@ export default {
 }
 ```
 
-访问的时候要加上明确的命名空间，也就是我们在 modules 里注册的模块的名称。
+```js
+import user from './user'
+
+export default new Vuex.Store({
+  modules: {
+    user
+  }
+})
+```
+
+访问和调用
 
 ```vue
 <template>
@@ -243,39 +243,25 @@ actions: {
 
 ##### 映射方法
 
-mapState 返回的是一个对象键值对的形式，键是 isLogin，值是将来要生成的 function，这个 function 返回的值就是 Store 中 isLogin 的值。
+mapState 返回的是一个对象键值对的形式，键是 isLogin，值是将来要生成的 function，这个 function 返回的值就是 Store 中 isLogin 的值，正好对应 computed 的形式。
 
 ```vue
 <template>
-	<button v-if="!isLogin">登录</button>
+	<button v-if="!isLogin" @click="login">登录</button>
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import { 
+  mapState,
+  mapMutations,
+  mapActions
+} from 'vuex'
 
 export default {
   computed: {
     // ...mapState('user/isLogin') // 映射出来的名字是 user/isLogin
     ...mapState('user', ['isLogin']) // 映射出来的名字是 isLogin
-  } 
-}
-</script>
-```
-
-mutations actions:
-
-```vue
-<template>
-	<button @click="login">登录</button>
-</template>
-
-<script>
-import { 
-  mapMutations,
-  mapActions
-} from 'vuex'
-  
-export default {
+  },
   methods: {
     // ...mapMutations('user', ['login'])
     // ...mapActions('user', ['login']),
@@ -283,25 +269,11 @@ export default {
     ...mapActions(['user/login']),
     login() {
       // this['login']();
-      this['user/login']('admin').then(() => {
-        
-      }).catch(() => {});
+      this['user/login']();
     }
   }
 }
 </script>
-```
-
-##### 严格模式
-
-严格模式主要是为了防止用户直接去改 Store 里的状态。
-
-严格模式下，无论何时发生了状态变更且不是由 mutation 函数引起的，将会抛出错误。这能保证所有的状态变更都能被调试工具跟踪到。
-
-```js
-const store = new Vuex.Store({
-  strict: true
-})
 ```
 
 ##### 给 vuex 加上热更替的功能
