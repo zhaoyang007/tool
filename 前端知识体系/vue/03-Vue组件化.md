@@ -425,99 +425,6 @@ export default {
 
 
 
-### Vue 组件化实践
-
-配合路由创建相应组件，组件里搭建整体结构，然后在相应位置插入子组件，一层一层向下写。
-
-基本页面上的每一块都分成组件，然后按照不分组件的时候怎么写就怎么写里面的功能，然后再处理需要处理的组件之间的数据通信问题就行了。将几个组件公用的数据放到公共的父组件中。
-
-
-
-### Vue 组件化探讨
-
-对 Vue 组件化的理解：
-
-* 组件化的含义：组件是可复用的 Vue 实例，准确讲它们是 VueComponent 的实例，继承自 Vue。
-
-* 组件化是软件工程中一些原则性的践行：软件工程中一个最重要的原则就是高内聚，低耦合，从而增强程序的复用性，可维护性，可测试性。
-
-* 组件分类：
-
-  * 通用组件：实现最基本的功能，具有通用性、复用性，例如按钮组件、输入框组件、布局组件等，类似 elementUI 等组件库的功能，这些组件库共同的特点是基本上就是最小的功能单元了，不可能再区分了。
-  * 业务组件：它们完成具体业务，具有一定的复用性，例如登录组件、轮播图组件。可以把这些通用组件做一个有机的组合来完成一个功能。
-  * 页面组件：组织应用各部分独立内容，需要时在不同页面组件间切换，例如列表页、详情页组件
-
-* 组件的使用
-
-  * 定义：全局定义 Vue.component()，局部定义 components 选项，sfc
-  * 分类
-    * 有状态组件
-    * functional（函数式组件，无状态组件）
-    * abstract（抽象组件，完成一些特定的功能，它不管视图，可能实现一个特别的逻辑控制，逻辑功能，比如一个防抖组件，keep-alive，transition 加上这些组件去包装）
-  * 组件化过程中一些常见的通信手段
-  * 内容分发：\<slot>，\<template>，v-slot
-  * 使用及优化：动态组件 is，keep-alive，异步组件
-
-* 组件的本质
-
-  Vue 中的组件经历的过程：组件配置 => VueComponent 实例 => render() => Virtual DOM => DOM。
-
-  因为你写了配置最后希望看到 DOM，组件里写的只是配置对象，Vue 内部为你做了中间这三件事。组件最终的目标就是产出虚拟 DOM。
-
-  * 首先它把你写的组件配置转换成了 VueComponent 实例。
-  * 实例里面会有 render 方法，render 方法是我们写的模版转换的，render 方法在合适的时间去执行获得虚拟 DOM。
-  * 虚拟 DOM 又通过更新的过程转换成真实 DOM。
-
-
-
-### vue 高级组件开发
-
-#### notification 全局通用性通知组件
-
-不用注册后在模版中使用，而是 api 调用的方式来使用。
-
-##### notification.vue
-
-这是一个基本组件，就是我们这个组件长的样式以及它的一些基础的内容。
-
-##### index.js
-
-通过它将notification制作成一个vue的插件，并将notification这个组件注册到全局，让每个页面都能都使用这个组件。
-
-将api调用的方法加到Vue.prototype中去。
-
-##### func-notification.js
-
-扩展notification.vue这个组件
-
-通过vue的extends的功能扩展notification这个组件
-
-##### function.js
-
-实现我们的notification通过fucniton去调用的这种方式。主要的方法调用涉及到的逻辑都在这里写。
-
-我们要通过js的方法调用去创建一个vue的组件，这个组件我们怎么去创建最方便呢，我们肯定是通过去new一下，我们可以直接通过new Vue()然后去创建一个组件，那么同样我们可以通过Vue的extend它返回的这个方法然后我们去创建一个组件。
-
-这就是我们的notification的全局通用性组件，这里面会涉及到一些最主要的内容就是我们如何去通过js方法调用的形式动态的创建一个组件，并且动态的把它渲染到我们的dom里面，然后再经过一系列的操作之后呢，我们又动态的去把它删除掉，那么这些内容其实相对来说是跟vue的组件化不太配套的一个内容，但是呢它会在我们日常的代码开发里面非常的有用。
-
-#### tabs 组件
-
-
-
-### js组件化设计原则
-
-* 复用
-* 高内聚低耦合：一个组件内不要依赖任何其他组件，组件的功能尽量不要受页面其他组件的控制
-* 周期性迭代，长期打造一个越来越好的代码设计，让组件越来越完美，最适合自己的业务场景。
-* 参数传递
-* 不断抽象出一个跟业务没有关系的模块，而这些业务模块对它是可以继承的，那么这种抽象的设计就是组件化设计思维非常大的一个转换。
-* 抽象组件不涉及业务，是抽象的最高层，但是你必须要支持各种配置怎么传进去，这个抽象组件在最上层，业务组件去用的时候，我怎么继承你的默认这个框架，还要把我自己想要的东西定制进去，说白了就是一个传参的过程
-* 组件抽象是要抽象到一个通用性较强的架子，并且还要有相对可以的功能，不能只是一个什么都没有的架子。
-* 一个组件的复杂度不能太高，也不能太低(除非这个复杂度特别低的组件的复用性特别高)
-* 组件抽象时不要考虑里面的具体内容，而是抽象出大致的框架
-
-
-
 ### 通用表单组件
 
 ##### 通用组件注意事项
@@ -770,35 +677,17 @@ export default {
 
 这时就涉及到一些问题了，这个组件实例怎么创建，又怎么脱离当前的 Vue 根实例去单独的挂载到 body 上，这就涉及到一些相对较底层的 API 了。
 
-需求：我现在有一个 Notice.vue 这样的组件，要用函数的方式去创建这个组件的实例，并且将来还能把它挂在到 body 上面去。
+需求：现在有一个 Notice.vue 这样的组件，要用函数的方式去创建这个组件的实例，并且将来把它挂在到 body 上面去。
 
 ##### 实现 create 函数
 
-这个 create 方法将来接收一个组件（其实就是组件的配置）和一些参数，通过 JS 的方式创建这个组件的实例，不需要在任何组件中通过 components 选项声明，并将其挂载到 body 上去，最终返回这个组件实例。
+create 方法将来接收一个组件（其实就是组件的配置）和一些参数，通过 JS 的方式创建这个组件的实例，不需要在任何组件中通过 components 选项声明，并将其挂载到 body 上去，最终返回这个组件实例。
 
-那现在有几个问题要思考：
-
-这个 Component 组件怎么能够变成构造函数，组件构造函数如何获取？我们平常写的组件，它只是一个 export 出去的一个配置对象，它不是构造函数。这个配置对象将来必须要变成实例，那它凭什么变成实例啊，它必须得有构造函数，所以我们平常写的这些组件的配置需要变成构造函数，然后才能创建它的实例。
-
-* 方法一：使用 Vue.extend() 方法，可以得到构造函数，然后创建组件的实例。Vue.extend 开发中很少接触，它是框架本身调的方法。
-* 方法二：借助 Vue 来创建根实例，使用 render 方法，直接把传入的组件渲染出来，整个过程会有组件实例的创建，然后我们从中获取组件的实例就可以了。
+我们平常写的组件，它只是一个 export 出去的一个配置对象，它不是构造函数。这个配置对象将来必须要变成实例，那么它必须得有构造函数。
 
 方法一： 
 
-Vue.extend 的用法：
-
-extend 方法时 Vue 的一个静态方法，它里面将 Vue 设置为超类，又创建了一个子类 Sub，名字叫 VueComponent，Sub 继承 Vue，也就是说所有组件的类型都是 VueComponent，它们都是 Vue 构造函数的子类。
-
-```js
-// 我们有一个组件的配置，一般是一个对象
-const comp = {data: {}, props: {}} 
-// 如果想得到这个组件的构造函数，就用Vue.extend方式把这个组件的配置对象传进去，就会得到一个构造函数
-const Ctor = Vue.extend(comp)
-// new一下这个构造函数，就可以得到这个组件的实例了。
-// 接下来的问题是怎么传参，官方给的接口是用propsDate的方式去传递参数，就相当于使用模版时父组件传过来的props参数
-new Ctor({propsDate: {}})
-// 既然得到组件实例了，后面的写法就跟之前的比较类似了
-```
+Vue.extend 方法是 Vue 的一个静态方法，它里面创建了一个子类 VueComponent，继承 Vue，也就是说所有组件的类型都是 VueComponent，它们都是 Vue 构造函数的子类。Vue.extend 开发中很少接触，它是框架本身调的方法。
 
 utils/create.js
 
@@ -806,26 +695,21 @@ utils/create.js
 import Vue from 'vue'
 
 function create(Component, props) {
-  // 组件的继承vue.extend()来扩展我们的vue, 可以简单理解为extend之后得到的是vue这个类的一个子类。
-  // 获得组件构造函数
-  const Ctor = Vue.extend(Component)
+  // 获得组件的构造函数
+  const Ctor = Vue.extend(Component);
   // 获得组件实例，组件实例创建之后得到虚拟DOM
-  cosnt comp = new Ctor({propsDate: props})
-  
-  // 组件实例挂载后得到真实DOM
-  comp.$mount()
-  
+	// 用propsDate传递参数，相当于使用模版时父组件传过来的props
+  cosnt comp = new Ctor({propsDate: props});
+  // 组件实例挂载，得到真实DOM
+  comp.$mount();
   // 获取真实DOM后，做手动挂载
-  document.body.appendChild(comp.$el)
-
-  // 清除自己，因为作为一个组件，不停的往界面中去追加而不去淘汰，将来内存就爆了。
+  document.body.appendChild(comp.$el);
+  // 作为一个组件，不停的往界面中去追加而不去清除，将来内存就爆了。
   comp.remove = function() {
-    document.body.removeChild(comp.$el)
-    comp.$destroy()
+    document.body.removeChild(comp.$el);
+    comp.$destroy();
   }
-
-  return comp
-
+  return comp;
 }
 
 export default create
@@ -833,44 +717,34 @@ export default create
 
 方法二：
 
+借助 Vue 来创建根实例，使用 render 方法，直接把传入的组件渲染出来，整个过程会有组件实例的创建，然后我们从中获取组件的实例就可以了。
+
 utils/create.js
 
 ```js
 import Vue from 'vue'
 
 function create(Component, props) {
-  // 组件的构造函数如何获取？
-  // 1.Vue.extend()
-  // 2.render
   // 这个实例会把这个组件作为根组件把它渲染出来了，所以我们就能得到虚拟DOM，挂载后得到真实DOM
   const vm = new Vue({
-    // h是createElement, 返回VNode虚拟DOM
-    // 挂载后变成真实DOM，最终把真实DOM放到宿主元素上去。
     render: h => h(Component, {props}),
-  }).$mount() // 不指定宿主元素，则会创建真实DOM，但是不会做追加操作，因为没有目标对象可追加，也不可以使用body
-
+  }).$mount(); // 不指定宿主元素，则会创建真实DOM，但是不会做追加操作，因为没有目标对象可追加，也不可以使用body
   // 获取真实DOM后，做手动挂载
-  document.body.appendChild(vm.$el)
-	
+  document.body.appendChild(vm.$el);
   // 获取传入的组件的实例
-  const comp = vm.$children[0]
-
-  // 清除自己，因为作为一个组件，不停的往界面中去追加而不去淘汰，将来内存就爆了。
+  const comp = vm.$children[0];
+  // 清除自己
   comp.remove = function() {
-    document.body.removeChild(vm.$el)
-    vm.$destroy()
+    document.body.removeChild(vm.$el);
+    vm.$destroy();
   }
-
-  return comp
-
+  return comp;
 }
 
 export default create
 ```
 
 ##### 实现 Notice.vue
-
-components/Notice.vue
 
 ```vue
 <template>
@@ -938,23 +812,19 @@ export default {
 </style>
 ```
 
-##### 项目入口文件中引入 create 并挂载到 Vue 原型上
-
 main.js
 
 ```js
 import create from './utils/create'
 
-Vue.prototype.$create = create
+Vue.prototype.$create = create;
 ```
 
-##### 使用
-
-传一个组件，传一些参数，然后让它显示，大概就是这样。
+使用
 
 ```js
-this.$create(Notice, { 
-  title: '社会你杨哥喊你来搬砖',
+this.$create(Notice, {
+  title: '弹窗组件',
   message: '提示信息',
   duration: 1000
 }).show();
@@ -996,45 +866,11 @@ Vue.use(create)
 
 ##### 修正 input 中 $parent 写法的问题
 
-想跨层级的去传参，还不能使用 $parent/$root/$children 等，element 官方用的是混入的方式，在 src/mixins 写了一个
-emitter.js 派发器。它可以做两件事，一个叫广播一个叫冒泡派发事件，这个东西在 vue1.0 里是有的，2.0 之后删了。element 觉得它有用，所以自己实现了，这个东西可以隔层的去派事件，比如在 input 里可以不停的向上去找我想要的组件让它去派发事件。这个东西是作为一个混入被引入的，主要是为了复用。
+想跨层级的去传参，还不能使用 $parent/$root/$children 等，element 官方用的是混入的方式，在 src/mixins 写了一个 emitter.js 派发器。它可以做两件事，一个叫广播一个叫冒泡派发事件，这个东西在 vue1.0 里是有的，2.0 之后删了。element 觉得它有用，所以自己实现了，这个东西可以隔层的去派事件，比如在 input 里可以不停的向上去找我想要的组件让它去派发事件。这个东西是作为一个混入被引入的，主要是为了复用。
 
 1.mixin emitter
 2.声明 componentName
 3.dispatch()
-
-##### 树形（递归）组件的设计与实现
-
-循环引用，在做树形组件的时候，会用到递归组件
-
-##### Vue 组件化知识点思维导图
-
-https://www.processon.com/view/link/5d430271e4b01ed2c6aa4171#map
-
-##### 开源组件库
-
-学会看开源组件库源码，有些功能遇到难处了，怎么从组件库的源码中找到解决办法；
-
-* github 中搜索 element
-* packages：几乎所有源码都在这里
-* src 是暴露一些接口的地方，有一些通用方法，例如混入和指令等
-
-
-
-### 组件封装总结
-
-常见基础组件封装
-
-* tab
-* 表单
-* 表格
-* 弹窗
-* 提示框
-* 树形组件
-* menu
-* 分页
-
-组件二次封装：将 elment-ui 进行二次封装，主要是为了样式风格。
 
 
 
@@ -1218,3 +1054,45 @@ select 的 options 的数据可以放在每个数据中，也可以像 modelObj 
 1. 内容是元素或组件的时候，元素和组件无法复制过去。需要封装一个组件，使拖拽和被拖拽的列表内容都使用这个组件进行渲染，配合 list 数据判断渲染的元素类型。
 2. list 数据只能接收 name, id 两个内容，无法接收其他内容。
 
+
+
+### Vue 组件化实践
+
+配合路由创建相应组件，组件里搭建整体结构，然后在相应位置插入子组件，一层一层向下写。
+
+基本页面上的每一块都分成组件，然后按照不分组件的时候怎么写就怎么写里面的功能，然后再处理需要处理的组件之间的数据通信问题就行了。将几个组件公用的数据放到公共的父组件中。
+
+
+
+### 组件封装
+
+根据数据渲染视图。
+
+常见基础组件封装。
+
+* tab
+* 表单
+* 表格
+* 弹窗
+* 提示框
+* 树形组件
+* menu
+* 分页
+
+组件二次封装：将 elment-ui 进行二次封装，主要是为了样式风格。
+
+
+
+### Vue 组件化探讨
+
+* 组件化的含义：组件是可复用的 Vue 实例，准确讲它们是 VueComponent 的实例，继承自 Vue。
+
+* 组件的本质
+
+  Vue 中的组件经历的过程：组件配置 => VueComponent 实例 => render() => Virtual DOM => DOM。
+
+  因为你写了配置最后希望看到 DOM，组件里写的只是配置对象，Vue 内部为你做了中间这三件事。组件最终的目标就是产出虚拟 DOM。
+
+  * 首先它把你写的组件配置转换成了 VueComponent 实例。
+  * 实例里面会有 render 方法，render 方法是我们写的模版转换的，render 方法在合适的时间去执行获得虚拟 DOM。
+  * 虚拟 DOM 又通过更新的过程转换成真实 DOM。
