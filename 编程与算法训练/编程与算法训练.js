@@ -891,9 +891,9 @@ function getMaxRect(arr) {
 class MyCircularQueue {
   constructor(k) {
     this.list = Array(k);
+    this.max = k;
     this.front = 0;
     this.rear = 0;
-    this.max = k;
   }
   enQueue(num) {
     if (this.isFull()) {
@@ -904,10 +904,11 @@ class MyCircularQueue {
       return true;
     }
   }
-  deQueue(num) {
+  deQueue() {
     let v = this.list[this.front];
     this.list[this.front] = '';
     this.front = (this.front + 1) % this.max;
+    return true;
   }
   isEmpty() {
     return this.front === this.rear && !this.list[this.front];
@@ -915,11 +916,20 @@ class MyCircularQueue {
   isFull() {
     return this.front === this.rear && !!this.list[this.front];
   }
-  front() {
+  Front() {
     return this.list[this.front];
   }
-  rear() {
+  Rear() {
     return this.list[this.rear - 1 < 0 ? this.max - 1 : this.rear - 1];
   }
 }
-
+// let circularQueue = new MyCircularQueue(3); // 设置长度为 3
+// console.log(circularQueue.enQueue(1)); // 返回 true
+// console.log(circularQueue.enQueue(2)) // 返回 true
+// console.log(circularQueue.enQueue(3)) // 返回 true
+// console.log(circularQueue.enQueue(4)) // 返回 false，队列已满
+// console.log(circularQueue.Rear()) // 返回 3
+// console.log(circularQueue.isFull()) // 返回 true
+// console.log(circularQueue.deQueue()) // 返回 true
+// console.log(circularQueue.enQueue(4)) // 返回 true
+// console.log(circularQueue.Rear()) // 返回 4
