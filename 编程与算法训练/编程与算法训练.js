@@ -933,3 +933,115 @@ class MyCircularQueue {
 // console.log(circularQueue.deQueue()) // 返回 true
 // console.log(circularQueue.enQueue(4)) // 返回 true
 // console.log(circularQueue.Rear()) // 返回 4
+
+/**
+ * 2.任务调度器(621)
+ * 给你一个用字符数组 tasks 表示的 CPU 需要执行的任务列表。其中每个字母表示一种不同种类的任务。任务可以以任意顺序执行，
+ * 并且每个任务都可以在 1 个单位时间内执行完。在任何一个单位时间，CPU 可以完成一个任务，或者处于待命状态。然而，两个 
+ * 相同种类 的任务之间必须有长度为整数 n 的冷却时间，因此至少有连续 n 个单位时间内 CPU 在执行不同的任务，或者在待命状态。
+ * 你需要计算完成所有任务所需要的 最短时间 。
+ * 输入：tasks = ["A","A","A","B","B","B"], n = 2
+ * 输出：8
+ * 解释：A -> B -> (待命) -> A -> B -> (待命) -> A -> B
+ * 在本示例中，两个相同类型任务之间必须间隔长度为 n = 2 的冷却时间，而执行一个任务只需要一个单位时间，所以中间出现了（待命）状态。
+ */
+
+// 链表
+/**
+ * 1.给你链表的头结点 head ，请将其按 升序 排列并返回 排序后的链表 。
+ * 进阶：
+ * 你可以在 O(n log n) 时间复杂度和常数级空间复杂度下，对链表进行排序吗？
+ * 输入：head = [4,2,1,3]
+ * 输出：[1,2,3,4]
+ * 输入：head = [-1,5,3,4,0]
+ * 输出：[-1,0,3,4,5]
+ * 输入：head = []
+ * 输出：[]
+ */
+// 声明链表的节点
+class Node {
+  constructor(value) {
+    this.val = value;
+    this.next = undefined;
+  }
+}
+// 声明链表的数据结构
+class NodeList {
+  constructor(arr) {
+    // 声明链表的头部节点
+    let head = new Node(arr.shift());
+    // 把剩下的数据都用节点的方式实例化并跟头部指针关联起来
+    let next = head;
+    arr.forEach(item => {
+      next.next = new Node(item);
+      next = next.next;
+    });
+    return head;
+  }
+}
+// 交换两个节点的值
+function swap(p, q) {
+  let val = p.val;
+  p.val = q.val;
+  q.val = val;
+} 
+// 寻找基准元素的节点
+function partion(begin, end) {
+  let val = begin.val;
+  let p = begin;
+  let q = begin.next;
+  while(q !== end) {
+    if (q.val < val) {
+      swap(p.next, q);
+      p = p.next;
+    }
+    q = q.next;
+  }
+  swap(p, begin);
+  return p;
+}
+function sort(begin, end) {
+  if (begin !== end) {
+    let part = partion(begin, end);
+    sort(begin, part);
+    sort(part.next, end);
+  }
+}
+// 测试用例
+let head = new NodeList([4, 1, 3, 2, 7, 9, 10, 12]);
+sort(head);
+let res = [];
+let next = head;
+while(next) {
+  res.push(next.val);
+  next = next.next;
+}
+// console.log(res);
+
+/**
+ * 2.环形链表(141)
+ * 给定一个链表，判断链表中是否有环。
+ * 如果链表中有某个节点，可以通过连续跟踪 next 指针再次到达，则链表中存在环。 为了表示给定链表中的环，我们使用整数 pos 来
+ * 表示链表尾连接到链表中的位置（索引从 0 开始）。 如果 pos 是 -1，则在该链表中没有环。注意：pos 不作为参数进行传递，仅仅
+ * 是为了标识链表的实际情况。
+ * 如果链表中存在环，则返回 true 。 否则，返回 false 。
+ */
+// 声明链表的节点
+function isCircle(head) {
+  let slow = head;
+  let fast = head.next;
+  while(1) {
+    if (!fast || !fast.next) {
+      return false;
+    } else if (fast === slow || fast.next === slow) {
+      return true;
+    } else {
+      slow = slow.next;
+      fast = fast.next.next;
+    }
+  }
+}
+let head2 = new NodeList([6, 1, 2, 5, 7, 9]);
+head2.next.next.next.next.next.next = head2.next;
+// console.log(isCircle(head2));
+ 
