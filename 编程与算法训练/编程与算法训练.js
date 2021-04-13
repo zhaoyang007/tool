@@ -1044,4 +1044,39 @@ function isCircle(head) {
 let head2 = new NodeList([6, 1, 2, 5, 7, 9]);
 head2.next.next.next.next.next.next = head2.next;
 // console.log(isCircle(head2));
- 
+
+// 矩阵(二维数组)
+/**
+ * 1.螺旋矩阵(54)
+ * 给你一个 m 行 n 列的矩阵 matrix ，请按照 顺时针螺旋顺序 ，返回矩阵中的所有元素。
+ * 输入：matrix = [[1,2,3],[4,5,6],[7,8,9]]
+ * 输出：[1,2,3,6,9,8,7,4,5]
+ */
+function rotateMatrix(arr) {
+  // 处理每一圈的数据遍历过程
+  function map(arr, r = []) {
+    for (let i = 0; i < arr.length; i++) {
+      if (i === 0) {
+        r = r.concat(arr[i]);
+      } else if (i === arr.length - 1) {
+        r = r.concat(arr[i].reverse());
+      } else {
+        r.push(arr[i].pop());
+      }
+    }
+    arr.shift();
+    arr.pop();
+    for (let i = arr.length - 1; i >= 0; i--) {
+      r.push(arr[i].shift());
+    }
+    if (arr.length) {
+      return map(arr, r);
+    } else {
+      return r;
+    }
+  }
+  return map(arr, []);
+}
+// console.log(rotateMatrix([[1,2,3],[4,5,6],[7,8,9]]))
+
+
