@@ -1078,5 +1078,246 @@ function rotateMatrix(arr) {
   return map(arr, []);
 }
 // console.log(rotateMatrix([[1,2,3],[4,5,6],[7,8,9]]))
+/**
+ * 2.旋转图像(48)
+ * 给定一个 n × n 的二维矩阵 matrix 表示一个图像。请你将图像顺时针旋转 90 度。
+ * 你必须在 原地 旋转图像，这意味着你需要直接修改输入的二维矩阵。请不要 使用另一个矩阵来旋转图像。
+ * 输入：matrix = [[1,2,3],[4,5,6],[7,8,9]
+ * 输出：[[7,4,1],[8,5,2],[9,6,3]]
+ */
+function rotatePic(arr) {
+  // 获取n的纬度
+  let vecor = arr.length;
+  // 垂直翻转
+  for (let i = 0; i < vecor / 2; i++) {
+    for (let j = 0; j < vecor; j++) {
+      let tmp = arr[i][j];
+      arr[i][j] = arr[vecor - i - 1][j];
+      arr[vecor - i - 1][j] = tmp;
+    }
+  }
+  // 对角线翻转
+  for (let i = 0; i < vecor; i++) {
+    for (let j = 0; j < i; j++) {
+      let tmp = arr[i][j];
+      arr[i][j] = arr[j][i];
+      arr[j][i] = tmp; 
+    }
+  }
+  return arr;
+}
+// console.log(rotatePic([[1,2,3],[4,5,6],[7,8,9]]));
 
+// 二叉树
+/**
+ * 1.对称二叉树(101)
+ * 给定一个二叉树，检查它是否是镜像对称的。
+ */
+// 二叉树的节点
+class Node2 {
+  constructor(val) {
+    this.val = val;
+    this.left = this.right = undefined;
+  }
+}
+// 二叉树
+class Tree {
+  constructor(data) {
+    // 临时存储所有节点，方便寻找父子节点
+    let nodeList = [];
+    // 顶节点
+    let root;
+    for (let i = 0; i < data.length; i++) {
+      let node = new Node2(data[i]);
+      nodeList.push(node);
+      if (i > 0) {
+        // 计算当前节点属于哪一层
+        let n = Math.floor(Math.sqrt(i + 1));
+        // 记录当前层的起始点
+        let q = Math.pow(2, n) - 1;
+        // 记录上一层的起始点
+        let p = Math.pow(2, n - 1) - 1;
+        // 找到当前节点的父节点
+        let parent = nodeList[p + Math.floor((i - q) / 2)];
+        // 将当前节点和上一层的父节点做关联
+        if (parent.left) {
+          parent.right = node;
+        } else {
+          parent.left = node;
+        }
+      }
+    }
+    root = nodeList.shift();
+    nodeList.length = 0;
+    return root;
+  }
+}
 
+function isSymmetry(root) {
+  if (!root) {
+    return true;
+  } 
+  function walk(left, right) {
+    if (!left && !right) {
+      return true;
+    }
+    if ((left && !right) || (!left && right) || (left.val !== right.val)) {
+      return false;
+    }
+    return walk(left.left, right.right) && walk(left.right, right.left);
+  }
+  return walk(root.left, root.right);
+}
+// console.log(isSymmetry(new Tree([1,2,2,3,4,4,3])));
+/**
+ * 2.验证二叉搜索树(98)
+ * 给定一个二叉树，判断其是否是一个有效的二叉搜索树。
+ * 假设一个二叉搜索树具有如下特征：
+ *   节点的左子树只包含小于当前节点的数。
+ *   节点的右子树只包含大于当前节点的数。
+ *   所有左子树和右子树自身必须也是二叉搜索树。
+ */
+class Node3 {
+  constructor(val) {
+    this.val = val;
+    this.left = this.right = undefined;
+  }
+}
+class Tree2 {
+  constructor(data) {
+    let root = new Node3(data.shift());
+    // 遍历所有数据，将每个数据插入到搜索树中去
+    data.forEach(item => {
+      this.insert(root, item);
+    });
+    return root;
+  }
+  insert(node, data) {
+    if (node.val > data) {
+      if (node.left === undefined) {
+        node.left = new Node(data);
+      } else {
+        this.insert(node.left, data)
+      }
+    } else {
+      if (node.right === undefined) {
+        node.right = new Node(data);
+      } else {
+        this.insert(node.right, data)
+      }
+    }
+  }
+}
+function isSearchTree(root) {
+  if (!root.left && !root.right) {
+    return true;
+  } else if ((root.left && root.val < root.left.val) || (root.right && root.val > root.right.val)) {
+    return false;
+  } else {
+    return isSearchTree(root.left) && isSearchTree(root.right);
+  }
+}
+// console.log(isSearchTree(new Tree2([2, 1, 3])))
+
+// 堆
+// 1.必须是完全二叉树（n-1层必须是满二叉树：任何节点都有左节点和右节点，不存在空余节点）
+// 2.任一节点的值是其子树所有节点的最大值或最小值
+/**
+ * 1.根据字符出现频率排序
+ * 给定一个字符串，请将字符串里的字符按照出现的频率降序排列。
+ * 输入: "tree"
+ * 输出: "eert"
+ * 解释: 'e'出现两次，'r'和't'都只出现一次。因此'e'必须出现在'r'和't'之前。此外，"eetr"也是一个有效的答案。
+ */
+class Heap {
+  constructor(data) {
+    this.data = data;
+  }
+  sort() {
+    let iArr = this.data;
+    let n = iArr.length;
+    if (n <= 1) {
+      return iArr;
+    } else {
+      // 先构建一次完整的最大堆
+      for (let i = Math.floor(n / 2) - 1; i >= 0; i--) {
+        Heap.maxHeapify(iArr, i, n);
+      }
+      // 交换首尾节点，构建n次单路最大堆
+      for (let j = 0; j < n; j++) {
+        Heap.swap(iArr, 0, n - 1 - j);
+        Heap.maxHeapify(iArr, 0, n - 1 - j - 1);
+      }
+      return iArr;
+    }
+  }
+  // 交换元素
+  static swap(arr, a, b) {
+    if (a === b) {
+      return '';
+    } else {
+      let c = arr[a];
+      arr[a] = arr[b];
+      arr[b] = c;
+    }
+  }
+  // 构建i节点下的单路最大堆
+  static maxHeapify(Arr, i, size) {
+    // 左子节点索引
+    let l = i * 2 + 1;
+    // 右子节点索引
+    let r = i * 2 + 2;
+    // 父节点和左右子节点比较出最大的值的索引
+    let largest = i;
+    if (l <= size && Arr[l] > Arr[largest]) {
+      largest = l;
+    }
+    if (r <= size && Arr[r] > Arr[largest]) {
+      largest = r;
+    }
+    // 将父节点和最大值交换
+    if (largest !== i) {
+      Heap.swap(Arr, i, largest);
+      Heap.maxHeapify(Arr, largest, size);
+    }
+  }
+}
+  //           1
+  //     4           3
+  // 8       5    6
+let arr = [1, 4, 3, 8, 5, 6]
+// Heap.maxHeapify(arr, 0, arr.length)
+for (let i = Math.floor(arr.length / 2) - 1; i >= 0; i--) {
+  Heap.maxHeapify(arr, i, arr.length);
+}
+// console.log(arr)
+// console.log(new Heap([1, 10, 9, 3, 8, 5, 20, 6]).sort());
+
+// 根据字符出现频率排序
+function charSort(str) {
+  // 统计次数
+  let map = new Map();
+  str.split('').forEach(item => {
+    if (map.has(item)) {
+      map.set(item, map.get(item) + 1);
+    } else {
+      map.set(item, 1);
+    }
+  });
+  // 排序
+  let arr = new Heap(Array.from(map.values())).sort();
+  // 输出
+  let res = [];
+  while (arr.length) {
+    let top = arr.pop();
+    for (let [k, v] of map) {
+      if (v === top) {
+        res.push(k.repeat(v));
+        map.delete(k);
+        break;
+      }
+    }
+  }
+  return res.join('');
+}
+// console.log(charSort('chcaa'));
