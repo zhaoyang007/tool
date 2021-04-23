@@ -158,153 +158,6 @@ export default {
 </script>
 ```
 
-
-
-### Vuex
-
-##### 模块
-
-user.js
-
-```js
-export default {
-  namespaced: true, // 设置独立的命名空间，避免命名冲突，副作用是访问的时候稍微麻烦一点 
-  state: {
-    isLogin: false
-  },
-  mutations: {
-    login(state) {
-      state.isLogin = true
-    }
-  },
-  actions: {
-    login({commit}, username) {
-      return new Promise((resolve, reject) => {
-        setTimeout(() => {
-          if (username === 'admin') {
-            commit('login');
-            resolve();
-          } else {
-            reject();
-          }
-        }, 1000);
-      })
-    }
-  }
-}
-```
-
-```js
-import user from './user'
-
-export default new Vuex.Store({
-  modules: {
-    user
-  }
-})
-```
-
-访问和调用
-
-```vue
-<template>
-	<button @click="login" v-if="!$store.state.user.isLogin">登录</button>
-</template>
-
-<script>
-export default {
-  methods: {
-		login() {
-			// this.$store.commit('user/login')
-      this.$store.dispatch('user/login', 'admin').then(() => {
-       
-      }).catch(() => {})
-    }
-  }
-}
-</script>
-```
-
-模块之间的调用：
-
-```js
-// 1. 在actions中使用
-commit('a/getList', {}, { root: ture })
-dispatch('a/getList', {}, { root: ture })
-// 可以从actions接收的store对象中解构出rootState和rootGetters，使用这两个对象就可以获取其他模块的state和getters
-actions: {
-  a({ rootState, rootGetters}, params) {
-    console.log(rootState.a.data)
-    console.log(rootGetters['a/getterData'])
-	}
-}
-// 2.在任何地方使用，直接把相应模块文件引入
-```
-
-##### 映射方法
-
-mapState 返回的是一个对象键值对的形式，键是 isLogin，值是将来要生成的 function，这个 function 返回的值就是 Store 中 isLogin 的值，正好对应 computed 的形式。
-
-```vue
-<template>
-	<button v-if="!isLogin" @click="login">登录</button>
-</template>
-
-<script>
-import { 
-  mapState,
-  mapMutations,
-  mapActions
-} from 'vuex'
-
-export default {
-  computed: {
-    // ...mapState('user/isLogin') // 映射出来的名字是 user/isLogin
-    ...mapState('user', ['isLogin']) // 映射出来的名字是 isLogin
-  },
-  methods: {
-    // ...mapMutations('user', ['login'])
-    // ...mapActions('user', ['login']),
-    ...mapMutations(['user/login']),
-    ...mapActions(['user/login']),
-    login() {
-      // this['login']();
-      this['user/login']();
-    }
-  }
-}
-</script>
-```
-
-##### 给 vuex 加上热更替的功能
-
-store.js
-
-```js
-if (module.hot) {
-  module.hot.accept([
-    // 这个数组里面的列表对应的就是我们去引用的那几个文件它的地址
-    './state/state',
-    './mutations/mutations',
-    './getters/getters',
-    './actions/actions'
-  ], () => {
-    const newState = require('./state/state').default
-    const newMutations = require('./mutations/mutations').default
-    const newGetters = require('./getters/getters').default
-    const newActions = require('./actions/actions').default
-    store.hotUpdate({
-      state: newState,
-      mutations: newMutations,
-      getters: newGetters,
-      actions: newActions
-    })
-  })
-}
-```
-
-
-
 ### VueRouter 原理
 
 ##### 核心使用步骤
@@ -476,6 +329,149 @@ export default {
 ```
 
 
+
+### Vuex
+
+##### 模块
+
+user.js
+
+```js
+export default {
+  namespaced: true, // 设置独立的命名空间，避免命名冲突，副作用是访问的时候稍微麻烦一点 
+  state: {
+    isLogin: false
+  },
+  mutations: {
+    login(state) {
+      state.isLogin = true
+    }
+  },
+  actions: {
+    login({commit}, username) {
+      return new Promise((resolve, reject) => {
+        setTimeout(() => {
+          if (username === 'admin') {
+            commit('login');
+            resolve();
+          } else {
+            reject();
+          }
+        }, 1000);
+      })
+    }
+  }
+}
+```
+
+```js
+import user from './user'
+
+export default new Vuex.Store({
+  modules: {
+    user
+  }
+})
+```
+
+访问和调用
+
+```vue
+<template>
+	<button @click="login" v-if="!$store.state.user.isLogin">登录</button>
+</template>
+
+<script>
+export default {
+  methods: {
+		login() {
+			// this.$store.commit('user/login')
+      this.$store.dispatch('user/login', 'admin').then(() => {
+       
+      }).catch(() => {})
+    }
+  }
+}
+</script>
+```
+
+模块之间的调用：
+
+```js
+// 1. 在actions中使用
+commit('a/getList', {}, { root: ture })
+dispatch('a/getList', {}, { root: ture })
+// 可以从actions接收的store对象中解构出rootState和rootGetters，使用这两个对象就可以获取其他模块的state和getters
+actions: {
+  a({ rootState, rootGetters}, params) {
+    console.log(rootState.a.data)
+    console.log(rootGetters['a/getterData'])
+	}
+}
+// 2.在任何地方使用，直接把相应模块文件引入
+```
+
+##### 映射方法
+
+mapState 返回的是一个对象键值对的形式，键是 isLogin，值是将来要生成的 function，这个 function 返回的值就是 Store 中 isLogin 的值，正好对应 computed 的形式。
+
+```vue
+<template>
+	<button v-if="!isLogin" @click="login">登录</button>
+</template>
+
+<script>
+import { 
+  mapState,
+  mapMutations,
+  mapActions
+} from 'vuex'
+
+export default {
+  computed: {
+    // ...mapState('user/isLogin') // 映射出来的名字是 user/isLogin
+    ...mapState('user', ['isLogin']) // 映射出来的名字是 isLogin
+  },
+  methods: {
+    // ...mapMutations('user', ['login'])
+    // ...mapActions('user', ['login']),
+    ...mapMutations(['user/login']),
+    ...mapActions(['user/login']),
+    login() {
+      // this['login']();
+      this['user/login']();
+    }
+  }
+}
+</script>
+```
+
+##### 给 vuex 加上热更替的功能
+
+store.js
+
+```js
+if (module.hot) {
+  module.hot.accept([
+    // 这个数组里面的列表对应的就是我们去引用的那几个文件它的地址
+    './state/state',
+    './mutations/mutations',
+    './getters/getters',
+    './actions/actions'
+  ], () => {
+    const newState = require('./state/state').default
+    const newMutations = require('./mutations/mutations').default
+    const newGetters = require('./getters/getters').default
+    const newActions = require('./actions/actions').default
+    store.hotUpdate({
+      state: newState,
+      mutations: newMutations,
+      getters: newGetters,
+      actions: newActions
+    })
+  })
+}
+```
 
 ### Vuex 原理
 
