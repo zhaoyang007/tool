@@ -192,23 +192,29 @@ render-header // 列标题 Label 区域渲染使用的 Function
 
 ```js
 function scrollOneRow(row) {
-	// 拿到行元素
-  const tableRowEl = this.$refs.myTable.$el.getElementsByClassName('el-table__row')[0]
-  if (tableRowEl) {
-    // 计算行高度
-    const itemHeight = parseInt(tableRowEl.offsetHeight)
-    if (this.tableData && this.tableData.length > 0) {
-      for (let i = 0; i < this.tableData.length; i++) {
-        if (this.tableData[i].dataDate === row.dataDate) {
-          const scrollHeight = itemHeight * i
-          document.getElementsByClassName('my-table')[0].getElementsByClassName('el-table__body-wrapper')[0].scrollTop = scrollHeight
-          break;
+  this.$nextTick(() => {
+    // 高亮当前行
+    this.$refs.trendTable.$refs.multipleTable.setCurrentRow(row)
+    // 拿到行元素
+    const tableRowEl = this.$refs.myTable.$el.getElementsByClassName('el-table__row')[0]
+    if (tableRowEl) {
+      // 计算行高度
+      const itemHeight = parseInt(tableRowEl.offsetHeight)
+      if (this.tableData && this.tableData.length > 0) {
+        for (let i = 0; i < this.tableData.length; i++) {
+          if (this.tableData[i].dataDate === row.dataDate) {
+            const scrollHeight = itemHeight * i
+            document.getElementsByClassName('my-table')[0].getElementsByClassName('el-table__body-wrapper')[0].scrollTop = scrollHeight
+            break;
+          }
         }
       }
-    }
+    })
   }
 }
 ```
+
+##### addClass 方法，给某行加对应样式
 
 ##### 自定义表头 render-header
 
