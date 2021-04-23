@@ -1321,3 +1321,31 @@ function charSort(str) {
   return res.join('');
 }
 // console.log(charSort('chcaa'));
+
+/**
+ * 2.超级丑数(313)
+ * 编写一段程序来查找第 n 个超级丑数。
+ * 超级丑数是指其所有质因数都是长度为 k 的质数列表 primes 中的正整数。
+ * 输入: n = 12, primes = [2,7,13,19]
+ * 输出: 32 
+ * 解释: 给定长度为 4 的质数列表 primes = [2,7,13,19]，前 12 个超级丑数序列为：[1,2,4,7,8,13,14,16,19,26,28,32] 。
+ */
+class Ugly {
+  constructor() {
+
+  }
+  // 计算指定正整数n的质因数
+  static getPrimes(n) {
+    function prime(n) {
+      // 存储所有的质因数
+      let arr = [];
+      for (let i = 2; i < n / 2 + 1; i++) {
+        if (n % i === 0 && !prime(i).length) {
+          arr.push(i);
+        }
+      }
+      return arr;
+    }
+    return prime(n);
+  }
+}
