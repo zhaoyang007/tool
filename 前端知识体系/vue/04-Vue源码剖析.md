@@ -693,8 +693,6 @@ callHook(vm, 'created') // 上面的事情都做完后，会有一个created这�
 
 模板编译的主要目标是将模板 template 转换为渲染函数 render。这个过程是一个字符串模版被转换成 JS 函数。
 
-模板编译必要性：Vue 2.0 需要用到 VNode 描述视图以及各种交互，而 VNode 是需要 render 函数来生成的，手写 render 显然不切实际，因此用户只需编写类似 HTML 代码的 Vue 模板，通过编译器将模板转换为可返回 VNode 的 render 函数。
-
 入口文件 entry-runtime-with-compiler.js 中，如果存在 template 或 el 选项就会执行编译，会执行 compileToFunctions 方法，把模版传进去。通过方法名就可以知道，它可以把字符串模版变成一个函数，它会返回 render 函数。
 
 编译分为三步：解析、优化和生成，src/compiler/index.js。
