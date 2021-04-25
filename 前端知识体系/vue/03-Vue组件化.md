@@ -1080,19 +1080,3 @@ select 的 options 的数据可以放在每个数据中，也可以像 modelObj 
 * 分页
 
 组件二次封装：将 elment-ui 进行二次封装，主要是为了样式风格。
-
-
-
-### Vue 组件化探讨
-
-* 组件化的含义：组件是可复用的 Vue 实例，准确讲它们是 VueComponent 的实例，继承自 Vue。
-
-* 组件的本质
-
-  Vue 中的组件经历的过程：组件配置 => VueComponent 实例 => render() => Virtual DOM => DOM。
-
-  因为你写了配置最后希望看到 DOM，组件里写的只是配置对象，Vue 内部为你做了中间这三件事。组件最终的目标就是产出虚拟 DOM。
-
-  * 首先它把你写的组件配置转换成了 VueComponent 实例。
-  * 实例里面会有 render 方法，render 方法是我们写的模版转换的，render 方法在合适的时间去执行获得虚拟 DOM。
-  * 虚拟 DOM 又通过更新的过程转换成真实 DOM。
