@@ -1251,6 +1251,16 @@ class Heap {
       return iArr;
     }
   }
+  find(val, i = 0) {
+    let arr = this.data;
+    if (val > arr[i] || i > arr.length) {
+      return false;
+    } else if (val === arr[i]) {
+      return val;
+    } else {
+      return this.find(val, i * 2 + 1) || this.find(val, i * 2 + 2);
+    }
+  }
   // 交换元素
   static swap(arr, a, b) {
     if (a === b) {
@@ -1331,8 +1341,40 @@ function charSort(str) {
  * 解释: 给定长度为 4 的质数列表 primes = [2,7,13,19]，前 12 个超级丑数序列为：[1,2,4,7,8,13,14,16,19,26,28,32] 。
  */
 class Ugly {
-  constructor() {
-
+  constructor(n, primes) {
+    this.n = n;
+    this.primes = new Heap(primes).sort();
+  }
+  // 获取所有的超级丑数
+  getAll() {
+    // 超级丑数列表
+    let res = [1];
+    let i = 2;
+    let primes = this.primes;
+    while (res.length < this.n) {
+      let arr = Ugly.getPrimes(i);
+      let k = 0;
+      let l = arr.length;
+      for (;k < l; k++) {
+        if (!primes.find(arr[k])) {
+          break;
+        }
+      }
+      // k===l有两种情况：
+      // 1.当前的数本身是质数，没有质因数
+      // 2.所有的质因数都在指定列表中
+      if (k === l) {
+        if (l === 0) {
+          if (primes.find(i)) {
+            res.push(i);
+          }
+        } else {
+          res.push(i);
+        }
+      }
+      i++;
+    }
+    return res[this.n - 1];
   }
   // 计算指定正整数n的质因数
   static getPrimes(n) {
@@ -1349,3 +1391,8 @@ class Ugly {
     return prime(n);
   }
 }
+
+// 贪心算法
+
+// 动态规划
+
