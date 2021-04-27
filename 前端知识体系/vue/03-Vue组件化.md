@@ -63,13 +63,6 @@ props: {
 }
 ```
 
-###### 传入一个布尔值
-
-```vue
-<!-- 该 prop 没有值的情况，意味着 `true`。-->
-<blog-post is-published></blog-post>
-```
-
 ###### 传入一个对象的所有 property
 
 如果你想要将一个对象的所有 property 都作为 prop 传入，你可以使用不带参数的 `v-bind` (取代 `v-bind:prop-name`)
@@ -126,9 +119,7 @@ computed: {
 
 ###### 非 Prop 的 Attribute
 
-是指传向一个组件，但是没有相应 prop 定义的 attribute。
-
-显式定义的 prop 适用于约定好的向一个子组件传入信息，然而组件库的作者并不总能预见组件会被用于怎样的场景。这也是为什么组件可以接受任意的 attribute，而这些 attribute 会被添加到这个组件的根元素上。
+没有相应 prop 接收的属性。 它们会被添加到这个组件的根元素上。
 
 inheritAttrs: false 可以禁止这些非 prop 的属性被添加到根元素。它不会影响 style 和 class 的绑定。
 
@@ -425,18 +416,17 @@ export default {
 
 
 
+### 组件封装
+
+将功能先用原始的 html 的方式实现，再从中拆分出组件。
+
+
+
 ### 通用表单组件
-
-##### 通用组件注意事项
-
-1. 高内聚，低耦合，功能应该尽量单一，功能越多复用性越差，也就不太内聚了。所以为了 KInput 功能较单一，我们在它的外面还要再设计一层 KFormItem，让它去做校验的事。KInput 只做一件事，就是双向绑定，能把数据管理起来就可以了。
-2. 接收数据的是 KForm，真正使用数据的是 KInput 或 KFormItem，所以就涉及到组件之间的传参的问题了。跨层级的传参，所以用 provide/inject 来进行数据的注入就是一个非常好的方式。
 
 ##### 需求分析
 
 在开始之前要做一个需求分析，到底要什么样的功能，为了实现这些功能要做一些什么事情。
-
-功能分析：收集数据、校验数据并提交。
 
 * KForm 
   * 接收数据
@@ -454,15 +444,13 @@ components/form/KInput.vue
 ```vue
 <template>
   <div>
-    <!-- 自定义组件双向绑定：:value  @input -->
-    <!-- v-bind="$attrs"展开$attrs，每一项单独设置上去 -->
     <input :type="type" :value="value" @input="onInput" v-bind="$attrs">
   </div>
 </template>
 
 <script>
   export default {
-    inheritAttrs: false, // 设置为false避免传入的属性继承到根元素上
+    inheritAttrs: false, // 避免传入的属性继承到根元素上
     props: {
       value: {
         type: String,
@@ -475,9 +463,7 @@ components/form/KInput.vue
     },
     methods: {
       onInput(e) {
-        // 派发一个input事件即可
         this.$emit('input', e.target.value)
-
         // 通知父级执行校验
         this.$parent.$emit('validate')
       }
@@ -584,7 +570,6 @@ export default {
   methods: {
     validate(cb) {
       // 获取所有孩子KFormItem
-      // [resultPromise]
       const tasks = this.$children
         .filter(item => item.prop) // 过滤掉没有prop属性的Item
         .map(item => item.validate());
