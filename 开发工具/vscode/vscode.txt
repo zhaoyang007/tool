@@ -1,0 +1,4 @@
+插件：
+vetur  
+vue vscode snippets 
+code runner

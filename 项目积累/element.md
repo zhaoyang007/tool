@@ -66,47 +66,6 @@ table {
 }
 ```
 
-##### 常用属性
-
-```js
-data // 要显示的数据列表
-ref // 该el-table组件实例
-border // 带边框的表格
-stripe // 斑马线表格
-highlight-current-row // 设置高亮必须加这个属性
-:row-class-name="rowClassName" // 每一行的className的回调方法，rowClassName方法返回的字符串会添加到该行的tr上。也可以使用字符串为所有行设置一个固定的 className。rowClassName
-empty-text // 空数据时显示的文本内容
-show-header	// 是否显示表头
-```
-
-##### 常用事件
-
-```js
-@row-click="rowClick" // 当某一行被点击时会触发该事件，参数会收到 row, column, event
-@sort-change="sortChange" // 当表格的排序条件发生变化的时候会触发该事件，参数会收到 { column, prop, order }
-```
-
-##### 常用方法
-
-```js
-this.$refs.myTable.setCurrentRow(tableData[0]) // 用于单选表格，设定某一行为选中行，如果调用时不加参数，则会取消目前高亮行的选中状态。
-```
-
-##### 列常用属性
-
-```js
-label	// 显示的标题
-prop	// 对应列内容的字段名
-width	// 对应列的宽度
-min-width // 对应列的最小宽度，与 width 的区别是 width 是固定的，min-width 会把剩余宽度按比例分配给设置了 min-width 的列
-align	// 对齐方式
-header-align // 表头对齐方式，若不设置该项，则使用表格的对齐方式
-resizable	// 对应列是否可以通过拖动改变宽度（需要在 el-table 上设置 border 属性为真）
-sortable // 对应列是否可以排序，如果设置为 'custom'，则代表用户希望远程排序，需要监听 Table 的 sort-change 事件
-fixed	// 列是否固定在左侧或者右侧
-render-header // 列标题 Label 区域渲染使用的 Function
-```
-
 ##### 改变 table 滚动条样式
 
 ```scss
@@ -142,23 +101,6 @@ render-header // 列标题 Label 区域渲染使用的 Function
 
   }
 }
-```
-
-##### 在 <el-table> 上加的 class 和 style 等属性，最终会加到 div.el-table 身上。
-
-```vue
-<!-- el-table中的height等属性写法：height="100" :height="100" height="100px" :height="100+'px'"都可以 -->
-<el-table
-	class="my-table"
-  style="width: 100%;"
-  height="100"
-  max-height="200"
->
-</el-table>
-
-<!-- 编译后的html -->
-<div class="my-table" style="width: 100%;height: 100px;max-height: 200px;">
-</div>
 ```
 
 ##### 禁用 table 横向滚动条
@@ -536,8 +478,6 @@ export default {
 </style>
 ```
 
-
-
 ### el-select
 
 ```vue
@@ -602,8 +542,6 @@ export default {
 select 绑定的 v-model 的值是和 option 绑定的 value 值所对应的。有对应的时候根据 v-model 对应的 option 项做回显，没有对应的直接显示当前 v-model 的值。
 
 切换 select 的时候，可以通过 scope 拿到当前行的 table 数据，然后可以修改该行其他的 select 绑定的 v-model 的值，从而改变该 select 的回显信息。
-
-
 
 ### el-scrollbar
 
@@ -781,12 +719,3 @@ export default {
   </div>
 </template>
 ```
-
-
-
-
-
-
-
-
-
