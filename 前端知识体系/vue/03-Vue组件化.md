@@ -342,6 +342,14 @@ sync 修饰符：为了写法更简洁。:show.sync="isShow" 将来会展开成 
 
 ### 双向绑定
 
+##### 非自定义组件
+
+```vue
+<input v-model="data"/>
+// 相当于：
+<input :value="data" @input="data=e.target.value"/>
+```
+
 ##### 自定义组件
 
 v-model 是一个语法糖，v-model 最终会转换成一个属性的传递 :value="values" 和一个事件的监听 @input="values=$event"。$event 是固定的名字，表示传递出来的参数。
@@ -349,7 +357,7 @@ v-model 是一个语法糖，v-model 最终会转换成一个属性的传递 :va
 ```vue
 <course-add v-model="data"></course-add>
 // 相当于：
-<course-add :value="values" @input="values=$event"></course-add>
+<course-add :value="data" @input="data=$event"></course-add>
 ```
 
 上面的事是 Vue 给我们做好了的，我们要做的事情是在组件的内部，接收一个叫 value 的 prop 属性，根据业务需求触发一个事件，事件中触发 input 事件，把值传出去，this.$emit('input', newValue)。
@@ -388,38 +396,6 @@ Vue.component('course-add', {
 })
 ```
 
-##### 非自定义组件
-
-表单元素的 v-model 和上面做的事是一样的，只不过组件内部做的事 Vue 已经在绑定了 v-model 的表单元素上做好了。所以在表单元素上使用数据双向绑定只需写一个 v-model 就行了。
-
-```vue
-<input v-model="data" />
-// 相当于：
-<input :value="data" @input="handleInput" />
-
-<script>
-export default {
-  data() {
-    return {
-      data: ''
-    }
-  },
-  methods: {
-    // Vue已经做好的
-    handleInput(e) {
-			this.data = e.target.value
-    }
-  }
-}
-</script>
-```
-
-
-
-### 组件封装
-
-将功能先用原始的 html 的方式实现，再从中拆分出组件。
-
 
 
 ### 通用表单组件
@@ -438,8 +414,6 @@ export default {
   * 维护数据 
 
 ##### 实现 KInput.vue
-
-components/form/KInput.vue
 
 ```vue
 <template>
@@ -473,8 +447,6 @@ components/form/KInput.vue
 ```
 
 ##### 实现 KFormItem
-
-components/form/KFormItem.vue
 
 ```vue
 <template>
@@ -542,8 +514,6 @@ export default {
 
 ##### 实现 KForm
 
-components/form/KForm.vue
-
 ```vue
 <template>
   <div>
@@ -584,9 +554,7 @@ export default {
 </script>
 ```
 
-##### 使用 KInput/KFormItem/KForm
-
-components/form/index.vue
+##### 使用
 
 ```vue
 <template>
@@ -650,29 +618,31 @@ export default {
 </script>
 ```
 
+##### 修正 input 中 $parent 写法的问题
+
+想跨层级的去传参，还不能使用 $parent/$root/$children 等，element 官方用的是混入的方式，在 src/mixins 写了一个 emitter.js 派发器。它可以做两件事，一个叫广播一个叫冒泡派发事件，这个东西在 vue1.0 里是有的，2.0 之后删了。element 觉得它有用，所以自己实现了，这个东西可以隔层的去派事件，比如在 input 里可以不停的向上去找我想要的组件让它去派发事件。这个东西是作为一个混入被引入的，主要是为了复用。
+
+1.mixin emitter
+2.声明 componentName
+3.dispatch()																				
+
+
+
 
 
 ### 弹窗组件
 
-对于组件的构造函数和实例，平时的工作中几乎不会和它有接触。但是写底层的通用组件库时，我们可能就要接触到构造函数。
-
-其他的所有组件所有内容都是在 app 里头的，而弹窗这类组件已经脱离出当前 Vue 管理的实例了，单独存在。这样做的好处是比较好控制弹窗的位置等东西。
-
-它们在当前 Vue 根实例之外独立存在，通常挂载于 body，而不是 app，所以不能将它声明在任何一个 app 组件下的 compunents 选项作为当前 app 的组件从而使用 Vue 内部来创建构造函数和实例的能力，我们需要自己去创建实例，完成 Vue 替我们做的关于创建构造函数和实例的过程。
-
-这时就涉及到一些问题了，这个组件实例怎么创建，又怎么脱离当前的 Vue 根实例去单独的挂载到 body 上，这就涉及到一些相对较底层的 API 了。
+其他的组件的内容都是在 app 里的，弹窗这类组件已经脱离出当前 Vue 管理的实例了。这样做的好处是比较好控制弹窗的位置等东西。它们在当前 Vue 根实例之外独立存在，通常挂载于 body，而不是 app，所以不能将它声明在任何一个 app 组件下的 compunents 选项作为当前 app 的组件从而使用 Vue 内部来创建构造函数和实例的能力，需要我们自己去创建实例。
 
 需求：现在有一个 Notice.vue 这样的组件，要用函数的方式去创建这个组件的实例，并且将来把它挂在到 body 上面去。
 
 ##### 实现 create 函数
 
-create 方法将来接收一个组件（其实就是组件的配置）和一些参数，通过 JS 的方式创建这个组件的实例，不需要在任何组件中通过 components 选项声明，并将其挂载到 body 上去，最终返回这个组件实例。
-
-我们平常写的组件，它只是一个 export 出去的一个配置对象，它不是构造函数。这个配置对象将来必须要变成实例，那么它必须得有构造函数。
+create 方法将来接收一个组件（其实就是组件的配置）和一些参数，创建这个组件的实例，并将其挂载到 body 上去，最终返回这个组件实例。
 
 方法一： 
 
-Vue.extend 方法是 Vue 的一个静态方法，它里面创建了一个子类 VueComponent，继承 Vue，也就是说所有组件的类型都是 VueComponent，它们都是 Vue 构造函数的子类。Vue.extend 开发中很少接触，它是框架本身调的方法。
+Vue.extend 方法是 Vue 的一个静态方法，它里面创建了一个子类 VueComponent，继承 Vue，组件实例就是通过 VueComponent 创建的。它是框架本身调的方法。
 
 utils/create.js
 
@@ -844,18 +814,6 @@ import create from './utils/create'
 
 Vue.use(create)
 ```
-
-
-
-### 遗漏问题
-
-##### 修正 input 中 $parent 写法的问题
-
-想跨层级的去传参，还不能使用 $parent/$root/$children 等，element 官方用的是混入的方式，在 src/mixins 写了一个 emitter.js 派发器。它可以做两件事，一个叫广播一个叫冒泡派发事件，这个东西在 vue1.0 里是有的，2.0 之后删了。element 觉得它有用，所以自己实现了，这个东西可以隔层的去派事件，比如在 input 里可以不停的向上去找我想要的组件让它去派发事件。这个东西是作为一个混入被引入的，主要是为了复用。
-
-1.mixin emitter
-2.声明 componentName
-3.dispatch()
 
 
 
@@ -1043,25 +1001,10 @@ select 的 options 的数据可以放在每个数据中，也可以像 modelObj 
 
 ### Vue 组件化实践
 
+根据数据渲染视图。
+
 配合路由创建相应组件，组件里搭建整体结构，然后在相应位置插入子组件，一层一层向下写。
 
 基本页面上的每一块都分成组件，然后按照不分组件的时候怎么写就怎么写里面的功能，然后再处理需要处理的组件之间的数据通信问题就行了。将几个组件公用的数据放到公共的父组件中。
 
-
-
-### 组件封装
-
-根据数据渲染视图。
-
-常见基础组件封装。
-
-* tab
-* 表单
-* 表格
-* 弹窗
-* 提示框
-* 树形组件
-* menu
-* 分页
-
-组件二次封装：将 elment-ui 进行二次封装，主要是为了样式风格。
+将功能先用原始的 html 的方式实现，再从中拆分出组件。
