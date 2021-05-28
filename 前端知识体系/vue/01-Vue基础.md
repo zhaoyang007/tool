@@ -184,83 +184,52 @@ h2[data-v-469af010] {
 
 ### 过度 & 动画
 
-Vue 在插入、更新或者移除 DOM 时，提供多种不同方式的过渡效果，Vue 会给我们一些钩子或者一些关键的样式来帮助我们实现，包括以下工具：
+在插入、更新或者移除 DOM 时，使用 transition 组件做过渡或动画。
 
-* 在 CSS 过渡和动画中自动应用 class
-* 可以配合使用第三方 CSS 动画库，如 Animate.css
-* 在过渡钩子函数中使用 JavaScript 直接操作 DOM
-* 可以配合使用第三方 JavaScript 动画库，如 Velocity.js
+过渡和动画的过程都是设置在 active 上的。v-enter/v-leave/v-enter-to/v-leave-to 都是设置初始或结束状态的，可以没有。
 
-##### CSS 过度动画
+css 方式是通过过渡类名，js 方式是通过钩子函数。
 
-组件在进行显示的时候，transition 组件会为嵌套元素自动添加一些跟动画相关的类名称，这个类名称取决于你在 transition 组件上起的 name，所以我们使用这些类名称来做 css 过度动画就可以了。 
+在下列情形中，可以给任何元素和组件添加进入/离开过渡
 
-```html
-<style> 
-  /* 定义过度动画 */ 
-  .fade-enter-active, .fade-leave-active { 
-    transition: opacity .5s; 
-  }
-  .fade-enter, .fade-leave-to { 
-    opacity: 0; 
-  } 
-  .fade-enter-to, .fade-leave { 
-    opacity: 1; 
-  } 
-</style>
+- 条件渲染 (使用 `v-if`)
+- 条件展示 (使用 `v-show`)
+- 动态组件
+- 组件根节点
 
-<script> 
-  Vue.component('message', { 
-    // 使用transition组件应用过度动画 
-    template: ` 
-			<transition name="fade"> 
-				<div> /* 这个div元素上面将来就会动态的添加一些跟动画相关的类 */
-  				...
-  			</div>
-  		</transition> 
-		`, 
-  })
-</script>
-```
+##### transition 组件基础使用
 
-#### 过度类名
+transition 组件会为嵌套元素自动添加跟动画相关的类名称，使用这些类名称来做 css 过度动画就可以了。
 
-![transition组件类名](/Users/zhaoyang/tool/images/前端知识体系/前端工程实践/Vue/transition组件类名.png)
-
-1. v-enter ：定义进入过渡的开始状态。在元素被插入之前生效，在元素被插入之后的下一帧移除。
-2. v-enter-active ：定义进入过渡生效时的状态。在元素被插入之前生效，在过渡/动画完成之后移除。
-3. v-enter-to : 定义进入过渡的结束状态。在元素被插入之后下一帧生效 (与此同时 v-enter 被移除)，在过渡/动画完成之后移除。
-4. v-leave : 定义离开过渡的开始状态。在离开过渡被触发时立刻生效，下一帧被移除。
-5. v-leave-active ：定义离开过渡生效时的状态。在整个离开过渡的阶段中应用，在离开过渡被触发时立刻生效，在过渡/动画完成之后移除。这个类可以被用来定义离开过渡的过程时间，延迟和曲线函数。
-6. v-leave-to : 定义离开过渡的结束状态。在离开过渡被触发之后下一帧生效 (与此同时 v-leave 被删除)，在过渡/动画完成之后移除。
-
-##### 使用 CSS 动画库
-
-我们可以使用一些现成的像 animate.css 这样的动画库来制作更精美的动画效果。
-
-animate.css 里面是有自己的动画类名称的，它跟 Vue 动态添加的类名称是不一样的，那我们怎么把它们结合起来呢，就是通过自定义 Vue 过度状态的类名的方式，这样我们设置的自定义的类名将来就会在相对应的 Vue 的六个过渡状态的时机代替原有的 Vue 的过度类名出现在需要做动画的元素上，就达到了使用第三方定义好的动画类名的效果。
-
-结合 CSS 动画库，动画设计的过程就不需要操心了，只需要在合适的时间点把类名给它加上去或者移除就可以了。
-
-引入animate.css
-
-```html
-<link href="https://cdn.jsdelivr.net/npm/animate.css@3.5.1" rel="stylesheet" type="text/css">
-```
-
-transition 组件设置
+1. 过渡被触发时，马上加 v-enter/v-leave 和 v-enter-active/v-leave-active。
+2. 下一帧马上移除 v-enter/v-leave，然后添加 v-enter-to/v-leave-to。
+3. 动画结束后移除 v-enter-active/v-leave-active 和 v-enter-to/v-leave-to。
 
 ```vue
-<transition enter-active-class="animated bounceIn" leave-active-class="animated bounceOut">
-	<div> /* 将来这个元素上的类名会是这样 class="animated bounceIn v-enter-to" */
-    ...
-  </div>
-</transition>
+<template>
+	<transition name="fade"> 
+    <div></div>
+  </transition> 
+</template>
+
+<style> 
+  .fade-enter-active, .fade-leave-active { 
+    transition: opacity .5s;
+  }
+  .fade-enter, .fade-leave-to { 
+    opacity: 0;
+  } 
+  .fade-enter-to, .fade-leave { 
+    opacity: 1;
+  }
+</style>
 ```
 
-##### 自定义过度类名
+##### 结合 CSS 动画库
 
-他们的优先级高于普通的类名，这对于 Vue 的过渡系统和其他第三方 CSS 动画库，如 [Animate.css](https://daneden.github.io/animate.css/) 结合使用十分有用。
+通过自定义过度类名，使用第三方定义好的动画。
+
+自定义过度类名：
 
 - enter-class
 - enter-active-class
@@ -269,9 +238,17 @@ transition 组件设置
 - leave-active-class
 - leave-to-class (2.1.8+)
 
-##### JavaScript 钩子
+```html
+<link href="https://cdn.jsdelivr.net/npm/animate.css@3.5.1" rel="stylesheet" type="text/css">
+```
 
-可以在 transition 属性中声明 JavaScript 钩子，使用JS实现动画。
+```vue
+<transition enter-active-class="animated bounceIn" leave-active-class="animated bounceOut">
+	<div></div>
+</transition>
+```
+
+##### JavaScript 钩子
 
 ```vue
 <transition
@@ -286,106 +263,78 @@ transition 组件设置
 ></transition>
 ```
 
-##### 保留 CSS 中过度的部分，加上 JS 钩子做动画起始状态：
+保留 CSS 中过度动画的部分，加上 JS 钩子做动画起始状态：
 
 ```html
 <style>
-	/* 定义过度动画 */ 
   .fade-enter-active, .fade-leave-active { 
     transition: opacity .5s; 
   }
-  /* opacity修改不用css做 */
-  /*
-  .fade-enter, .fade-leave-to { 
-    opacity: 0; 
-  } 
-  .fade-enter-to, .fade-leave { 
-    opacity: 1; 
-  } 
-  */
 </style>
 
+<template>
+	<transition 
+		@before-enter="beforeEnter" 
+		@enter="enter"
+		@before-leave="beforeLeave" 
+		@leave="leave">
+  	<div></div>
+  </transition>
+</template>
+
 <script>
-Vue.component('message', {
-  template: `
-    <transition 
-			@before-enter="beforeEnter" 
-			@enter="enter"
-			@before-leave="beforeLeave" 
-			@leave="leave"
-		>
-      ...
-    </transition>
-  `,
+export default {
 	methods: {
     beforeEnter(el) {
-    	el.style.opacity = 0 // 设置初始状态
+    	el.style.opacity = 0; // 设置初始状态
     },
     enter(el, done) {
       document.body.offsetHeight; // 触发回流激活动画
-      el.style.opacity = 1 // 设置结束状态
-      el.addEventListener('transitionend', done) // 监听动画结束事件，并执行done函数
+      el.style.opacity = 1; // 设置结束状态
+      el.addEventListener('transitionend', done); // 监听动画结束事件，并执行done函数
     },
     beforeLeave(el) {
-    	el.style.opacity = 1 // 设置初始状态
+    	el.style.opacity = 1; // 设置初始状态
     },
     leave(el, done) {
       document.body.offsetHeight; // 触发回流激活动画
-      el.style.opacity = 0 // 设置结束状态
-      el.addEventListener('transitionend', done) // 监听动画结束事件，并执行done函数
+      el.style.opacity = 0; // 设置结束状态
+      el.addEventListener('transitionend', done); // 监听动画结束事件，并执行done函数
     }
   },
-})
+}
 </script>
 ```
 
-##### 纯js方案：
+纯js方案：
 
 ```html
-<script src="https://cdnjs.cloudflare.com/ajax/libs/velocity/1.2.3/velocity.min.js"></script>
+<template>
+	<transition name="fade"
+		:css="false" // 禁用css
+    @before-enter="beforeEnter"
+    @enter="enter"
+    @before-leave="beforeLeave"
+    @leave="leave"></transition>
+</template>
+
 <script>
-	Vue.component('message', {
-    template: `
-      <transition name="fade"
-        :css="false" // 禁用css
-        @before-enter="beforeEnter"
-        @enter="enter"
-        @before-leave="beforeLeave"
-        @leave="leave">
-      </transition>
-    `,
-    methods: {
-      beforeEnter(el) {
-        el.style.opacity = 0
-      },
-      enter(el, done) {
-        Velocity(el, { opacity: 1 }, { duration: 500, complete: done })
-      },
-      beforeLeave(el) {
-        el.style.opacity = 1
-      },
-      leave(el, done) {
-        Velocity(el, { opacity: 0 }, { duration: 500, complete: done })
-      }
+import "https://cdnjs.cloudflare.com/ajax/libs/velocity/1.2.3/velocity.min.js";
+export default {
+	methods: {
+    beforeEnter(el) {
+      el.style.opacity = 0;
     },
-  })
+    enter(el, done) {
+      Velocity(el, { opacity: 1 }, { duration: 500, complete: done });
+    },
+    beforeLeave(el) {
+      el.style.opacity = 1;
+    },
+    leave(el, done) {
+      Velocity(el, { opacity: 0 }, { duration: 500, complete: done });
+    }
+  },
+}
 </script>
 ```
-
-##### 列表过度
-
-有时候列表中，条目的新增或删除也需要加入一些动画，这时候可以考虑列表过度的方式。
-
-利用 transition-group 可以对 v-for 渲染的每个元素应用过度。
-
-用 transition-group 包裹 v-for 的元素，最终 transition-group 会展开成 n 个 transition，每一个 transition 包裹着一个单独的 v-for 元素。
-
-```vue
-<transition-group name="fade">
-  <div v-for="c in courses" :key="c.name">
-    {{ c.name }} - ￥{{c.price}}
-    <button @click="addToCart(c)">加购</button>
-  </div>
-</transition-group>
-```
-
