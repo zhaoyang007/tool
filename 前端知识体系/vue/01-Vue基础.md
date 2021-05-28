@@ -148,6 +148,15 @@ h2[data-v-469af010] {
 
 ##### CSS Module
 
+css-loader 的 modules 设置为 true 就会将我们写的 class 改掉，然后当你引入 css 文件模块的时候，它会给你返回一个 class 的列表，这个列表就是原来的 class 跟编译之后的 class 名字的对应关系。
+
+```js
+import styles from "./style.css";
+// import { className } from "./style.css";
+
+element.innerHTML = '<div class="' + styles.className + '">';
+```
+
 选择器不能在模版中直接使用，而会把所有的选择器放到计算属性 $style 里，然后通过 $style.xx 去访问选择器。选择器会被动态的转换成很有特点的名字，来和其他的组件做区分。
 
 生成的选择器：文件名\_选择器本身名字\_hash。它不会影响元素本身，只会影响你最终类名的生成。

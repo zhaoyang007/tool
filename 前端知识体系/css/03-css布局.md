@@ -1,7 +1,5 @@
 ### 经典布局
 
-正常流排版：依次排列，排不下了换行。
-
 块级盒和行内级盒：
 
 * 块级元素从上到下顺次排列元素，单独占据一行。
@@ -149,12 +147,6 @@ css 规范中，可以设定一个元素长得像表格。
 
 
 ### 经典布局应用
-
-多列布局，就是让几个元素呈现水平方式排列的效果。 
-
-块级元素默认垂直排列，行内元素和行内块元素默认水平排列。
-
-所以想要实现多列布局只要搞定块级元素，使用浮动或把它变成行内块。
 
 ##### 居中布局
 
@@ -656,7 +648,7 @@ align-self: baseline;   // 子元素会以内容区域去互相对齐
 
 ##### 弹性盒演示工具 flexbox-playground
 
-codepen: https://codepen.io/peiqun/pen/WYzzYX
+https://codepen.io/peiqun/pen/WYzzYX
 
 https://github.com/randyviandaputra/flexbox-playground
 
