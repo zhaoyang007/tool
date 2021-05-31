@@ -1414,21 +1414,38 @@ class Ugly {
 
 
 
-
 function moveZeroes(nums) {
   let j = 0;
   for (let i = 0; i < nums.length; i++) {
     if (nums[i] !== 0) {
+      let c = nums[j];
+      nums[j] = nums[i];
+      num[i] = c;
+      j++;
+    }
+  }
+  return nums;
+}
+
+
+
+
+function moveZeroes(nums) {
+  let j = 0;
+  for (let i = 0; i < nums.length; i++) {
+    let c;
+    if (nums[i] !== 0) {
+      c = nums[j];
       nums[j] = nums[i];
       j++;
     }
-    if (i !== j) {
+    if (c === 0 && nums[i] !== 0) {
       nums[i] = 0;
     }
   }
   return nums;
 }
 
-console.log(moveZeroes([0,1,1,0,0,8,7,0,1]))
+console.log(moveZeroes([0,1,1,0,0,8,7,0,11,1]))
 
 
