@@ -1397,26 +1397,38 @@ class Ugly {
 // 动态规划
 // 状态转移方程，最优子结构，边界
 
-var moveZeroes = function(nums) {
-  let count = 0;
-  
-  // nums.forEach((item, index) => {
-  //     console.log(nums, 'nums')
-  //     if (item === 0) {
-  //         console.log(index, 'index')
-  //         nums.splice(index, 1);
-  //         count++;
-  //     }
-  // });
+
+// 移动零
+// function moveZeroes(nums) {
+//   let j = 0;
+//   for (let i = 0; i < nums.length; i++) {
+//     if (nums[i] !== 0) {
+//       let c = nums[j];
+//       nums[j] = nums[i];
+//       nums[i] = c;
+//       j++;
+//     }
+//   }
+//   return nums;
+// };
+
+
+
+
+function moveZeroes(nums) {
+  let j = 0;
   for (let i = 0; i < nums.length; i++) {
-      if (nums[i] === 0) {
-        nums.splice(i, 1);
-          count++;
-      }
-  }
-  for (i = 0; i < count; i++) {
-      nums.push(0);
+    if (nums[i] !== 0) {
+      nums[j] = nums[i];
+      j++;
+    }
+    if (i !== j) {
+      nums[i] = 0;
+    }
   }
   return nums;
-};
-console.log(moveZeroes([0,0,1]))
+}
+
+console.log(moveZeroes([0,1,1,0,0,8,7,0,1]))
+
+
