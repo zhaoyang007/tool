@@ -1446,6 +1446,15 @@ function moveZeroes(nums) {
   return nums;
 }
 
-console.log(moveZeroes([0,1,1,0,0,8,7,0,11,1]))
+// console.log(moveZeroes([0,1,1,0,0,8,7,0,11,1]))
 
-
+function climbStairs(n) {
+  if (n === 2) {
+    return 2;
+  } 
+  if (n === 1) {
+		return 1;
+  }
+  return climbStairs(n - 1) + climbStairs(n - 2);
+}
+console.log(climbStairs(3));
