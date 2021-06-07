@@ -982,7 +982,7 @@ class NodeList {
 // 交换两个节点的值
 function swap(p, q) {
   let val = p.val;
-  p.val = q.val;
+  p.val = q.val
   q.val = val;
 } 
 // 寻找基准元素的节点
