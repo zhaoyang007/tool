@@ -1065,3 +1065,250 @@
 //   }
 //   return r;
 // }
+// 两数之和 1.暴力枚举 O(n^2) 2.hash O(n)
+// function twoSum(nums, target) {
+//   for (let i = 0; i < nums.length - 1; i++) {
+//     for (let j = i + 1; j < nums.length; j++) {
+//       if (nums[i] + nums[j] === target) {
+//         return [i, j];
+//       }
+//     }
+//   }
+//   return [];
+// }
+// function twoSum(nums, target) {
+//   let mapData = new Map();
+//   for (let i = 0; i < nums.length; i++) {
+//     if (mapData.has(target - nums[i])) {
+//       return [mapData.get(target - nums[i]), i];
+//     }
+//     mapData.set(nums[i], i);
+//   }
+//   return [];
+// }
+// 三数之和 1.暴力枚举 2.hash 3.夹逼
+// function threeSum(nums) {
+//   let a = [];
+//   let mapData = new Map();
+//   for (let i = 0; i < nums.length - 2; i++) {
+//     for (let j = i + 1; j < nums.length - 1; j++) {
+//       for (let k = j + 1; k < nums.length; k++) {
+//         let sum = nums[i] + nums[j] + nums[k];
+//         if (sum === 0) {
+//           let tmp = [nums[i], nums[j], nums[k]];
+//           tmp.sort();
+//           if (!mapData.has(tmp.join())) {
+//             a.push([nums[i], nums[j], nums[k]]);
+//             mapData.set(tmp.join(), [nums[i], nums[j], nums[k]]);
+//           }
+//         }
+//       } 
+//     }
+//   }
+//   return a;
+// }
+// console.log(threeSum([-1,0,1,2,-1,-4]));
+// function threeSum(nums) {
+//   if (nums == null || nums.length <= 2) return []; 
+//   let a = [];
+//   nums.sort((a, b) => a - b);
+//   for (let k = 0; k < nums.length - 2; k++) {
+//     if (nums[k] > 0) break;
+//     if (k > 0 && nums[k] === nums[k - 1]) continue;
+//     let i = k + 1;
+//     let j = nums.length - 1;
+//     while(i < j) {
+//       let sum = nums[i] + nums[j] + nums[k];
+//       if (sum < 0) {
+//         while(i < j && nums[i] === nums[++i]);
+//       } else if (sum > 0) {
+//         while(i < j && nums[j] === nums[--j]);
+//       } else {
+//         a.push([nums[i], nums[j], nums[k]]);
+//         while(i < j && nums[i] === nums[++i]);
+//         while(i < j && nums[j] === nums[--j]);
+//       }
+//     }
+//   }
+//   return a;
+// }
+// function threeSum(nums) {
+//   if (nums == null || nums.length <= 2) return [];
+//   let a = [];
+//   let mapData = new Map();
+//   let uniqMapData = new Map();
+//   // nums.sort((a, b) => a -b);
+//   for (let i = 0; i < nums.length - 1; i++) {
+//     for (let j = i + 1; j < nums.length; j++) {
+//       if (mapData.has(nums[i] + nums[j]) && mapData.get(nums[i] + nums[j]) !== i) {
+//         // a.push([nums[i], nums[j], mapData.get(nums[i] + nums[j])]);
+//         let tmp = [nums[i], nums[j], nums[mapData.get(nums[i] + nums[j])]];
+//         tmp.sort((a, b) => a - b);
+//         if (!uniqMapData.has(tmp.join())) {
+//           a.push([nums[i], nums[j], nums[mapData.get(nums[i] + nums[j])]]);
+//           uniqMapData.set(tmp.join(), 1);
+//         }
+//       } else {
+//         mapData.set(-nums[i], i);
+//       }
+//     }
+//   }
+//   return a;
+// }
+// 声明链表数据结构
+// class Node {
+//   costructor(value) {
+//     this.value = value;
+//     this.next = null;
+//   }
+// }
+// class LinkedList {
+//   constructor(arr) {
+//     let head = new Node(arr.shift());
+//     let next = head;
+//     arr.forEach(item => {
+//       next.next = new Node(item);
+//       next = next.next;
+//     });
+//     return head;
+//   }
+// }
+// class Node {
+//   constructor(value) {
+//     this.value = value;
+//     this.next = null;
+//   }
+// }
+// class LinkedList {
+//   constructor(arr) {
+//     let head = new Node(arr.shift());
+//     let next = head;
+//     arr.forEach(item => {
+//       next.next = new Node(item);
+//       next = next.next;
+//     });
+//     return head;
+//   }
+// }
+// // 环形链表
+// function hasCycle(head) {
+//   if(head === null || head.next === null) return false;
+//   let mapData = new Map();
+//   let p = head;
+//   while(p != null) {
+//     if (mapData.has(p)) {
+//     	return true;
+//     } else {
+// 			mapData.set(p, 1);
+//       p = p.next;
+//     }
+//   }
+//   return false;
+// }
+// let head = new LinkedList([6, 1, 2, 5, 7, 9]);
+// // head.next.next.next.next.next.next = head.next;
+// console.log(hasCycle(head))
+// function hasCycle(head) {
+//   if (head == null || head.next == null) return false;
+//   let mapData = new Map();
+//   let next = head;
+//   while(next != null) {
+//     if (mapData.has(next)) {
+//       return true;
+//     }
+//     mapData.set(next, 1);
+//     next = next.next;
+//   }
+//   return false;
+// }
+// function hasCycle(head) {
+//   if (head == null || head.next == null) return false;
+//   let slow = head;
+//   let fast = head.next;
+//   while(fast != null && fast.next != null) {
+//     if (fast === slow || fast.next === slow) {
+//       return true;
+//     }
+//     slow = slow.next;
+//     fast = fast.next.next;
+//   }
+//   return false;
+// }
+// function hasCycle(head) {
+//   if (head == null || head.next == null) return false;
+//   let mapData = new Map();
+//   let next = head;
+//   while(next != null) {
+//     if (mapData.has(next)) {
+//       return true;
+//     }
+//     mapData.set(next, 1);
+//     next = next.next;
+//   }
+//   return false;
+// }
+// function hasCycle(head) {
+//   if (head == null || head.next == null) return false;
+//   let mapData = new Map();
+//   let next = head;
+//   while(next != null) {
+//     if (mapData.has(next)) {
+//       return true;
+//     }
+//     mapData.set(next, 1);
+//     next = next.next;
+//   }
+//   return false;
+// }
+// function hasCycle(head) {
+//   if (head == null || head.next == null) return false;
+//   let slow = head;
+//   let fast = head.next;
+//   while(fast != null && fast.next != null) {
+//     if (fast === slow || fast.next === slow) {
+//       return true;
+//     }
+//     slow = slow.next;
+//     fast = fast.next.next;
+//   }
+//   return false;
+// }
+// function hasCycle(head) {
+//   if (head == null || head.next == null) return false;
+//   let slow = head;
+//   let fast = head.next;
+//   while(fast != null && fast.next != null) {
+//     if (fast === slow || fast.next === slow) {
+//       return true;
+//     }
+//     slow = slow.next;
+//     fast = fast.next.next;
+//   }
+//   return false;
+// }
+// function hasCycle(head) {
+//   if (head == null || head.next == null) return false;
+//   let mapData = new Map();
+//   let next = head;
+//   while(next != null) {
+//     if (mapData.has(next)) {
+//       return true;
+//     }
+//     mapData.set(next, 1);
+//     next = next.next;
+//   }
+//   return false;
+// }
+// function hasCycle(head) {
+//   if (head == null || head.next == null) return false;
+//   let slow = head;
+//   let fast = head.next;
+//   while(fast != null && fast.next != null) {
+//     if (fast === slow || fast.next === slow) {
+//       return true;
+//     }
+//     slow = slow.next;
+//     fast = fast.next.next;
+//   }
+//   return false;
+// }
