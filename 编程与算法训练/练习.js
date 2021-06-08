@@ -984,49 +984,84 @@
 //   return a;
 // }
 // 声明链表数据结构
-class Node {
-  constructor(value) {
-    this.value = value;
-    this.next = null;
-  }
-}
-class LinkedList {
-  constructor(arr) {
-    let head = new Node(arr.shift());
-    let next = head;
-    arr.forEach(item => {
-      next.next = new Node(item);
-      next = next.next;
-    });
-    return head;
-  }
-}
-// 环形链表 1.hash 2.快慢指针
-function hasCycle(head) {
-  if (head == null || head.next == null) return false;
-  let slow = head;
-  let fast = head.next;
-  while(fast != null && fast.next != null) {
-    if (fast === slow || fast.next === slow) {
-      return true;
-    } else {
-      slow = slow.next;
-      fast = fast.next.next;
-    }
-  }
-  return false;
-}
-function hasCycle(head) {
-  if (head == null || head.next == null) return false;
-  let mapData = new Map();
-  let p = head;
-  while(p != null) {
-    if (mapData.has(p)) {
-      return true;
-    } else {
-      mapData.set(p, 1);
-      p = p.next;
-    }
-  }
-  return false;
-}
+// class Node {
+//   constructor(value) {
+//     this.value = value;
+//     this.next = null;
+//   }
+// }
+// class LinkedList {
+//   constructor(arr) {
+//     let head = new Node(arr.shift());
+//     let next = head;
+//     arr.forEach(item => {
+//       next.next = new Node(item);
+//       next = next.next;
+//     });
+//     return head;
+//   }
+// }
+// // 环形链表 1.hash 2.快慢指针
+// function hasCycle(head) {
+//   if (head == null || head.next == null) return false;
+//   let slow = head;
+//   let fast = head.next;
+//   while(fast != null && fast.next != null) {
+//     if (fast === slow || fast.next === slow) {
+//       return true;
+//     } else {
+//       slow = slow.next;
+//       fast = fast.next.next;
+//     }
+//   }
+//   return false;
+// }
+// function hasCycle(head) {
+//   if (head == null || head.next == null) return false;
+//   let mapData = new Map();
+//   let p = head;
+//   while(p != null) {
+//     if (mapData.has(p)) {
+//       return true;
+//     } else {
+//       mapData.set(p, 1);
+//       p = p.next;
+//     }
+//   }
+//   return false;
+// }
+// 爬楼梯 1.暴力递归 2.记忆化递归 3.动态规划
+// function climbStair(n) {
+//   if (n <= 2) return n;
+//   return climbStair(n - 1) + climbStair(n - 2); 
+// }
+// let mapData = new Map();
+// function climbStair(n) {
+//   if (n <= 2) return n;
+//   if (mapData.has(n)) {
+//     return mapData.get(n);
+//   }
+//   let value = climbStair(n - 1) + climbStair(n - 2);
+//   mapData.set(n, value);
+//   return value;
+// }
+// function climbStair(n) {
+//   if (n < 2) return n;
+//   let arr = [];
+//   arr[1] = 1;
+//   arr[2] = 2;
+//   for (let i = 3; i <= n; i++) {
+//     arr[i] = arr[i - 1] + arr[i - 2];
+//   }
+//   return arr[n];
+// }
+// function climbStair(n) {
+//   if (n <= 2) return n;
+//   let a = 1, b = 2, r = 0;
+//   for (let i = 0; i < n - 2; i++) {
+//     r = a + b;
+//     a = b;
+//     b = r;
+//   }
+//   return r;
+// }
