@@ -1312,3 +1312,270 @@
 //   }
 //   return false;
 // }
+// 两数之和 1.暴力枚举 2.hash
+// function twoSum(nums, target) {
+//   if (nums == null || nums.length <= 1) return [];
+//   for (let i = 0; i < nums.length - 1; i++) {
+//     for (let j = i + 1; j < nums.length; j++) {
+//       if (nums[i] + nums[j] === target) {
+//         return [i, j];
+//       }
+//     }
+//   }
+//   return [];
+// }
+// function twoSum(nums, target) {
+//   if (nums == null || nums.length <= 1) return [];
+//   let mapData = new Map();
+//   for (let i = 0; i < nums.length; i++) {
+//     if (mapData.has(target - nums[i])) {
+//       return [mapData.get(target - nums[i]), i]
+//     }
+//     mapData.set(nums[i], i);
+//   }
+//   return [];
+// }
+// 三数之和 1.暴力枚举 2.hash 3.夹逼
+// function threeSum(nums) {
+//   if (nums == null || nums.length <= 2) return [];
+//   let a = [];
+//   let mapData = new Map();
+//   for (let i = 0; i < nums.length - 2; i++) {
+//     for (let j = i + 1; j < nums.length - 1; j++) {
+//       for (let k = j + 1; k < nums.length; k++) {
+//         let sum = nums[i] + nums[j] + nums[k];
+//         if (sum === 0) {
+//           let tmp = [nums[i], nums[j], nums[k]];
+//           tmp.sort();
+//           if (!mapData.has(tmp.join())) {
+//             a.push([nums[i], nums[j], nums[k]]);
+//             mapData.set(tmp.join(), 1);
+//           }
+//         }
+//       }
+//     }
+//   }
+//   return a;
+// }
+// function threeSum(nums) {
+//   if (nums == null || nums.length <= 2) return [];
+//   let a = [];
+//   nums.sort((a, b) => a - b);
+//   for (let k = 0; k < nums.length - 2; k++) {
+//     if (nums[k] > 0) break;
+//     if (k > 0 && nums[k] === nums[k - 1]) continue;
+//     let i = k + 1;
+//     let j = nums.length - 1;
+//     while(i < j) {
+//       let sum = nums[i] + nums[j] + nums[k];
+//       if (sum < 0) {
+//         while(i < j && nums[i] === nums[++i]);
+//       } else if (sum > 0) {
+//         while(i < j && nums[j] === nums[--j]);
+//       } else {
+//         a.push([nums[i], nums[j], nums[k]]);
+//         while(i < j && nums[i] === nums[++i]);
+//         while(i < j && nums[j] === nums[--j]);
+//       }
+//     }
+//   } 
+//   return a;
+// }
+// class Node {
+//   constructor(value) {
+//     this.value = value;
+//     this.next = null;
+//   }
+// }
+// class LinkedList {
+//   constructor(arr) {
+//     let head = new Node(arr.shift());
+//     let next = head;
+//     arr.forEach(item => {
+//       next.next = new Node(item);
+//       next = next.next;
+//     }); 
+//     return head;
+//   }
+// }
+// 环形链表 1.暴力枚举 hash 2.快慢指针
+// function hasCycle(head) {
+//   if (head == null || head.next == null) return false;
+//   let next = head;
+//   let mapData = new Map();
+//   while(next != null) {
+//     if (mapData.has(next)) {
+//       return true;
+//     }
+//     mapData.set(next, 1);
+//     next = next.next;
+//   }
+//   return false;
+// }
+// function hasCycle(head) {
+//   if (head == null || head.next == null) return false;
+//   let slow = head;
+//   let fast = head.next;
+//   while(fast != null || fast.next != null) {
+//     if (fast == slow || fast.next == slow) {
+//       return true;
+//     }
+//     slow = slow.next;
+//     fast = fast.next.next;
+//   }
+//   return false;
+// }
+// function hasCycle(head) {
+//   if (head == null) return false;
+//   let mapData = new Map();
+//   let next = head;
+//   while(next != null) {
+//     if (mapData.has(next)) {
+//       return true;
+//     }
+//     mapData.set(next, 1);
+//     next = next.next;
+//   }
+//   return false;
+// }
+// function hasCycle(head) {
+//   if (head == null || head.next == null) return false;
+//   let mapData = new Map();
+//   let next = head;
+//   while(next != null) {
+//     if (mapData.has(next)) {
+//       return true;
+//     }
+//     mapData.set(next, 1);
+//     next = next.next;
+//   }
+//   return false;
+// }
+// function hasCycle(head) {
+//   if (head == null || head.next == null) return false;
+//   let slow = head;
+//   let fast = head.next;
+//   while(fast != null && fast.next != null) {
+//     if (fast === slow || fast.next === slow) {
+//       return true;
+//     }
+//     slow = slow.next;
+//     fast = fast.next.next;
+//   }
+//   return false;
+// }
+// function hasCycle(head) {
+//   if (head == null || head.next == null) return false;
+//   let slow = head;
+//   let fast = head.next;
+//   while(fast != null && fast.next != null) {
+//     if (fast === slow || fast.next === slow) {
+//       return true;
+//     }
+//     slow = slow.next;
+//     fast = fast.next.next;
+//   }
+//   return false;
+// }
+// function isValid(s) {
+//   if (s.length % 2 === 1) return false;
+//   let mapData = new Map([
+//     ['(', ')'],
+//     ['[', ']'],
+//     ['{', '}']
+//   ]);
+//   let stack = [];
+//   for (let i of s) {
+//     if (mapData.has(i)) {
+//       stack.push(i);
+//     } else {
+//       if (!stack.length || mapData.get(stack.pop()) !== i) {
+//         return false;
+//       }
+//     }
+//   }
+//   return !stack.length;
+// }
+// function isValid(s) {
+//   if (s.length % 2 === 1) return false;
+//   let mapData = new Map([
+//     [')', '('],
+//     [']', '['],
+//     ['}', '{']
+//   ]);
+//   let stack = [];
+//   for (let i of s) {
+//     if (mapData.has(i)) {
+//       if (!stack.length || stack.pop() !== mapData.get(i)) {
+//         return false;
+//       }
+//     } else {
+//       stack.push(i);
+//     }
+//   }
+//   return !stack.length;
+// }
+// function isValid(s) {
+//   if (s.length % 2 === 1) return false;
+//   let length = s.length / 2;
+//   for (let i = 0; i < length; i++) {
+//     s = s.replace('()', '').replace('[]', '').replace('{}', '');
+//   }
+//   return !s.length;
+// }
+// 有效的括号 1.暴力 replace 括号替换成'' O(n^2) 2.栈 O(n)
+// function isValid(s) {
+//   if (s.length % 2 === 1) return false;
+//   let l = s.length / 2;
+//   for (let i = 0; i < l; i++) {
+//     s = s.replace('()', '').replace('[]', '').replace('{}', '');
+//   }
+//   return !s.length;
+// }
+// function isValid(s) {
+//   if (s.length % 2 === 1) return false;
+//   let mapData = new Map([
+//     [')', '('],
+//     [']', '['],
+//     ['}', '{']
+//   ]);
+//   let stack = [];
+//   for (let i of s) {
+//     if (mapData.has(i)) {
+//       if (!stack.length || stack.pop() !== mapData.get(i)) {
+//         return false;
+//       }
+//     } else {
+//       stack.push(i);
+//     }
+//   }
+//   return !stack.length;
+// }
+// 有效的括号 1.暴力 遍历 replace 括号 -> '' O(n^2) 2.栈 O(n)
+// function isValid(s) {
+//   if (s.length % 2 === 1) return false;
+//   let l = s.length / 2;
+//   for (let i = 0; i < l; i++) {
+//     s = s.replace('()', '').replace('[]', '').replace('{}', '');
+//   }
+//   return !s.length;
+// }
+// function isValid(s) {
+//   if (s.length % 2 === 1) return false;
+//   let mapData = new Map([
+//     [')', '('],
+//     [']', '['],
+//     ['}', '{']
+//   ]);
+//   let stack = [];
+//   for (let i of s) {
+//     if (mapData.has(i)) {
+//       if (!s.length || stack.pop() !== mapData.get(i)) {
+//         return false;
+//       }
+//     } else {
+//       stack.push(i);
+//     }
+//   }
+//   return !stack.length;
+// }
