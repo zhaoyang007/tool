@@ -1579,3 +1579,258 @@
 //   }
 //   return !stack.length;
 // }
+// 两数之和 1.暴力枚举 2.hash
+// function twoSum(nums, target) {
+//   if (nums == null || nums.length <= 1) return [];
+//   for (let i = 0; i < nums.length - 1; i++) {
+//     for (let j = i + 1; j < nums.length; j++) {
+//       if (nums[i] + nums[j] === target) {
+//         return [i, j];
+//       }
+//     }
+//   }
+//   return [];
+// }
+// function twoSum(nums, target) {
+//   let mapData = new Map();
+//   for (let i = 0; i < nums.length; i++) {
+//     if (mapData.has(target - nums[i])) {
+//       return [mapData.get(target - nums[i]), i];
+//     }
+//     mapData.set(nums[i], i);
+//   }
+//   return [];
+// }
+// 三数之和 1.暴力枚举 2.hash 3.夹逼
+// function threeSum(nums) {
+//   if (nums == null || nums.length <= 2) return [];
+//   let a = [];
+//   let mapData = new Map();
+//   for (let i = 0; i < nums.length - 2; i++) {
+//     for (let j = 0; j < nums.length - 1; j++) {
+//       for (let k = 0; k < nums.length; k++) {
+//         let sum = nums[i] + nums[j] + nums[k];
+//         if (sum === 0) {
+//           let tmp = [nums[i], nums[j], nums[k]];
+//           tmp.sort();
+//           if (!mapData.has(tmp.join())) {
+//             a.push([nums[i], nums[j], nums[k]]);
+//             mapData.set(tmp.join(), 1);
+//           }
+//         }
+//       }
+//     }
+//   }
+//   return a;
+// }
+// function threeSum(nums) {
+//   if (nums == null || nums.length <= 2) return [];
+//   nums.sort((a, b) => a - b);
+//   let a = [];
+//   for (let k = 0; k < nums.length - 2; k++) {
+//     if (nums[k] > 0) break;
+//     if (k > 0 && nums[k] === nums[k - 1]) continue;
+//     let i = k + 1, j = nums.length - 1;
+//     while(i < j) {
+//       let sum = nums[i] + nums[j] + nums[k];
+//       if (sum < 0) {
+//         while(i < j && nums[i] === nums[++i]);
+//       } else if(sum > 0) {
+//         while(i < j && nums[j] === nums[--j]);
+//       } else {
+//         a.push([nums[i], nums[j], nums[k]]);
+//         while(i < j && nums[i] === nums[++i]);
+//         while(i < j && nums[j] === nums[--j]);
+//       }
+//     }
+//   }
+//   return a;
+// }
+// js声明链表数据结构
+// class Node {
+//   constructor(value) {
+//     this.value = value;
+//     this.next = null;
+//   }
+// }
+// class LinkedList {
+//   constructor(arr) {
+//     let head = new Node(arr.shift());
+//     let next = head;
+//     arr.forEach(item => {
+//       next.next = new Node(item);
+//       next = next.next;
+//     });
+//     return head;
+//   }
+// }
+// 环形链表 1.hash 2.快慢指针
+// function hasCycle(head) {
+//   if (head == null || head.next == null) return false;
+//   let mapData = new Map();
+//   let next = head;
+//   while (next != null) {
+//     if (mapData.has(next)) {
+//       return true;
+//     }
+//     mapData.set(next, 1);
+//     next = next.next;
+//   } 
+//   return false;
+// }
+// function hasCycle(head) {
+//   if (head == null || head.next == null) return false;
+//   let slow = head;
+//   let fast = head.next;
+//   while (fast != null && fast.next != null) {
+//     if (fast === slow || fast.next === slow) {
+//       return true;
+//     }
+//     slow = slow.next;
+//     fast = fast.next.next;
+//   }
+//   return false;
+// }
+// 有效的括号 1.replace O(n^2) 2.stack o(1)
+// function isValid(s) {
+//   if (s.length % 2 === 1) return false;
+//   let l = a.length / 2;
+//   for (let i = 0; i < l; i++) {
+//     s = s.replace('()', '').replace('[]', '').replace('{}', '');
+//   }
+//   return !s.length;
+// }
+// function isValid(s) {
+//   if (s.length % 2 === 1) return false;
+//   let mapData = new Map([
+//     [')', '('],
+//     [']', '['],
+//     ['}', '{']
+//   ]);
+//   let stack = [];
+//   for (let i of s) {
+//     if (mapData.has(i)) {
+//       if (!stack.length || stack.pop() !== mapData.get(i)) {
+//         return false;
+//       }
+//     } else {
+//       stack.push(i);
+//     }
+//   }
+//   return !stack.length;
+// }
+// 最小栈 1.辅助栈
+// class MinStack {
+//   constructor() {
+//     this.x_stack = [];
+//     this.min_stack = [Infinity];
+//   }
+//   push(x) {
+//     this.x_stack.push(x);
+//     this.min_stack.push(Math.min(this.min_stack[this.min_stack.length - 1], x));
+//   }
+//   pop() {
+//     this.x_stack.pop();
+//     this.min_stack.pop();
+//   }
+//   top() {
+//     return this.x_stack[this.x_stack.length - 1];
+//   }
+//   getMin() {
+//     return this.min_stack[this.min_stack.length - 1];
+//   }
+// // }
+// class MinStack {
+//   constructor() {
+//     this.x_stack = [];
+//     this.min_stack = [Infinity];
+//   }
+//   push(x) {
+//     this.x_stack.push(x);
+//     this.min_stack.push(Math.min(this.min_stack[this.min_stack.length - 1], x));
+//   }
+//   pop() {
+//     if (this.x_stack.length) {
+//       this.x_stack.pop();
+//       this.min_stack.pop();
+//     }
+//   }
+//   top() {
+//     return this.x_stack[this.x_stack.length - 1];
+//   }
+//   getMin() {
+//     return this.min_stack[this.min_stack.length - 1];
+//   }
+// }
+// class MinStack {
+//   constructor() {
+//     this.x_stack = [];
+//     this.min_stack = [];
+//   }
+//   push(x) {
+//     this.x_stack.push(x);
+//     if (this.min_stack.length === 0 || x <= this.min_stack[this.min_stack.length - 1]) {
+//       this.min_stack.push(x);
+//     }
+//   }
+//   pop() {
+//     if (this.x_stack.length) {
+//       if (this.x_stack.pop() === this.min_stack[this.min_stack.length - 1]) {
+//         this.min_stack.pop();
+//       }
+//     }
+//   }
+//   top() {
+//     return this.x_stack[this.x_stack.length - 1];
+//   }
+//   getMin() {
+//     return this.min_stack[this.min_stack.length - 1];
+//   }
+// }
+// class MinStack {
+//   constructor() {
+//     this.x_stack = [];
+//     this.min_stack = [Infinity];
+//   }
+//   push(x) {
+//     this.x_stack.push(x);
+//     this.min_stack.push(Math.min(this.min_stack[this.min_stack.length - 1], x));
+//   }
+//   pop() {
+//     if (this.x_stack.length) {
+//       this.x_stack.pop();
+//       this.min_stack.pop();
+//     }
+//   }
+//   top() {
+//     return this.x_stack[this.x_stack.length - 1];
+//   }
+//   getMin() {
+//     return this.min_stack[this.min_stack.length - 1];
+//   }
+// }
+class MinStack {
+  constructor() {
+    this.x_stack = [];
+    this.min_stack = [];
+  }
+  push(x) {
+    this.x_stack.push(x);
+    if (!this.min_stack.length || x <= this.min_stack[this.min_stack.length - 1]) {
+      this.min_stack.push(x);
+    }
+  }
+  pop() {
+    if (this.x_stack.length) {
+      if (this.x_stack.pop() === this.min_stack[this.min_stack.length - 1]) {
+        this.min_stack.pop();
+      }
+    }
+  }
+  top() {
+    return this.x_stack[this.x_stack.length - 1];
+  }
+  getMin() {
+    return this.min_stack[this.min_stack.length - 1];
+  }
+}
