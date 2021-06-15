@@ -1955,3 +1955,127 @@
 //     return this.min_stack[this.min_stack.length - 1];
 //   }
 // }
+// js声明链表数据结构
+// class Node {
+//   constructor(value ) {
+//     this.value = value;
+//     this.next = null;
+//   }
+// }
+// class LinkedList {
+//   constructor(arr) {
+//     let head = new Node(arr.shift());
+//     let next = head;
+//     arr.forEach(item => {
+//       next.next = new Node(item);
+//       next = next.next;
+//     });
+//     return head;
+//   }
+// }
+// 环形链表 1.暴力 hash 2.快慢指针
+// function hasCycle(head) {
+//   if (head == null || head.next == null) return false;
+//   let mapData = new Map();
+//   let next = head.next;
+//   while (next) {
+//     if (mapData.has(next)) {
+//       return true;
+//     }
+//     mapData.set(next, 1);
+//     next = next.next;
+//   }
+//   return false;
+// }
+// function hasCycle(head) {
+//   if (head == null || head.next == null) return false;
+//   let slow = head;
+//   let fast = head.next;
+//   while (fast != null && fast.next != null) {
+//     if (fast === slow || fast.next === slow) {
+//       return true;
+//     }
+//     slow = slow.next;
+//     fast = fast.next.next;
+//   }
+//   return false;
+// }
+// 有效的括号 1.暴力 replace O(n^2) 2.栈 O(n)
+// function isValid(s) {
+//   if (s.length % 2 === 1) return false;
+//   let l = s.length / 2;
+//   for (let i = 0; i < l; i++) {
+//     s = s.replace('()', '').replace('[]', '').replace('{}', '');
+//   }
+//   return !s.length;
+// }
+// function isValid(s) {
+//   if (s.length % 2 === 1) return false;
+//   let mapData = new Map([
+//     [')', '('],
+//     [']', '['],
+//     ['}', '{']
+//   ]);
+//   let stack = [];
+//   for (let i of s) {
+//     if (mapData.has(i)) {
+//       if (!stack.length || stack.pop() !== mapData.get(i)) {
+//         return false;
+//       }
+//     } else {
+//       stack.push(i);
+//     }
+//   }
+//   return !stack.length;
+// }
+// 最小栈 1.两个栈
+// class MinStack {
+//   constructor() {
+//     this.x_stack = [];
+//     this.min_stack = [Infinity];
+//   }
+//   push(x) {
+//     this.x_stack.push(x);
+//     if (this.min_stack.length) {
+//       this.min_stack.push(Math.min(x, this.min_stack[this.min_stack.length - 1]));
+//     }
+//   }
+//   pop() {
+//     if (this.x_stack.length) {
+//       this.x_stack.pop();
+//       this.min_stack.pop();
+//     }
+//   }
+//   top() {
+//     return this.x_stack[this.x_stack.length - 1];
+//   }
+//   getMin() {
+//     return this.min_stack[this.min_stack.length - 1];
+//   }
+// }
+// class MinStack {
+//   constructor() {
+//     this.x_stack = [];
+//     this.min_stack = [];
+//   }
+//   push(x) {
+//     this.x_stack.push(x);
+//     if (this.min_stack.length === 0 || x <= this.min_stack[this.min_stack.length - 1]) {
+//       this.min_stack.push(x);
+//     }
+//   }
+//   pop() {
+//     if (this.x_stack.length) {
+//       if (this.x_stack.pop() === this.min_stack[this.min_stack.length - 1]) {
+//         this.min_stack.pop();
+//       }
+//     }
+//   }
+//   top() {
+//     return this.x_stack[this.x_stack.length - 1];
+//   }
+//   getMin() {
+//     return this.min_stack[this.min_stack.length - 1];
+//   }
+// }
+
