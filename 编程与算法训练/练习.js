@@ -2078,4 +2078,372 @@
 //     return this.min_stack[this.min_stack.length - 1];
 //   }
 // }
-
+// 移动零 1.遇零删除O(n^2) 2.新内存O(n) 3.双指针交换元素O(n)
+// function moveZeroes(nums) {
+//   let count = 0;
+//   for (let i = 0; i < nums.length; i++) {
+//     if (nums[i] === 0) {
+//       nums.splice(i, 1);
+//       count++;
+//       i--;
+//     }
+//   }
+//   for (let i = 0; i < count; i++) {
+//     nums.push(0);
+//   }
+//   return nums;
+// }
+// function moveZeroes(nums) {
+//   let res1 = [];
+//   let res2 = [];
+//   nums.forEach(item => {
+//     if (item === 0) {
+//       res1.push(item);
+//     } else {
+//       res2.push(item);
+//     }
+//   });
+//   return res2.concat(res1);
+// }
+// function moveZeroes(nums) {
+//   let j = 0;
+//   for (let i = 0; i < nums.length; i++) {
+//     if (nums[i] !== 0) {
+//       let c = nums[j];
+//       nums[j] = nums[i];
+//       nums[i] = c;
+//       j++;
+//     }
+//   }
+//   return nums;
+// }
+// 盛水最多的容器 1.暴力 O(n^2) 2.夹逼 O(n)
+// function maxArea(arr) {
+//   let max = 0;
+//   for (let i = 0; i < arr.length - 1; i++) {
+//     for (let j = i + 1; j < arr.length; j++) {
+//       let area = Math.min(arr[i], arr[j]) * (j - i);
+//       max = Math.max(max, area);
+//     }
+//   }
+//   return max;
+// }
+// function maxArea(arr) {
+//   let max = 0;
+//   for (let i = 0, j = arr.length - 1; i < j; ) {
+//     let minHeight = arr[i] < arr[j] ? arr[i++] : arr[j--];
+//     let area = minHeight * (j - i + 1);
+//     max = Math.max(max, area);
+//   }
+//   return max;
+// }
+// 声明链表数据结构
+// class Node {
+//   contructor(value) {
+//     this.value = value;
+//     this.next = null;
+//   }
+// }
+// class LinkedList {
+//   constructor(arr) {
+//     let head = new Node(arr.shift());
+//     let next = head;
+//     arr.forEach(item => {
+//       next.next = new Node(item);
+//       next = next.next;
+//     });
+//     return head;
+//   }
+// }
+// 环形链表 1.hash 2.快慢指针
+// function hasCycle(head) {
+//   if (head == null || head.next == null) return false;
+//   let mapData = new Map();
+//   let next = head.next;
+//   while (next != null) {
+//     if (mapData.has(next)) {
+//       return true;
+//     }
+//     mapData.set(next, 1);
+//     next = next.next;
+//   }
+//   return false;
+// }
+// function hasCycle(head) {
+//   if (head == null || head.next == null) return false;
+//   let slow = head;
+//   let fast = head.next;
+//   while (fast != null && fast.next != null) {
+//     if (fast === slow || fast.next === slow) {
+//       return true;
+//     }
+//     slow = slow.next;
+//     fast = fast.next.next;
+//   }
+//   return false;
+// }
+// 有效的括号 1.暴力 replace O(n^2) 2.栈 O(n)
+// function isValid(s) {
+//   if (s.length % 2 === 1) return false;
+//   let l = s.length / 2;
+//   for (let i = 0; i < l; i++) {
+//     s = s.replace('()', '').replace('[]', '').replace('{}', '');
+//   }
+//   return !s.length;
+// }
+// function isValid(s) {
+//   if (s.length % 2 === 1) return false;
+//   let mapData = new Map([
+//     [')', '('],
+//     [']', '['],
+//     ['}', '{']
+//   ]);
+//   let stack = [];
+//   for (let i of s) {
+//     if (mapData.has(i)) {
+//       if (stack.length === 0 || stack.pop() !== mapData.get(i)) {
+//         return false;
+//       }
+//     } else {
+//       stack.push(i);
+//     }
+//   }
+//   return !stack.length;
+// }
+// 最小栈 1.栈
+// class MinStack {
+//   constructor() {
+//     this.x_stack = [];
+//     this.min_stack = [];
+//   }
+//   push(x) {
+//     this.x_stack.push(x);
+//     this.min_stack.push(Math.min(x, this.min_stack[this.min_stack.length - 1]));
+//   }
+//   pop() {
+//     if (this.x_stack.length) {
+//       this.x_stack.pop();
+//       this.min_stack.pop();
+//     }
+//   }
+//   top() {
+//     return this.x_stack[this.x_stack.length - 1];
+//   }
+//   getMin() {
+//     return this.min_stack[this.min_stack.length - 1];
+//   }
+// }
+// class MinStack {
+//   constructor() {
+//     this.x_stack = [];
+//     this.min_stack = [];
+//   }
+//   push(x) {
+//     this.x_stack.push(x);
+//     if (!this.min_stack.length || x <= this.min_stack[this.min_stack.length - 1]) {
+//       tihs.min_stack.push(x);
+//     }
+//   }
+//   pop() {
+//     if (this.x_stack.length) {
+//       if (this.x_stack.pop() === this.min_stack[this.min_stack.length - 1]) {
+//         this.min_stack.pop();
+//       }
+//     }
+//   }
+//   top() {
+//     return this.x_stack[this.x_stack.length - 1];
+//   }
+//   getMin() {
+//     return this.min_stack[this.min_stack.length - 1];
+//   }
+// }
+// 三数之和 1.暴力 2.hash 3.夹逼
+// function threeSum(nums) {
+//   if (nums == null || nums.length <= 2) return [];
+//   let a = [];
+//   let mapData = new Map();
+//   let setData = new Set();
+//   for (let i = 0; i < nums.length - 2; i++) {
+//     mapData.set(nums[i], nums[i]);
+//     for (let j = i + 2; j < nums.length; j++) {
+//       let sum = nums[i + 1] + nums[j];
+//       if (mapData.has(-sum)) {
+//         let tmp = [mapData.get(-sum), nums[i + 1], nums[j]];
+//         tmp.sort();
+//         if (!setData.has(tmp.join())) {
+//           a.push([mapData.get(-sum), nums[i + 1], nums[j]]);
+//           setData.add(tmp.join(), 1);
+//         }
+//       }
+//     }
+//   }
+//   return a;
+// }
+// 爬楼梯 1.暴力递归 2.记忆化递归 3.动态规划
+// function climbStairs(n) {
+//   if (n <= 2) return n;
+//   return climbStairs(n - 1) + climbStairs(n - 2);
+// }
+// let mapData = new Map();
+// function climbStairs(n) {
+//   if (n <= 2) return n;
+  
+//   if (mapData.has(n)) {
+//     return mapData.get(n);
+//   }
+//   let value = climbStairs(n - 1) + climbStairs(n - 2);
+//   mapData.set(n, value);
+//   return value;
+// }
+// function climbStairs(n) {
+//   if (n <= 2) return n;
+//   let a = [];
+//   a[1] = 1;
+//   a[2] = 2;
+//   for (let i = 3; i <= n; i++) {
+//     a[i] = a[i - 1] + a[i - 2];
+//   }
+//   return a[n];
+// }
+// function climbstairs(n) {
+//   if (n <= 2) return n;
+//   let a = 1, b = 2, r = 0;
+//   for (let i = 0; i < n - 2; i++) {
+//     r = a + b;
+//     a = b;
+//     b = r;
+//   }
+//   return r;
+// }
+// js声明链表数据结构
+// class Node {
+//   constructor(value) {
+//     this.value = value;
+//     this.next = null;
+//   }
+// }
+// class LinkedList {
+//   constructor(list) {
+//     let head = new Node(list.shift());
+//     let next = head;
+//     list.forEach(item => {
+//       next.next = new Node(item);
+//       next = next.next;
+//     });
+//     return head;
+//   }
+// }
+// 环形链表 1.hash 2.快慢指针
+// function hasCycle(head) {
+//   if (head == null || head.next == null) return false;
+//   let mapData = new Map();
+//   let next = head;
+//   while (next) {
+//     if (mapData.has(next)) {
+//       return true;
+//     }
+//     mapData.set(next, 1);
+//     next = next.next;
+//   }
+//   return false;
+// }
+// function hasCycle(head) {
+//   if (head == null || head.next == null) return false;
+//   let slow = head;
+//   let fast = head.next;
+//   while (fast != null && fast.next != null) {
+//     if (fast === slow || fast.next === slow) {
+//       return true;
+//     }
+//     slow = slow.next;
+//     fast = fast.next.next;
+//   }
+//   return false;
+// }
+// 有效的括号 1.暴力 replace 2.栈
+// function isValid(s) {
+//   if (s.length % 2 === 1) return false;
+//   let l = s.length / 2;
+//   for (let i = 0; i < l; i++) {
+//     s = s.replace('()', '').replace('[]', '').replace('{}', '');
+//   }  
+//   return !s.length;
+// }
+// function isValue(s) {
+//   if (s.length % 2 === 1) return false;
+//   let mapData = new Map([
+//     [')', '('],
+//     [']', '['],
+//     ['}', '{']
+//   ]);
+//   let stack = [];
+//   for (let i of s) {
+//     if (mapData.has(i)) {
+//       if (stack.length === 0 || stack.pop() !== mapData.get(i)) {
+//         return false;
+//       }
+//     } else {
+//       stack.push(i);
+//     }
+//   }
+//   return !stack.length;
+// }
+// 最小栈 1.辅助栈
+// 同步
+// class MinStack {
+//   constructor() {
+//     this.x_stack = [];
+//     this.min_stack = [Infinity];
+//   }
+//   push(x) {
+//     this.x_stack.push(x);
+//     this.min_stack.push(Math.min(this.min_stack[this.min_stack.length - 1], x));
+//   }
+//   pop() {
+//     this.x_stack.pop();
+//     this.min_stack.pop();
+//   }
+//   top() {
+//     return this.x_stack[this.x_stack.length - 1];
+//   }
+//   getMin() {
+//     return this.min_stack[this.min_stack.length - 1];
+//   }
+// }
+// 不同步
+// class MinStack {
+//   constructor() {
+//     this.x_stack = [];
+//     this.min_stack = [];
+//   }
+//   push(x) {
+//     this.x_stack.push(x);
+//     if (!this.min_stack.length || x <= this.min_stack[this.min_stack.length - 1]) {
+//       this.min_stack.push(x);
+//     }
+//   }
+//   pop() {
+//     if (this.x_stack.pop() === this.min_stack[this.min_stack.length - 1]) {
+//       this.min_stack.pop();
+//     }
+//   }
+//   top() {
+//     return this.x_stack[this.x_stack.length - 1];
+//   }
+//   getMin() {
+//     return this.min_stack[this.min_stack.length - 1];
+//   }
+// }
+// 滑动窗口最大值 1.暴力 O(n*k) 2.双端队列
+// function maxSlidingWindow(nums, k) {
+//   let a = [];
+//   for (let i = 0; i < nums.length; i++) {
+//     let max = nums[i];
+//     for (let j = i; j < i + k; j++) {
+//       max = Math.max(max, nums[j]);
+//     }
+//     a.push(max);
+//   }
+//   return a;
+// }
