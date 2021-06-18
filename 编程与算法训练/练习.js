@@ -2447,3 +2447,262 @@
 //   }
 //   return a;
 // }
+// 滑动窗口最大值
+// function maxSlidingWindow(nums, k) {
+//   let q = [];
+//   for (let i = 0; i < k; i ++) {
+//     while (q.length && nums[i] >= nums[q[q.length - 1]]) {
+//       q.pop();
+//     }
+//     q.push(i);
+//   }
+//   let res = [nums[q[0]]];
+//   for (let i = k; i < nums.length; i++) {
+//     while (q.length && nums[i] >= nums[q[q.length - 1]]) {
+//       q.pop();
+//     }
+//     q.push(i);
+//     while (q[0] < i - k + 1) {
+//       q.shift();
+//     }
+//     res.push(nums[q[0]]);
+//   }
+//   return res;
+// }
+// 滑动窗口最大值
+// function maxSlidingWindow(nums, k) {
+//   let res = [];
+//   let q = [];
+//   for (let i = 0; i < k; i++) {
+//     while (q.length && nums[i] >= nums[q[q.length - 1]]) {
+//       q.pop();
+//     }
+//     q.push(i);
+//   }
+//   res[0] = nums[q[0]];
+//   for (let i = k; i < nums.length; i++) {
+//     while (q.length && nums[i] >= nums[q[q.length - 1]]) {
+//       q.pop();
+//     }
+//     q.push(i);
+//     while (q[0] < i - k + 1) {
+//       q.shift();
+//     }
+//     res.push(nums[q[0]]);
+//   }
+//   return res;
+// }
+// 滑动窗口最大值
+// function maxSlidingWindow(nums, k) {
+//   let res = [];
+//   let q = [];
+//   for (let i = 0; i < k; i++) {
+//     while (q.length && nums[i] >= nums[q[q.length - 1]]) {
+//       q.pop();
+//     }
+//     q.push(i);
+//   }
+//   res.push(nums[q[0]]);
+//   for (let i = k; i < nums.length; i++) {
+//     while (q.length && nums[i] >= nums[q[q.length - 1]]) {
+//       q.pop();
+//     }
+//     q.push(i);
+//     while (q[0] < i - k + 1) {
+//       q.shift();
+//     }
+//     res.push(nums[q[0]]);
+//   }
+//   return res;
+// }
+// function maxSlidingWindow(nums, k) {
+//   let res = [];
+//   let q = [];
+//   for (let i = 0; i < nums.length; i++) {
+//     while (q.length && nums[i] > nums[q[q.length - 1]]) {
+//       q.pop();
+//     }
+//     q.push(i);
+//     while (q[0] < i - k + 1) {
+//       q.shift();
+//     }
+//     if (i >= k - 1) res.push(nums[q[0]]);
+//   }
+//   return res;
+// }
+// function maxSlidingWindow(nums, k) {
+//   let a = [];
+//   for (let i = 0; i < nums.length - k + 1; i++) {
+//     let max = nums[i];
+//     for (let j = i; j < i + k; j++) {
+//       if (nums[j] > max) {
+//         max = nums[j];
+//       }
+//     }
+//     a.push(max);
+//   }
+//   return a;
+// }
+// function largestRectangleArea(heights) {
+//   let max = 0;
+//   for (let i = 0; i < heights.length; i++) {
+//     let minHeight = heights[i];
+//     for (let j = i; j < heights.length; j++) {
+//       minHeight = Math.min(minHeight, heights[j]);
+//       let area = (j - i + 1) * minHeight;
+//       max = Math.max(max, area);
+//     }
+//   }
+//   return max;
+// }
+// function largestRectangleArea(heights) {
+//   let max = 0;
+//   for (let i = 0; i < heights.length; i++) {
+//     for (let j = i; j < heights.length; j++) {
+//       let area = (j - i + 1) * Math.min.apply(null, heights.slice(i, j + 1));
+//       max = Math.max(max, area);
+//     }
+//   }
+//   return max;
+// }
+// console.log(largestRectangleArea([0,9]))
+// 有效的括号 1.暴力 replace 2.栈
+// function isValid(s) {
+//   if (s.length % 2 === 1) return false;
+//   let l = s.length / 2;
+//   for (let i = 0; i < l; i++) {
+//     s = s.replace('()', '').replace('[]', '').replace('{}', '');
+//   }
+//   return !s.length;
+// }
+// function isValid(s) {
+//   if (s.length % 2 === 1) return false;
+//   let mapData = new Map([
+//     [')', '('],
+//     [']', '['],
+//     ['}', '{']
+//   ]);
+//   let stack = [];
+//   for (let i of s) {
+//     if (mapData.has(i)) {
+//       if (!stack.length || stack.pop() !== mapData.get(i)) {
+//         return false;
+//       }
+//     } else {
+//       stack.push(i);
+//     }
+//   }
+//   return !stack.length;
+// }
+// 最小栈 1.辅助栈
+// 同步
+// class MinStack {
+//   constructor() {
+//     this.x_stack = [];
+//     this.min_stack = [Infinity];
+//   }
+//   push(x) {
+//     this.x_stack.push(x);
+//     this.min_stack.push(Math.min(x, this.min_stack[this.min_stack.length - 1]));
+//   }
+//   pop() {
+//     this.x_stack.pop();
+//     this.min_stack.pop();
+//   }
+//   top() {
+//     return this.x_stack[this.x_stack.length - 1];
+//   }
+//   getMin() {
+//     return this.min_stack[this.min_stack.length - 1];
+//   }
+// }
+// 不同步
+// class MinStack {
+//   constructor() {
+//     this.x_stack = [];
+//     this.min_stack = [];
+//   }
+//   push(x) {
+//     this.x_stack.push(x);
+//     if (this.min_stack.length === 0 || x <= this.min_stack[this.min_stack.length - 1]) {
+//       this.min_stack.push(x);
+//     }
+//   }
+//   pop() {
+//     if (this.x_stack.pop() === this.min_stack[this.min_stack.length - 1]) {
+//       this.min_stack.pop();
+//     }
+//   }
+//   top() {
+//     return this.x_stack[this.x_stack.length - 1];
+//   }
+//   getMin() {
+//     return this.min_stack[this.min_stack.length - 1];
+//   }
+// }
+// 滑动窗口最大值 1.暴力 O(n*k) 2.双端单调递减队列 O(n)
+// function maxSlidingWindow(nums, k) {
+//   let res = [];
+//   for (let i = 0; i < nums.length - k + 1; i++) {
+//     let max = nums[i];
+//     for (let j = i; j < i + k; j++) {
+//       max = Math.max(max, nums[j]);
+//     }
+//     res.push(max);
+//   }
+//   return res;
+// }
+// function maxSlidingWindow(nums, k) {
+//   let res = [];
+//   let q = [];
+//   for (let i = 0; i < k; i++) {
+//     while (q.length && nums[i] >= nums[q[q.length - 1]]) {
+//       q.pop();
+//     }
+//     q.push(i);
+//   }
+//   res.push(nums[q[0]]);
+//   for (let i = k; i < nums.length; i++) {
+//     while (q.length && nums[i] >= nums[q[q.length - 1]]) {
+//       q.pop();
+//     }
+//     q.push(i);
+//     while (q[0] < i - k + 1) {
+//       q.shift();
+//     }
+//     res.push(nums[q[0]]);
+//   }
+//   return res;
+// }
+// function maxSlidingWindow(nums, k) {
+//   let res =[];
+//   let q = [];
+//   for (let i = 0; i < nums.length; i++) {
+//     while (q.length && nums[i] >= nums[q[q.length - 1]]) {
+//       q.pop();
+//     }
+//     q.push(i);
+//     while (q[0] < i - k + 1) {
+//       q.shift();
+//     }
+//     if (i >= k - 1) res.push(nums[q[0]]);
+//   }
+//   return res;
+// }
+function largestRectangleArea(heights) {
+  let max = 0;
+  for (let i = 1; i < heights.length - 1; i++) {
+    let j = i - 1;
+    let k = i + 1;
+    for (; j >= 0; j--) {
+      if (heights[j] < heights[i]) break;
+    }
+    for (; k < heights.length; k++) {
+      if (heights[k] < heights[i]) break;
+    }
+    // while (j >= 0 && nums[j] > nums[i]) j--;
+    // while (j < heights.length - 1 && nums[k] > nums[i]) k++;
+    let area = (k - j - 1) * nums[i];
+    max = Math.max(max, area);
+  }
+}
