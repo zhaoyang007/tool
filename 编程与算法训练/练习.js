@@ -2689,20 +2689,223 @@
 //   }
 //   return res;
 // }
+// function largestRectangleArea(heights) {
+//   let max = 0;
+//   for (let i = 0; i < heights.length; i++) {
+//     let j = i;
+//     let k = i;
+//     // for (; j >= 0; j--) {
+//     //   if (heights[j] < heights[i]) break;
+//     // }
+//     // for (; k < heights.length; k++) {
+//     //   if (heights[k] < heights[i]) break;
+//     // }
+//     while (j >= 0 && heights[j] >= heights[i]) j--;
+//     while (k < heights.length && heights[k] >= heights[i]) k++;
+//     let area = (k - j - 1) * heights[i];
+//     max = Math.max(max, area);
+//   }
+//   return max;
+// }
+// console.log(largestRectangleArea([5,4]))
+// largestRectangleArea
+// function largestRectangleArea(heights) {
+// 	let max = 0;
+//   let stack = [];
+//   for (let i = 0; i < heights.length; i++) {
+//     while (stack.length && heights[i] < heights[stack[stack.length - 1]]) {
+//       let index = stack.pop();
+//       let area = (i - index) * heights[index];
+//       max = Math.max(max, area);
+//     }
+//     stack.push(i);
+//   }
+//   for (let i = 0; i < stack.length; i++) {
+//     let area = (stack[stack.length - 1] - stack[i] + 1) * heights[stack[i]];
+//     max = Math.max(max, area);
+//   }
+//   return max;
+// }
+// console.log(largestRectangleArea([2,1,5,6,2,3]))
+// 两数之和 1.暴力枚举 O(n^2) 2.hash O(n)
+// function twoSum(nums, k) {
+//   for (let i = 0; i < nums.length - 1; i++) {
+//     for (let j = i + 1; j < nums.length; j++) {
+//       if (nums[i] + nums[j] === k) {
+//         return [i, j];
+//       }
+//     }
+//   }
+//   return [];
+// }
+// function twoSum(nums, target) {
+//   let mapData = new Map();
+//   for (let i = 0; i < nums.length; i++) {
+//     if (mapData.has(target - nums[i])) {
+//       return [i, mapData.get(target - nums[i])];
+//     }
+//     mapData.set(nums[i], i);
+//   }
+//   return [];
+// }
+// 最小栈 1.辅助栈
+// 同步
+// class MinStack {
+//   constructor() {
+//     this.x_stack = [];
+//     this.min_stack = [Infinity];
+//   }
+//   push(x) {
+//     this.x_stack.push(x);
+//     this.min_stack.push(Math.min(x, this.min_stack[this.min_stack.length - 1]));
+//   }
+//   pop() {
+//     this.x_stack.pop();
+//     this.min_stack.pop();
+//   }
+//   top() {
+//     return this.x_stack[this.x_stack.length - 1];
+//   }
+//   getMin() {
+//     return this.min_stack[this.min_stack.length - 1];
+//   }
+// }
+// 不同步
+// class MinStack {
+//   constructor() {
+//     this.x_stack = [];
+//     this.min_stack = [];
+//   }
+//   push(x) {
+//     this.x_stack.push(x);
+//     if (this.min_stack.length === 0 || x <= this.min_stack[this.min_stack.length - 1]) {
+//       this.min_stack.push(x);
+//     }
+//   }
+//   pop() {
+//     if (this.x_stack.pop() === this.min_stack[this.min_stack.length - 1]) {
+//       this.min_stack.pop();
+//     }
+//   }
+//   top() {
+//     return this.x_stack[this.x_stack.length - 1];
+//   }
+//   getMin() {
+//     return this.min_stack[this.min_stack.length - 1];
+//   }
+// }
+// 滑动窗口最大值 1.暴力 O(n*k) 2.单调双端队列 O(n)
+// function maxSlidingWindow(nums, k) {
+//   let a = [];
+//   let max = 0;
+//   for (let i = 0; i < nums.length - k + 1; i++) {
+//     for (let j = i; j < i + k; j++) {
+//       max = Math.max(max, nums[j]);
+//       a.push(max);
+//     }
+//   }
+//   return a;
+// }
+// function maxSlidingWindow(nums, k) {
+//   let a = [];
+//   for (let i = 0; i < nums.length - k + 1; i++) {
+//     let max = nums[i];
+//     for (let j = i; j < i + k; j++) {
+//       max = Math.max(max, nums[j]);
+//     }
+//     a.push(max);
+//   }
+//   return a;
+// }
+// function maxSlidingWindow(nums, k) {
+//   let a = [];
+//   let q = [];
+//   for (let i = 0; i < k; i++) {
+//     while (q.length && nums[i] >= nums[q[q.length - 1]]) {
+//       q.pop();
+//     }
+//     q.push(i);
+//   }
+//   a.push(nums[q[0]]);
+//   for (let i = k; i < nums.length; i++) {
+//     while (q.length && nums[i] >= nums[q[q.length - 1]]) {
+//       q.pop();
+//     }
+//     q.push(i);
+//     while (q[0] < i - k + 1) {
+//       q.shift();
+//     }
+//     a.push(nums[q[0]]);
+//   }
+//   return a;
+// }
+// function maxSlidingWindow(nums, k) {
+//   let a = [];
+//   let q = [];
+//   for (let i = 0; i < nums.length; i++) {
+//     while (q.length && nums[i] >= nums[q[q.length - 1]]) {
+//       q.pop();
+//     }
+//     q.push(i);
+//     while (q[0] < i - k + 1) {
+//       q.shift();
+//     }
+//     if (i >= k - 1) a.push(nums[q[0]]); 
+//   }
+//   return a;
+// }
+// function maxSlidingWindow(nums, k) {
+//   let a = [];
+//   let q = [];
+//   for (let i = 0; i < k; i++) {
+//     while (q.length && nums[i] >= nums[q[q.length - 1]]) {
+//       q.pop();
+//     }
+//     q.push(i);
+//   }
+//   a.push(nums[q[0]]);
+//   for (let i = k; i < nums.length; i++) {
+//     while (q.length && nums[i] >= nums[q[q.length - 1]]) {
+//       q.pop();
+//     }
+//     q.push(i);
+//     while (q[0] < i - k + 1) {
+//       q.shift();
+//     }
+//     a.push(nums[q[0]]);
+//   }
+//   return a;
+// }
+// function maxSlidingWindow(nums, k) {
+//   let a = [];
+//   let q = [];
+//   for (let i = 0; i < nums.length; i++) {
+//     while (q.length && nums[i] >= nums[q[q.length - 1]]) {
+//       q.pop();
+//     }
+//     q.push(i);
+//     while (q[0] < i - k + 1) {
+//       q.shift();
+//     }
+//     if (i >= k - 1) a.push(nums[q[0]]);
+//   }
+//   return a;
+// }
 function largestRectangleArea(heights) {
-  let max = 0;
-  for (let i = 1; i < heights.length - 1; i++) {
-    let j = i - 1;
-    let k = i + 1;
-    for (; j >= 0; j--) {
-      if (heights[j] < heights[i]) break;
+	let max = 0;
+  let stack = [];
+  for (let i = 0; i < heights.length; i++) {
+    while (stack.length && heights[i] < heights[stack[stack.length - 1]]) {
+      let index = stack.pop();
+      let area = (i - index) * heights[index];
+      max = Math.max(max, area);
     }
-    for (; k < heights.length; k++) {
-      if (heights[k] < heights[i]) break;
-    }
-    // while (j >= 0 && nums[j] > nums[i]) j--;
-    // while (j < heights.length - 1 && nums[k] > nums[i]) k++;
-    let area = (k - j - 1) * nums[i];
+    stack.push(i);
+  }
+  for (let i = 0; i < stack.length; i++) {
+    let area = (stack[stack.length - 1] - stack[i] + 1) * heights[stack[i]];
     max = Math.max(max, area);
   }
+  return max;
 }
+console.log(largestRectangleArea([2,1,5,6,2,3]))
