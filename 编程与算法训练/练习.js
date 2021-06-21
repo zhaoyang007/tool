@@ -3039,3 +3039,151 @@
 //   }
 //   return a;
 // }
+// 有效的字母异位词
+// function isAnagram(s, t) {
+//   let sortS = Array.from(s).sort().join();
+//   let sortT = Array.from(t).sort().join();
+//   return sortS === sortT;
+// }
+// function isAnagram(s, t) {
+//   let mapData = new Map();
+//   for (let i of s) {
+//     if (mapData.has(i)) {
+//       mapData.set(i, mapData.get(i) + 1);
+//     } else {
+//       mapData.set(i, 1);
+//     }
+//   }
+//   for (let i of t) {
+//     if (mapData.has(i)) {
+//       mapData.set(i, mapData.get(i) - 1);
+//       if (mapData.get(i) < 0) return false;
+//     } else {
+//       return false;
+//     }
+//   }
+//   // for (let [key, value] of mapData) {
+//   //   if (mapData.get(key) !== 0) {
+//   //     return false;
+//   //   }
+//   // }
+//   return true;
+// }
+// function isAnagram(s, t) {
+//   if (s.length !== t.length) {
+//     return false;
+//   }
+//   const table = new Array(26).fill(0);
+//   for (let i = 0; i < s.length; ++i) {
+//       table[s.codePointAt(i) - 'a'.codePointAt(0)]++;
+//   }
+//   for (let i = 0; i < t.length; ++i) {
+//       table[t.codePointAt(i) - 'a'.codePointAt(0)]--;
+//       if (table[t.codePointAt(i) - 'a'.codePointAt(0)] < 0) {
+//           return false;
+//       }
+//   }
+//   return true;
+// }
+// console.log(isAnagram("anagram", "nagaram"));
+// function groupAnagrams(strs) {
+//   let a = [];
+//   let mapData = new Map();
+//   strs.forEach(item => {
+//     let key = [...item].sort().join('');
+//     if (mapData.has(key)) {
+//       let a = mapData.get(key);
+//       a.push(item);
+// 			mapData.set(key, a);
+//     } else {
+// 			mapData.set(key, [item]);
+//     }
+//   });
+//   for (let [key, value] of mapData) {
+//   	a.push(value); 
+//   }
+//   return a;
+// }
+// function groupAnagrams(strs) {
+//   let mapData = new Map();
+//   for (let str of strs) {
+//     let key = [...str].sort().join('');
+//    	let list = mapData.has(key) ? mapData.get(key) : [];
+//     list.push(str);
+//     mapData.set(key, list);
+//   };
+//   return [...mapData.values()];
+// }
+// groupAnagrams(["eat","tea","tan","ate","nat","bat"]);
+// function groupAnagrams(strs) {
+//   let map = {};
+//   for (let str of strs) {
+//     let count = new Array(26).fill(0);
+//     for (let c of str) {
+//       count[c.charCodeAt() - 'a'.charCodeAt()]++;
+//     }
+//     map[count] ? map[count].push(str) : map[count] = [str];
+//   }
+//   console.log(map)
+//   return Object.values(map);
+// }
+// function groupAnagrams(strs) {
+//   let map = new Map();
+//   for (let str of strs) {
+//     let count = new Array(26).fill(0);
+//     for (let c of str) {
+//       count[c.charCodeAt() - 'a'.charCodeAt()]++;
+//     }
+//     let list = map.has(count.join()) ? map.get(count) : [];
+//     list.push(str);
+//     map.set(count, list);
+//   }
+//   return Array.from(map.values());
+// }
+// groupAnagrams(["eat","tea","tan","ate","nat","bat"])
+// 滑动窗口最大值 1.暴力 O(n*k) 2.双端单调队列 O(n)
+// function maxSlidingWindow(nums, k) {
+//   let a = [];
+//   for (let i = 0; i < nums.length - k + 1; i++) {
+//     let max = nums[i];
+//     for (let j = i; j < i + k; j++) {
+//       max = Math.max(max, nums[j]);
+//     }
+//     a.push(max);
+//   }
+//   return a;
+// }
+// function maxSlidingWindow(nums, k) {
+//   let a = [];
+//   let q = [];
+//   for (let i = 0; i < k; i++) {
+//     while (q.length && nums[i] >= nums[q[q.length - 1]]) {
+//       q.pop();
+//     }
+//     q.push(i);
+//   }
+//   a.push(nums[q[0]]);
+//   for (let i = k; i < nums.length; i++) {
+//     while (q.length && nums[i] >= nums[q[q.length - 1]]) {
+//       q.pop();
+//     }
+//     q.push(i);
+//     while (q[0] < i - k + 1) {
+//       q.shift();
+//     }
+//     a.push(nums[q[0]]);
+//   }
+//   return a;
+// }
+// 柱状图中最大的矩形 1.暴力 O(n^3) 2.暴力2 O(n^2) 3.栈 O(n)
+function largestRectangleArea(heights) {
+  let max = 0;
+  for (let i = 0; i < heights.length; i++) {
+    for (let j = i; j < heights.length; j++) {
+      let area = (j - i + 1) * Math.min.apply(null, heights.slice(i, j + 1));
+      max = Math.max(max, area);
+    }
+  }
+  return max;
+}
+console.log(largestRectangleArea([0,9]))
