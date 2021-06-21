@@ -2891,21 +2891,151 @@
 //   }
 //   return a;
 // }
-function largestRectangleArea(heights) {
-	let max = 0;
-  let stack = [];
-  for (let i = 0; i < heights.length; i++) {
-    while (stack.length && heights[i] < heights[stack[stack.length - 1]]) {
-      let index = stack.pop();
-      let area = (i - index) * heights[index];
-      max = Math.max(max, area);
-    }
-    stack.push(i);
-  }
-  for (let i = 0; i < stack.length; i++) {
-    let area = (stack[stack.length - 1] - stack[i] + 1) * heights[stack[i]];
-    max = Math.max(max, area);
-  }
-  return max;
-}
-console.log(largestRectangleArea([2,1,5,6,2,3]))
+// function largestRectangleArea(heights) {
+// 	let max = 0;
+//   let stack = [];
+//   for (let i = 0; i < heights.length; i++) {
+//     while (stack.length && heights[i] < heights[stack[stack.length - 1]]) {
+//       let index = stack.pop();
+//       let area = (i - index) * heights[index];
+//       max = Math.max(max, area);
+//     }
+//     stack.push(i);
+//   }
+//   for (let i = 0; i < stack.length; i++) {
+//     let area = (stack[stack.length - 1] - stack[i] + 1) * heights[stack[i]];
+//     max = Math.max(max, area);
+//   }
+//   return max;
+//   // let max = 0;
+//   // let stack = [-1];
+//   // for (let i = 0; i < heights.length; i++) {
+//   //   while (stack.length > 1 && heights[i] < heights[stack[stack.length - 1]]) {
+//   //     let area = (i - stack[stack.length - 2] - 1) * heights[stack.pop()];
+//   //     max = Math.max(max, area);
+//   //   }
+//   //   stack.push(i);
+//   // }
+//   // for (let i = 1; i < stack.length; i++) {
+//   //   let area = heights[stack[i]] * (stack[stack.length - 1] - stack[i - 1]);
+//   //   max = Math.max(max, area);
+//   // }
+//   // return max;
+// }
+// console.log(largestRectangleArea([6,5]))
+// function largestRectangleArea(heights) {
+// 	let left = [];
+//   let right = new Array(heights.length).fill(heights.length);
+//   let stack = [];
+//   for (let i = 0; i < heights.length; i++) {
+// 		while (stack.length && heights[i] < heights[stack[stack.length - 1]]) {
+//     	right[stack.pop()] = i;
+//     }
+//     left[i] = !stack.length ? -1 : stack[stack.length - 1];
+//     stack.push(i);
+//   }
+//   console.log(left)
+//   console.log(right)
+//   let max = 0;
+//   for (let i = 0; i < heights.length; i++) {
+//     let area = heights[i] * (right[i] - left[i] - 1);
+//     max = Math.max(max, area);
+//   }
+//   return max;
+// }
+// console.log(largestRectangleArea([2,1,5,6,2,3]))
+// 滑动窗口最大值 1.暴力 O(n*k) 2.双端递减队列 O(n)
+// function maxSlidingWindow(nums, k) {
+//   let a = [];
+//   for (let i = 0; i < nums.length - k + 1; i++) {
+//     let max = nums[i];
+//     for (let j = i; j < i + k; j++) {
+//       max = Math.max(max, nums[j]);
+//     }
+//     a.push(max);
+//   }
+//   return a;
+// }
+// function maxSlidingWindow(nums, k) {
+//   let a = [];
+//   let q = [];
+//   for (let i = 0; i < nums.length; i++) {
+//     while (q.length && nums[i] >= nums[q[q.length - 1]]) {
+//       q.pop();
+//     }
+//     q.push(i);
+//     while (q[0] < i - k + 1) {
+//       q.shift();
+//     }
+//     if (i >= k - 1) a.push(nums[q[0]]);
+//   }
+//   return a;
+// }
+// function maxSlidingWindow(nums, k) {
+//   let a = [];
+//   let q = [];
+//   for (let i = 0; i < k; i++) {
+//     while (q.length && nums[i] >= nums[q[q.length - 1]]) {
+//       q.pop();
+//     }
+//     q.push(i);
+//   }
+//   a.push(nums[q[0]]);
+//   for (let i = k; i < nums.length; i++) {
+//     while (q.length && nums[i] >= nums[q[q.length - 1]]) {
+//       q.pop();
+//     }
+//     q.push(i);
+//     while (q[0] < i - k + 1) {
+//       q.shift();
+//     }
+//     a.push(nums[q[0]]);
+//   }
+//   return a;
+// }
+// 三数之和 1.暴力枚举 2.hash 2.夹逼
+// function threeSum(nums) {
+//   if (nums == null || nums.length <= 2) return [];
+//   let a = [];
+//   let map = new Map();
+//   for (let i = 0; i < nums.length - 2; i++) {
+//     for (let j = i + 1; j < nums.length - 1; j++) {
+//       for (let k = j + 1; k < nums.length; k++) {
+//         let sum = nums[i] + nums[j] + nums[k];
+//         let tmp = [nums[i], nums[j], nums[k]];
+//         tmp.sort();
+//         if (sum === 0) {
+//           if (!mapData.has(tmp.join())) {
+//             a.push([nums[i], nums[j], nums[k]]);
+//             mapData.set(tmp.join(), 1);
+//           }
+//         }
+//       }
+//     }
+//   }
+//   return a;
+// } 
+// function threeSum(nums) {
+//   if (nums == null || nums.length <= 2) return [];
+//   let a = [];
+//   nums.sort((a, b) => a - b);
+//   for (let k = 0; k < nums.length - 2; k++) {
+//     if (nums[k] > 0) break;
+//     if (k > 0 && nums[k] === nums[k - 1]) continue;
+//     let i = k + 1;
+//     let j = nums.length - 1;
+//     while (i < j) {
+//       let sum = nums[i] + nums[j] + nums[k];
+//       if (sum < 0) {
+//         while (i < j && nums[i] === nums[++i]);
+//       } else if (sum > 0) {
+//         while (i < j && nums[j] === nums[--j]);
+//       } else {
+//         a.push([nums[k], nums[i], nums[j]]);
+//         while (i < j && nums[i] === nums[++i]);
+//         while (i < j && nums[j] === nums[--j]);
+//       }
+//     }
+//   }
+//   return a;
+// }
