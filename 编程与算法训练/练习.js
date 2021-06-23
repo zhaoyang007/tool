@@ -3435,7 +3435,7 @@
 //   }
 //   return Object.values(map);
 // }
-function groupAnagrams(strs) {
+// function groupAnagrams(strs) {
   // let map = new Map();
   // for (let str of strs) {
   //   let table = new Array(26).fill(0);
@@ -3457,5 +3457,352 @@ function groupAnagrams(strs) {
   //   map.has(count.join(',')) ? map.get(count.join(',')).push(str) : map.set(count.join(','), [str]);
   // }
   // return Array.from(map.values());
-}
-console.log(groupAnagrams(["eat","tea","tan","ate","nat","bat"]))
+// }
+// console.log(groupAnagrams(["eat","tea","tan","ate","nat","bat"]))
+// 三数之和 2.hash O(n^2)
+// function threeSum(nums) {
+//   if (nums == null || nums.length <= 2) return [];
+//   let a = [];
+//   let map = new Map();
+//   let set = new Set();
+//   for (let i = 0; i < nums.length - 2; i++) {
+//     map.set(nums[i], nums[i]);
+//     for (let j = i + 2; j < nums.length; j++) {
+//       let sum = nums[i + 1] + nums[j];
+//       if (map.has(-sum)) {
+//         let tmp = [map.get(-sum), nums[i + 1], nums[j]];
+//         tmp.sort();
+//         if (!set.has(tmp.join())) {
+//           a.push([map.get(-sum), nums[i + 1], nums[j]]);
+//           set.add(tmp.join());
+//         }
+//       }
+//     }
+//   }
+//   return a;
+// }
+// function threeSum(nums) {
+//   if (nums == null || nums.length <= 2) return [];
+//   let a = [];
+//   let map = new Map();
+//   let set = new Set();
+//   for (let i = 0; i < nums.length - 2; i++) {
+//     map.set(nums[i], i);
+//     for (let j = i + 2; j < nums.length; j++) {
+//       let sum = nums[i + 1] + nums[j];
+//       if (map.has(-sum)) {
+//         let tmp = [nums[map.get(-sum)], nums[i + 1], nums[j]];
+//         tmp.sort();
+//         if (!set.has(tmp.join())) {
+//           a.push([nums[map.get(-sum)], nums[i + 1], nums[j]]);
+//           set.add(tmp.join());
+//         }
+//       }
+//     }
+//   }
+//   return a;
+// }
+// function threeSum(nums) {
+//   if (nums == null || nums.length <= 2) return [];
+//   let a = [];
+//   let map = new Map();
+//   let set = new Set();
+//   for (let i = 0; i < nums.length - 1; i++) {
+//     for (let j = i + 1; j < nums.length; j++) {
+//       let sum = nums[i] + nums[j];
+//       if (map.has(-sum)) {
+//         let tmp = [nums[map.get(-sum)], nums[i], nums[j]];
+//         tmp.sort();
+//         if (!set.has(tmp.join())) {
+//           a.push([nums[map.get(-sum)], nums[i], nums[j]]);
+//           set.add(tmp.join());
+//         }
+//       }
+//     }
+//     map.set(nums[i], i);
+//   }
+//   return a;
+// }
+// function fourSum(nums, target) {
+//   if (nums == null || nums.length <= 3) return [];
+//   let a = [];
+//   let map = new Map();
+//   let set = new Set();
+//   for (let i = 0; i < nums.length - 2; i++) {
+//     for (let j = i + 1; j < nums.length - 1; j++) {
+//       for (let k = j + 1; k < nums.length; k++) {
+//         let sum = nums[i] + nums[j] + nums[k];
+//         if (map.has(target - sum)) {
+//           let tmp = [nums[map.get(target - sum)], nums[i], nums[j], nums[k]];
+//           tmp.sort();
+//           if (!set.has(tmp.join())) {
+//             a.push([nums[map.get(target - sum)], nums[i], nums[j], nums[k]]);
+//             set.add(tmp.join());
+//           }
+//         }
+//       }
+//     }
+//     map.set(nums[i], i);
+//   }
+//   return a;
+// }
+// function threeSum(nums) {
+//   if (nums == null || nums.length <= 2) return [];
+//   let a = [];
+//   let mapData = new Map();
+//   let setData = new Set();
+//   for (let i = 0; i < nums.length - 2; i++) {
+//     mapData.set(nums[i], i);
+//   }
+//   for (let i = 0; i < nums.length - 1; i++) {
+//     for (let j = i + 1; j < nums.length; j++) {
+//       let sum = nums[i] + nums[j];
+//       if (mapData.has(-sum) && mapData.get(-sum) !== i && mapData.get(-sum) !== j) {
+//         let tmp = [nums[mapData.get(-sum)], nums[i], nums[j]];
+//         tmp.sort();
+//         if (!setData.has(tmp.join())) {
+//           a.push([nums[mapData.get(-sum)], nums[i], nums[j]]);
+//           setData.add(tmp.join());
+//         }
+//       }
+//     }
+//   }
+//   return a;
+// }
+// function threeSum(nums) {
+//   if (nums == null || nums.length <= 2) return [];
+//   let a = [];
+//   let map = new Map();
+//   let set = new Set();
+//   for (let i = 0; i < nums.length - 1; i++) {
+//     for (let j = i + 1; j < nums.length; j++) {
+//       let sum = nums[i] + nums[j];
+//       if (map.has(-sum)) {
+//         let tmp = [map.get(-sum), nums[i], nums[j]];
+//         tmp.sort();
+//         if (!set.has(tmp.join())) {
+//           a.push([map.get(-sum), nums[i], nums[j]]);
+//           set.add(tmp.join());
+//         }
+//       }
+//     }
+//     map.set(nums[i], nums[i]);
+//   }
+//   return a;
+// }
+// 三数之和 1.暴力 O(n^3) 2.hash O(n^2) 3.夹逼 O(n^2)
+// function threeSum(nums) {
+//   if (nums == null || nums.length <= 2) return [];
+//   let a = [];
+//   let set = new Set();
+//   for (let i = 0; i < nums.length - 2; i++) {
+//     for (let j = i + 1; j < nums.length - 1; j++) {
+//       for (let k = j + 1; k < nums.length; k++) {
+//         let sum = nums[i] + nums[j] + nums[k];
+//         if (sum === 0) {
+//           let tmp = [nums[i], nums[j], nums[k]];
+//           tmp.sort();
+//           if (!set.has(tmp.join())) {
+//             a.push([nums[i], nums[j], nums[k]]);
+//             set.add(tmp.join());
+//           }
+//         }
+//       }
+//     }
+//   }
+//   return a;
+// }
+// function threeSum(nums) {
+//   if (nums == null || nums.length <= 2) return [];
+//   let a = [];
+//   let map = new Map();
+//   let set = new Set();
+//   for (let i = 0; i < nums.length - 1; i++) {
+//     for (let j = i + 1; j < nums.length; j++) {
+//       let sum = nums[i] + nums[j];
+//       if (map.has(-sum)) {
+//         let tmp = [map.get(-sum), nums[i], nums[j]];
+//         tmp.sort();
+//         if (!set.has(tmp.join())) {
+//           a.push([map.get(-sum), nums[i], nums[j]]);
+//           set.add(tmp.join());
+//         }
+//       }
+//     }
+//     map.set(nums[i], nums[i]);
+//   }
+//   return a;
+// }
+// function threeSum(nums) {
+//   if (nums == null || nums.length <= 2) return [];
+//   let a = [];
+//   let map = new Map();
+//   let set = new Set();
+//   for (let i = 0; i < nums.length; i++) {
+//     map.set(nums[i], i);
+//   }
+//   for (let i = 0; i < nums.length - 1; i++) {
+//     for (let j = i + 1; j < nums.length; j++) {
+//       let sum = nums[i] + nums[j];
+//       if (map.has(-sum) && map.get(-sum) !== i && map.get(-sum) !== j) {
+//         let tmp = [nums[map.get(-sum)], nums[i], nums[j]];
+//         tmp.sort();
+//         if (!set.has(tmp.join())) {
+//           a.push([nums[map.get(-sum)], nums[i], nums[j]]);
+//           set.add(tmp.join());
+//         }
+//       }
+//     }
+//   }
+//   return a;
+// }
+// function threeSum(nums) {
+//   if (nums == null || nums.length <= 2) return [];
+//   let a = [];
+//   nums.sort((a, b) => a - b);
+//   for (let k = 0; k < nums.length - 2; k++) {
+//     if (nums[k] > 0) break;
+//     if (k > 0 && nums[k] === nums[k - 1]) continue;
+//     let i = k + 1;
+//     let j = nums.length - 1;
+//     while (i < j) {
+//       let sum = nums[k] + nums[i] + nums[j];
+//       if (sum < 0) {
+//         while (i < j && nums[i] === nums[++i]);
+//       } else if (sum > 0) {
+//         while (i < j && nums[j] === nums[--j]);
+//       } else {
+//         a.push([nums[i], nums[j], nums[k]]);
+//         while (i < j && nums[i] === nums[++i]);
+//         while (i < j && nums[j] === nums[--j]) ;
+//       }
+//     }
+//   }
+//   return a;
+// }
+// 有效的字母异位词 1.字母排序后比较是否相等 O(nlogn) 2.hash 统计每个字母出现的频次 O(n)
+// function isAnagram(s, t) {
+//   if (s.length !== t.length) return false;
+//   return Array.from(s).sort().join() === Array.from(t).sort().join();
+// }
+// function isAnagram(s, t) {
+//   if (s.length !== t.length) return false;
+//   let map = new Map();
+//   for (let i of s) {
+//     let value = map.has(i) ? map.get(i) + 1 : 1;
+//     map.set(i, value);
+//   }
+//   for (let i of t) {
+//     if (map.has(i)) {
+//       map.set(i, map.get(i) - 1);
+//       if (map.get(i) < 0) return false;
+//     } else {
+//       return false;
+//     }
+//   }
+//   return true;
+// }
+// function isAnagram(s, t) {
+//   if (s.length !== t.length) return false;
+//   let table = new Array(26).fill(0);
+//   for (let i of s) {
+//     table[i.charCodeAt() - 'a'.charCodeAt()]++;
+//   }
+//   for (let i of t) {
+//     table[i.charCodeAt() - 'a'.charCodeAt()]--;
+//     if (table[i.charCodeAt() - 'a'.charCodeAt()] < 0) return false; 
+//   }
+//   return true;
+// }
+// 字母异位词分组 1.排序后 hash O(n*klogk) 2.自制 hash O(n*k)
+// function groupAnagrams(strs) {
+//   let map = new Map();
+//   for (let str of strs) {
+//     let key = [...str].sort().join();
+//     let value = map.has(key) ? map.get(key) : [];
+//     value.push(str);
+//     map.set(key, value);
+//   }
+//   return [...map.values()];
+// }
+// function groupAnagrams(strs) {
+//   let map = {};
+//   for (let str of strs) {
+//     let table = new Array(26).fill(0);
+//     for (let c of str) {
+//       table[c.charCodeAt() - 'a'.charCodeAt()]++;
+//     }
+//     map[table] ? map[table].push(str) : map[table] = [str];
+//   }
+//   return Object.values(map);
+// }
+// function groupAnagrams(strs) {
+//   let map = new Map();
+//   for (let str of strs) {
+//     let table = new Array(26).fill(0);
+//     for (let c of str) {
+//       table[c.charCodeAt() - 'a'.charCodeAt()]++;
+//     }
+//     map.has(table.join()) ? map.get(table.join()).push(str) : map.set(table.join(), [str]);
+//   }
+//   return [...map.values()];
+// }
+// 柱状图中最大的矩形 1.暴力 O(n^3) 2.扩散遍历 3.栈
+// function largestRectangleArea(heights) {
+//   let max = 0;
+//   for (let i = 0; i < heights.length; i++) {
+//     let minHeight = heights[i];
+//     for (let j = i; j < heights.length; j++) {
+//       minHeight = Math.min(minHeight, heights[j]);
+//       let area = minHeight * (j - i + 1);
+//       max = Math.max(max, area);
+//     }
+//   }
+//   return max;
+// }
+// function largestRectangleArea(heights) {
+//   let max = 0;
+//   for (let i = 0; i < heights.length; i++) {
+//     let j = i, k = i;
+//     while (j >= 0 && heights[j] >= heights[i]) j--;
+//     while (k < heights.length && heights[k] >= heights[i]) k++;
+//     let area = heights[i] * (k - j - 1);
+//     max = Math.max(max, area); 
+//   }
+//   return max;
+// }
+// function largestRectangleArea(heights) {
+//   let max = 0;
+//   let stack = [-1];
+//   for (let i = 0; i < heights.length; i++) {
+//     while (stack.length && heights[i] < heights[stack[stack.length - 1]]) {
+//       let index = stack.pop();
+//       let area = heights[index] * (i - stack[stack.length - 1] - 1);
+//       max = Math.max(max, area);
+//     }
+//     stack.push(i);
+//   }
+//   for (let i = 1; i < stack.length; i++) {
+//     let area = heights[stack[i]] * (stack[stack.length - 1] - stack[i - 1]);
+//     max = Math.max(max, area);
+//   }
+//   return max;
+// }
+// function largestRectangleArea(heights) {
+//   let max = 0;
+//   let stack = [];
+//   let left = [];
+//   let right = new Array(heights.length).fill(heights.length);
+//   for (let i = 0; i < heights.length; i++) {
+//     while (stack.length && heights[i] <= heights[stack[stack.length - 1]]) {
+//       right[stack.pop()] = i;
+//     }
+//     left[i] = !stack.length ? -1 : stack[stack.length - 1];
+//     stack.push(i);
+//   }
+//   for (let i = 0; i < heights.length; i++) {
+//     let area = heights[i] * (right[i] - left[i] - 1);
+//     max = Math.max(max, area);
+//   }
+//   return max;
+// }
