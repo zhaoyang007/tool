@@ -4477,3 +4477,130 @@
 //   }
 //   return max;
 // }
+// 柱状图中最大的矩形 1.暴力 O(n^3) 2.扩散 O(n^2) 3.栈
+// function largestRectangleArea(heights) {
+//   let max = 0;
+//   for (let i = 0; i < heights.length; i++) {
+//     let minHeight = heights[i];
+//     for (let j = i; j < heights.length; j++) {
+//       minHeight = Math.min(minHeight, heights[j]);
+//       let area = minHeight * (j - i + 1);
+//       max = Math.max(max, area);
+//     }
+//   }
+//   return max;
+// }
+// function largestRectangleArea(heights) {
+//   let max = 0;
+//   for (let i = 0; i < heights.length; i++) {
+//     for (let j = i; j < heights.length; j++) {
+//       minHeight = Math.min.apply(null, heights.slice(i, j + 1));
+//       let area = minHeight * (j - i + 1);
+//       max = Math.max(max, area);
+//     }
+//   }
+//   return max;
+// }
+// function largestRectangleArea(heihgts) {
+//   let max = 0;
+//   for (let i = 0; i < heights.length; i++) {
+//     let j = i;
+//     let k = i;
+//     while (j >= 0 && heights[j] >= heights[i]) j--;
+//     while (k < heights.length && heights[k] >= heihgts[i]) k++;
+//     let area = heights[i] * (k - j - 1);
+//     max = Math.max(max, area);
+//   }
+//   return max;
+// }
+// function largestRectangleArea(heights) {
+//   let max = 0;
+//   for (let i = 0; i < heights.length; i++) {
+//     let j = i;
+//     let k = i;
+//     for ( ; j >= 0; j--) {
+//       if (heights[j] < heights[i]) break;
+//     }
+//     for ( ; k < heights.length; k++) {
+//       if (heights[k] < heights[i]) break;
+//     }
+//     let area = heights[i] * (k - j - 1);
+//     max = Math.max(max, area);
+//   }
+//   return max;
+// }
+// function largestRectangleArea(heights) {
+//   let max = 0;
+//   let stack = [-1];
+//   heights.push(0);
+//   for (let i = 0; i < heights.length; i++) {
+//     while (stack.length > 1 && heights[i] < heights[stack[stack.length - 1]]) {
+//       let index = stack.pop();
+//       let area = heights[index] * (i - stack[stack.length - 1] - 1);
+//       max = Math.max(max, area);
+//     }
+//     stack.push(i);
+//   }
+//   return max;
+// }
+// function largestRectangleArea(heihgts) {
+//   let max = 0;
+//   let stack = [-1];
+//   for (let i = 0; i < heihgts.length; i++) {
+//     while (stack.length > 1 && heihgts[i] < heihgts[stack[stack.length - 1]]) {
+//       let index = stack.pop();
+//       let area = heihgts[index] * (i - stack[stack.length - 1] - 1);
+//       max = Math.max(max, area);
+//     }
+//     stack.push(i);
+//   }
+//   for (let i = 1; i < stack.length; i++) {
+//     let area = heihgts[stack[i]] * (stack[stack.length - 1] - stack[i - 1]);
+//     max = Math.max(max, area);
+//   }
+//   return max;
+// }
+// function largestRectangleArea(heights) {
+//   let max = 0;
+//   let stack = [];
+//   let left = [];
+//   let right = [];
+//   for (let i = 0; i < heights.length; i++) {
+//     while (stack.length && heights[i] <= heights[stack[stack.length - 1]]) {
+//       stack.pop();
+//     }
+//     left[i] = !stack.length ? -1 : stack[stack.length - 1];
+//     stack.push(i);
+//   }
+//   stack = [];
+//   for (let i = heights.length - 1; i >= 0; i--) {
+//     while (stack.length && heights[i] <= heights[stack[stack.length - 1]]) {
+//       stack.pop();
+//     }
+//     right[i] = !stack.length ? heights.length : stack[stack.length - 1];
+//     stack.push(i);
+//   }
+//   for (let i = 0; i < heights.length; i++) {
+//     let area = heights[i] * (right[i] - left[i] - 1);
+//     max = Math.max(max, area);
+//   }
+//   return max;
+// }
+// function largestRectangleArea(heights) {
+//   let max = 0;
+//   let stack = [];
+//   let left = [];
+//   let right = new Array(heights.length).fill(heights.length);
+//   for (let i = 0; i < heights.length; i++) {
+//     while (stack.length && heights[i] < heights[stack[stack.length - 1]]) {
+//       right[stack.pop()] = i;
+//     }
+//     left[i] = !stack.length ? -1 : stack[stack.length - 1];
+//     stack.push(i);
+//   }
+//   for (let i = 0; i < heights.length; i++) {
+//     let area = heights[i] * (right[i] - left[i] - 1);
+//     max = Math.max(max, area);
+//   }
+//   return max;
+// }
