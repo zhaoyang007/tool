@@ -4811,3 +4811,528 @@
 //   }
 //   return Object.values(map);
 // }
+// 树节点定义
+// class Node {
+//   constructor(val) {
+//     this.val = val;
+//     this.left = null;
+//     this.right = null;
+//   }
+// }
+// // js声明二叉树数据结构
+// class Tree {
+//   constructor(data) {
+//     let nodeList = [];
+//     for (let i = 0; i < data.length; i++) {
+//       let node = new Node(data[i]);
+//       nodeList.push(node);
+//       if (i > 0) {
+//         let n = Math.floor(Math.sqrt(i + 1));
+//         let q = Math.pow(2, n) - 1;
+//         let p = Math.pow(2, n - 1) - 1;
+//         let parent = nodeList[p + Math.floor((i - q) / 2)];
+//         if (parent.left) {
+//           parent.right = node;
+//         } else {
+//           parent.left = node;
+//         }
+//       }
+//     }
+//     let root = nodeList.shift();
+//     nodeList.length = 0;
+//     return root;
+//   }
+// }
+// console.log(new Tree([0,1,2,3,4,5,6,7,8,9,10,11,12,13,14]))
+// js 声明二叉树数据结构
+// class Node {
+//   constructor(val) {
+//     this.val = val;
+//     this.left = null;
+//     this.right = null;
+//   }
+// }
+// class Tree {
+//   constructor(data) {
+//     let nodeList = [];
+//     for (let i = 0; i < data.length; i++) {
+//       let node = new Node(data[i]);
+//       nodeList.push(node);
+//       if (i > 0) {
+//         let n = Math.floor(Math.sqrt(i + 1));
+//         let q = Math.pow(2, n) - 1;
+//         let p = Math.pow(2, n - 1) - 1;
+//         let parent = nodeList[p + Math.floor((i - q) / 2)];
+//         if (parent.left) {
+//           parent.right = node;
+//         } else {
+//           parent.left = node;
+//         }
+//       }
+//     }
+//     let root = nodeList.shift();
+//     nodeList.length = 0;
+//     return root;
+//   }
+// }
+// console.log(new Tree([0,1,2,3,4,5,6,7,8,9,10,11,12,13,14]))
+// 二叉树的中序遍历 1.递归 O(n)
+// function inorderTraversal(root) {
+//   let res = [];
+//   function inorder(root) {
+//     if (inorder) {
+//       inorder(root.left);
+//       res.push(root.val);
+//       inorder(root.right);
+//     }
+//   }
+//   inorder(root);
+//   return res;
+// }
+// 二叉树的中序遍历
+// function inorderTraversal(root) {
+//   let res = [];
+//   function inorder(root) {
+//     if (root) {
+//       inorder(root.left);
+//       res.push(root.val);
+//       inorder(root.right);
+//     }
+//   }
+//   inorder(root);
+//   return res;
+// }
+// 柱状图中最大的矩形 1.暴力 O(n^3) 2.扩散 O(n^2) 3.栈 O(n)
+// function largestRectangleArea(heights) {
+//   let max = 0;
+//   for (let i = 0; i < heights.length; i++) {
+//     let minHeight = heights[i];
+//     for (let j = i; i < heights.length; j++) {
+//       minHeight = Math.min(minHeight, heights[j]);
+//       let area = minHeight * (j - i + 1);
+//       max = Math.max(max, area);
+//     }
+//   }
+//   return max;
+// }
+// function largestRectangleArea(heights) {
+//   let max = 0;
+//   for (let i = 0; i < heights.length; i++) {
+//     let j = i, k = i;
+//     while (j >= 0 && heights[j] >= heights[i]) {
+//       j--;
+//     }
+//     while (k < heights.length && heights[k] >= heights[i]) {
+//       k++
+//     }
+//     let area = heights[i] * (k - j - 1);
+//     max = Math.max(max, area);
+//   }
+//   return max;
+// }
+// function largestRectangleArea(heihgts) {
+//   let max = 0;
+//   for (let i = 0; i < heihgts.length; i++) {
+//     let j = i, k = i;
+//     for ( ; j >= 0; j--) {
+//       if (heihgts[j] < heihgts[i]) break;
+//     }
+//     for ( ; k < heihgts.length; k++) {
+//       if (heihgts[k] < heihgts[i]) break;
+//     }
+//     let area = heihgts[i] * (k - j - 1);
+//     max = Math.max(max, area);
+//   }
+//   return max;
+// }
+// function largestRectangleArea(heights) {
+//   let max = 0;
+//   let stack = [-1];
+//   for (let i = 0; i < heights.length; i++) {
+//     while (stack.length > 1 && heights[i] < heights[stack[stack.length - 1]]) {
+//       let index = stack.pop();
+//       let area = heights[index] * (i - stack[stack.length - 1] - 1);
+//       max = Math.max(max, area);
+//     }
+//   }
+//   for (let i = 1; i < stack.length; i++) {
+//     let area = heights[stack[i]] * (stack[stack.length - 1] - stack[i - 1]);
+//     max = Math.max(max, area);
+//   }
+//   return max;
+// }
+// function largestRectangleArea(heights) {
+//   let max = 0;
+//   let stack = [-1];
+//   heights.push(0);
+//   for (let i = 0; i < heights.length; i++) {
+//     while (stack.length > 1 && heights[i] < heights[stack[stack.length - 1]]) {
+//       let index = stack.pop();
+//       let area = heights[index] * (i - stack[stack.length] - 1);
+//       max = Math.max(max, area);
+//     }
+//     stack.push(i);
+//   }
+//   return max;
+// }
+// function largestRectangleArea(heights) {
+//   let max = 0;
+//   let stack = [];
+//   let left = [];
+//   let right = [];
+//   for (let i = 0; i < heights.length; i++) {
+//     while (stack.length && heights[i] <= heights[stack[stack.length - 1]]) {
+//       stack.pop();
+//     }
+//     left[i] = stack.length ? stack[stack.length - 1] : -1;
+//     stack.push(i);
+//   }
+//   stack = [];
+//   for (let i = heights.length - 1; i >= 0; i--) {
+//     while (stack.length && heights[i] <= heights[stack[stack.length - 1]]) {
+//       stack.pop();
+//     }
+//     right[i] = stack.length ? stack[stack.length - 1] : heights.length;
+//     stack.push(i);
+//   }
+//   for (let i = 0; i < heights.length; i++) {
+//     let area = heights[i] * (right[i] - left[i] - 1);
+//     max = Math.max(max, area);
+//   }
+//   return max;
+// }
+// function largestRectangleArea(heights) {
+//   let max = 0;
+//   let stack = [];
+//   let left = [];
+//   let right  = new Array(heights.length).fill(heights.length);
+//   for (let i = 0; i < heights.length; i++) {
+//     while (stack.length && heights[i] < heights[stack[stack.length - 1]]) {
+//       right[stack.pop()] = i;
+//     }
+//     left[i] = stack.length ? stack[stack.length - 1] : -1;
+//     stack.push(i);
+//   }
+//   for (let i = 0; i < heights.length; i++) {
+//     let area = heights[i] * (right[i] - left[i] - 1);
+//     max = Math.max(max, area);
+//   }
+//   return max;
+// }
+// 有效的字母异位词 1.排序后哈希归类 O(nlogn) 2.自制hash后哈希归类 O(n)
+// function isAnagram(s, t) {
+//   if (s.length !== t.length) return false;
+//   return [...s].sort().join() === [...t].sort().join();
+// }
+// function isAnagram(s, t) {
+//   if (s.length !== t.length) return false;
+//   let table = new Array(26).fill(0);
+//   for (let i of s) {
+//     table[i.charCodeAt() - 'a'.charCodeAt()]++;
+//   }
+//   for (let i of t) {
+//     table[i.charCodeAt() - 'a'.charCodeAt()]--;
+//     if (table[i.charCodeAt() - 'a'.charCodeAt()] < 0) return false;
+//   }
+//   return true;
+// }
+// function isAnagram(s, t) {
+//   if (s.length !== t.length) return false;
+//   let map = new Map();
+//   for (let i of s) {
+//     let value = map.has(i) ? map.get(i) + 1 : 1;
+//     map.set(i, value);
+//   }
+//   for (let i of t) {
+//     if (map.has(i)) {
+//       map.set(i, map.get(i) - 1);
+//       if (map.get(i) < 0) return false;
+//     } else {
+//       return false;
+//     }
+//   }
+//   return true;
+// }
+// 字母异位词分组 1.排序后归类 2.自制hash后归类
+// function groupAnagrams(strs) {
+//   let map = new Map();
+//   for (let str of strs) {
+//     let key = [...str].sort().join();
+//     let value = map.has(key) ? map.get(key) : [];
+//     value.push(str);
+//     map.set(key, value);
+//   }
+//   return [...map.values()];
+// }
+// function groupAnagrams(strs) {
+//   let map = {};
+//   for (let str of strs) {
+//     let table = new Array(26).fill(0);
+//     for (let c of str) {
+//       table[c.charCodeAt() - 'a'.charCodeAt()]++;
+//     }
+//     map[table] ? map[table].push(str) : map[table] = [str];
+//   }
+//   return Object.values(map);
+// }
+// 柱状图中的最大矩形 1.暴力 O(n^3) 2.扩散 O(n^2) 3.栈 O(n)
+// function largestRectangleArea(heights) {
+//   let max = 0;
+//   for (let i = 0; i < heights.length; i++) {
+//     let minHeight = heights[i];
+//     for (let j = i; j < heights.length; j++) {
+//       minHeight = Math.min(minHeight, heights[j]);
+//       let area = minHeight * (j - i + 1);
+//       max = Math.max(max, area);
+//     }
+//   }
+//   return max;
+// }
+// function largestRectangleArea(heights) {
+//   let max = 0;
+//   for (let i = 0; i < heights.length; i++) {
+//     for (let j = i; j < heights.length; j++) {
+//       let minHeight = Math.min.apply(null, heights.slice(i, j + 1));
+//       let area = minHeight * (j - i + 1);
+//       max = Math.max(max, area);
+//     }
+//   }
+//   return max;
+// }
+// function largestRectangleArea(heights) {
+//   let max = 0;
+//   for (let i = 0; i < heights.length; i++) {
+//     let j = i, k = i;
+//     while (j >= 0 && heights[j] >= heights[i]) {
+//       j--;
+//     }
+//     while (k < heights.length && heights[k] >= heights[i]) {
+//       k++;
+//     }
+//     let area = heights[i] * (k - j - 1);
+//     max = Math.max(max, area);
+//   }
+//   return max;
+// }
+// function largestRectangleArea(heights) {
+//   let max = 0;
+//   for (let i = 0; i < heights.length; i++) {
+//     let j = i, k = i;
+//     for (; j >= 0; j--) {
+//       if (heights[j] < heights[i]) break;
+//     }
+//     for (; k < heights.length; k++) {
+//       if (heights[k] < heights[i]) break;
+//     }
+//     let area = heights[i] * (k - j - 1);
+//     max = Math.max(max, area);
+//   }
+//   return max;
+// }
+// function largestRectangleArea(heights) {
+//   let max = 0;
+//   let stack = [-1];
+//   for (let i = 0; i < heights.length; i++) {
+//     while (stack.length > 1 && heights[i] < heights[stack[stack.length - 1]]) {
+//       let index = stack.pop();
+//       let area = heights[index] * (i - stack[stack.length - 1] - 1);
+//       max = Math.max(max, area);
+//     }
+//     stack.push(i);
+//   }
+//   for (let i = 1; i < stack.length; i++) {
+//     let area = heights[stack[i]] * (stack[stack.length - 1] - stack[i - 1]);
+//     max = Math.max(max, area);
+//   }
+//   return max;
+// }
+// function largestRectangleArea(heights) {
+//   let max = 0;
+//   let stack = [-1];
+//   heights.push(0);
+//   for (let i = 0; i < heights.length; i++) {
+//     while (stack.length > 1 && heights[i] < heights[stack[stack.length - 1]]) {
+//       let index = stack.pop();
+//       let area = heights[index] * (i - stack[stack.length - 1] - 1);
+//       max = Math.max(max, area);
+//     }
+//     stack.push(i);
+//   }
+//   return max;
+// }
+// function largestRectangleArea(heights) {
+//   let max = 0;
+//   let stack = [];
+//   let left = [];
+//   let right = [];
+//   for (let i = 0; i < heights.length; i++) {
+//     while (stack.length && heights[i] <= heights[stack[stack.length - 1]]) {
+//       stack.pop();
+//     }
+//     left[i] = stack.length ? stack[stack.length - 1] : -1;
+//     stack.push(i);
+//   }
+//   stack = [];
+//   for (let i = heights.length - 1; i >= 0; i--) {
+//     while (stack.length && heights[i] <= heights[stack[stack.length - 1]]) {
+//       stack.pop();
+//     }
+//     right[i] = stack.length ? stack[stack.length - 1] : heights.length;
+//     stack.push(i);
+//   }
+//   for (let i = 0; i < heights.length; i++) {
+//     let area = heights[i] * (right[i] - left[i] - 1);
+//     max = Math.max(max, area);
+//   }
+//   return max;
+// }
+// function largestRectangleArea(heights) {
+//   let max = 0;
+//   let stack = [];
+//   let left = [];
+//   let right = new Array(heights.length).fill(heights.length);
+//   for (let i = 0; i < heights.length; i++) {
+//     while (stack.length && heights[i] < heights[stack[stack.length - 1]]) {
+//       right[stack.pop()] = i;
+//     }
+//     left[i] = stack.length ? stack[stack.length - 1] : -1;
+//     stack.push(i);
+//   }
+//   for (let i = 0; i < heights.length; i++) {
+//     let area = heights[i] * (right[i] - left[i] - 1);
+//     max = Math.max(max, area);
+//   }
+//   return max;
+// }
+// 四数之和 1.hash
+// function fourSum(nums, target) {
+//   let a = [];
+//   let map = new Map();
+//   let set = new Set();
+//   for (let i = 0; i < nums.length - 2; i++) {
+//     for (let j = i + 1; j < nums.length - 1; j++) {
+//       for (let k = j + 1; k < nums.length; k++) {
+//         let sum = nums[i] + nums[j] + nums[k];
+//         if (map.has(target - sum)) {
+//           let key = [target - sum, nums[i], nums[j], nums[k]].sort();
+//           if (!set.has(key.join())) {
+//             a.push(key);
+//             set.add(key.join());
+//           }
+//         }
+//       }
+//     }
+//     map.set(nums[i], nums[i]);
+//   }
+//   return a;
+// }
+// 有效的字母异位词 1.排序后比较是否相等 O(nlogn) 2.hash 计数
+// function isAnagram(s, t) {
+//   if (s.length !== t.length) return false;
+//   return [...s].sort().join() === [...t].sort().join();
+// }
+// function isAnagram(s, t) {
+//   if (s.length !== t.length) return false;
+//   let map = new Map();
+//   for (let i of s) {
+//     let value = map.has(i) ? map.get(i) + 1 : 1;
+//     map.set(i, value);
+//   }
+//   for (let i of t) {
+//     if (map.has(i)) {
+//       map.set(i, map.get(i) - 1);
+//       if (map.get(i) < 0) return false;
+//     } else {
+//       return false;
+//     }
+//   }
+//   return true;
+// }
+// function isAnagram(s, t) {
+//   if (s.length !== t.length) return false;
+//   let table = new Array(26).fill(0);
+//   for (let i of s) {
+//     table[i.charCodeAt() - 'a'.charCodeAt()]++;
+//   }
+//   for (let i of t) {
+//     table[i.charCodeAt() - 'a'.charCodeAt()]--;
+//     if (table[i.charCodeAt() - 'a'.charCodeAt()] < 0) return false;
+//   }
+//   return true;
+// }
+// 字母异位词分组 1.key 排序后hash分组 2.key hash后hash分组
+// function groupAnagrams(strs) {
+//   let map = new Map();
+//   for (let str of strs) {
+//     let key = [...str].sort().join();
+//     map.has(key) ? map.get(key).push(str) : map.set(key, [str]);
+//   }
+//   return [...map.values()];
+// }
+// function groupAnagrams(strs) {
+//   let map = new Map();
+//   for (let str of strs) {
+//     let table = new Array(26).fill(0);
+//     for (let c of str) {
+//       table[c.charCodeAt() - 'a'.charCodeAt()]++;
+//     }
+//     map.has(table.join()) ? map.get(table.join()).push(str) : map.set(table.join(), [str]);
+//   }
+//   return [...map.values()];
+// }
+// function groupAnagrams(strs) {
+//   let map = {};
+//   for (let str of strs) {
+//     let table = new Array(26).fill(0);
+//     for (let c of str) {
+//       table[c.charCodeAt() - 'a'.charCodeAt()]++;
+//     }
+//     map[table] ? map[table].push(str) : map[table] = [str];
+//   }
+//   return Object.values(map);
+// }
+// js 声明二叉树数据结构
+// class Node {
+//   constructor(val) {
+//     this.val = val;
+//     this.left = null;
+//     this.right = null;
+//   }
+// }
+// class Tree {
+//   constructor(data) {
+//     let nodeList = [];
+//     for (let i = 0; i < data.length; i++) {
+//       let node = new Node(data[i]);
+//       nodeList.push(node);
+//       if (i > 0) {
+//         let n = Math.floor(Math.sqrt(i + 1));
+//         let q = Math.pow(2, n) - 1;
+//         let p = Math.pow(2, n - 1) - 1;
+//         let parent = nodeList[p + Math.floor((i - q) / 2)];
+//         if (parent.left) {
+//           parent.right = node;
+//         } else {
+//           parent.left = node;
+//         }
+//       }
+//     }
+//     let root = nodeList.shift();
+//     nodeList.length = 0;
+//     return root;
+//   }
+// }
+// console.log(new Tree([0,1,2,3,4,5,6,7,8,9,10,11,12,13,14]))
+// 二叉树的中序遍历 1.递归 O(n)
+// function inorderTraversal(root) {
+//   let res = [];
+//   function inorder(root) {
+//     if (root) {
+//       inorder(root.left);
+//       res.push(root.val);
+//       inorder(root.right);
+//     }
+//   }
+//   inorder(root);
+//   return res;
+// }
