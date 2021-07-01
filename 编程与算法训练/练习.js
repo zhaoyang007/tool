@@ -5336,3 +5336,16 @@
 //   inorder(root);
 //   return res;
 // }
+// 二叉树的中序遍历 1.递归 O(n) 2.栈迭代 O(n)
+// function inorderTraversal(root) {
+//   let res = [];
+//   function inorder(root) {
+//     if (root) {
+//       inorder(root.left);
+//       res.push(root.val);
+//       inorder(root.right);
+//     }
+//   }
+//   inorder(root);
+//   return res;
+// }
