@@ -5349,3 +5349,123 @@
 //   inorder(root);
 //   return res;
 // }
+// 二叉树的中序遍历
+// function inorderTraversal(root) {
+//   let res = [];
+//   function inorder(root) {
+//     if (root) {
+//       inorder(root.left);
+//       res.push(root.val);
+//       inorder(root.right);
+//     }
+//   }
+//   inorder(root);
+//   return res;
+// }
+// function inorderTraversal(root) {
+//   let res = [];
+//   let stack = [];
+//   while (root || stack.length) {
+//     while (root) {
+//       stack.push(root);
+//       root = root.left;
+//     }
+//     root = stack.pop();
+//     res.push(root.val);
+//     root = root.right;
+//   }
+//   return res;
+// }
+// function inorderTraversal(root) {
+//   let res = [];
+//   let stack = [];
+//   while (root || stack.length) {
+//     while (root) {
+//       stack.push(root);
+//       root = root.left;
+//     }
+//     root = stack.pop();
+//     res.push(root.val);
+//     root = root.right;
+//   }
+//   return res;
+// }
+// function inorderTraversal(root) {
+//   let res = [];
+//   function inorder(root) {
+//     if (root) {
+//       inorder(root.left);
+//       res.push(root.val);
+//       inorder(root.right);
+//     }
+//   }
+//   inorder(root);
+//   return res;
+// }
+// function inorderTraversal(root) {
+//   let res = [];
+//   let stack = [];
+//   while (root || stack.length) {
+//     while (root) {
+//       stack.push(root);
+//       root = root.left;
+//     }
+//     root = stack.pop();
+//     res.push(root.val);
+//     root = root.right;
+//   }
+//   return res;
+// }
+// class Node {
+//   constructor(val) {
+//     this.val = val;
+//     this.left = null;
+//     this.right = null;
+//   }
+// }
+// class Tree {
+//   constructor(data) {
+//     let nodeList = [];
+//     for (let i = 0; i < data.length; i++) {
+//       let node = new Node(data[i]);
+//       nodeList.push(node);
+//       if (i > 0) {
+//         let n = Math.floor(Math.sqrt(i + 1));
+//         let q = Math.pow(2, n) - 1;
+//         let p = Math.pow(2, n - 1) - 1;
+//         let parent = nodeList[p + Math.floor((i - q) / 2)];
+//         if (parent.left) {
+//           parent.right = node;
+//         } else {
+//           parent.left = node;
+//         }
+//       }
+//     }
+//     let root = nodeList.shift();
+//     nodeList.length = 0;
+//     return root;
+//   }
+// }
+// console.log(new Tree([1,null,2,3]))
+// 四数之和
+// function fourSum(nums, target) {
+//   let a = [];
+//   let map = new Map();
+//   let set = new Set();
+//   for (let i = 0; i < nums.length - 2; i++) {
+//     for (let j = i + 1; j < nums.length - 1; j++) {
+//       for (let k = j + 1; k < nums.length; k++) {
+//         let sum = nums[i] + nums[j] + nums[k];
+//         if (map.has(target - sum)) {
+//           let key = [target - sum, nums[i], nums[j], nums[k]].sort();
+//           if (!set.has(key.join())) {
+//             a.push(key);
+//             set.add(key.join());
+//           }
+//         }
+//       }
+//     }
+//     map.set(nums[i], nums[i]);
+//   }
+//   return a;
+// }
