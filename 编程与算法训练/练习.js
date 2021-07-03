@@ -5469,3 +5469,90 @@
 //   }
 //   return a;
 // }
+// 四数之和 1.hash
+// function fourSum(nums, target) {
+//   let a = [];
+//   let map = new Map();
+//   let set = new Set();
+//   for (let i = 0; i < nums.length - 2; i++) {
+//     for (let j = i + 1; j < nums.length - 1; j++) {
+//       for (let k = j + 1; k < nums.length; k++) {
+//         let sum = nums[i] + nums[j] + nums[k];
+//         if (map.has(target - sum)) {
+//           let key = [target - sum, nums[i], nums[j], nums[k]].sort();
+//           if (!set.has(key.join())) {
+//             a.push(key);
+//             set.add(key.join());
+//           }
+//         }
+//       }
+//     }
+//     map.set(nums[i], nums[i]);
+//   }
+//   return a;
+// }
+// 滑动窗口最大值 1.暴力 O(n*k) 2.单调递减双端队列 O(n)
+// function maxSlidingWindow(nums, k) {
+//   let a = [];
+//   for (let i = 0; i < nums.length - k + 1; i++) {
+//     let max = nums[i];
+//     for (let j = i; j < i + k; j++) {
+//       max = Math.max(max, nums[j]);
+//     }
+//     a.push(max);
+//   }
+//   return a;
+// }
+// function maxSlidinWindow(nums, k) {
+//   let a = [];
+//   let q = [];
+//   for (let i = 0; i < nums.length; i++) {
+//     while (q.length && nums[i] >= nums[q[q.length - 1]]) {
+//       q.pop();
+//     }
+//     q.push(i);
+//     while (q[0] < i - k + 1) {
+//       q.shift();
+//     }
+//     if (i >= k - 1) a.push(nums[q[0]]);
+//   }
+//   return a;
+// }
+// function maxSlidingWindow(nums, k) {
+//   let a = [];
+//   let q = [];
+//   for (let i = 0; i < k; i++) {
+//     while (q.length && nums[i] >= nums[q[q.length - 1]]) {
+//       q.pop();
+//     }
+//     q.push(i);
+//   }
+//   a.push(nums[q[0]]);
+//   for (let i = k; i < nums.length; i++) {
+//     while (q.length && nums[i] >= nums[q[q.length - 1]]) {
+//       q.pop();
+//     }
+//     q.push(i);
+//     while (q[0] < i - k + 1) {
+//       q.shift();
+//     }
+//     a.push(nums[q[0]]);
+//   }
+//   return a;
+// }
+// js声明二叉树数据结构
+class Node {
+  constructor(val) {
+    this.val = val;
+    this.left = null;
+    this.right = null;
+  }
+}
+class Tree {
+  constructor(data) {
+    let nodeList = [];
+    for (let i = 0; i < data.length; i++) {
+      
+    }
+  }
+}
