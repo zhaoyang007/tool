@@ -3,8 +3,6 @@
 ssh-keygen -t rsa -C "your email"
 ```
 
-
-
 ##### 配置用户信息
 
 不加 global 就为配置单个项目的用户信息
@@ -15,8 +13,6 @@ git config --global user.email "email"
 git config --global color.ui true  # 让Git显示颜色
 git config --list # 查看本机 Git 配置信息
 ```
-
-
 
 ##### 关联远程库
 
@@ -43,8 +39,6 @@ git clone url
   git commit -m '首次提交'
   git push -u origin master
   ```
-
-
 
 ##### 分支管理
 
@@ -86,8 +80,6 @@ git stash apply stash@{0} 恢复指定的stash
 git cherry-pick 4c805e2 复制一个特定的提交到当前分支，并自动做一次提交
 ```
 
-
-
 ##### 常规提交流程
 
 ```bash
@@ -102,8 +94,6 @@ git merge origin/master  # 合并远程和本地代码
 git push origin master  # 推送到远程库
 # 如果有冲突，手动解决冲突，然后再次add,commit,push就可以了
 ```
-
-
 
 ##### 时光机穿梭
 查看提交历史：`git log`
@@ -127,8 +117,6 @@ git push origin master  # 推送到远程库
   * 退回到上一个提交的版本： `git reset --hard HEAD^`
   * 回退到指定版本：`git reset --hard 1094adb`
 
-
-
 ##### 标签
 
 ```bash
@@ -144,8 +132,6 @@ git push origin master  # 推送到远程库
  git push origin :refs/tags/tagname  删除远程标签。
 ```
 
-
-
 ##### 待研究
 
 git 原理：
@@ -157,15 +143,11 @@ git 原理：
 
 rebase, merge 区别：rebase 把提交线变成直线。
 
-
-
 ##### 每次 pull 和 push 的时候都要输入密码
 
 方法一：`git config --global credential.helper store`
 
 方法二：将私钥添加到钥匙串 `ssh-add -K ~/.ssh/id_rsa`
-
-
 
 ##### git svn 对比
 
