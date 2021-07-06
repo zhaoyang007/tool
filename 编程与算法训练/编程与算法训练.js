@@ -1239,7 +1239,7 @@ class Heap {
     if (n <= 1) {
       return iArr;
     } else {
-      // 先构建一次完整的最大堆
+      // 从最后一个父节点开始遍历，先构建一次完整的最大堆
       for (let i = Math.floor(n / 2) - 1; i >= 0; i--) {
         Heap.maxHeapify(iArr, i, n);
       }
