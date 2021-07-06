@@ -5822,10 +5822,18 @@
 //   insertAt(index, value) {
 //     this.data[index] = value;
 //     while (index > 0 && value > this.data[Math.floor((index - 1) / 2)]) {
-//       this.data[Math.floor((index - 1) / 2)] = value;
+      
 //       this.data[index] = this.data[Math.floor((index - 1) / 2)];
+//       this.data[Math.floor((index - 1) / 2)] = value;
 //       index = Math.floor((index - 1) / 2);
 //     }
+//     // this.data[index] = value;    
+//     // // 对比当前节点与其父节点，如果当前节点更大就交换它们    
+//     // while (index > 0 && value > this.data[Math.floor((index - 1) / 2)]) {      
+//     //   this.data[index] = this.data[Math.floor((index - 1) / 2)];      
+//     //   this.data[Math.floor((index - 1) / 2)] = value;      
+//     //   index = Math.floor((index - 1) / 2);    
+//     // }  
 //   }
 //   delete(index) {
 //     if (this.data.length === 0) return;
@@ -5866,13 +5874,20 @@
 //   }
 // }
 // let maxHeap = new BinaryHeap();
-// maxHeap.insert(10);
-// maxHeap.insert(9);
-// maxHeap.insert(8);
-// maxHeap.insert(7);
-// maxHeap.insert(6);
-// maxHeap.insert(5);
-// maxHeap.delete(4);
-// maxHeap.printHeap();
-// maxHeap.delete(2);
-// maxHeap.printHeap();
+// // maxHeap.insert(10);
+// // maxHeap.insert(11);
+// // maxHeap.insert(20);
+// // maxHeap.insert(7);
+// // maxHeap.insert(99);
+// // maxHeap.insert(5);
+// // maxHeap.printHeap();
+// let a = [10,2,4,89,99,7,3]
+// for (let i of a) {
+//   maxHeap.insert(i);
+// }
+// let b = [];
+// let l =  maxHeap.data.length;
+// for (let i = 0; i < l; i++) {
+//   b.push(maxHeap.delete(0));
+// }
+// console.log(b);
