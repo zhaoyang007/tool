@@ -5725,145 +5725,154 @@
 //   }
 //   return nums;
 // }
-// class Heap {
+// js根据一维数组声明二叉树完全二叉树数据结构
+// class Node {
+//   constructor(val) {
+//     this.val = val;
+//     this.left = null;
+//     this.right = null;
+//   }
+// }
+// class Tree {
 //   constructor(data) {
-//     this.data = data;
-//   }
-//   sort() {
-//     let iArr = this.data;
-//     let n = iArr.length;
-//     if (n <= 1) {
-//       return iArr;
-//     } else {
-//       // 先构建一次完整的最大堆
-//       for (let i = Math.floor(n / 2) - 1; i >= 0; i--) {
-//         Heap.maxHeapify(iArr, i, n);
+//     let nodeList = [];
+//     for (let i = 0; i < data.length; i++) {
+//       let node = new Node(data[i]);
+//       nodeList.push(node);
+//       if (i > 0) {
+//         let parent = nodeList[Math.floor((i - 1) / 2)];
+//         if (parent.left) {
+//           parent.right = node;
+//         } else {
+//           parent.left = node;
+//         }
 //       }
-//       // 交换首尾节点，构建n次单路最大堆
-//       for (let j = 0; j < n; j++) {
-//         Heap.swap(iArr, 0, n - 1 - j);
-//         Heap.maxHeapify(iArr, 0, n - 1 - j - 1);
-//       }
-//       return iArr;
 //     }
-//   }
-//   find(val, i = 0) {
-//     let arr = this.data;
-//     if (val > arr[i] || i > arr.length) {
-//       return false;
-//     } else if (val === arr[i]) {
-//       return val;
-//     } else {
-//       return this.find(val, i * 2 + 1) || this.find(val, i * 2 + 2);
-//     }
-//   }
-//   // 交换元素
-//   static swap(arr, a, b) {
-//     if (a === b) {
-//       return '';
-//     } else {
-//       let c = arr[a];
-//       arr[a] = arr[b];
-//       arr[b] = c;
-//     }
-//   }
-//   // 构建i节点下的单路最大堆
-//   static maxHeapify(Arr, i, size) {
-//     // 左子节点索引
-//     let l = i * 2 + 1;
-//     // 右子节点索引
-//     let r = i * 2 + 2;
-//     // 父节点和左右子节点比较出最大的值的索引
-//     let largest = i;
-//     if (l <= size && Arr[l] > Arr[largest]) {
-//       largest = l;
-//     }
-//     if (r <= size && Arr[r] > Arr[largest]) {
-//       largest = r;
-//     }
-//     // 将父节点和最大值交换
-//     if (largest !== i) {
-//       Heap.swap(Arr, i, largest);
-//       Heap.maxHeapify(Arr, largest, size);
-//     }
+//     let root = nodeList.shift();
+//     nodeList.length = 0;
+//     return root;
 //   }
 // }
-//   //           1
-//   //     4           3
-//   // 8       5    6
-// let arr = [1, 4, 3, 8, 5, 6]
-// Heap.maxHeapify(arr, 0, arr.length)
-// for (let i = Math.floor(arr.length / 2) - 1; i >= 0; i--) {
-//   Heap.maxHeapify(arr, i, arr.length);
+// console.log(new Tree([0,1,2,3,4,5,6]));
+// class Node {
+//   constructor(val) {
+//     this.val = val;
+//     this.left = null;
+//     this.right = null;
+//   }
 // }
-// console.log(arr)
-// console.log(new Heap([1, 10, 9, 3, 8, 5, 20, 6]).sort());
-class BinaryHeap {  
-  constructor(compare) {    
-    this.data = [];    
-    this.compare = compare;  
-  }  
-  insert(value) {    
-    this.insertAt(this.data.length, value);  
-  }  
-  insertAt(index, value) {    
-    this.data[index] = value;    
-    // 对比当前节点与其父节点，如果当前节点更小就交换它们    
-    while (index > 0 && this.compare(value, this.data[Math.floor((index - 1) / 2)]) < 0) {      
-      this.data[index] = this.data[Math.floor((index - 1) / 2)];      
-      this.data[Math.floor((index - 1) / 2)] = value;      
-      index = Math.floor((index - 1) / 2);    
-    }  
-  }  
-  delete(index) {    
-    if (this.data.length === 0) return;    
-    let value = this.data[index];    
-    let i = index;    
-    // fix heap    
-    while (i < this.data.length) {      
-      let left = i * 2 + 1;      
-      let right = i * 2 + 2;      
-      // 没有左子节点      
-      if (left >= this.data.length) break;      
-      // 没有右子节点      
-      if (right >= this.data.length) {        
-        this.data[i] = this.data[left];        
-        i = left;        
-        break;      
-      }      
-      // 比较左右子节点的大小，更小的补到父节点      
-      if (this.compare(this.data[left], this.data[right]) < 0) {        
-        this.data[i] = this.data[left];        
-        i = left;      
-      } else {        
-        this.data[i] = this.data[right];        
-        i = right;      
-      }    
-    }    
-    // 查看最后的空位是不是最后的叶子节点    
-    if (i < this.data.length - 1) {      
-      this.insertAt(i, this.data.pop());    
-    } else {      
-      this.data.pop();    
-    }    
-    return value;  
-  }  
-  deleteMax() {
-    return this.delete(0);
-  }
-  printHeap() {    
-    console.log("nHeap = ");    
-    console.log(this.data);  
-  }
-}
-let maxHeap = new BinaryHeap((a, b) => b - a);
-let a = [2,3,3,1,1,4,5,7,9,8,10,10]
-for (let i = 0; i < a.length; i++) {
-  maxHeap.insert(a[i]);
-}
-let a1 = [];
-let l = maxHeap.data.length;
-for (let i = 0; i < l; i++) {
-  a1.push(maxHeap.deleteMax());
-}
-console.log(a1);
+// class Tree {
+//   constructor(data) {
+//     let nodeList = [];
+//     for (let i = 0; i < data.length; i++) {
+//       let node = new Node(data[i]);
+//       nodeList.push(node);
+//       if (i > 0) {
+//         let n = Math.floor(Math.sqrt(i + 1));
+//         let q = Math.pow(2, n) - 1;
+//         let p = Math.pow(2, n - 1) - 1;
+//         let parent = nodeList[p + Math.floor((i - q) / 2)];
+//         if (parent.left) {
+//           parent.right = node;
+//         } else {
+//           parent.left = node;
+//         }
+//       }
+//     }
+//     let root = nodeList.shift();
+//     nodeList.length = 0;
+//     return root;
+//   }
+// }
+// console.log(new Tree([1,4,5,6,7,8,9]))
+// 二叉树的中序遍历 1.递归 O(n) 2.栈迭代 O(n)
+// function inorderTraversal(root) {
+//   let res = [];
+//   function inorder(root) {
+//     if (root) {
+//       inorder(root.left);
+//       res.push(root.val);
+//       inorder(root.right);
+//     }
+//   }
+//   inorder(root);
+//   return res;
+// }
+// function inorderTraversal(root) {
+//   let res = [];
+//   let stack = [];
+//   while (root || stack.length) {
+//     while (root) {
+//       stack.push(root);
+//       root = root.left;
+//     }
+//     root = stack.pop();
+//     res.push(root.val);
+//     root = root.right;
+//   }
+//   return res;
+// }
+// class BinaryHeap {
+//   constructor() {
+//     this.data = [];
+//   }
+//   insert(value) {
+//     this.insertAt(this.data.length, value);
+//   }
+//   insertAt(index, value) {
+//     this.data[index] = value;
+//     while (index > 0 && value > this.data[Math.floor((index - 1) / 2)]) {
+//       this.data[Math.floor((index - 1) / 2)] = value;
+//       this.data[index] = this.data[Math.floor((index - 1) / 2)];
+//       index = Math.floor((index - 1) / 2);
+//     }
+//   }
+//   delete(index) {
+//     if (this.data.length === 0) return;
+//     let value = this.data[index];
+//     let i = index;
+//     while (i < this.data.length) {
+//       let left = i * 2 + 1;
+//       let right = i * 2 + 2;
+//       if (left >= this.data.length) break;
+//       if (right >= this.data.length) {
+//         this.data[i] = this.data[left];
+//         i = left;
+//         break;
+//       }
+//       if (this.data[left] > this.data[right]) {
+//         this.data[i] = this.data[left];
+//         i = left;
+//       } else {
+//         this.data[i] = this.data[right];
+//         i = right;
+//       }
+//     }
+//     if (i < this.data.length - 1) {
+//       this.insertAt(i, this.data.pop());
+//     } else {
+//       this.data.pop();
+//     }
+//     return value;
+//   }
+//   deleteMax() {
+//     return this.delete(0);
+//   }
+//   findMax() {
+//     return this.data[0];
+//   }
+//   printHeap() {
+//     console.log(this.data);
+//   }
+// }
+// let maxHeap = new BinaryHeap();
+// maxHeap.insert(10);
+// maxHeap.insert(9);
+// maxHeap.insert(8);
+// maxHeap.insert(7);
+// maxHeap.insert(6);
+// maxHeap.insert(5);
+// maxHeap.delete(4);
+// maxHeap.printHeap();
+// maxHeap.delete(2);
+// maxHeap.printHeap();
