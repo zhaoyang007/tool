@@ -6397,3 +6397,58 @@
 //   }
 //   return [...map.values()];
 // }
+// js声明二叉堆数据结构
+// class BinaryHeap {
+//   constructor() {
+//     this.data = [];
+//   }
+//   insert(value) {
+//     this.insertAt(this.data.length, value);
+//   }
+//   insertAt(i, value) {
+//     this.data[i] = value;
+//     while (i > 0 && value > this.data[Math.floor((i - 1) / 2)]) {
+//       this.data[i] = this.data[Math.floor((i - 1) / 2)];
+//       this.data[Math.floor((i - 1) / 2)] = value;
+//       i = Math.floor((i - 1) / 2);
+//     }
+//   }
+//   delete(i) {
+//     if (this.data.length === 0) return;
+//     let value = this.data[i];
+//     while (i < this.data.length) {
+//       let left = 2 * i + 1;
+//       let right = 2 * i + 2;
+//       if (left >= this.data.length) break;
+//       if (right >= this.data.length) {
+//         this.data[i] = this.data[left];
+//         i = left;
+//         break;
+//       }
+//       if (this.data[left] > this.data[right]) {
+//         this.data[i] = this.data[left];
+//         i = left;
+//       } else {
+//         this.data[i] = this.data[right];
+//         i = right;
+//       }
+//     }
+//     if (i < this.data.length - 1) {
+//       this.insertAt(i, this.data.pop());
+//     } else {
+//       this.data.pop();
+//     }
+//     return value;
+//   }
+// }
+// let heap = new BinaryHeap();
+// let a = [1,5,49,83,2,4];
+// for (let i of a) {
+//   heap.insert(i);
+// }
+// console.log(heap.data)
+// let b = [];
+// for (let i of a) {
+//   b.push(heap.delete(0));
+// }
+// console.log(b)
