@@ -6047,3 +6047,153 @@
 //   a.push(maxHeap.findMax());
 // }
 // console.log(a);
+// js根据一维数组声明完全二叉树数据结构
+// class Node {
+//   constructor(val) {
+//     this.val = val;
+//     this.left = null;
+//     this.right = null;
+//   }
+// }
+// class Tree {
+//   constructor(data) {
+//     let nodeList = [];
+//     for (let i = 0; i < data.length; i++) {
+//       let node = new Node(data[i]);
+//       nodeList.push(node);
+//       if (i > 0) {
+//         let parent = nodeList[Math.floor((i - 1) / 2)];
+//         if (parent.left) {
+//           parent.right = node;
+//         } else {
+//           parent.left = node;
+//         }
+//       }
+//     }
+//     let root = nodeList.shift();
+//     nodeList.length = 0;
+//     return root;
+//   }
+// }
+// console.log(new Tree([1,2,3,4,5,6]))
+// class Node {
+//   constructor(val) {
+//     this.val = val;
+//     this.left = null;
+//     this.right = null;
+//   }
+// }
+// class Tree {
+//   constructor(data) {
+//     let nodeList = [];
+//     for (let i = 0; i < data.length; i++) {
+//       let node = new Node(data[i]);
+//       nodeList.push(node);
+//       if (i > 0) {
+//         let n = Math.floor(Math.sqrt(i + 1));
+//         let q = Math.pow(2, n) - 1;
+//         let p = Math.pow(2, n - 1) - 1;
+//         let parent = nodeList[p + Math.floor((i - q) / 2)];
+//         if (parent.left) {
+//           parent.right = node;
+//         } else {
+//           parent.left = node;
+//         }
+//       }
+//     }
+//     let root = nodeList.shift();
+//     nodeList.length = 0;
+//     return root;
+//   }
+// }
+// console.log(new Tree([0,1,2,3,4,5]))
+// 二叉树的中序遍历 1.递归 O(n) 2.栈迭代 O(n)
+// function inorderTraversal(root) {
+//   let res = [];
+//   function inorder(root) {
+//     if (root) {
+//       inorder(root.left);
+//       res.push(root.val);
+//       inorder(root.right);
+//     }
+//   }
+//   inorder(root);
+//   return res;
+// }
+// function inorderTraversal(root) {
+//   let res = [];
+//   let stack = [];
+//   while (root || stack.length) {
+//     while (root) {
+//       stack.push(root);
+//       root = root.left;
+//     }
+//     root = stack.pop();
+//     res.push(root.val);
+//     root = root.right;
+//   }
+//   return res;
+// }
+// js声明二叉堆数据结构
+// class BinaryHeap {  
+//   constructor() {    
+//     this.data = [];    
+//   }  
+//   insert(value) {    
+//     this.insertAt(this.data.length, value);  
+//   }  
+//   insertAt(i, value) {
+//     this.data[i] = value;
+//     // 对比当前节点与其父节点，如果当前节点更大就交换它们 
+//     while (i > 0 && value > this.data[Math.floor((i - 1) / 2)]) {
+//       this.data[i] = this.data[Math.floor((i - 1) / 2)];
+//       this.data[Math.floor((i - 1) / 2)] = value;
+//       i = Math.floor((i - 1) / 2);
+//     }
+//   }
+//   delete(i) {    
+//     if (this.data.length === 0) return;    
+//     let value = this.data[i];     
+//     // fix heap    
+//     while (i < this.data.length) {      
+//       let left = i * 2 + 1;      
+//       let right = i * 2 + 2;      
+//       // 没有左子节点      
+//       if (left >= this.data.length) break;      
+//       // 没有右子节点      
+//       if (right >= this.data.length) {        
+//         this.data[i] = this.data[left];        
+//         i = left;        
+//         break;      
+//       }      
+//       // 左右子节点都有，比较左右子节点的大小，更大的补到父节点      
+//       if (this.data[left] > this.data[right]) {        
+//         this.data[i] = this.data[left];        
+//         i = left;      
+//       } else {        
+//         this.data[i] = this.data[right];        
+//         i = right;      
+//       }    
+//     }    
+//     // 查看最后的空位是不是最后的叶子节点    
+//     if (i < this.data.length - 1) {      
+//       this.insertAt(i, this.data.pop());    
+//     } else {      
+//       this.data.pop();    
+//     }    
+//     return value;  
+//   }
+//   printHeap() {       
+//     console.log(this.data);  
+//   }
+// }
+// let maxHeap = new BinaryHeap();
+// let a = [1,3,4,2,92,8,7];
+// for (let i of a) {
+//   maxHeap.insert(i);
+// }
+// let b = [];
+// for (let i of a) {
+//   b.push(maxHeap.delete(0));
+// }
+// console.log(b)
