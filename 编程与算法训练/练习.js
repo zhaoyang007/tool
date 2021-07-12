@@ -6452,3 +6452,368 @@
 //   b.push(heap.delete(0));
 // }
 // console.log(b)
+// 四数之和 1.hash O(n^3)
+// function fourSum(nums, target) {
+//   let a = [];
+//   let map = new Map();
+//   let set = new Set();
+//   for (let i = 0; i < nums.length - 2; i++) {
+//     for (let j = i + 1; j < nums.length - 1; j++) {
+//       for (let k = j + 1; k < nums.length; k++) {
+//         let sum = nums[i] + nums[j] + nums[k];
+//         if (map.has(target - sum)) {
+//           let key = [target -  sum, nums[i], nums[j], nums[k]].sort();
+//           if (!set.has(key.join())) {
+//             a.push(key);
+//             set.add(key.join());
+//           }
+//         }
+//       }
+//     }
+//     map.set(nums[i], nums[i]);
+//   }
+//   return a;
+// }
+// js声明二叉堆数据结构
+// class BinaryHeap {
+//   constructor() {
+//     this.data = [];
+//   }
+//   insert(value) {
+//     this.insertAt(this.data.length, value);
+//   }
+//   insertAt(i, value) {
+//     this.data[i] = value;
+//     while (i > 0 && value > this.data[Math.floor((i - 1) / 2)]) {
+//       this.data[i] = this.data[Math.floor((i - 1) / 2)];
+//       this.data[Math.floor((i - 1) / 2)] = value;
+//       i = Math.floor((i - 1) / 2);
+//     }
+//   }
+//   delete(i) {
+//     if (this.data.length === 0) return;
+//     let value = this.data[i];
+//     while (i < this.data.length) {
+//       let left = 2 * i + 1;
+//       let right = 2 * i + 2;
+//       if (left >= this.data.length) break;
+//       if (right >= this.data.length) {
+//         this.data[i] = this.data[left];
+//         i = left;
+//         break;
+//       }
+//       if (this.data[left] > this.data[right]) {
+//         this.data[i] = this.data[left];
+//         i = left;
+//       } else {
+//         this.data[i] = this.data[right];
+//         i = right;
+//       }
+//     }
+//     if (i < this.data.length - 1) {
+//       this.insertAt(i, this.data.pop());
+//     } else {
+//       this.data.pop();
+//     }
+//     return value;
+//   }
+//   printHeap() {
+//     console.log(this.data);
+//   }
+// }
+// let heap = new BinaryHeap();
+// let a = [0,8,3,9,4,6,7,2];
+// for (let i of a) {
+//   heap.insert(i);
+// }
+// heap.printHeap();
+// let b = [];
+// for (let i of a) {
+//   b.push(heap.delete(0));
+// }
+// console.log(b);
+// 盛水最多的容器 1.暴力 O(n^2) 2.双指针夹逼 O(n)
+// function maxArea(height) {
+//   let max = 0;
+//   for (let i = 0; i < height.length - 1; i++) {
+//     for (let j = i + 1; j < height.length; j++) {
+//       let minHeight = Math.min(height[i], height[j]);
+//       let area = minHeight * (j - i);
+//       max = Math.max(max, area);
+//     }
+//   }
+//   return max;
+// }
+// function maxArea(height) {
+//   let max = 0;
+//   for (let i = 0, j = height.length - 1; i < j; ) {
+//     // 谁高度小谁往里面挪，来找那个更高的棒子。
+//     let minHeight = height[i] < height[j] ? height[i++] : height[j--];
+//     let area = minHeight * (j - i + 1);
+//     max = Math.max(max, area);
+//   }
+//   return max;
+// }
+// 爬楼梯 1.递归 O(n^2) 2.记忆化递归 O(n) 3.动态规划 O(n)
+// function climbStairs(n) {
+//   if (n <= 2) return n;
+//   return climbStairs(n - 1) + climbStairs(n - 2);
+// }
+// let map = new Map();
+// function climbStairs(n) {
+//   let map = new Map();
+//   function recursion(n) {
+//     if (n <= 2) return n;
+//     if (map.has(n)) return map.get(n);
+//     let value = recursion(n - 1) + recursion(n - 2);
+//     map.set(n, value);
+//     return value; 
+//   }
+//   return recursion(n);
+// }
+// function climbStairs(n) {
+//   if (n <= 2) return n;
+//   let a = 1, b = 2, res = 0;
+//   for (let i = 0; i < n - 2; i++) {
+//     res = a + b;
+//     a = b;
+//     b = res;
+//   }
+//   return res;
+// }
+// function climbStairs(n) {
+//   if (n <= 2) return n;
+//   let arr = [];
+//   arr[0] = 1;
+//   arr[1] = 1;
+//   for (let i = 2; i <= n; i++) {
+//     arr[i] = arr[i - 1] + arr[i - 2];
+//   }
+//   return arr[n];
+// }
+// 两数之和 1.暴力枚举 O(n^2) 2.hash O(n)
+// function towSum(nums, target) {
+//   for (let i = 0; i < nums.length - 1; i++) {
+//     for (let j = i + 1; j < nums.length; j++) {
+//       if (nums[i] + nums[j] === target) {
+//         return [i, j];
+//       }
+//     }
+//   }
+//   return [];
+// }
+// function twoSum(nums, target) {
+//   let map = new Map();
+//   for (let i = 0; i < nums.length; i++) {
+//     if (map.has(target - nums[i])) {
+//       return [map.get(target - nums[i]), i];
+//     }
+//     map.set(nums[i], i);
+//   }
+//   return [];
+// }
+// 最小的k个数 1.
+// function getLeastNumbers(arr, k) {
+//   let a = [];
+//   arr.sort((a, b) => a - b);
+//   for (let i = 0; i < k; i++) {
+//     a.push(arr[i]);
+//   }
+//   return a;
+// }
+// class BinaryHeap {  
+//   constructor() {    
+//     this.data = [];    
+//   }  
+//   insert(value) {    
+//     this.insertAt(this.data.length, value);  
+//   }  
+//   insertAt(i, value) {
+//     this.data[i] = value;
+//     // 对比当前节点与其父节点，如果当前节点更大就交换它们 
+//     while (i > 0 && value < this.data[Math.floor((i - 1) / 2)]) {
+//       this.data[i] = this.data[Math.floor((i - 1) / 2)];
+//       this.data[Math.floor((i - 1) / 2)] = value;
+//       i = Math.floor((i - 1) / 2);
+//     }
+//   }
+//   delete(i) {    
+//     if (this.data.length === 0) return;    
+//     let value = this.data[i];     
+//     // fix heap    
+//     while (i < this.data.length) {      
+//       let left = i * 2 + 1;      
+//       let right = i * 2 + 2;      
+//       // 没有左子节点      
+//       if (left >= this.data.length) break;      
+//       // 没有右子节点      
+//       if (right >= this.data.length) {        
+//         this.data[i] = this.data[left];        
+//         i = left;        
+//         break;      
+//       }      
+//       // 左右子节点都有，比较左右子节点的大小，更大的补到父节点      
+//       if (this.data[left] < this.data[right]) {        
+//         this.data[i] = this.data[left];        
+//         i = left;      
+//       } else {        
+//         this.data[i] = this.data[right];        
+//         i = right;      
+//       }    
+//     }    
+//     // 查看最后的空位是不是最后的叶子节点    
+//     if (i < this.data.length - 1) {      
+//       this.insertAt(i, this.data.pop());    
+//     } else {      
+//       this.data.pop();    
+//     }    
+//     return value;  
+//   }
+//   printHeap() {       
+//     console.log(this.data);  
+//   }
+// }
+// let heap = new BinaryHeap();
+// let a = [1,4,3,6,7,5,2,2]
+// for (let i of a) {
+//   heap.insert(i);
+// }
+// let b = [];
+// for (let i of a) {
+//   b.push(heap.delete(0));
+// }
+// console.log(b)
+// function getLeastNumbers(arr, k) {
+//   let a = [];
+//   for (let i of arr) {
+//     heap.insert(i);
+//   }
+//   for (let i = 0; i < k; i++) {
+//     a.push(heap.delete(0));
+//   }
+//   return a;
+// }
+// function getLeastNumbers(arr, k) {
+//   let a = [];
+//   for (let i of arr) {
+//     heap.insert(i);
+//   }
+//   for (let i = 0; i < k; i++) {
+//     let value = heap.delete(0);
+//     console.log(value);
+//     a.push(value);
+//   }
+//   return a;
+// }
+// console.log(getLeastNumbers([0,0,1,2,4,2,2,3,1,4], 8))
+// class BinaryHeap {  
+//   constructor(compare) {    
+//     this.data = [];    
+//     this.compare = compare;
+//   }  
+//   insert(value) {    
+//     this.insertAt(this.data.length, value);  
+//   }  
+//   insertAt(i, value) {
+//     this.data[i] = value;
+//     // 对比当前节点与其父节点，如果当前节点更大就交换它们 
+//     while (i > 0 && this.compare(value, this.data[Math.floor((i - 1) / 2)]) < 0) {
+//       this.data[i] = this.data[Math.floor((i - 1) / 2)];
+//       this.data[Math.floor((i - 1) / 2)] = value;
+//       i = Math.floor((i - 1) / 2);
+//     }
+//   }
+//   delete(i) {    
+//     if (this.data.length === 0) return;    
+//     let value = this.data[i];     
+//     // fix heap    
+//     while (i < this.data.length) {      
+//       let left = i * 2 + 1;      
+//       let right = i * 2 + 2;      
+//       // 没有左子节点      
+//       if (left >= this.data.length) break;      
+//       // 没有右子节点      
+//       if (right >= this.data.length) {        
+//         this.data[i] = this.data[left];        
+//         i = left;        
+//         break;      
+//       }      
+//       // 左右子节点都有，比较左右子节点的大小，更大的补到父节点      
+//       if (this.compare(this.data[left], this.data[right]) < 0) {        
+//         this.data[i] = this.data[left];        
+//         i = left;      
+//       } else {        
+//         this.data[i] = this.data[right];        
+//         i = right;      
+//       }    
+//     }    
+//     // 查看最后的空位是不是最后的叶子节点    
+//     if (i < this.data.length - 1) {      
+//       this.insertAt(i, this.data.pop());    
+//     } else {      
+//       this.data.pop();    
+//     }    
+//     return value;  
+//   }
+//   printHeap() {       
+//     console.log(this.data);  
+//   }
+// }
+// let heap = new BinaryHeap((a, b) => a - b);
+// class BinaryHeap {
+//   constructor() {
+//     this.data = [];
+//   }
+//   insert(value) {
+//     this.insertAt(this.data.length, value);
+//   }
+//   insertAt(i, value) {
+//     this.data[i] = value;
+//     while (i > 0 && value > this.data[Math.floor((i - 1) / 2)]) {
+//       this.data[i] = this.data[Math.floor((i - 1) / 2)];
+//       this.data[Math.floor((i - 1) / 2)] = value;
+//       i = Math.floor((i - 1) / 2);
+//     }
+//   }
+//   delete(i) {
+//     if (this.data.length === 0) return;
+//     let value = this.data[i];
+//     while (i < this.data.length) {
+//       let left = 2 * i + 1;
+//       let right = 2 * i + 2;
+//       if (left >= this.data.length) break;
+//       if (right >= this.data.length) {
+//         this.data[i] = this.data[left];
+//         i = left;
+//         break;
+//       }
+//       if (this.data[left] > this.data[right]) {
+//         this.data[i] = this.data[left];
+//         i = left;
+//       } else {
+//         this.data[i] = this.data[right];
+//         i = right;
+//       }
+//     }
+//     if (i < this.data.length - 1) {
+//       this.insertAt(i, this.data.pop());
+//     } else {
+//       this.data.pop();
+//     }
+//     return value;
+//   }
+//   printHeap() {
+//     console.log(this.data);
+//   }
+// }
+// let heap = new BinaryHeap();
+// let a = [0,8,3,9,4,6,7,2];
+// for (let i of a) {
+//   heap.insert(i);
+// }
+// heap.printHeap();
+// let b = [];
+// for (let i of a) {
+//   b.push(heap.delete(0));
+// }
+// console.log(b);
