@@ -6759,17 +6759,35 @@
 //     console.log(this.data);  
 //   }
 // }
-// let heap = new BinaryHeap((a, b) => a - b);
+// let maxHeap = new BinaryHeap((a, b) => b - a);
+// // // 滑动窗口最大值 1.堆 O(nlogk)
+// function maxSlidingWindow(nums, k) {
+//   let res = [];
+//   for (let i = 0; i < k; i++) {
+//     maxHeap.insert(nums[i]);
+//   }
+//   res.push(maxHeap.data[0]);
+//   for (let i = k; i < nums.length; i++) {
+//     console.log(maxHeap.data)
+//     maxHeap.data.splice(maxHeap.data.findIndex(item => item === nums[i - k]), 1);
+//     maxHeap.insert(nums[i]);
+//     res.push(maxHeap.data[0]);
+//   }
+//   return res;
+// }
+// console.log(maxSlidingWindow([1,3,1,2,0,5], 3))
+// js声明二叉堆数据结构
 // class BinaryHeap {
-//   constructor() {
+//   constructor(compare) {
 //     this.data = [];
+//     this.compare = compare;
 //   }
 //   insert(value) {
 //     this.insertAt(this.data.length, value);
 //   }
 //   insertAt(i, value) {
 //     this.data[i] = value;
-//     while (i > 0 && value > this.data[Math.floor((i - 1) / 2)]) {
+//     while (i > 0 && this.compare(value, this.data[Math.floor((i - 1) / 2)]) < 0) {
 //       this.data[i] = this.data[Math.floor((i - 1) / 2)];
 //       this.data[Math.floor((i - 1) / 2)] = value;
 //       i = Math.floor((i - 1) / 2);
@@ -6779,15 +6797,15 @@
 //     if (this.data.length === 0) return;
 //     let value = this.data[i];
 //     while (i < this.data.length) {
-//       let left = 2 * i + 1;
-//       let right = 2 * i + 2;
+//       let left = i * 2 + 1;
+//       let right = i * 2 + 2;
 //       if (left >= this.data.length) break;
 //       if (right >= this.data.length) {
 //         this.data[i] = this.data[left];
 //         i = left;
 //         break;
 //       }
-//       if (this.data[left] > this.data[right]) {
+//       if (this.compare(this.data[left], this.data[right]) < 0) {
 //         this.data[i] = this.data[left];
 //         i = left;
 //       } else {
@@ -6803,17 +6821,31 @@
 //     return value;
 //   }
 //   printHeap() {
-//     console.log(this.data);
+//     console.log(this.data)
 //   }
 // }
-// let heap = new BinaryHeap();
-// let a = [0,8,3,9,4,6,7,2];
+// let maxHeap = new BinaryHeap((a, b) => a - b);
+// let a = [1,2,6,4,7,3,5];
 // for (let i of a) {
-//   heap.insert(i);
+//   maxHeap.insert(i);
 // }
-// heap.printHeap();
+// maxHeap.printHeap();
 // let b = [];
 // for (let i of a) {
-//   b.push(heap.delete(0));
+//   b.push(maxHeap.delete(0));
 // }
-// console.log(b);
+// console.log(b)
+// function getLeastNumbers(arr, k) {
+//   arr.sort((a, b) => a - b);
+//   return arr.slice(0, k);
+// }
+function getLeastNumbers(arr, k) {
+  let a = [];
+  for (let i of arr) {
+    minHeap.insert(i);
+  }
+  for (let i = 0; i < k; i++) {
+    a[i] = minHeap.delete(0);
+  }
+  return a;
+}
