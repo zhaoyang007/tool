@@ -6777,54 +6777,54 @@
 // }
 // console.log(maxSlidingWindow([1,3,1,2,0,5], 3))
 // js声明二叉堆数据结构
-// class BinaryHeap {
-//   constructor(compare) {
-//     this.data = [];
-//     this.compare = compare;
-//   }
-//   insert(value) {
-//     this.insertAt(this.data.length, value);
-//   }
-//   insertAt(i, value) {
-//     this.data[i] = value;
-//     while (i > 0 && this.compare(value, this.data[Math.floor((i - 1) / 2)]) < 0) {
-//       this.data[i] = this.data[Math.floor((i - 1) / 2)];
-//       this.data[Math.floor((i - 1) / 2)] = value;
-//       i = Math.floor((i - 1) / 2);
-//     }
-//   }
-//   delete(i) {
-//     if (this.data.length === 0) return;
-//     let value = this.data[i];
-//     while (i < this.data.length) {
-//       let left = i * 2 + 1;
-//       let right = i * 2 + 2;
-//       if (left >= this.data.length) break;
-//       if (right >= this.data.length) {
-//         this.data[i] = this.data[left];
-//         i = left;
-//         break;
-//       }
-//       if (this.compare(this.data[left], this.data[right]) < 0) {
-//         this.data[i] = this.data[left];
-//         i = left;
-//       } else {
-//         this.data[i] = this.data[right];
-//         i = right;
-//       }
-//     }
-//     if (i < this.data.length - 1) {
-//       this.insertAt(i, this.data.pop());
-//     } else {
-//       this.data.pop();
-//     }
-//     return value;
-//   }
-//   printHeap() {
-//     console.log(this.data)
-//   }
-// }
-// let maxHeap = new BinaryHeap((a, b) => a - b);
+class BinaryHeap {
+  constructor(compare) {
+    this.data = [];
+    this.compare = compare;
+  }
+  insert(value) {
+    this.insertAt(this.data.length, value);
+  }
+  insertAt(i, value) {
+    this.data[i] = value;
+    while (i > 0 && this.compare(value, this.data[Math.floor((i - 1) / 2)]) < 0) {
+      this.data[i] = this.data[Math.floor((i - 1) / 2)];
+      this.data[Math.floor((i - 1) / 2)] = value;
+      i = Math.floor((i - 1) / 2);
+    }
+  }
+  delete(i) {
+    if (this.data.length === 0) return;
+    let value = this.data[i];
+    while (i < this.data.length) {
+      let left = i * 2 + 1;
+      let right = i * 2 + 2;
+      if (left >= this.data.length) break;
+      if (right >= this.data.length) {
+        this.data[i] = this.data[left];
+        i = left;
+        break;
+      }
+      if (this.compare(this.data[left], this.data[right]) < 0) {
+        this.data[i] = this.data[left];
+        i = left;
+      } else {
+        this.data[i] = this.data[right];
+        i = right;
+      }
+    }
+    if (i < this.data.length - 1) {
+      this.insertAt(i, this.data.pop());
+    } else {
+      this.data.pop();
+    }
+    return value;
+  }
+  printHeap() {
+    console.log(this.data)
+  }
+}
+let maxHeap = new BinaryHeap((a, b) => a - b);
 // let a = [1,2,6,4,7,3,5];
 // for (let i of a) {
 //   maxHeap.insert(i);
@@ -6839,13 +6839,36 @@
 //   arr.sort((a, b) => a - b);
 //   return arr.slice(0, k);
 // }
-function getLeastNumbers(arr, k) {
+// function getLeastNumbers(arr, k) {
+//   let a = [];
+//   for (let i of arr) {
+//     minHeap.insert(i);
+//   }
+//   for (let i = 0; i < k; i++) {
+//     a[i] = minHeap.delete(0);
+//   }
+//   return a;
+// }
+// 前k个高频元素
+function topKFrequent(nums, k) {
   let a = [];
-  for (let i of arr) {
-    minHeap.insert(i);
+  let map = new Map();
+  for (let i of nums) {
+    let value = map.has(i) ? map.get(i) + 1 : 1;
+    map.set(i, value);
   }
+  for (let [k, v] of map) {
+    maxHeap.insert(v);
+  }
+  console.log(map)
   for (let i = 0; i < k; i++) {
-    a[i] = minHeap.delete(0);
+    for (let [k1, v] of map) {
+      if (maxHeap.delete(0) === v) {
+        a[i] = k1;
+        map.delete(k1);
+      }
+    }
   }
   return a;
 }
+console.log(topKFrequent([1,1,1,2,2,3], 2))
