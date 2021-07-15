@@ -7013,3 +7013,106 @@
 //   }
 //   return a;
 // }
+// 最小的k个数 1.sort O(nlogn) 2.heap
+// function getLeastNumbers(arr, k) {
+//   arr.sort((a, b) => a - b);
+//   return arr.slice(0, k);
+// }
+// function getLeastNumbers(arr, k) {
+//   let a = [];
+//   let minHeap = new BinaryHeap((a, b) => a - b);
+//   for (let i of arr) {
+//     minHeap.insert(i);
+//   }
+//   for (let i = 0; i < k; i++) {
+//     a[i] = minHeap.delete(0);
+//   }
+//   return a;
+// }
+// 前k个高频元素 1.sort 2.heap
+// function topKFrequent(nums, k) {
+//   let a = [];
+//   let map = new Map();
+//   for (let i of nums) {
+//     let value = map.has(i) ? map.get(i) + 1 : 1;
+//     map.set(i, value);
+//   }
+//   let arr = [...map.values()].sort((a, b) => b - a);
+//   for (let i = 0; i < k; i++) {
+//     let value = arr.shift();
+//     for (let [k, v] of map) {
+//       if (value === v) {
+//         a.push(k);
+//         map.delete(k);
+//         break;
+//       }
+//     }
+//   }
+//   return a;
+// }
+// function topKFrequent(nums, k) {
+//   let a = [];
+//   let map = new Map();
+//   for (let i of nums) {
+//     let value = map.has(i) ? map.get(i) + 1 : 1;
+//     map.set(i, value);
+//   }
+//   let maxHeap = new BinaryHeap((a, b) => b - a);
+//   for (let [k, v] of map) {
+//     maxHeap.insert(v);
+//   }
+//   for (let i = 0; i < k; i++) {
+//     let value = maxHeap.delete(0);
+//     for (let [k, v] of map) {
+//       if (value === v) {
+//         a.push(k);
+//         map.delete(k);
+//         break;
+//       }
+//     }
+//   }
+//   return a;
+// }
+// function factorial(n) {
+//   if (n === 1) return 1;
+//   return n * factorial(n - 1);
+// }
+// console.log(factorial(8))
+// function generateParenthesis(n) {
+//   let a = [];
+//   function generate(left, right, n, s) {
+//     // 终止条件
+//     if (left === n && right === n) {
+//       a.push(s);
+//       return;
+//     }
+//     // 处理当前层
+//     // 下探下一层
+//     if (left < n)
+//       generate(left + 1, right, n, s + '(');
+//     if (left > right)
+//       generate(left, right + 1, n, s + ')');
+//     // 清理当前层
+//   }
+//   generate(0, 0, n, '');
+//   return a;
+// }
+// 括号生成 1.递归 O(n^2)
+// function generateParenthesis(n) {
+//   let a = [];
+//   function generate(left, right, n, s) {
+//     // 递归终止条件
+//     if (left === n && right === n) {
+//       a.push(s);
+//       return;
+//     }
+//     // 处理当前层
+//     // 下探下一层
+//     if (left < n) 
+//       generate(left + 1, right, n, s + '(');
+//     if (left > right)
+//       generate(left, right + 1, n, s + ')');
+//   }
+//   generate(0, 0, n, '');
+//   return a;
+// }
