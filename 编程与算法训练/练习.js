@@ -7116,3 +7116,281 @@
 //   generate(0, 0, n, '');
 //   return a;
 // }
+// js根据一维数组声明完全二叉树数据结构
+// class Node {
+//   constructor(val) {
+//     this.val = val;
+//     this.left = null;
+//     this.right = null;
+//   }
+// }
+// class Tree {
+//   constructor(data) {
+//     let nodeList = [];
+//     for (let i = 0; i < data.length; i++) {
+//       let node = new Node(data[i]);
+//       nodeList.push(node);
+//       if (i > 0) {
+//         let parent = nodeList[Math.floor((i - 1) / 2)];
+//         if (parent.left) {
+//           parent.right = node;
+//         } else {
+//           parent.left = node;
+//         }
+//       }
+//     }
+//     let root = nodeList.shift();
+//     nodeList.length = 0;
+//     return root;
+//   }
+// }
+// console.log(new Tree([1,2,3,4,5,6,7,8]))
+// class Node {
+//   constructor(val) {
+//     this.val = val;
+//     this.left = null;
+//     this.right = null;
+//   }
+// }
+// class Tree {
+//   constructor(data) {
+//     let nodeList = [];
+    
+//     for (let i = 0; i < data.length; i++) {
+//       let node = new Node(data[i]);
+//       nodeList[i] = node;
+//       if (i > 0) {
+//         let n = Math.floor(Math.sqrt(i + 1));
+//         let q = Math.pow(2, n) - 1;
+//         let p = Math.pow(2, n - 1) - 1;
+//         let parent = nodeList[p + Math.floor((i - q) / 2)];
+//         if (parent.left) {
+//           parent.right = node;
+//         } else {
+//           parent.left = node;
+//         }
+//       }
+//     }
+//     let root = nodeList.shift();
+//     nodeList.length = 0;
+//     return root;
+//   }
+// }
+// console.log(new Tree([1,2,3,4,5,6]))
+// 二叉树的中序遍历 1.递归 2.栈迭代
+// function inorderTraversal(root) {
+//   let a = [];
+//   function inorder(root) {
+//     if (root) {
+//       inorder(root.left);
+//       a.push(root.val);
+//       inorder(root.right);
+//     }
+//   }
+//   inorder(root);
+//   return a;
+// }
+// function inorderTraversal(root) {
+//   let a = [];
+//   let stack = [];
+//   while (root || stack.length) {
+//     while (root) {
+//       stack.push(root);
+//       root = root.left;
+//     }
+//     root = stack.pop();
+//     a.push(root.val);
+//     root = root.right;
+//   }
+//   return a;
+// }
+// 最小的k个数 1.sort 2.heap
+// function getLeastNumbers(nums, k) {
+//   nums.sort((a, b) => a - b);
+//   return nums.slice(0, k);
+// }
+// function getLeastNumbers(nums, k) {
+//   let a = [];
+//   for (let i of nums) {
+//     minHeap.insert(i);
+//   }
+//   for (let i = 0; i < k; i++) {
+//     a[i] = minHeap.delete(0);
+//   }
+//   return a;
+// }
+// 前k个高频元素 1.sort 2.heap
+// function topKFrequent(nums, k) {
+//   let a = [];
+//   let map = new Map();
+//   for (let i of nums) {
+//     let value = map.has(i) ? map.get(i) + 1 : 1;
+//     map.set(i, value);
+//   }
+//   let arr = [...map.values()].sort((a, b) => b - a);
+//   for (let i = 0; i < k; i++) {
+//     let value = arr.shift();
+//     for (let [k, v] of map) {
+//       if (v === value) {
+//         a.push(k);
+//         map.delete(k);
+//         break;
+//       }
+//     }
+//   }
+//   return a;
+// }
+// function topKFrequent(nums, k) {
+  // let a = [];
+  // let map = new Map();
+  // for (let i of nums) {
+  //   let value = map.has(i) ? map.get(i) + 1 : 1;
+  //   map.set(i, value);
+  // }
+  // for (let [k, v] of map) {
+  //   maxHeap.insert(v);
+  // }
+  // for (let i = 0; i < k; i++) {
+  //   let value = maxHeap.delete(0);
+  //   for (let [k, v] of map) {
+  //     if (value === v) {
+  //       a.push(k);
+  //       map.delete(k);
+  //       break;
+  //     }
+  //   }
+  // }
+  // return a;
+// }
+// n的阶乘
+// function factorial(n) {
+//   if (n === 1) return 1;
+//   return n * factorial(n - 1);
+// }
+// console.log(factorial(5))
+// 括号生成 1.递归
+// function generateParenthesis(n) {
+//   let a = [];
+//   function generate(left, right, n, s) {
+//     if (left === n && right === n) {
+//       a.push(s);
+//       return;
+//     }
+//     if (left < n)
+//       generate(left + 1, right, n, s + '(');
+//     if (left > right)
+//       generate(left, right + 1, n, s + ')');
+//   }
+//   generate(0, 0, n, '');
+//   return a;
+// }
+// function generateParenthesis(n) {
+//   let a = [];
+//   function generate(level, n, s) {
+//     // 递归终止条件
+//     if (level > 2 * n) {
+//       a.push(s);
+//       return;
+//     }
+//     // 处理当前层
+//     // 下探下一层
+//     generate(level + 1, n, s + '(');
+//     generate(level + 1, n, s + ')');
+//   }
+//   generate(1, n, '');
+//   return a;
+// }
+// console.log(generateParenthesis(3).length);
+// 递归代码模版
+// function recursion(level, params) {
+//   // 递归终止条件
+//   if (level > MAX_LEVEL) {
+//     process_resulet
+//     return;
+//   }
+//   // 处理当前层
+//   process(level, params);
+//   // 下探到下一层
+//   recursion(level + 1, params);
+//   // 清理当前层
+// }
+// 递归代码模版
+// function recursion(level, params) {
+//   // 递归终止条件
+//   if (level > MAX_LEVEL) {
+//     process_result;
+//     return;
+//   } 
+//   // 处理当前层
+//   process(level, params);
+//   // 下探到下一层
+//   recursion(level + 1, params);
+//   // 清理当前层
+// }
+// 递归代码模版
+// function recursion(level, params) {
+//   // 递归终止条件
+//   if (level > MAX_LEVEL) {
+//     process_result;
+//     return;
+//   }
+//   // 处理当前层
+//   process(level, params);
+//   // 下探到下一层
+//   recursion(level + 1, params);
+//   // 清理当前层
+// }
+// 递归代码模版
+// function recursion(level, params) {
+//   // 递归终止条件
+//   if (level > MAX_LEVEL) {
+//     process_result;
+//     return;
+//   }
+//   // 处理当前层
+//   process(level, params);
+//   // 下探到下一层
+//   recursion(level + 1, params);
+//   // 清理当前层
+// }
+// function inorderTraversal(root) {
+//   let a = [];
+//   let stack = [];
+//   while (root || stack.length) {
+//     while (root) {
+//       stack.push(root);
+//       root = root.left;
+//     }
+//     res.push(root.val);
+//     root = root.right;
+//   }    
+//   return a;
+// }
+// function inorderTraversal(root) {
+//   let res = [];
+//   function inorder(root) {
+//     if (root) {
+//       inorder(root.left);
+//       res.push(root.val);
+//       inorder(root.right);
+//     }
+//   }
+//   inorder(root);
+//   return res;
+// }
+// function generateParenthesis(n) {
+//   let a = [];
+//   function generate(level, n, s) {
+//     // 递归终止条件
+//     if (level > 2 * n) {
+//       a.push(s);
+//       return;
+//     }
+//     // 处理当前层
+//     // 下探下一层
+//     generate(level + 1, n, s + '(');
+//     generate(level + 1, n, s + ')');
+//   }
+//   generate(1, n, '');
+//   return a;
+// }
