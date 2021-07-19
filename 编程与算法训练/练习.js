@@ -7410,13 +7410,202 @@
 //   return recursion(root, -Infinity, Infinity);
 // }
 // 二叉树的最大深度
-function maxDepth(root) {
-  if (root == null) return 0;
-  let leftHeight = maxDepth(root.left);
-  let rightHeight = maxDepth(root.right);
-  return  Math.max(leftHeight, rightHeight) + 1;
-}
-                              root
-                  2 left              1 right
-            1  left    1 right        0
-            0
+// function maxDepth(root) {
+//   if (root == null) return 0;
+//   let leftHeight = maxDepth(root.left);
+//   let rightHeight = maxDepth(root.right);
+//   return  Math.max(leftHeight, rightHeight) + 1;
+// }
+//                               root
+//                   2 left              1 right
+//             1  left    1 right        0
+//             0
+// 最小的k个数 1.sor
+// function getLeastNumbers(nums, k) {
+//   nums.sort((a, b) => a - b);
+//   return nums.slice(0, k);
+// }
+// function getLeastNumbers(nums, k) {
+//   let a = [];
+//   for (let i of nums) {
+//     minHeap.insert(i);
+//   }
+//   for (let i = 0; i < k; i++) {
+//     a[i] = minHeap.delete(0);
+//   }
+//   return a;
+// }
+// 前k个高频元素
+// function topKFrequent(nums, k) {
+//   let a = [];
+//   let map = new Map();
+//   for (let i of nums) {
+//     let value = map.has(i) ? map.get(i) + 1 : 1;
+//     map.set(i, value);
+//   }
+//   let arr = [...map.values()].sort((a, b) => b - a);
+//   for (let i = 0; i < k; i++) {
+//     let value = arr.shift();
+//     for (let [k, v] of map) {
+//       if (value === v) {
+//         a.push(k);
+//         map.delete(k);
+//         break;
+//       }
+//     }
+//   }
+//   return a;
+// }
+// function topKFrequent(nums, k) {
+//   let a = [];
+//   let map = new Map();
+//   for (let i of nums) {
+//     let value = map.has(i) ? map.get(i) + 1 : 1;
+//     map.set(i, value);
+//   }
+//   for (let [k, v] of map) {
+//     maxHeap.insert(v);
+//   }
+//   for (let i = 0; i < k; i++) {
+//     let value = maxHeap.delete(0);
+//     for (let [k, v] of map) {
+//       if (value === v) {
+//         a.push(k);
+//         map.delete(k);
+//         break;
+//       }
+//     }
+//   }
+//   return a;
+// }
+// 递归代码模版
+// function recursion(level, params) {
+//   // 递归终止条件
+//   if (level > MAX_LEVEL) {
+//     process_result;
+//     return;
+//   }
+//   // 处理当前层
+//   process(level, params);
+//   // 下探下一层
+//   recursion(level + 1, params);
+//   // 清理当前层
+// }
+// n!
+// function factorial(n) {
+//   if (n === 1) return 1;
+//   return n * factorial(n - 1);
+// }
+// console.log(factorial(4))
+// 括号生成 1.递归 O(n)
+// function generateParenthesis(n) {
+//   let a = [];
+//   function generate(left, right, n, s) {
+//     if (left === n && right === n) {
+//       a.push(s);
+//       return;
+//     }
+//     if (left < n) generate(left + 1, right, n, s + '(');
+//     if (left > right) generate(left, right + 1, n, s + ')');
+//   }
+//   generate(0, 0, n, '');
+//   return a;
+// }
+// 生成全部括号 O(2^2n)
+// function generateParenthesis(n) {
+//   let a = [];
+//   function generate(level, max, s) {
+//     if (level === max) {
+//       a.push(s);
+//       return;
+//     }
+//     generate(level + 1, max, s + '(');
+//     generate(level + 1, max, s + ')');
+//   }
+//   generate(0, 2 * n, '');
+//   return a;
+// }
+// console.log(generateParenthesis(2))
+// 验证二叉搜索树 1.递归 2.中序遍历是升序
+// function isValidBST(root) {
+//   function recursion(root, lower, upper) {
+//     if (root == null) return true;
+//     if (root.val <= lower || root.val >= upper) return false;
+//     return recursion(root.left, lower, root.val) && recursion(root.right, root.val, upper);
+//   }
+//   return recursion(root, -Infinity, Infinity);
+// }
+// function isValidBST(root) {
+//   let pre = -Infinity;
+//   let flag = true;
+//   function inorder(root) {
+//     if (root) {
+//       inorder(root.left);
+//       if (root.val <= pre) {
+//         flag = false;
+//       }
+//       pre = root.val;
+//       inorder(root.right);
+//     }
+//   }
+//   inorder(root);
+//   return flag;
+// }
+// function isValidBST(root) {
+//   let stack = [];
+//   let pre = -Infinity;
+//   while (root || stack.length) {
+//     while (root) {
+//       stack.push(root);
+//       root = root.left;
+//     }
+//     root = stack.pop();
+//     if (root.val <= pre) {
+//       return false;
+//     }
+//     pre = root.val;
+//     root = root.right;
+//   }
+//   return true;
+// }
+// 二叉树的最大深度 1.递归 2.广搜
+// function maxDepth(root) {
+//   if (root == null) return 0;
+//   let leftHeight = maxDepth(root.left);
+//   let rightHeight = maxDepth(root.right);
+//   return Math.max(leftHeight, rightHeight) + 1;
+// }
+// function maxDepth(root) {
+//   if (root == null) return 0;
+//   let res = 0;
+//   let q = [];
+//   q.push(root);
+//   while (q.length) {
+//     let length = q.length;
+//     while (length > 0) {
+//       let node = q.shift();
+//       if (node.left != null) q.push(node.left);
+//       if (node.right != null) q.push(node.right);
+//       length--;
+//     }
+//     res++;
+//   }
+//   return res;
+// }
+// function maxDepth(root) {
+//   if (root == null) return 0;
+//   let res = 0;
+//   let q = [];
+//   q.push(root);
+//   while (q.length) {
+//     let length  = q.length;
+//     while (length > 0) {
+//       let node = q.shift();
+//       if (node.left != null) q.push(node.left);
+//       if (node.right != null) q.push(node.right); 
+//       length--;
+//     }
+//     res++;
+//   }
+//   return res;
+// }
