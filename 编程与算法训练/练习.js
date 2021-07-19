@@ -7394,3 +7394,29 @@
 //   generate(1, n, '');
 //   return a;
 // }
+// function isValidBST(root) {
+//   function recursion(root, lower, upper) {
+//     // 递归终止条件
+//     if (root == null) {
+//       return true;
+//     }
+//     if (root.val <= lower || root.val >= upper) {
+//       return false;
+//     }
+//     // 处理当前层
+//     // 下探下一层
+//     return recursion(root.left, lower, root.val) && recursion(root.right, root.val, upper);
+//   }
+//   return recursion(root, -Infinity, Infinity);
+// }
+// 二叉树的最大深度
+function maxDepth(root) {
+  if (root == null) return 0;
+  let leftHeight = maxDepth(root.left);
+  let rightHeight = maxDepth(root.right);
+  return  Math.max(leftHeight, rightHeight) + 1;
+}
+                              root
+                  2 left              1 right
+            1  left    1 right        0
+            0
