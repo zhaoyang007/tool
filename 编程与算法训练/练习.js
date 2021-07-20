@@ -7609,3 +7609,247 @@
 //   }
 //   return res;
 // }
+// 最小的k个数
+// function getLeastNumbers(nums, k) {
+//   nums.sort((a, b) => a - b);
+//   return nums.slice(0, k);
+// }
+// function getLeastNumbers(nums, k) {
+//   let a = [];
+//   for (let i of nums) {
+//     minHeap.insert(i);
+//   }
+//   for (let i = 0; i < k; i++) {
+//     a.push(minHeap.delete(0));
+//   }
+//   return a;
+// }
+// 前k个高频元素
+// function topKFrequent(nums, k) {
+//   let a = [];
+//   let map = new Map();
+//   for (let i of nums) {
+//     let value = map.has(i) ? map.get(i) + 1 : 1;
+//     map.set(i, value);
+//   }
+//   let arr = [...map.values()].sort((a, b) => b - a);
+//   for (let i = 0; i < k; i++) {
+//     let value = arr.shift();
+//     for (let [k, v] of map) {
+//       if (value === v) {
+//         a.push(k);
+//         map.delete(k);
+//         break;
+//       }
+//     }
+//   }
+//   return a;
+// }
+// function topKFrequent(nums, k) {
+//   let a = [];
+//   let map = new Map();
+//   for (let i of nums) {
+//     let value = map.has(i) ? map.get(i) + 1 : 1;
+//     map.set(i, value);
+//   }
+//   for (let [k, v] of map) {
+//     maxHeap.insert(v);
+//   }
+//   for (let i = 0; i < k; i++) {
+//     let value = maxHeap.delete(0);
+//     for (let [k, v] of map) {
+//       if (value === v) {
+//         a.push(k);
+//         map.delete(k);
+//         break;
+//       }
+//     }
+//   }
+//   return a;
+// }
+// 递归代码模版
+// function recursion(level, params) {
+//   // 递归终止条件
+//   if (level > MAX_LEVEL) {
+//     process_result;
+//     return;
+//   }
+//   // 处理当前层
+//   process(level, params);
+//   // 下探下一层
+//   recursion(level + 1, params);
+//   // 清理当前层
+// }
+// n!
+// function factorial(n) {
+//   if (n === 1) return 1;
+//   return n * factorial(n - 1);
+// }
+// console.log(factorial(3));
+// 括号生成
+// function generateParenthesis(n) {
+//   let a = [];
+//   function generate(left, right, n, s) {
+//     if (left == n && right == n) {
+//       a.push(s);
+//       return;
+//     }
+//     if (left < n) generate(left + 1, right, n, s + '(');
+//     if (left > right) generate(left, right + 1, n, s + ')');
+//   }
+//   generate(0, 0, n, '');
+//   return a;
+// }
+// function generateParenthesis(n) {
+//   let a = [];
+//   function recursion(level, max, s) {
+//     if (level === max) {
+//       a.push(s);
+//       return;
+//     }
+//     recursion(level + 1, max, s + '(');
+//     recursion(level + 1, max, s + ')');
+//   }
+//   recursion(0, 2 * n, '');
+//   return a;
+// }
+// console.log(generateParenthesis(3))
+// 验证二叉搜索树 1.递归 2.中序遍历是升序
+// function isValidBST(root) {
+//   function recursion(root, lower, upper) {
+//     if (root == null) return true;
+//     if (root.val <= lower || root.val >= upper) {
+//       return false;
+//     }
+//     return recursion(root.left, lower, root.val) && recursion(root.right, root.val, upper);
+//   }
+//   return recursion(root, -Infinity, Infinity);
+// }
+// function isValidBST(root) {
+//   let flag = true;
+//   let pre = -Infinity;
+//   function inorder(root) {
+//     if (root) {
+//       inorder(root.left);
+//       if (root.val <= pre) {
+//         flag = false;
+//       }
+//       pre = root.val;
+//       inorder(root.right);
+//     }
+//   }
+//   inorder(root);
+//   return flag;
+// }
+// function isValidBST(root) {
+//   let stack = [];
+//   let pre = -Infinity;
+//   while (root || stack.length) {
+//     while (root) {
+//       stack.push(root);
+//       root = root.left;
+//     }
+//     root = stack.pop();
+//     if (root.val <= pre) return false;
+//     pre = root.val;
+//     root = root.right;
+//   }
+//   return true;
+// }
+// 二叉树的最大深度 1.递归 2.广搜
+// function maxDepth(root) {
+//   if (root == null) return 0;
+//   let leftHeight = maxDepth(root.left);
+//   let rightHeight = maxDepth(root.right);
+//   return Math.max(leftHeight, rightHeight) + 1;
+// }
+// function maxDepth(root) {
+//   if (root == null) return 0;
+//   let res = 0;
+//   let q = [];
+//   q.push(root);
+//   while (q.length) {
+//     let length = q.length;
+//     while (length > 0) {
+//       let node = q.shift();
+//       if (node.left != null) q.push(node.left);
+//       if (node.right != null) q.push(node.right);
+//       length--;
+//     }
+//     res++;
+//   }
+//   return res;
+// }
+// js声明链表数据结构
+// class Node {
+//   constructor(val) {
+//     this.val = val;
+//     this.next = null;
+//   }
+// }
+// class LinkedList {
+//   constructor(data) {
+//     let head = new Node(data.shift());
+//     let next = head;
+//     for (let i of data) {
+//       next.next = new Node(i);
+//       next = node.next;
+//     }
+//     return head;
+//   }
+// }
+// 环形链表 1.hash O(n) 2.快慢指针 O(n)
+// function hasCycle(head) {
+//   if (head == null || head.next == null) return false;
+//   let next = head;
+//   let map = new Map();
+//   while (next != null) {
+//     if (map.has(next)) {
+//       return true;
+//     }
+//     map.set(next, 1);
+//     next = next.next;
+//   }
+//   return false;
+// }
+// function hasCycle(head) {
+//   if (head == null || head.next == null) return false;
+//   let slow = head;
+//   let fast = head.next;
+//   while (fast != null && fast.next != null) {
+//     if (fast === slow || fast.next === slow) {
+//       return true;
+//     }
+//     slow = slow.next;
+//     fast = fast.next.next;
+//   }
+//   return false;
+// }
+// 有效的括号 1.暴力 replace O(n^2) 2.栈
+// function isValid(s) {
+//   if (s.length % 2 === 1) return false;
+//   let l = s.length / 2;
+//   for (let i = 0; i < l; i++) {
+//     s = s.replace('()', '').replace('[]', '').replace('{}', '');
+//   }
+//   return !s.length;
+// }
+// function isValid(s) {
+//   if (s.length % 2 === 1) return false;
+//   let stack = [];
+//   let map = new Map([
+//     [')', '('],
+//     [']', '['],
+//     ['}', '{']
+//   ]);
+//   for (let i of s) {
+//     if (map.has(i)) {
+//       if (!stack.length || map.get(i) !== stack.pop()) {
+//         return false;
+//       }
+//     } else {
+//       stack.push(i);
+//     }
+//   }
+//   return !stack.length;
+// }
