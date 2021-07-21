@@ -7853,3 +7853,19 @@
 //   }
 //   return !stack.length;
 // }
+// myPow = function (x, n) {
+//   if (n === 1) return x;
+//   return x * myPow(x, n - 1);
+// };
+// console.log(myPow(2, -2))
+function myPow(x, n) {
+  function pow() {
+    subResult = pow(x, n / 2);
+    if (n % 2 === 1) {
+      return subResult * subResult * x;
+    } else {
+      return subResult * subResult;
+    }
+  }
+  pow(x, n);
+}
