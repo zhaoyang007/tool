@@ -8106,17 +8106,45 @@
 //   }
 //   return pow(x, n);
 // }
-myPow = function(x, n) {
-  if (n === 0) return 1;
-  if (n < 0) {
-    x = 1 / x;
-    n = -n;
+// myPow = function(x, n) {
+//   if (n === 0) return 1;
+//   if (n < 0) {
+//     x = 1 / x;
+//     n = -n;
+//   }
+//   function pow(x, n) {
+//     if (n === 1) return x;
+//     // subResult = pow(x, Math.floor(n / 2));
+//     return n % 2 === 0 ? pow(x, Math.floor(n / 2)) * pow(x, Math.floor(n / 2)) : pow(x, Math.floor(n / 2)) * pow(x, Math.floor(n / 2)) * x;
+//   }
+//   return pow(x, n);
+// };
+// console.log(myPow(2, 10))
+// function subsets(nums) {
+//   let a = [];
+//   function recursion(level, nums, list) {
+//     if (level === nums.length) {
+//       a.push(list);
+//       return;
+//     }
+//     recursion(level + 1, nums, JSON.parse(JSON.stringify(list)));
+//     list.push(nums[level]);
+//     recursion(level + 1, nums, JSON.parse(JSON.stringify(list)));
+//     // list.splice(list.length - 1, 1);
+//   }
+//   recursion(0, nums, []);
+//   return a;
+// }
+// console.log(subsets([1,2,3]))
+function subsets(nums) {
+  let a = [[]];
+  for (let num of nums) {
+    let newsets = [];
+    for (let i of a) {
+      let tmp = i.concat(num);
+      newsets.push(tmp);
+    }
+    a.push(newsets);
   }
-  function pow(x, n) {
-    if (n === 1) return x;
-    // subResult = pow(x, Math.floor(n / 2));
-    return n % 2 === 0 ? pow(x, Math.floor(n / 2)) * pow(x, Math.floor(n / 2)) : pow(x, Math.floor(n / 2)) * pow(x, Math.floor(n / 2)) * x;
-  }
-  return pow(x, n);
-};
-console.log(myPow(2, 10))
+  return a;
+}
