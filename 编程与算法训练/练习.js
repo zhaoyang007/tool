@@ -8136,15 +8136,316 @@
 //   return a;
 // }
 // console.log(subsets([1,2,3]))
-function subsets(nums) {
-  let a = [[]];
-  for (let num of nums) {
-    let newsets = [];
-    for (let i of a) {
-      let tmp = i.concat(num);
-      newsets.push(tmp);
-    }
-    a.push(newsets);
-  }
-  return a;
-}
+// function subsets(nums) {
+//   let a = [[]];
+//   for (let num of nums) {
+//     let newsets = [];
+//     for (let i of a) {
+//       let tmp = i.concat(num);
+//       newsets.push(tmp);
+//     }
+//     a = a.concat(newsets);
+//   }
+//   return a;
+// }
+// console.log(subsets([1,2,3]));
+// 子集 1.递归 O(n^2) 2.迭代 O(n^2)
+// function subsets(nums) {
+//   let a = [];
+//   function recursion(nums, list, index) {
+//     if (index === nums.length) {
+//       a.push(list);
+//       return;
+//     }
+//     recursion(nums, JSON.parse(JSON.stringify(list)), index + 1);
+//     list.push(nums[index]);
+//     recursion(nums, JSON.parse(JSON.stringify(list)), index + 1);
+//   }
+//   recursion(nums, [], 0);
+//   return a;
+// }
+// function subsets(nums) {
+//   let a = [[]];
+//   for (let num of nums) {
+//     let newsets = [];
+//     for (let i of a) {
+//       newsets.push(i.concat(num));
+//     }
+//     a = a.concat(newsets);
+//   }
+//   return a;
+// }
+// 前k个高频元素
+// function topKFrequent(nums, k) {
+//   let a = [];
+//   let map = new Map();
+//   for (let i of nums) {
+//     let value = map.has(i) ? map.get(i) + 1 : 1;
+//     map.set(i, value);
+//   }
+//   let arr = [...map.values()].sort((a, b) => b - a);
+//   for (let i = 0; i < k; i++) {
+//     let value = arr.shift();
+//     for (let [k, v] of map) {
+//       if (value === v) {
+//         a.push(k);
+//         map.delete(k);
+//         break;
+//       }
+//     }
+//   }
+//   return a;
+// }
+// function topKFrequent(nums, k) {
+//   let a = [];
+//   let map = new Map();
+//   for (let i of nums) {
+//     let value = map.has(i) ? map.get(i) + 1 : 1;
+//     map.set(i, value);
+//   }
+//   for (let [k, v] of map) {
+//     maxHeap.insert(v);
+//   }
+//   for (let i = 0; i < k; i++) {
+//     let value = maxHeap.delete(0);
+//     for (let [k, v] of map) {
+//       if (value === v) {
+//         a.push(k);
+//         map.delete(k);
+//         break;
+//       }
+//     }
+//   }
+//   return a;
+// }
+// 递归代码模版
+// function recursion(level, params) {
+//   if (level > MAX_LEVEL) {
+//     process_result;
+//     return;
+//   }
+//   process(level, params);
+//   recursion(level + 1, params);
+//   // 清理当前层
+// }
+// n!
+// function factorial(n) {
+//   if (n === 1) return 1;
+//   return n * factorial(n - 1);
+// }
+// console.log(factorial(4))
+// 括号生成 1.递归
+// function generateParenthesis(n) {
+//   let a = [];
+//   function generate(level, max, s) {
+//     if (level === max) {
+//       a.push(s);
+//       return;
+//     }
+//     generate(level + 1, max, s + '(');
+//     generate(level + 1, max, s + ')');
+//   }
+//   generate(0, 2 * n, '');
+//   return a;
+// }
+// console.log(generateParenthesis(3).length)
+// function generateParenthesis(n) {
+//   let a = [];
+//   function generate(left, right, n, s) {
+//     if (left === n && right === n) {
+//       a.push(s);
+//       return;
+//     }
+//     if (left < n) generate(left + 1, right, n, s + '(');
+//     if (left > right) generate(left, right + 1, n, s + ')');
+//   }
+//   generate(0, 0, n, '');
+//   return a;
+// }
+// 验证二叉搜索树 1.递归 2.中序遍历是升序
+// function isValidBST(root) {
+//   function recursion(root, lower, upper) {
+//     if (root == null) return true;
+//     if (root.val <= lower || root.val >= upper) return false;
+//     return recursion(root.left, lower, root.val) && recursion(root.right, root.val, upper); 
+//   }
+//   return recursion(root, -Infinity, Infinity);
+// }
+// function isValidBST(root) {
+//   let flag = true;
+//   let pre = -Infinity;
+//   function inorder(root) {
+//     if (root) {
+//       inorder(root.left);
+//       if (root.val <= pre) flag = false;
+//       pre = root.val;
+//       inorder(root.right);
+//     }
+//   }
+//   inorder(root);
+//   return flag;
+// }
+// function isValidBST(root) {
+//   let stack = [];
+//   let pre = -Infinity;
+//   while (root || stack.length) {
+//     while (root) {
+//       stack.push(root);
+//       root = root.left;
+//     }
+//     root = stack.pop();
+//     if (root.val <= pre) return false;
+//     pre = root.val;
+//     root = root.right;
+//   }
+//   return true;
+// }
+// 二叉树的最大深度 1.递归 2.迭代
+// function maxDepth(root) {
+//   function recursion(root) {
+//     if (root == null) return 0;
+//     let leftDepth = maxDepth(root.left);
+//     let rightDepth = maxDepth(root.right);
+//     return Math.max(leftDepth, rightDepth) + 1;
+//   }
+//   return recursion(root);
+// }
+// function maxDepth(root) {
+//   if (root == null) return 0;
+//   let res = 0;
+//   let q = [];
+//   q.push(root);
+//   while (q.length) {
+//     let length = q.length;
+//     while (length > 0) {
+//       let node = q.shift();
+//       if (node.left != null) q.push(node.left);
+//       if (node.right != null) q.push(node.right);
+//       length--;
+//     }
+//     res++;
+//   }
+//   return res;
+// }
+// pow(x, n) 1.暴力枚举累乘 2.傻递归 3.分治递归
+// function myPow(x, n) {
+//   if (n < 0) {
+//     x = 1 / x;
+//     n = -n;
+//   }
+//   let res = 1;
+//   for (let i = 0; i < n; i++) {
+//     res = res * x;
+//   }
+//   return res;
+// }
+// function myPow(x, n) {
+//   if (n < 0) {
+//     x = 1 / x;
+//     n = -n;
+//   }
+//   function pow(x, n) {
+//     if (n === 0) return 1;
+//     return x * pow(x, n - 1);
+//   }
+//   return pow(x, n);
+// }
+// console.log(myPow(2, -10))
+// function myPow(x, n) {
+//   // if (n === 0) return 1;
+//   if (n < 0) {
+//     x = 1 / x;
+//     n = -n;
+//   }
+//   function pow(x, n) {
+//     if (n === 0) return 1;
+//     let sub = pow(x, Math.floor(n / 2));
+//     return n % 2 === 0 ? sub * sub : sub * sub * x;
+//   }
+//   return pow(x, n);
+// }
+// 子集 1.递归 2.迭代
+// function subsets(nums) {
+//   let a = [];
+//   function recursion(nums, list, index) {
+//     if (index === nums.length) {
+//       a.push(list);
+//       return;
+//     }
+//     recursion(nums, JSON.parse(JSON.stringify(list)), index + 1);
+//     list.push(nums[index]);
+//     recursion(nums, JOSN.parse(JOSN.stringify(list)), index + 1);
+//   }
+//   recursion(nums, [], 0);
+//   return a;
+// }
+// function subsets(nums) {
+//   let a = [[]];
+//   for (let num of nums) {
+//     let res = [];
+//     for (let sub of a) {
+//       res.push(sub.concat(num));
+//     }
+//     a = a.concat(res);
+//   }
+//   return a;
+// }
+// js声明二叉堆数据结构
+// class BinaryHeap {
+//   constructor(compare) {
+//     this.compare = compare;
+//     this.data = [];
+//   }
+//   insert(value) {
+//     this.insertAt(this.data.length, value);
+//   }
+//   insertAt(i, value) {
+//     this.data[i] = value;
+//     while (i > 0 && this.compare(value, this.data[Math.floor((i - 1) / 2)]) < 0) {
+//       this.data[i] = this.data[Math.floor((i - 1) / 2)];
+//       this.data[Math.floor((i - 1) / 2)] = value;
+//       i = Math.floor((i - 1) / 2);
+//     }
+//   }
+//   delete(i) {
+//     if (this.data.length === 0) return;
+//     let value = this.data[i];
+//     while (i < this.data.length) {
+//       let left = 2 * i + 1;
+//       let right = 2 * i + 2;
+//       if (left >= this.data.length) break;
+//       if (right >= this.data.length) {
+//         this.data[i] = this.data[left];
+//         i = left;
+//         break;
+//       }
+//       if (this.compare(this.data[left], this.data[right]) < 0) {
+//         this.data[i] = this.data[left];
+//         i = left;
+//       } else {
+//         this.data[i] = this.data[right];
+//         i = right;
+//       }
+//       if (i < this.data.length - 1) {
+//         this.insertAt(i, this.data.pop());
+//       } else {
+//         this.data.pop();
+//       }
+//     }
+//     return value;
+//   }
+//   printHeap() {
+//     console.log(this.data);
+//   }
+// }
+// let maxHeap = new BinaryHeap((a, b) => b - a);
+// let a = [1,4,2,7,9,6,3];
+// for (let i of a) {
+//   maxHeap.insert(i);
+// }
+// maxHeap.printHeap();
+// let b = [];
+// for (let i of a) {
+//   b.push(maxHeap.delete(0));
+// }
+// console.log(b);
