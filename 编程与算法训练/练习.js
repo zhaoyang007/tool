@@ -8449,3 +8449,15 @@
 //   b.push(maxHeap.delete(0));
 // }
 // console.log(b);
+// function majorityElement(nums) {
+//   let map = new Map();
+//   for (let i of nums) {
+//     let value = map.has(i) ? map.get(i) + 1 : 1;
+//     map.set(i, value);
+//   }
+//   for (let [k, v] of map) {
+//     if (v > nums.length / 2) {
+//       return k;
+//     }
+//   }
+// }
