@@ -8461,3 +8461,240 @@
 //     }
 //   }
 // }
+// 电话号码的字母组合
+// function letterCombinations(digits) {
+//   if (digits === '') return [];
+//   let mapData = ['', '', 'abc', 'def', 'ghi', 'jkl', 'mno', 'pqrs', 'tuv', 'wxyz'];
+//   if (digits.length === 1) return mapData[digits].split('');
+//   let tmp = digits.split('');
+//   let arr = [];
+//   for (let i of tmp) {
+//     arr.push(mapData[i]);
+//   }
+//   // ['abc', 'def']
+//   function recursion(arr) {
+//     if (arr.length === 1) {
+//       return arr[0];
+//     }
+//     let res = [];
+//     let a1 = arr.shift();
+//     let a2 = arr.shift();
+//     for (let i of a1) {
+//       for (let j of a2) {
+//         res.push(i + j);
+//       }
+//     }
+//     arr.unshift(res);
+//     return recursion(arr);
+//   }
+//   return recursion(arr);
+// }
+// console.log(letterCombinations('2'))
+// 递归代码模版
+// function recursion(level, params) {
+//   // 递归终止条件
+//   if (level > MAX_LEVEL) {
+//     process_result
+//     return;
+//   }
+//   // 处理当前层
+//   process(level, params);
+//   // 下探下一层
+//   recursion(level + 1, params);
+//   清理当前层
+// }
+// 计算n!
+// function factorial(n) {
+//   if (n === 1) return n;
+//   return n * factorial(n - 1);
+// }
+// console.log(factorial(4))
+// 括号生成
+// function generateParenthesis(n) {
+//   let a = [];
+//   function generate(level, max, s) {
+//     if (level === max) {
+//       a.push(s);
+//       return;
+//     }
+//     generate(level + 1, max, s + '(');
+//     generate(level + 1, max, s + ')');
+//   }
+//   generate(0, 2 * n, '');
+//   return a;
+// }
+// console.log(generateParenthesis(3).length)
+// function generateParenthesis(n) {
+//   let a = [];
+//   function generate(left, right, n, s) {
+//     if (left === n && right === n) {
+//       a.push(s);
+//       return;
+//     }
+//     if (left < n) generate(left + 1, right, n, s + '(');
+//     if (left > right) generate(left, right + 1, n, s + ')');
+//   }
+//   generate(0, 0, n, '');
+//   return a;
+// }
+// 验证二叉搜索树 1.递归 2.中序遍历是升序的
+// function isValidBST(root) {
+//   function recursion(root, lower, upper) {
+//     if (root == null) return true;
+//     if (root.val <= lower || root.val >= upper) return false;
+//     return recursion(root.left, lower, root.val) && recursion(root.right, root.val, upper);
+//   }
+//   return recursion(root, -Infinity, Infinity);
+// }
+// function isValidBST(root) {
+//   let flag = true;
+//   let pre = -Infinity;
+//   function inorder(root) {
+//     if (root) {
+//       inorder(root.left);
+//       if (root.val <= pre) flag = false;
+//       pre = root.val;
+//       inorder(root.right);
+//     }
+//   }
+//   inorder(root);
+//   return flag;
+// }
+// function isValidBST(root) {
+//   let pre = -Infinity;
+//   let stack = [];
+//   while (root || stack.length) {
+//     while (root) {
+//       stack.push(root);
+//       root = root.left;
+//     }
+//     root = stack.pop();
+//     if (root.val <= pre) return false;
+//     pre = root.val;
+//     root = root.right;
+//   }
+//   return true;
+// }
+// 二叉树最大深度 1.递归 2.层序遍历
+// function maxDepth(root) {
+//   if (root == null) return 0;
+//   let leftDepth = maxDepth(root.left);
+//   let rightDepth = maxDepth(root.right);
+//   return Math.max(leftDepth, rightDepth) + 1;
+// }
+// function maxDepth(root) {
+//   let res = 0;
+//   let q = [];
+//   q.push(root);
+//   while (q.length) {
+//     let length = q.length;
+//     while (length > 0) {
+//       let node = q.shift();
+//       if (node.left) q.push(node.left);
+//       if (node.right) q.push(node.right);
+//       length--;
+//     }
+//     res++;
+//   }
+//   return res;
+// }
+// pow(x, n) 1.暴力枚举累乘 O(n) 2.傻递归 O(n) 3.分治递归 O(logn)
+// function myPow(x, n) {
+//   if (n < 0) {
+//     x = 1 / x;
+//     n = -n;
+//   }
+//   let res = 1;
+//   for (let i = 0; i < n; i++) {
+//     res = res * x;
+//   }
+//   return res;
+// }
+// function myPow(x, n) {
+//   if (n < 0) {
+//     x = 1 / x;
+//     n = -n;
+//   }
+//   function pow(x, n) {
+//     if (n === 0) return 1;
+//     return x * pow(x, n - 1);
+//   }
+//   return pow(x, n);
+// }
+// function myPow(x, n) {
+//   if (n < 0) {
+//     x = 1 / x;
+//     n = -n;
+//   }
+//   function pow(x, n) {
+//     if (n === 0) return 1;
+//     let sub = pow(x, Math.floor(n / 2));
+//     return n % 2 === 0 ? sub * sub : sub * sub * x;
+//   }
+//   return pow(x, n);
+// }
+// 子集 1.递归 O(n^2) 2.迭代 O(n)
+// function subsets(nums) {
+//   let a = [];
+//   function recursion(nums, list, index) {
+//     if (index === nums.length) {
+//       a.push(list);
+//       return;
+//     }
+//     recursion(nums, JSON.parse(JSON.stringify(list)), index + 1);
+//     list.push(nums[index]);
+//     recursion(nums, JSON.parse(JSON.stringify(list)), index + 1);
+//   }
+//   recursion(nums, [], 0);
+//   return a;
+// }
+// function subsets(nums) {
+//   let a = [[]];
+//   for (let num of nums) {
+//     let res = [];
+//     for (let i of a) {
+//       res.push(i.concat(num));
+//     }
+//     a = a.concat(res);
+//   }
+//   return a;
+// }
+// 多数元素 1.hash O(n) 2.排序
+// function majorityElement(nums) {
+//   let map = new Map();
+//   for (let i of nums) {
+//     let value = map.has(i) ? map.get(i) + 1 : 1;
+//     map.set(i, value);
+//     if (map.get(i) > nums.length / 2) return i;
+//   }
+// }
+// function majorityElement(nums) {
+//   nums.sort((a, b) => a - b);
+//   return nums[Math.floor(nums.length / 2)];
+// }
+// 电话号码字母组合 1.分治递归
+// function letterCombinations(digits) {
+//   if (digits === '') return [];
+//   let data = ['', '', 'abc', 'def', 'ghi', 'jkl', 'mno', 'pqrs', 'tuv', 'wxyz'];
+//   if (digits.length === 1) return data[digits].split('');
+//   let a = digits.split('');
+//   let b = [];
+//   for (let i of a) {
+//     b.push(data[i]);
+//   }
+//   function recursion(arr) {
+//     if (arr.length === 1) return arr[0];
+//     let a1 = arr.shift();
+//     let a2 = arr.shift();
+//     let tmp = [];
+//     for (let i of a1) {
+//       for (let j of a2) {
+//         tmp.push(i + j);
+//       }
+//     }
+//     arr.unshift(tmp);
+//     return recursion(arr);
+//   }
+//   return recursion(b);
+// }
+// letterCombinations('23')
