@@ -8698,3 +8698,363 @@
 //   return recursion(b);
 // }
 // letterCombinations('23')
+// function letterCombinations(digits) {
+//   let res = [];
+//   let a = digits.split('');
+//   let b = [];
+//   for (let i of a) {
+//     b.push(data[i]);
+//   }
+//   // ['abc', 'def']
+//   function recursion(arr, s, index) {
+//     if (index === arr.length) {
+//       res.push(s);
+//       return;
+//     }
+//     for (let i = 0; i < arr.length; i++) {
+//       for (let j of arr[i]) {
+//         recursion(arr, s + j,i + 1);
+//       }
+//     }
+//   }
+//   recursion(b, '', 0);
+//   return res;
+// }
+// letterCombinations = function(digits) {
+//   if (digits === '') return [];
+//   let mapData = ['', '', 'abc', 'def', 'ghi', 'jkl', 'mno', 'pqrs', 'tuv', 'wxyz'];
+//   if (digits.length === 1) return mapData[digits].split('');
+//   let tmp = digits.split('');
+//   let b = [];
+//   let res = [];
+//   for (let i of tmp) {
+//     b.push(mapData[i]);
+//   }
+//   function recursion(arr, s, index) {
+//     if (index === digits.length) {
+//       res.push(s);
+//       return;
+//     }
+//     let letter = arr[index];
+//     for (let i of letter) {
+//       recursion(arr, s + i, index + 1);
+//     }
+//   }
+//   recursion(b, '', 0);
+//   return res;
+// }
+// var letterCombinations = function(digits) {
+//   if (digits === '') return [];
+//   let mapData = ['', '', 'abc', 'def', 'ghi', 'jkl', 'mno', 'pqrs', 'tuv', 'wxyz'];
+//   if (digits.length === 1) return mapData[digits].split('');
+//   let tmp = digits.split('');
+//   let b = [];
+//   let res = [];
+//   for (let i of tmp) {
+//     b.push(mapData[i]);
+//   }
+//   // ['abc', 'def']
+//   function recursion(arr, s, index) {
+//     if (index === arr.length) {
+//       res.push(s);
+//       return;
+//     }
+//     for (let i = 0; i < arr.length; i++) {
+//       for (let j of arr[i]) {
+//         recursion(arr, s + j, i + 1);
+//         for (let i = 0; i < arr.length; i++) {
+//           for (let j of arr[i]) {
+//             recursion(arr, s + j, i + 1);
+//           }
+//         }
+//       }
+//     }
+//   }
+//   recursion(b, '', 0);
+//   return res;
+// };
+// 递归代码模版
+// function recursion(level, params) {
+//   if (level > MAX_LEVEL) {
+//     process_result;
+//     return;
+//   }
+//   process(level, params);
+//   recursion(level + 1, params);
+//   // 清理当前层
+// }
+// 验证二叉搜索树 1.递归 2.中序遍历是升序的
+// function isValidBST(root) {
+//   function recursion(root, lower, upper) {
+//     if (root == null) return true;
+//     if (root.val <= lower || root.val >= upper) return false;
+//     return recursion(root.left, lower, root.val) && recursion(root.right, root.val, upper);
+//   }
+//   return recursion(root, -Infinity, Infinity);
+// }
+// function isValidBST(root) {
+//   let flag = true;
+//   let pre = -Infinity;
+//   function inorder(root) {
+//     if (root) {
+//       inorder(root.left);
+//       if (root.val <= pre) return false;
+//       pre = root.val;
+//       inorder(root.right);
+//     }
+//   }
+//   inorder(root);
+//   return flag;
+// }
+// function isValidBST(root) {
+//   let stack = [];
+//   let pre = -Infinity;
+//   while (root || stack.length) {
+//     while (root) {
+//       stack.push(root);
+//       root = root.left;
+//     }
+//     root = stack.pop();
+//     if (root.val <= pre) return false;
+//     root = root.right;
+//   }
+//   return true;
+// }
+// 二叉树的最大深度 1.递归 2.迭代
+// function maxDepth(root) {
+//   function recursion(root) {
+//     if (root == null) return 0;
+//     let leftDepth = recursion(root.left);
+//     let rightDepth = recursion(root.right);
+//     return Math.max(leftDepth, rightDepth) + 1;
+//   }
+//   return recursion(root);
+// }
+// function maxDepth(root) {
+//   if (root == null) return 0;
+//   let res = 0;
+//   let q = [];
+//   q.push(root);
+//   while (q.length) {
+//     let length = q.length;
+//     while (length > 0) {
+//       let node = q.shift();
+//       if (node.left) q.push(node.left);
+//       if (node.right) q.push(node.right);
+//       length--;
+//     }
+//     res++;
+//   }
+//   return res;
+// }
+// 验证二叉搜索树 1.递归 2.中序遍历是升序的
+// function isValidBST(root) {
+//   function recursion(root, lower, upper) {
+//     if (root == null) return true;
+//     if (root.val <= lower || root.val >= upper) return false;
+//     return recursion(root.left, lower, root.val) && recursion(root.right, root.val, upper);
+//   }
+//   return recursion(root, -Infinity, Infinity);
+// }
+// function isValidBST(root) {
+//   let flag = true;
+//   let pre = -Infinity;
+//   function inorder(root) {
+//     if (root) {
+//       inorder(root.left);
+//       if (root.val <= pre) flag = false;
+//       pre = root.val;
+//       inorder(root.right);
+//     } else {
+//       return true;
+//     }
+//   }
+//   return inorder(root);
+// }
+// function isValidBST(root) {
+//   let stack = [];
+//   let pre = -Infinity;
+//   while (root || stack.length) {
+//     while (root) {
+//       stack.push(root);
+//       root = root.left;
+//     }
+//     root = stack.pop();
+//     if (root.val <= pre) return false;
+//     pre = root.val;
+//     root = root.right;
+//   }
+//   return true;
+// }
+// 二叉树的最大深度 1.递归 2.迭代
+// function maxDepth(root) {
+//   function recursion(root) {
+//     if (root == null) return 0;
+//     let leftDepth = recursion(root.left);
+//     let rightDepth = recursion(root.right);
+//     return Math.max(leftDepth, rightDepth) + 1;
+//   }
+//   recursion(root);
+// }
+// function maxDepth(root) {
+//   if (root == null) return 0;
+//   let res = 0;
+//   let q = [];
+//   q.push(root);
+//   while (q.length) {
+//     let length = q.length;
+//     while (length > 0) {
+//       let node = q.shift();
+//       if (node.left != null) q.push(node.left);
+//       if (node.right != null) q.push(node.right);
+//       length--;
+//     }
+//     res++;
+//   }
+//   return res;
+// }
+// pow(x, n) 1.暴力枚举累乘 O(n) 2.傻递归 O(n) 调用栈溢出 3.分治递归 O(logn )
+// function myPow(x, n) {
+//   if (n < 0) {
+//     x = 1 / x;
+//     n = -n;
+//   }
+//   let res = 1;
+//   for (let i = 0; i < n; i++) {
+//     res = res * x;
+//   }
+//   return res;
+// }
+// function myPow(x, n) {
+//   if (n < 0) {
+//     x = 1 / x;
+//     n = -n;
+//   }
+//   function pow(x, n) {
+//     if (n === 0) return 1;
+//     return pow(x, n - 1) * x;
+//   }
+//   return pow(x, n);
+// }
+// function myPow(x, n) {
+//   if (n < 0) {
+//     x = 1 / x;
+//     n = -n;
+//   }
+//   function pow(x, n) {
+//     if (n === 0) return 1;
+//     let sub = pow(x, Math.floor(n / 2));
+//     return n % 2 === 0 ? sub * sub : sub * sub * x;
+//   }
+//   return pow(x, n);
+// }
+// 子集 1.递归 2.迭代
+// function subsets(nums) {
+//   let a = [];
+//   function recursion(nums, list, index) {
+//     if (index === nums.length) {
+//       a.push(list.slice());
+//       return;
+//     }
+//     recursion(nums, list, index + 1);
+//     list.push(nums[index]);
+//     recursion(nums, list, index + 1);
+//     list.pop();
+//   }
+//   recursion(nums, [], 0);
+//   return a;
+// }
+// function subsets(nums) {
+//   let a = [];
+//   function recursion(nums, list, index) {
+//     if (index === nums.length) {
+//       a.push(list);
+//       return;
+//     }
+//     recursion(nums, list.slice(), index + 1);
+//     list.push(nums[index]);
+//     recursion(nums, list.slice(), index + 1);
+//   }
+//   recursion(nums, [], 0);
+//   return a;
+// }
+// function subsets(nums) {
+//   let a = [[]];
+//   for (let num of nums) {
+//     let res = [];
+//     for (let i of a) {
+//       res.push(i.concat(num));
+//     }
+//     a = a.concat(res);
+//   }
+//   return a;
+// }
+// 多数元素 1.hash O(n) 2.排序 O(nlogn) 3.分治递归 O(nlogn)
+// function majorityElement(nums) {
+//   let map = new Map();
+//   for (let i of nums) {
+//     let value = map.has(i) ? map.get(i) + 1 : 1;
+//     map.set(i, value);
+//     if (map.get(i) > n / 2) return i;
+//   }
+// }
+// functon majorityElement(nums) {
+//   let map = new Map();
+//   for (let i of nums) {
+//     let value = map.has(i) ? map.get(i) + 1 : 1;
+//     map.set(i, value); 
+//   }
+//   for (let [k, v] of map) {
+//     if (v > nums.length / 2) return k;
+//   }
+// }
+// function majorityElement(nums) {
+//   nums.sort((a, b) => a - b);
+//   return nums[Math.floor(nums.length / 2)];
+// // }
+// function letterCombinations(digits) {
+//   if (digits === '') return [];
+//   let a = [];
+//   let map = ['', '', 'abc', 'def', 'ghi', 'jkl', 'mno', 'pqrs', 'tuv', 'wxyz'];
+//   // if (digits.length === 1) return map[digits];
+//     let b = [];
+//     for (let i of digits) {
+//       b.push(map[i]);
+//     }
+//   function recursion(arr, s, index) {
+//     if (index === digits.length) {
+//       a.push(s);
+//       return;
+//     }
+//     for (let i of arr[index]) {
+//       recursion(arr, s + i, index + 1);
+//     }
+//   }
+//   recursion(b, '', 0); 
+//   return a;
+// }
+// function letterCombinations(digits) {
+//   if (digits === '') return [];
+//   let map = ['', '', 'abc', 'def', 'ghi', 'jkl', 'mno', 'pqrs', 'tuv', 'wxyz'];
+//   if (digits.length === 1) return map[digits[0]].split('');
+//   let b = [];
+//   for (let i of digits) {
+//     b.push(map[i]);
+//   }
+//   function recursion(arr) {
+//     if (arr.length === 1) {
+//       return arr[0];
+//     }
+//     let a1 = arr.shift();
+//     let a2 = arr.shift();
+//     let res = [];
+//     for (let i of a1) {
+//       for (let j of a2) {
+//         res.push(i + j);
+//       }
+//     }
+//     arr.unshift(res);
+//     return recursion(arr);
+//   }
+//   return recursion(b);
+// }
