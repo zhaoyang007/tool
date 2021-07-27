@@ -9208,3 +9208,147 @@
 //   let res = n * factorial(n - 1);
 //   return res;
 // }
+// pow(x, n) 1.暴力枚举累乘 O(n) 2.傻递归 O(n) 3.分治 O(logn)
+// function myPow(x, n) {
+//   if (n < 0) {
+//     x = 1 / x;
+//     n = -n;
+//   }
+//   let res = 1;
+//   for (let i = 0; i < n; i++) {
+//     res = res * x;
+//   }
+//   return res;
+// }
+// function myPow(x, n) {
+//   if (n < 0) {
+//     x = 1 / x;
+//     n = -n;
+//   }
+//   function recursion(x, n) {
+//     if (n === 0) return 1;
+//     return recursion(x, n - 1) * x;
+//   }
+//   recursion(x, n);
+// }
+// function myPow(x, n) {
+//   if (n < 0) {
+//     x = 1 / x;
+//     n = -n;
+//   }
+//   function recursion(x, n) {
+//     if (n === 0) return 1;
+//     let sub = recursion(x, Math.floor(n / 2));
+//     return n % 2 === 0 ? sub * sub : sub * sub * x;
+//   }
+//   return recursion(x, n);
+// }
+// 子集 1.递归深搜 2.广搜
+// function subsets(nums) {
+//   let a = [];
+//   function recursion(nums, list, index) {
+//     if (index === nums.length) {
+//       a.push(list.slice());
+//       return;
+//     }
+//     recursion(nums, list, index + 1);
+//     list.push(nums[index]);
+//     recursion(nums, list, index + 1);
+//     list.pop();
+//   }
+//   recursin(nums, [], 0);
+//   return a;
+// }
+// function subsets(nums) {
+//   let a = [];
+//   function recursion(nums, list, index) {
+//     if (index === nums.length) {
+//       a.push(list);
+//       return;
+//     }
+//     recursion(nums, list, index + 1);
+//     list.push(nums[index]);
+//     recursion(nums, list, index + 1);
+//   }
+//   recursion(nums, [], 0)
+//   return a;
+// }
+// function subsets(nums) {
+//   let a = [[]];
+//   for (let num of nums) {
+//     let res = [];
+//     for (let i of a) {
+//       res.push(i.concat(num));
+//     }
+//     a = a.concat(res);
+//   }
+//   return a;
+// }
+// 多数元素 1.hash O(n) 2.排序 O(nlogn) 3.分治
+// function majorityElement(nums) {
+//   let map = new Map();
+//   for (let i of nums) {
+//     let value = map.has(i) ? map.get(i) + 1 : 1;
+//     map.set(i, value);
+//     if (map.get(i) > nums.length / 2) return i;
+//   }
+// }
+// function majorityElement(nums) {
+//   let map = new Map();
+//   for (let i of nums) {
+//     let value = map.has(i) ? map.get(i) + 1 : 1;
+//     map.set(i, value);
+//   }
+//   for (let [k, v] of map) {
+//     if (v > nums.length / 2) return k;
+//   }
+// }
+// function majorityElement(nums) {
+//   nums.sort((a, b) => a - b);
+//   return nums[Math.floor(nums.length / 2)];
+// }
+// 电话号码字母组合 1.递归
+// function letterCombinations(digits) {
+//   if (digits === '') return [];
+//   let map = ['', '', 'abc', 'def', 'ghi', 'jkl', 'mno', 'pqrs', 'tuv', 'wxyz'];
+//   let b = [];
+//   for (let i of digits) {
+//     b.push(map[i]);
+//   }
+//   function recursion(arr, s, index) {
+//     if (index === arr.length) {
+//       a.push(s);
+//       return;
+//     }
+//     for (let i of arr[index]) {
+//       recursion(arr, s + i, index + 1);
+//     }
+//   }
+//   recursion(b, '', 0);
+//   return a;
+// }
+// function letterCombinations(digits) {
+//   if (digits === '') return [];
+//   let map = ['', '', 'abc', 'def', 'ghi', 'jkl', 'mno', 'pqrs', 'tuv', 'wxyz'];
+//   if (digits.length === 1) return map[digits].split('');
+//   let b = [];
+//   for (let i of digits) {
+//     b.push(map[i]);
+//   }
+//   function recursion(arr) {
+//     if (arr.length === 1) {
+//       return arr[0];
+//     }
+//     let a1 = arr.shift();
+//     let a2 = arr.shift();
+//     let res = [];
+//     for (let i of a1) {
+//       for (let j of a2) {
+//         res.push(i + j);
+//       }
+//     }
+//     arr.unshift(res);
+//     return recursion(arr);
+//   }
+//   return recursion(b);
+// }
