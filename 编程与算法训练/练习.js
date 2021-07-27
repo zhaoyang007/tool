@@ -9203,8 +9203,8 @@
 //   }
 //   return recursion(b);
 // }
-function factorial(n) {
-  if (n === 1) return 1;
-  let res = n * factorial(n - 1);
-  return res;
-}
+// function factorial(n) {
+//   if (n === 1) return 1;
+//   let res = n * factorial(n - 1);
+//   return res;
+// }
