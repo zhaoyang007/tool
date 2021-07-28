@@ -9352,3 +9352,184 @@
 //   }
 //   return recursion(b);
 // }
+// 最小的k个数 1.排序 2.堆排序
+// function getLeastNumbers(nums, k) {
+//   nums.sort((a, b) => a - b);
+//   return nums[k - 1];
+// }
+// function getLeastNumbers(nums, k) {
+//   let minHeap = new BinaryHeap((a, b) => a - b);
+//   let a = [];
+//   for (let i of nums) {
+//     minHeap.insert(i);
+//   }
+//   for (let i = 0; i < k; i++) {
+//     a[i] = minHeap.delete(0);
+//   }
+//   return a;
+// }
+// pow(x, n) 1.暴力枚举累乘 2.傻递归 3.分治递归
+// function myPow(x, n) {
+//   if (n < 0) {
+//     x = 1 / x;
+//     n = -n;
+//   }
+//   let res = 1;
+//   for (let i = 0; i < n; i++) {
+//     res = res * x;
+//   }
+//   return res;
+// }
+// function myPow(x, n) {
+//   if (n < 0) {
+//     x = 1 / x;
+//     n = -n;
+//   }
+//   function recursion(x, n) {
+//     if (n === 0) return 1;
+//     return x * recursion(x, n - 1); 
+//   }
+//   return recursion(x, n);
+// }
+// function myPow(x, n) {
+//   if (n < 0) {
+//     x = 1 / x;
+//     n = -n;
+//   }
+//   function recursion(x, n) {
+//     if (n === 0) return 1;
+//     let sub = recursion(x, Math.floor(n / 2));
+//     return n % 2 === 0 ? sub * sub : sub * sub * x;
+//   }
+//   return recursion(x, n);
+// }
+// 子集 1.递归 2.迭代
+// function subsets(nums) {
+//   let a = [];
+//   function recursion(nums, list, index) {
+//     if (index === nums.length) {
+//       a.push(list.slice());
+//       return;
+//     } 
+//     recursion(nums, list, index + 1);
+//     list.push(nums[index]);
+//     recursion(nums, list, index + 1);
+//     list.pop();
+//   }
+//   recursion(nums, [], 0);
+//   return a;
+// }
+// function subsets(nums) {
+//   let a = [];
+//   function recursion(nums, list, index) {
+//     if (index === nums.length) {
+//       a.push(list);
+//       return;
+//     }
+//     recursion(nums, list.slice(), index + 1);
+//     list.push(nums[index]);
+//     recursion(nums, list.slice(), index + 1);
+//   }
+//   recursion(nums, [], 0);
+//   return a;
+// }
+// function subsets(nums) {
+//   let a = [[]];
+//   for (let num of nums) {
+//     let res = [];
+//     for (let i of a) {
+//       res.push(a.concat(num));
+//     }
+//     a = a.concat(res);
+//   }
+//   return a;
+// }
+// 多数元素 1.hash 2.排序 2.分治
+// function majorityElement(nums) {
+//   let map = new Map();
+//   for (let i of nums) {
+//     let value = map.has(i) ? map.get(i) + 1 : 1;
+//     map.set(i, value);
+//   }
+//   for (let [k, v] of map) {
+//     if (v > nums.length / 2) return k;
+//   }
+// }
+// function majorityelement(nums) {
+//   nums.sort((a, b) => a - b);
+//   return nums[Math.floor(num.length / 2)];
+// }
+// function letterCombinations(digits) {
+//   if (digits === '') return [];
+//   let map = ['', '', 'abc', 'def', 'ghi', 'jkl', 'mno', 'pqrs', 'tuv', 'wxyz'];
+//   let b = [];
+//   for (let i of digits) {
+//     b.push(map[i]);
+//   }
+//   let a = [];
+//   function recursion(arr, s, index) {
+//     if (index === arr.length) {
+//       a.push(s);
+//       return;
+//     }
+//     for (let i of arr[index]) {
+//       recursion(arr, s + i, index + 1);
+//     }
+//   }
+//   recursion(b, '', 0);
+//   return a;
+// }
+// function letterCombinations(digits) {
+//   if (digits === '') return [];
+//   let map = ['', '', 'abc', 'def', 'ghi', 'jkl', 'mno', 'pqrs', 'tuv', 'wxyz'];
+//   if (digits.length === 1) return map[digits].split('');
+//   let b = [];
+//   for (let i of digits) {
+//     b.push(map[i]);
+//   }
+//   function recursin(arr) {
+//     if (arr.length === 1) {
+//       return arr[0];
+//     }
+//     let a1 = arr.shift();
+//     let a2 = arr.shift();
+//     let res = [];
+//     for (let i of a1) {
+//       for (let j of a2) {
+//         res.push(i + j);
+//       }
+//     }
+//     arr.unshift(res);
+//     return recursin(arr);
+//   }
+//   return recursin(b);
+// }
+// 二叉树的层序遍历 1.广度搜索 2.深度搜索
+// function levelOrder(root) {
+//   if (root == null) return [];
+//   let a = [];
+//   let q = [root];
+//   while (q.length) {
+//     let n = q.length;
+//     let res = [];
+//     for (let i = 0; i < n; i++) {
+//       let node = q.shift();
+//       res.push(node.val);
+//       if (node.left) q.push(node.left);
+//       if (node.right) q.push(node.right);
+//     }
+//     a.push(res);
+//   }
+//   return a;
+// }
+// function levelOrder(root) {
+//   let a = [];
+//   function recursion(root, index) {
+//     if (root == null) return;
+//     arr[index] ? arr[index].push(root.val) : arr[index] = [root.val];
+//     recursion(root.left, index + 1);
+//     recursion(root.right, index + 1);
+//   }
+//   recursion(root, 0);
+//   return a;
+// }
