@@ -9566,3 +9566,214 @@
 //   recursion(root, 0);
 //   return a;
 // }
+// 前k个高频元素 1.sort 2.堆排序
+// function topKFrequent(nums, k) {
+//   let a = [];
+//   let map = new Map();
+//   for (let i of nums) {
+//     let value = map.has(i) ? map.get(i) + 1 : 1;
+//     map.set(i, value);
+//   }
+//   let arr = [...map.values()].sort((a, b) => b - a);
+//   for (let i = 0; i < k; i++) {
+//     let value = arr[i];
+//     for (let [k, v] of map) {
+//       if (v === value) {
+//         a.push(k);
+//         map.delete(k);
+//         break;
+//       }
+//     }
+//   }
+//   return a;
+// }
+// function topKFrequent(nums, k) {
+//   let a = [];
+//   let map = new Map();
+//   for (let i of nums) {
+//     let value = map.has(i) ? map.get(i) + 1 : 1;
+//     map.set(i, value);
+//   }
+//   for (let [k, v] of map) {
+//     maxHeap.insert(v);
+//   }
+//   for (let i = 0; i < k; i++) {
+//     let value = maxHeap.delete(0);
+//     for (let [k, v] of map) {
+//       if (value === v) {
+//         a.push(k);
+//         map.delete(k);
+//         break;
+//       }
+//     }
+//   }
+//   return a;
+// }
+// 子集 1.递归 2.迭代
+// function subsets(nums) {
+//   let a = [];
+//   function recursion(nums, list, index) {
+//     if (index === nums.length) {
+//       a.push(list.slice());
+//       return;
+//     }
+//     recursion(nums, list, index + 1);
+//     list.push(nums[index]);
+//     recursion(nums, list, index + 1);
+//     list.pop();
+//   }
+//   recursion(nums, [], 0);
+//   return a;
+// }
+// function subsets(nums) {
+//   let a = [];
+//   function recursion(nums, list, index) {
+//     if (index === nums.length) {
+//       a.push(list);
+//       return;
+//     }
+//     recursion(nums, list.slice(), index + 1);
+//     list.push(nums[index]);
+//     recursion(nums, list.slice(), index + 1);
+//   }
+//   recursion(nums, [], 0);
+//   return a;
+// }
+// function subsets(nums) {
+//   let a = [[]];
+//   for (let num of nums) {
+//     let res = [];
+//     for (let i of a) {
+//       res.push(i.concat(num));
+//     }
+//     a = a.concat(res);
+//   }
+//   return a;
+// }
+// 多数元素 1.hash 2.排序
+// function majorityElement(nums) {
+//   let map = new Map();
+//   for (let i of nums) {
+//     let value = map.has(i) ? map.get(i) + 1 : 1;
+//     map.set(i, value);
+//     if (map.get(i) > nums.length / 2) return i;
+//   }
+// }
+// function majorityElement(nums) {
+//   let map = new Map();
+//   for (let i of nums) {
+//     let value = map.has(i) ? map.get(i) + 1 : 1;
+//     map.set(i, value);
+//   }
+//   for (let [k, v] of map) {
+//     if (v > nums.length / 2) return k;
+//   }
+// }
+// function majorityElement(nums) {
+//   nums.sort((a, b) => a - b);
+//   return nums[Math.floor(nums.length / 2)];
+// }
+// 电话号码字母组合 
+// function letterCombinations(digits) {
+//   if (digits === '') return [];
+//   let a = [];
+//   let map = ['', '', 'abc', 'def', 'ghi', 'jkl', 'mno', 'pqrs', 'tuv', 'wxyz'];
+//   let b = [];
+//   for (let i of digits) {
+//     b.push(map[i]);
+//   }
+//   function recursion(arr, s, index) {
+//     if (index === arr.length) {
+//       a.push(s);
+//       return;
+//     }
+//     for (let i of arr[index]) {
+//       recursion(arr, s + i, index + 1);
+//     }
+//   }
+//   recursion(b, '', 0);
+//   return a;
+// }
+// function letterCombinations(digits) {
+//   if (digits === '') return [];
+//   let map = ['', '', 'abc', 'def', 'ghi', 'jkl', 'mno', 'pqrs', 'tuv', 'wxyz'];
+//   if (digits.length === 1) return map[digits].split('');
+//   let b = [];
+//   for (let i of digits) {
+//     b.push(map[i]);
+//   }
+//   function recursion(arr) {
+//     if (arr.length === 1) {
+//       return arr[0];
+//     }
+//     let a1 = arr.shift();
+//     let a2 = arr.shift();
+//     let res = [];
+//     for (let i of a1) {
+//       for (let j of a2) {
+//         res.push(i + j);
+//       }
+//     }
+//     arr.unshift(res);
+//     recursion(arr);
+//   }
+//   return recursion(b);
+// }
+// 二叉树的层序遍历 1.bfs 2.dfs
+// function levelOrder(root) {
+//   if (root == null) return [];
+//   let a = [];
+//   let q = [root];
+//   while (q.length) {
+//     let res = [];
+//     let n = q.length;
+//     for (let i = 0; i < n; i++) {
+//       let node = q.shift();
+//       res.push(node.val);
+//       if (node.left) q.push(node.left);
+//       if (node.right) q.push(node.right);
+//     }
+//     a.push(res);
+//   }
+//   return a;
+// }
+// function levelOrder(root) {
+//   let a = [];
+//   function recursion(root, index) {
+//     if (root == null) return;
+//     a[index] ? a[index].push(root.val) : a[index] = [root.val];
+//     recursion(root.left, index + 1);
+//     recursion(root.right, index + 1);
+//   }
+//   recursion(root, 0);
+//   return a;
+// }
+// 在每个树行中找最大值
+// function largestValues(root) {
+//   if (root == null) return [];
+//   let a = [];
+//   let q = [root];
+//   while (q.length) {
+//     let max = -Infinity;
+//     let n = q.length;
+//     for (let i = 0; i < n; i++) {
+//       let node = q.shift();
+//       max = Math.max(max, node.val);
+//       if (node.left) q.push(node.left);
+//       if (node.right) q.push(node.right);
+//     }
+//     a.push(max);
+//   }
+//   return a;
+// }
+// function largestValues(root) {
+//   let a = [];
+//   function recursion(root, index) {
+//     if (root == null) return;
+//     a[index] = a[index] == null ? root.val : Math.max(a[index], root.val);
+//     recursion(root.left, index + 1);
+//     recursion(root.right, index + 1);
+//   }
+//   recursion(root, 0);
+//   return a;
+// }
