@@ -9533,3 +9533,36 @@
 //   recursion(root, 0);
 //   return a;
 // }
+// 在每个树行中找最大值
+// function largestValues(root) {
+//   if (root == null) return [];
+//   let a = [];
+//   let q = [root];
+//   while (q.length > 0) {
+//     let max = -Infinity;
+//     let n = q.length;
+//     for (let i = 0; i < n; i++) {
+//       let node = q.shift();
+//       max = Math.max(max, node.val);
+//       if (node.left) q.push(node.left);
+//       if (node.right) q.push(node.right);
+//     }
+//     a.push(max);
+//   }
+//   return a;
+// }
+// function largestValues(root) {
+//   let a = [];
+//   function recursion(root, index) {
+//     if (root == null) return;
+//     if (a[index] != null) {
+//       a[index] = Math.max(a[index], root.val);
+//     } else {
+//       a[index] = root.val;
+//     }
+//     recursion(root.left, index + 1);
+//     recursion(root.right, index + 1);
+//   }
+//   recursion(root, 0);
+//   return a;
+// }
