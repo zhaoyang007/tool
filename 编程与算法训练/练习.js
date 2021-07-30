@@ -9777,3 +9777,161 @@
 //   recursion(root, 0);
 //   return a;
 // }
+// 计算n!
+// function factorial(n) {
+//   function recursion(n) {
+//     if (n === 0) return 1;
+//     return n * recursion(n - 1);
+//   }
+//   return recursion(n);
+// }
+// console.log(factorial(4))
+// 括号生成 1.递归
+// function generateParenthesis(n) {
+//   let a = [];
+//   function generate(n, s, index) {
+//     if (index === 2 * n) {
+//       a.push(s);
+//       return;
+//     }
+//     generate(n, s + '(', index + 1);
+//     generate(n, s + ')', index + 1);
+//   }
+//   generate(n, '', 0);
+//   return a;
+// }
+// function generateParenthesis(n) {
+//   let a = [];
+//   function generate(n, s, left, right) {
+//     if (left === n && right === n) {
+//       a.push(s);
+//       return;
+//     }
+//     if (left < n) generate(n, s + '(', left + 1, right);
+//     if (left > right) generate(n, s + ')', left, right + 1);
+//   }
+//   generate(n, '', 0, 0);
+//   return a;
+// }
+// 多数元素 1.hash 2.排序
+// function majorityElement(nums) {
+//   let map = new Map();
+//   for (let i of nums) {
+//     let value = map.has(i) ? map.get(i) + 1 : 1;
+//     map.set(i, value);
+//     if (map.get(i) > nums.length / 2) return i;
+//   }
+// }
+// function majorityElement(nums) {
+//   let map = new Map();
+//   for (let i of nums) {
+//     let value = map.has(i) ? map.get(i) + 1 : 1;
+//     map.set(i, value);
+//   }
+//   for (let [k, v] of map) {
+//     if (v > nums.length / 2) return k;
+//   }
+// }
+// function majorityElement(nums) {
+//   nums.sort((a, b) => a - b);
+//   return nums[Math.floor(nums.length / 2)];
+// }
+// 电话号码的字母组合 1.递归
+// function letterCombinations(digits) {
+//   if (digits === '') return [];
+//   let a = [];
+//   let map = ['', '', 'abc', 'def', 'ghi', 'jkl', 'mno', 'pqrs', 'tuv', 'wxyz'];
+//   let b = [...digits].map(item => map[item]);
+//   function recursion(arr, s, index) {
+//     if (index === arr.length) {
+//       a.push(s);
+//       return;
+//     }
+//     for (let i of arr[index]) {
+//       recursion(arr, s + i, index + 1);
+//     }
+//   }
+//   recursion(b, '', 0);
+//   return a;
+// }
+// letterCombinations('23')
+// function letterCombinations(digits) {
+//   if (digits === '') return [];
+//   let map = ['', '', 'abc', 'def', 'ghi', 'jkl', 'mno', 'pqrs', 'tuv', 'wxyz'];
+//   if (digits.length === 1) return map[digits].split('');
+//   let b = [...digits].map(item => map(item));
+//   function recursion(arr) {
+//     if (arr.length === 1) {
+//       return arr[0];
+//     }
+//     let a1 = arr.shift();
+//     let a2 = arr.shift();
+//     let res = [];
+//     for (let i of a1) {
+//       for (let j of a2) {
+//         res.push(i + j);
+//       }
+//     }
+//     arr.unshift(res);
+//     return recursion(arr);
+//   }
+//   return recursin(b);
+// }
+// 二叉树的层序遍历 1.bfs 2.dfs
+// function levelOrder(root) {
+//   if (root == null) return [];
+//   let a = [];
+//   let q = [root];
+//   while (q.length) {
+//     let n = q.length;
+//     let res = [];
+//     for (let i = 0; i < n; i++) {
+//       let node = q.shift();
+//       res.push(node.val);
+//       if (node.left) q.push(node.left);
+//       if (node.right) q.push(node.right);
+//     }
+//     a.push(res);
+//   }
+//   return a;
+// }
+// function levelOrder(root) {
+//   let a = [];
+//   function recursion(root, index) {
+//     if (root == null) return;
+//     a[index] = a[index] ? a[index].push(root.val) : a[index] = [root.val];
+//     recursion(root.left, index + 1);
+//     recursion(root.right, index + 1);
+//   }
+//   recursion(root, 0);
+//   return a;
+// }
+// 在每个树行中找最大值 1.bfs 2.dfs
+// function largestValues(root) {
+//   if (root == null) return [];
+//   let a = [];
+//   let q = [root];
+//   while (q.length) {
+//     let max = -Infinity;
+//     let n = q.length;
+//     for (let i = 0; i < n; i++) {
+//       let node = q.shift();
+//       max = Math.max(max, node.val);
+//       if (node.left) q.push(node.left);
+//       if (node.right) q.push(node.right);
+//     }
+//     a.push(max);
+//   }
+//   return a;
+// }
+// function largestValues(root) {
+//   let a = [];
+//   function recursion(root, index) {
+//     if (root == null) return;
+//     a[index] = a[index] == null ? root.val : Math.max(a[index], root.val);
+//     recursion(root.left, index + 1);
+//     recursion(root.right, index + 1);
+//   }
+//   recursion(root, 0);
+//   return a;
+// }

@@ -1018,33 +1018,6 @@ while(next) {
 }
 // console.log(res);
 
-/**
- * 2.环形链表(141)
- * 给定一个链表，判断链表中是否有环。
- * 如果链表中有某个节点，可以通过连续跟踪 next 指针再次到达，则链表中存在环。 为了表示给定链表中的环，我们使用整数 pos 来
- * 表示链表尾连接到链表中的位置（索引从 0 开始）。 如果 pos 是 -1，则在该链表中没有环。注意：pos 不作为参数进行传递，仅仅
- * 是为了标识链表的实际情况。
- * 如果链表中存在环，则返回 true 。 否则，返回 false 。
- */
-// 声明链表的节点
-function isCircle(head) {
-  let slow = head;
-  let fast = head.next;
-  while(1) {
-    if (!fast || !fast.next) {
-      return false;
-    } else if (fast === slow || fast.next === slow) {
-      return true;
-    } else {
-      slow = slow.next;
-      fast = fast.next.next;
-    }
-  }
-}
-let head2 = new NodeList([6, 1, 2, 5, 7, 9]);
-head2.next.next.next.next.next.next = head2.next;
-// console.log(isCircle(head2));
-
 // 矩阵(二维数组)
 /**
  * 1.螺旋矩阵(54)
