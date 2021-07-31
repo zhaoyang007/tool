@@ -9935,3 +9935,73 @@
 //   recursion(root, 0);
 //   return a;
 // }
+// 递归代码模版
+// function recursion(level, params) {
+//   // 递归终止条件
+//   if (level > MAX_LEVEL) {
+//     process_result;
+//     return;
+//   }
+//   // 处理当前层
+//   process(level, params);
+//   // 下探下一层
+//   recursion(level + 1, params);
+//   // 清理当前层
+// }
+// 二叉树的层序遍历
+// function levelOrder(root) {
+//   let a = [];
+//   let q = [root];
+//   while (q.length) {
+//     let res = [];
+//     let n = q.length;
+//     for (let i = 0; i < n; i++) {
+//       let node = q.shift();
+//       res.push(node.val);
+//       if (node.left) q.push(node.left);
+//       if (node.right) q.push(node.right);
+//     }
+//     a.push(res);
+//   }
+//   return a;
+// }
+// function levelOrder(root) {
+//   let a = [];
+//   function recursion(root, index) {
+//     if (root == null) return;
+//     root[index] == null ? root[index] = [root.val] : root[index].push(root.val);
+//     recursion(root.left, index + 1);
+//     recursion(root.right, index + 1);
+//   }
+//   recursion(root, 0);
+//   return a;
+// }
+// 在每个树行中找最大值
+// function largestValues(root) {
+//   if (root == null) return [];
+//   let a = [];
+//   let q = [root];
+//   while (q.length) {
+//     let max = -Infinity;
+//     let n = q.length;
+//     for (let i = 0; i < n; i++) {
+//       let node = q.shift();
+//       max = Math.max(max, node.val);
+//       if (node.left) q.push(node.left);
+//       if (node.right) q.push(node.right);
+//     }
+//     res.push(max);
+//   }
+//   return a;
+// }
+// function largestValues(root) {
+//   let a = [];
+//   function recursion(root, index) {
+//     if (root == null) return;
+//     a[index] = a[index] == null ? root.val : Math.max(a[index], root.val);
+//     recursion(root.left, index + 1);
+//     recursion(root.right, index + 1);
+//   }
+//   recursion(root, 0);
+//   return a;
+// }
