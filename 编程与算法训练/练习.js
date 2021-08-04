@@ -10200,3 +10200,156 @@
 //   }
 //   return count;
 // }
+// pow(x, n) 1.暴力枚举累乘 O(n) 2.傻递归 O(n) 3.分治递归 O(logn)
+// function myPow(x, n) {
+//   if (n < 0) {
+//     x = 1 / x;
+//     n = -n;
+//   }
+//   let res = 1;
+//   for (let i = 0; i < n; i++) {
+//     res = res * x;
+//   }
+//   return res;
+// }
+// function myPow(x, n) {
+//   if (n < 0) {
+//     x = 1 / x;
+//     n = -n;
+//   }
+//   function recursion(x, n) {
+//     if (n === 0) return 1;
+//     return x * recursion(x, n - 1);
+//   }
+//   return recursion(x, n);
+// }
+// function myPow(x, n) {
+//   if (n < 0) {
+//     x = 1 / x;
+//     n = -n;
+//   }
+//   function recursion(x, n) {
+//     if (n === 0) return 1;
+//     let sub = recursion(x, Math.floor(n / 2));
+//     return n % 2 === 0 ? sub * sub : sub * sub * x;
+//   }
+//   return recursion(x, n);
+// }
+// 二叉树的层序遍历 1.bfs 2.dfs
+// function levelOrder(root) {
+//   if (root == null) return [];
+//   let a = [];
+//   let q = [root];
+//   while (q.length) {
+//     let res = [];
+//     let n = q.length;
+//     for (let i = 0; i < n; i++) {
+//       let node = q.shift();
+//       res.push(node.val);
+//       if (node.left) q.push(node.left);
+//       if (node.right) q.push(node.right);
+//     }
+//     a.push(res);
+//   }
+//   return a;
+// }
+// function levelOrder(root) {
+//   let a = [];
+//   function dfs(root, index) {
+//     if (root == null) return;
+//     a[index] ? a[index].push(root.val) : a[index] = [root.val];
+//     dfs(root.left, index + 1);
+//     dfs(root.right, index + 1);
+//   }
+//   dfs(root, 0);
+//   return a;
+// }
+// 在每个树行中找最大值 1.bfs 2.dfs
+// function largestValues(root) {
+//   if (root == null) return [];
+//   let a = [];
+//   let q = [root];
+//   while (q.length) {
+//     let max = -Infinity;
+//     let n = q.length;
+//     while (n > 0) {
+//       let node = q.shift();
+//       max = Math.max(max, node.val);
+//       if (node.left) q.push(node.left);
+//       if (node.right) q.push(node.right);
+//       n--;
+//     }
+//     a.push(max);
+//   } 
+//   return a;
+// }
+// function largestValues(root) {
+//   let a = [];
+//   function dfs(root, index) {
+//     if (root == null) return [];
+//     a[index] = a[index] == null ? root.val : Math.max(a[index], root.val);
+//     dfs(root.left, index + 1);
+//     dfs(root.right, index + 1);
+//   }
+//   dfs(root, 0);
+//   return a;
+// }
+// 岛屿数量 1.dfs
+// function numIslands(grid) {
+//   let n = grid.length;
+//   if (n === 0) return 0;
+//   let count = 0;
+//   let m = grid[0].length;
+//   for (let i = 0; i < n; i++) {
+//     for (let j = 0; j < m; j++) {
+//       if (grid[i][j] === '1') {
+//         count++;
+//         dfs(grid, i, j);
+//       }
+//     }
+//   }
+//   function dfs(grid, i, j) {
+//     if (i < 0 || j < 0 || i >= n || j >= m || grid[i][j] === '0') {
+//       return;
+//     }
+//     grid[i][j] = '0';
+//     dfs(grid, i - 1, j);
+//     dfs(grid, i + 1, j);
+//     dfs(grid, i, j - 1);
+//     dfs(grid, i, j + 1);
+//   }
+//   return count;
+// }
+// bfs代码模版
+// function bfs(root) {
+//   let a = [];
+//   let q = [root];
+//   while (q.length > 0) {
+//     let n = q.length;
+//     let res = [];
+//     for (let i = 0; i < n; i++) {
+//       let node = q.shift();
+//       res.push(node.val);
+//       if (node.left) q.push(node.left);
+//       if (node.right) q.push(node.right);
+//     }
+//     a.push(res);
+//   }
+//   return a;
+// }
+// dfs代码模版
+// let set = new Set();
+// function dfs(root) {
+//   if (set.has(root)) return;
+//   set.add(root);
+//   dfs(root.left);
+//   dfs(root.right);
+// }
+// let set = new Set();
+// function dfs(root) {
+//   if (set.has(root)) return;
+//   set.add(root);
+//   for (let child_node of root.children) {
+//     dfs(child_node);
+//   }
+// }
