@@ -10353,3 +10353,125 @@
 //     dfs(child_node);
 //   }
 // }
+// 子集 1.递归 O(2^n) 2.迭代 O(2^n)
+// function subsets(nums) {
+//   let a = [];
+//   function recursion(nums, list, index) {
+//     if (index === nums.length) {
+//       a.push(list.slice());
+//       return;
+//     }
+//     recursion(nums, list, index + 1);
+//     list.push(nums[index]);
+//     recursion(nums, list, index + 1);
+//     list.pop();
+//   }
+//   return a;
+// }
+// function subsets(nums) {
+//   let a = [];
+//   for (let num of nums) {
+//     let res = [];
+//     for (let i of a) {
+//       res.push(i.concat(num));
+//     }
+//     a = a.concat(res);
+//   }
+//   return a;
+// }
+// function subsets(nums) {
+//   let a = [];
+//   function recursion(nums, list, index) {
+//     if (index === nums.length) {
+//       a.push(list);
+//       return;
+//     }
+//     recursion(nums, list.slice(), index + 1);
+//     list.push(nums[index]);
+//     recursion(nums, list.slice(), index + 1);
+//   }
+//   recursion(nums, [], 0);
+//   return a;
+// }
+// 二叉树的层序遍历 1.bfs 2.dfs
+// function levelOrder(root) {
+//   if (root == null) return []; 
+//   let a = [];
+//   let q = [root];
+//   while (q.length) {
+//     let res = [];
+//     let n = q.length;
+//     for (let i = 0; i < n; i++) {
+//       let node = q.shift();
+//       res.push(node.val);
+//       if (node.left) q.push(node.left);
+//       if (node.right) q.push(node.right);
+//     }
+//     a.push(res);
+//   }
+//   return a;
+// }
+// function levelOrder(root) {
+//   let a = [];
+//   function dfs(root, index) {
+//     if (root == null) return;
+//     a[index] ? a[index].push(root.val) : a[index] = [node.val];
+//     dfs(root.left, index + 1);
+//     dfs(root.right, index + 1);
+//   }
+//   dfs(root, 0);
+//   return a;
+// }
+// 在每个数行中找最大值 1.bfs 2.dfs
+// function largestValues(root) {
+//   if (root == null) return [];
+//   let a = [];
+//   let q = [root];
+//   while (q.length) {
+//     let max = -Infinity;
+//     let n = q.length;
+//     for (let i = 0; i < n; i++) {
+//       let node = q.shift();
+//       max = Math.max(max, node.val);
+//       if (node.left) q.push(node.left);
+//       if (node.right) q.push(node.right);
+//     }
+//     a.push(max);
+//   }
+//   return a;
+// }
+// function largestValues(root) {
+//   let a = [];
+//   function dfs(root, index) {
+//     if (root == null) return;
+//     a[index] = a[index] ? Math.max(a[index], root.val) : root.val;
+//     dfs(root.left, index + 1);
+//     dfs(root.right, index + 1);
+//   }
+//   dfs(root, 0);
+//   return a;
+// }
+// 岛屿数量 1.dfs
+// function numIslands(grid) {
+//   let count = 0;
+//   let n = grid.length;
+//   if (n === 0) return 0;
+//   let m = grid[0].length;
+//   for (let i = 0; i < n; i++) {
+//     for (let j = 0; j < m; j++) {
+//       if (grid[i][j] === '1') {
+//         count++;
+//         dfs(grid, i, j);
+//       }
+//     }
+//   }
+//   function dfs(grid, i, j) {
+//     if (i < 0 || j < 0 || i >= n || j >= m || grid[i][j] === '0') return;
+//     grid[i][j] = 0;
+//     dfs(grid, i - 1, j);
+//     dfs(grid, i + 1, j);
+//     dfs(grid, i, j - 1);
+//     dfs(grid, i, j + 1);
+//   }
+//   return count;
+// }
