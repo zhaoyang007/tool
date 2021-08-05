@@ -10475,3 +10475,98 @@
 //   }
 //   return count;
 // }
+// dfs代码模版
+// let visited = new Set();
+// // function dfs(root) {
+// //   if (visited.has(root)) {
+// //     return;
+// //   }
+// //   visited.add(root);
+// //   dfs(root.left);
+// //   dfs(root.right);
+// // }
+// function dfs(root) {
+//   if (visited.has(root)) {
+//     return;
+//   }
+//   visited.add(root);
+//   for (let node of root.children) {
+//     dfs(node);
+//   }
+// }
+// 深搜代码模版
+// let visited = new Set();
+// function dfs(root) {
+//   if (visited.has(root)) {
+//     return;
+//   }
+//   visited.add(root);
+//   dfs(root.left);
+//   dfs(root.right);
+// }
+// function dfs(root) {
+//   if (visited.has(root)) return;
+//   visited.add(root);
+//   for (let node of root.children) {
+//     dfs(node);
+//   }
+// }
+// function dfs(root) {
+//   if (root == null) return;
+//   let visited = new Set();
+//   let stack = [root];
+//   while (stack.length) {
+//     let node = stack.pop();
+//     if (visited.has(node)) continue;
+//     visited.add(node);
+//     for (let i = node.children.length - 1; i >= 0; i--) {
+//       stack.push(node.children[i]);
+//     }
+//   }
+// }
+// dfs代码模版
+// let visited = new Set();
+// function dfs(root) {
+//   if (visited.has(root)) return;
+//   visited.add(root);
+//   dfs(root.left);
+//   dfs(root.right);
+// }
+// let visited = new Set();
+// function dfs(root) {
+//   if (visited.has(root)) return;
+//   visited.add(root);
+//   for (let node of root.children) {
+//     dfs(node);
+//   }
+// }
+// function dfs(root) {
+//   if (root == null) return;
+//   let stack = [root];
+//   let visited = new Set();
+//   while (stack.length) {
+//     let node = stack.pop();
+//     if (visited.has(node)) continue;
+//     visited.add(node);
+//     for (let i = node.children.length - 1; i >= 0; i--) {
+//       stack.push(node.children[i]);
+//     }
+//   }
+// }
+// function bfs(root) {
+//   if (root == null) return [];
+//   let a = [];
+//   let q = [root];
+//   while (q.length) {
+//     let res = [];
+//     let n = q.length;
+//     for (let i = 0; i < n; i++) {
+//       let node = q.shift();
+//       res.push(node.val);
+//       if (node.left) q.push(node.left);
+//       if (node.right) q.push(node.right);
+//     }
+//     a.push(res);
+//   }
+//   return a;
+// }
