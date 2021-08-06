@@ -10570,3 +10570,188 @@
 //   }
 //   return a;
 // }
+// function mySqrt(x) {
+//   if (x === 0 || x === 1) return x;
+//   let left = 0;
+//   let right = x;
+//   let mid = 1;
+//   while (left <= right) {
+//     mid = (left + right) >> 1;
+//     if (mid * mid === x) {
+//       return mid;
+//     } else if (mid * mid < x) {
+//       left = mid + 1;
+//     } else {
+//       right = mid - 1;
+//     }
+//   }
+//   return right;
+// }
+// console.log(mySqrt(4))
+// 多数元素 1.排序 2.hash
+// function majorityElement(nums) {
+//   let map = new Map();
+//   for (let i of nums) {
+//     let value = map.has(i) ? map.get(i) + 1 : 1;
+//     map.set(i, value);
+//     if (map.get(i) > nums.length / 2) return i;
+//   }
+// }
+// function majorityElement(nums) {
+//   let map = new Map();
+//   for (let i of nums) {
+//     let value = map.has(i) ? map.get(i) + 1 : 1;
+//     map.set(i, value);
+//   }
+//   for (let [k, v] of map) {
+//     if (v > nums.length / 2) return k;
+//   }
+// }
+// function majorityElement(nums) {
+//   nums.sort((a, b) => a - b);
+//   return nums[nums.length >> 1];
+// }
+// 电话号码的字母组合 
+// function letterCombinations(digits) {
+//   if (digits === '') return [];
+//   let a = [];
+//   let map = ['', '', 'abc', 'def', 'ghi', 'jkl', 'mno', 'pqrs', 'tuv', 'wxyz'];
+//   let b = [];
+//   for (let i of digits) {
+//     b.push(map[i]);
+//   }
+//   function recursion(arr, s, index) {
+//     if (index === arr.length) {
+//       a.push(s);
+//       return;
+//     }
+//     for (let i of arr[index]) {
+//       recursion(arr, s + i, index + 1);
+//     }
+//   }
+//   recursion(arr, '', 0);
+//   return a;
+// }
+// function letterCombinations(digits) {
+//   if (digits === '') return [];
+//   let map = ['', '', 'abc', 'def', 'ghi', 'jkl', 'mno', 'pqrs', 'tuv', 'wxyz'];
+//   if (digits.length === 1) return map[digits].split('');
+//   let b = [];
+//   for (let i of digits) {
+//     b.push(map[i]);
+//   }
+//   function recursion(arr) {
+//     if (arr.length === 1) return arr[0];
+//     let a1 = arr.shift();
+//     let a2 = arr.shift();
+//     let res = [];
+//     for (let i of a1) {
+//       for (let j of a2) {
+//         res.push(i + j);
+//       }
+//     }
+//     arr.unshift(res);
+//     return recursion(arr);
+//   }
+//   return recursion(b);
+// }
+// 在每个树行中找最大值 1.bfs 2.dfs
+// function largestValues(root) {
+//   if (root == null) return [];
+//   let a = [];
+//   let q = [root];
+//   while (q.length) {
+//     let max = -Infinity;
+//     let n = q.length;
+//     for (let i = 0; i < n; i++) {
+//       let node = q.shift();
+//       max = Math.max(max, node.val);
+//       if (node.left) q.push(node.left);
+//       if (node.right) q.push(node.right);
+//     }
+//     a.push(max);
+//   }
+//   return a;
+// }
+// function largestValues(root) {
+//   let a = [];
+//   function dfs(root, index) {
+//     if (root == null) return;
+//     a[index] = a[index] != null ? a[index] = Math.max(a[index], root.val) : root.val;
+//     dfs(root.left, index + 1);
+//     dfs(root.right, index + 1);
+//   }
+//   dfs(root, 0);
+//   return a;
+// }
+// 岛屿数量
+// function numIslands(grid) {
+//   let n = grid.length;
+//   if (n === 0) return 0;
+//   let count = 0;
+//   let m = grid[0].length;
+//   for (let i = 0; i < n; i++) {
+//     for (let j = 0; j < m; j++) {
+//       if (grid[i][j] === '1') {
+//         count++;
+//         recursion(grid, i, j);
+//       }
+//     }
+//   }
+//   function recursion(grid, i, j) {
+//     if (i < 0 || j < 0 || i >= n || j >= m || grid[i][j] === '0') return;
+//     grid[i][j] = '0';
+//     recursion(grid, i - 1, j);
+//     recursion(grid, i + 1, j);
+//     recursion(grid, i, j - 1);
+//     recursion(grid, i, j + 1);
+//   }
+//   return count;
+// }
+// 深度优先搜索代码模版
+// let visited = new Set();
+// function dfs(root) {
+//   if (visited.has(root)) {
+//     return;
+//   } 
+//   visited.add(root);
+//   dfs(root.left);
+//   dfs(root.right);
+// }
+// function dfs(root) {
+//   if (visited.has(root)) return;
+//   visited.add(root);
+//   for (let node of root.children) {
+//     dfs(node);
+//   }
+// }
+// function dfs(root) {
+//   if (root == null) return;
+//   let visited = new Set();
+//   let stack = [root];
+//   while (stack.length) {
+//     let node = stack.pop();
+//     if (visited.has(node)) continue;
+//     visited.add(node);
+//     for (let i = node.children.length - 1; i >= 0; i--) {
+//       stack.push(node);
+//     }
+//   }
+// }
+// 广度优先搜索代码模版
+// function bfs(root) {
+//   let a = [];
+//   let q = [root];
+//   while (q.length) {
+//     let n = q.length;
+//     let res = [];
+//     for (let i = 0; i < n; i++) {
+//       let node = q.shift();
+//       res.push(node.val);
+//       if (node.left) q.push(node.left);
+//       if (node.right) q.push(node.right);
+//     }
+//     a.push(res);
+//   }
+//   return a;
+// }
