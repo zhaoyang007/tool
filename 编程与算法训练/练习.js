@@ -10886,3 +10886,122 @@
 //   }
 //   return right;
 // }
+// 深度优先搜索代码模版
+// let visited = new Set();
+// function dfs(root) {
+//   if (visited.has(root)) return;
+//   visited.add(root);
+//   dfs(root.left);
+//   dfs(root.right);
+// }
+// let visited = new Set();
+// function dfs(root) {
+//   if (visited.has(root)) return;
+//   visited.add(root);
+//   for (let node of root.children) {
+//     dfs(node);
+//   }
+// }
+// function dfs(root) {
+//   if (root == null) return;
+//   let visited = new Set();
+//   let stack = [root];
+//   while (stack.length) {
+//     let node = stack.pop();
+//     if (!visited.has(node)) continue;
+//     visited.add(node);
+//     for (let i = nodd.children.length - 1; i >= 0; i--) {
+//       stack.push(node.children[i]);
+//     }
+//   }
+// }
+// 广度优先搜索模版
+// function bfs(root) {
+//   if (root == null) return [];
+//   let a = [];
+//   let q = [root];
+//   while (q.length) {
+//     let res = [];
+//     let n = q.length;
+//     for (let i = 0; i < n; i++) {
+//       let node = q.shift();
+//       res.push(node.val);
+//       if (node.left) q.push(node.left);
+//       if (node.right) q.push(node.right);
+//     }
+//     a.push(res);
+//   }
+//   return a;
+// }
+// 岛屿数量 1.dfs
+// function numIslands(grid) {
+//   let count = 0;
+//   let n = grid.length;
+//   if (n === 0) return 0;
+//   let m = grid[0].length;
+//   for (let i = 0; i < n; i++) {
+//     for (let j = 0; j < m; j++) {
+//       if (grid[i][j] === '1') {
+//         count++;
+//         recursion(grid, i, j);
+//       }
+//     }
+//   }
+//   function recursion(grid, i, j) {
+//     if (i < 0 || j < 0 || i >= n || m >= m || grid[i][j] === '0') return;
+//     grid[i][j] = '0';
+//     recursion(grid, i - 1, j);
+//     recursion(grid, i + 1, j);
+//     recursion(grid, i, j - 1);
+//     recursion(grid, i, j + 1);
+//   }
+//   return count;
+// }
+// 二分查找代码模版
+// function binarySearch(arr, target) {
+//   let left = 0;
+//   let right = arr.length - 1;
+//   while (left <= right) {
+//     let mid = (left + right) >> 1;
+//     if (arr[mid] === target) {
+//       return mid;
+//     } else if (arr[mid] < target) {
+//       left = mid + 1;
+//     } else {
+//       right = mid - 1;
+//     }
+//   }
+// }
+// x的平方根 1.二分查找 O(logn)
+// function mySqrt(x) {
+//   if (x === 0 || x === 1) return x;
+//   let left = 0;
+//   let right = x;
+//   while (left <= right) {
+//     let mid = (left + right) >> 1;
+//     if (mid * mid === x) {
+//       return mid;
+//     } else if (mid * mid < x) {
+//       left = mid + 1;
+//     } else {
+//       right = mid - 1;
+//     }
+//   }
+//   return right;
+// }
+// function mySqrt(x) {
+//   let r = x;
+//   while (r * r > x) {
+//     r = (r + x / r) / 2 | 0; 
+//   }
+//   return r;
+// }
+// function maxProfit(prices) {
+//   let res = 0;
+//   for (let i = 0; i < prices.length - 1; i++) {
+//     if (prices[i] < prices[i + 1]) {
+//       res += prices[i + 1] - prices[i];
+//     }
+//   }
+//   return res;
+// }
