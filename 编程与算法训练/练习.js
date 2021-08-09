@@ -11005,3 +11005,193 @@
 //   }
 //   return res;
 // }
+// 深度优先搜索代码模版
+// let visited = new Set();
+// function dfs(root) {
+//   if (visited.has(root)) return;
+//   visited.add(root);
+//   dfs(root.left);
+//   dfs(root.right);
+// }
+// let visited = new Set();
+// function dfs(root) {
+//   if (visited.has(root)) return;
+//   visited.add(root);
+//   for (let node of root.children) {
+//     dfs(node);
+//   }
+// }
+// function dfs(root) {
+//   if (root == null) return;
+//   let stack = [root];
+//   let visited = new Set();
+//   while (stack.length) {
+//     let node = stack.pop();
+//     if (visited.has(node)) continue;
+//     visited.add(node);
+//     for (let i = node.children.length - 1; i >= 0; i--) {
+//       stack.push(node.children[i]);
+//     }
+//   }
+// }
+// 广度优先搜索代码模版
+// function bfs(root) {
+//   if (root == null) return [];
+//   let a = [];
+//   let q = [root];
+//   while (q.length) {
+//     let n = q.length;
+//     let res = [];
+//     for (let i = 0; i < n; i++) {
+//       let node = q.shift();
+//       res.push(node.val);
+//       if (node.left) q.push(node.left);
+//       if (node.right) q.push(node.right);
+//     }
+//     a.push(res);
+//   }
+//   return a;
+// }
+// 岛屿数量 1.dfs
+// function numIslands(grid) {
+//   let n = grid.length;
+//   if (n === 0) return 0;
+//   let m = grid[0].length;
+//   let count = 0;
+//   for (let i = 0; i < n; i++) {
+//     for (let j = 0; j < m; j++) {
+//       if (grid[i][j] === '1') {
+//         count++;
+//         recursion(grid, i, j);
+//       }
+//     }
+//   }
+//   function recursion(grid, i, j) {
+//     if (i < 0 || j < 0 || i >= n || j >= m || grid[i][j] === '0') return;
+//     grid[i][j] = '0';
+//     recursion(grid, i - 1, j);
+//     recursion(grid, i + 1, j);
+//     recursion(grid, i, j - 1);
+//     recursion(grid, i, j + 1);
+//   }
+//   return count;
+// }
+// 买卖股票最佳时机
+// function maxProfit(prices) {
+//   let money = 0;
+//   for (let i = 0; i < prices.length - 1; i++) {
+//     if (prices[i + 1] > prices[i]) {
+//       money += prices[i + 1] - prices[i];
+//     }
+//   }
+//   return money;
+// }
+// 二分查找代码模版
+// function binarySearch(arr, target) {
+//   let left = 0;
+//   let right = arr.length - 1;
+//   while (left <= right) {
+//     let mid = (left + right) >> 1;
+//     if (arr[mid] === target) {
+//       return mid;
+//     } else if (arr[mid] < target) {
+//       left = mid + 1;
+//     } else {
+//       right = mid - 1;
+//     }
+//   }
+// }
+// x的平方根
+// function mySqrt(x) {
+//   if (x === 0 || x === 1) return x;
+//   let left = 0;
+//   let right = x;
+//   while (left <= right) {
+//     let mid = (left + right) >> 1;
+//     if (mid * mid === x) {
+//       return mid;
+//     } else if (mid * mid < x) {
+//       left = mid + 1;
+//     } else {
+//       right = mid - 1;
+//     }
+//   }
+//   return right;
+// }
+// function mySqrt(x) {
+//   let r = x;
+//   while (r * r > x) {
+//     r = (r + x / r) / 2 | 0;
+//   }
+//   return r;
+// }
+// 有效的完全平方数 1.二分查找 
+// function isPerfectSquare(num) {
+//   let left = 0;
+//   let right = num;
+//   while (left <= right) {
+//     let mid = (left + right) >> 1;
+//     if (mid * mid === num) {
+//       return true;
+//     } else if (mid * mid < num) {
+//       left = mid + 1;
+//     } else {
+//       right = mid - 1;
+//     }
+//   }
+//   return false;
+// }
+// 搜索旋转排序数组 1.暴力枚举 O(n) 2.二分查找 O(logn)
+// function search(nums, target) {
+//   for (let i = 0; i < nums.length; i++) {
+//     if (nums[i] === target) return i;
+//   }
+//   return -1;
+// }
+// function search(nums, target) {
+//   let left = 0;
+//   let right = nums.length - 1;
+//   while (left <= right) {
+//     let mid = (left + right) >> 1;
+//     if (nums[mid] === target) {
+//       return mid;
+//     } else if (nums[left] <= nums[mid]) {
+//       if (target >= nums[left] && target <= nums[mid]) {
+//         right = mid - 1;
+//       } else {
+//         left = mid + 1;
+//       }
+//     } else {
+//       if (target >= nums[mid] && target <= nums[right]) {
+//         left = mid + 1;
+//       } else {
+//         right = mid - 1;
+//       }
+//     }
+//   }
+//   return -1;
+// }
+// function search(nums, target) {
+//   let left = 0;
+//   let right = nums;
+//   while (left <= right) {
+//     let mid = (left + right) >> 1;
+//     if (nums[mid] === target) {
+//       return mid;
+//     }
+//     if (nums[left] <= nums[mid]) {
+//       if (target >= nums[left] && target <= nums[mid]) {
+//         right = mid - 1;
+//       } else {
+//         left = mid + 1;
+//       }
+//     } else {
+//       if (target >= nums[mid] && target <= nums[right]) {
+//         left = mid + 1;
+//       } else {
+//         right = mid - 1;
+//       }
+//     }
+//   }
+//   return -1;
+// }
