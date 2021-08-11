@@ -8,14 +8,14 @@
 <!-- 对象语法 -->
 <div
   class="static"
-  v-bind:class="{ active: isActive, 'text-danger': hasError }"
+  :class="{ active: isActive, 'text-danger': hasError }"
 ></div>
 data {
   isActive: true,
   hasError: false
 }
 <!-- 数据对象放在 data 中 -->
-<div v-bind:class="classObject"></div>
+<div :class="classObject"></div>
 data: {
   classObject: {
     active: true,

@@ -11328,3 +11328,237 @@
 //   }
 //   return -1;
 // }
+// 0 1 2 3 5 8 13 21 34 55
+// function fib(n) {
+// 	let a = [];
+//   a[0] = 0;
+//   a[1] = 1;
+//   for (let i = 2; i <= n; i++) {
+//     a[i] = a[i - 1] + a[i - 2];
+//   }
+//   return a[n];
+// }
+// console.log(fib(45))
+// 深度优先搜索代码模版
+// let visited = new Set();
+// function dfs(root) {
+//   if (visited.has(root)) return;
+//   visited.add(root);
+//   dfs(root.left);
+//   dfs(root.right);
+// }
+// let visited = new Set();
+// function dfs(root) {
+//   if (visited.has(root)) return;
+//   visited.add(root);
+//   for (let node of root.children) {
+//     dfs(node);
+//   }
+// }
+// function dfs(root) {
+//   if (root == null) return;
+//   let visited = new Set();
+//   let stack = [root];
+//   while (stack.length) {
+//     let node = stack.pop();
+//     if (visited.has(node)) continue;
+//     visited.add(node);
+//     for (let i = node.children.length - 1; i >= 0; i--) {
+//       stack.push(node.children[i]);
+//     }
+//   }
+// }
+// function dfs(root) {
+//   if (root == null) return;
+//   let stack = [root];
+//   let visited = new Set();
+//   while (stack.length) {
+//     let node = stack.pop();
+//     if (visited.has(node)) continue;
+//     visited.add(node);
+//     for (let i = node.children.length - 1; i >= 0; i--) {
+//       stack.push(node.children[i]);
+//     }
+//   }
+// }
+// 广度优先搜索代码模版
+// function dfs(root) {
+//   if (root == null) return;
+//   let stack = [root];
+//   let visited = new Set();
+//   while (stack.length) {
+//     let node = stack.pop();
+//     if (visited.has(node)) continue;
+//     visited.add(node);
+//     for (let i = node.children.length; i >= 0; i--) {
+//       stack.push(node.children[i]);
+//     }
+//   }
+// }
+// 广度优先搜索代码模版
+// function bfs(root) {
+//   if (root == null) return [];
+//   let a = [];
+//   let q = [root];
+//   while (q.length) {
+//     let res = [];
+//     let n = q.length;
+//     for (let i = 0; i < n; i++) {
+//       let node = q.shift();
+//       res.push(node.val);
+//       if (node.left) q.push(node.left);
+//       if (node.right) q.push(node.right);
+//     }
+//     a.push(res);
+//   }
+//   return a;
+// }
+// 买卖股票最佳时机 1.贪心 O(n)
+// function maxProfit(prices) {
+//   let res = 0;
+//   for (let i = 0; i < prices.length - 1; i++) {
+//     if (prices[i] < prices[i + 1]) {
+//       res += prices[i + 1] - prices[i];
+//     }
+//   }
+//   return res;
+// }
+// 二分查找代码模版
+// function binarySearch(arr, target) {
+//   let left = 0;
+//   let right = arr.length - 1;
+//   while (left <= right) {
+//     let mid = (left + right) >> 1;
+//     if (arr[mid] === target) {
+//       return mid;
+//     } else if (arr[mid] < target) {
+//       left = mid + 1;
+//     } else {
+//       right = mid - 1;
+//     }
+//   }
+//   return -1;
+// }
+// x的平方根 1.二分查找
+// function mySqrt(x) {
+//   if (x === 0 || x === 1) return x;
+//   let left = 0;
+//   let right = x;
+//   while (left <= right) {
+//     let mid = (left + right) >> 1;
+//     if (mid * mid === x) {
+//       return mid;
+//     } else if (mid * mid < x) {
+//       left = mid + 1;
+//     } else {
+//       right = mid - 1;
+//     }
+//   }
+//   return right;
+// }
+// 有效的完全平方数 1.二分查找
+// function isPerfectSquare(num) {
+//   let left = 0;
+//   let right = num;
+//   while (left <= right) {
+//     let mid = (left + right) >> 1;
+//     if (mid * mid === nums) {
+//       return true;
+//     } else if (mid * mid < num) {
+//       left = mid + 1;
+//     } else {
+//       right = mid - 1;
+//     }
+//   }
+//   return false;
+// }
+// 搜索旋转排序数组 1.暴力枚举 O(n) 2.二分查找 O(logn)
+// function search(nums, target) {
+//     for (let i = 0; i < nums.length; i++) {
+//       if (nums[i] === target) return i;
+//     }
+//     return -1;
+// }
+// function search(nums, target) {
+//   let left = 0;
+//   let right = nums.length - 1;
+//   while (left <= right) {
+//     let mid = (left + right) >> 1;
+//     if (nums[mid] === target) return mid;
+//     if (nums[left] <= nums[mid]) {
+//       if (target >= nums[left] && targe <= nums[mid]) {
+//         right = mid - 1;
+//       } else {
+//         left = mid + 1;
+//       }
+//     } else {
+//       if (target >= nums[mid] && target <= nums[right]) {
+//         left = mid + 1;
+//       } else {
+//         right = mid - 1;
+//       }
+//     }
+//   }
+//   return -1;
+// }
+// 斐波那契数列 1.傻递归 O(n*2) 2.记忆化递归 O(n) 3.动态规划 O(n)
+// function fib(n) {
+//   if (n <= 1) return n;
+//   return fib(n - 1) + fib(n - 2);
+// }
+// function fib(n) {
+//   let a = [];
+//   a[0] = 0;
+//   a[1] = 1;
+//   for (let i = 2; i <= n; i++) {
+//     a[i] = (a[i - 1] + a[i - 2]) % 1000000007;
+//   }
+//   return a[n];
+// }
+// function fib(n) {
+//   let a = [];
+//   function recursion(n) {
+//     if (n <= 1) a[n] = n;
+//     if (a[n] == null) a[n] = (recursion(n - 1) + recursion(n - 2)) % 1000000007;
+//   }
+//   recursion(n)
+//   return a[n];
+// }
+// console.log(fib(5))
+// let a = [];
+// function fib(n) {
+//   if (n <= 1) return n;
+//   if (a[n] == null) a[n] = (fib(n - 1) + fib(n - 2));
+//   return a[n];
+// }
+// 斐波那契数列 1.暴力递归 O(2*n) 2.记忆化递归 O(n) 3.动态规划 O(n)
+// function fib(n) {
+//   if (n <= 1) return n;
+//   return (fib(n - 1) + fib(n - 2)) % 1000000007;
+// }
+// let a = [];
+// function fib(n) {
+//   if (n <= 1) return n;
+//   if (a[n] == null) a[n] = (fib(n - 1) + fib(n - 2)) % 1000000007;
+//   return a[n];
+// }
+// function fib(n) {
+//   let a = [];
+//   if (n <= 1) return n;
+//   function recursion(n) {
+//     if (n <= 1) return n;
+//     if (a[n] == null) a[n] = (recursion(n - 1) + recursion(n - 2)) % 1000000007;
+//     return a[n];
+//   }
+//   recursion(n);
+//   return a[n];
+// }
+// function fib(n) {
+//   let a = [];
+//   a[0] = 0;
+//   a[1] = 1;
+//   for (let i = 2; i <= n; i++) {
+//     a[i] = (a[i - 1] + a[i - 2]) % 7;
+//   }
+//   return a[n];
+// }
