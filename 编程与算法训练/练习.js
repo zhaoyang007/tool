@@ -11561,4 +11561,73 @@
 //     a[i] = (a[i - 1] + a[i - 2]) % 7;
 //   }
 //   return a[n];
+// // }
+// uniquePathsWithObstacles = function(obstacleGrid) {
+//   let a = [];
+//   let n = obstacleGrid.length;
+//   let m = obstacleGrid[0].length;
+//   a[n - 1] = [];
+//   a[n - 1][m - 1] = 1;
+//   for (let i = n - 1; i >= 0; i--) {
+//     a[i] = [];
+//     for (let j = m - 1; j >= 0; j--) {
+//         if (obstacleGrid[i][j] === 0) {
+          
+//             if (i === n - 1) {
+//                 a[i][j] = a[i][j + 1];
+//                 break;
+//             }
+//             if (j === m - 1) {
+//                 a[i][j] = a[i + 1][j];
+//                 break;
+//             }
+//             a[i][j] = a[i + 1, j] + a[i, j + 1];
+//         } else {
+//             a[i][j] = 0;
+//         }
+//     }
+//   }
+//   console.log(a)
+//   return a[0][0];
 // }
+// console.log(uniquePathsWithObstacles([[0,0,0],[0,1,0],[0,0,0]]));
+// var uniquePathsWithObstacles = function(obstacleGrid) {
+//   let n = obstacleGrid.length;
+//   let m = obstacleGrid[0].length;
+//   function recursion(i, j) {
+//     if (obstacleGrid[i][j] === 1) return 0;
+//     if (i === n - 1 && j === m - 1) return 1;
+//     let value = 0;
+//     if (i === n - 1){
+//       value = recursion(i, j + 1);
+//     } else if (j === m - 1) {
+// 		value = recursion(i + 1, j);
+//     } else {
+// 	    value = recursion(i + 1, j) + recursion(i, j + 1);
+//     }
+//     return value;
+//   }
+//   return recursion(0, 0);
+  
+// };
+// console.log(uniquePathsWithObstacles([
+//   [0, 0, 0],
+//   [0, 1, 0],
+//   [0, 0, 0],
+// ]))
+function uniquePathsWithObstacles(obstacleGrid) {
+  let n = obstacleGrid.length;
+  let m = obstacleGrid[0].length;
+  let a = new Array(n + 1);
+  a[1] = 1;
+  for (let i = 0; i < n; i++) {
+    for (let j = 1; j <= m; j++) {
+      if (obstacleGrid[i][j] === 1) {
+        a[j] = 0;
+      } else {
+        a[j] += a[j - 1];
+      }
+    }
+  }
+  return a[m];
+}
