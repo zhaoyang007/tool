@@ -11817,3 +11817,149 @@
 //   }
 //   return recursion(0, 0);
 // }
+// 在每个树行中找最大值 1.bfs 2.dfs
+// function largestValues(root) {
+//   if (root == null) return [];
+//   let a = [];
+//   let q = [root];
+//   while (q.length) {
+//     let max = -Infinity;
+//     let n = q.length;
+//     for (let i = 0; i < n; i++) {
+//       let node = q.shift();
+//       max = Math.max(max, node.val);
+//       if (node.left) q.push(node.left);
+//       if (node.right) q.push(node.right);
+//     }
+//     a.push(max);
+//   }
+//   return a;
+// }
+// function largestValues(root) {
+//   let a = [];
+//   function dfs(root, index) {
+//     if (root == null) return;
+//     a[index] = a[index] == null ?  root.val : Math.max(a[index], root.val);
+//     dfs(root.left, index + 1);
+//     dfs(root.right, index + 1);
+//   }
+//   dfs(root, 0);
+//   return a;
+// }
+// 买卖股票最佳时机 1.贪心
+// function maxProfit(prices) {
+//   let res = 0;
+//   for (let i = 0; i < prices.length - 1; i++) {
+//     if (prices[i] < prices[i + 1]) {
+//       res += prices[i + 1] - prices[i];
+//     }
+//   }
+//   return res;
+// }
+// 二分查找代码模版
+// function binarySearch(arr, target) {
+//   let left = 0;
+//   let right = arr.length - 1;
+//   while (left <= right) {
+//     let mid = (left + right) >> 1;
+//     if (arr[mid] === target) {
+//       return mid;
+//     } else if (arr[mid] < target) {
+//       left = mid + 1;
+//     } else {
+//       right = mid - 1;
+//     }
+//   }
+//   return -1;
+// }
+// x的平方根
+// function mySqrt(x) {
+//   if (x === 0 || x === 1) return x;
+//   let left = 0;
+//   let right = x;
+//   while (left <= right) {
+//     let mid = (left + right) >> 1;
+//     if (mid * mid === x) {
+//       return mid;
+//     } else if (mid * mid < x) {
+//       left = mid + 1;
+//     } else {
+//       right = mid - 1;
+//     }
+//   }
+//   return right;
+// }
+// 有效的完全平方数
+// function isPerfectSquare(num) {
+//   let left = 0;
+//   let right = num;
+//   while (left <= right) {
+//     let mid = (left + right) >> 1;
+//     if (mid * mid === num) {
+//       return true;
+//     } else if (mid * mid < num) {
+//       left = mid + 1;
+//     } else {
+//       right = mid - 1;
+//     }
+//   }
+//   return false;
+// }
+// 搜索旋转排序数组
+// function search(nums, target) {
+//   let left = 0;
+//   let right = nums.length - 1;
+//   while (left <= right) {
+//     let mid = (left + right) >> 1;
+//     if (nums[mid] === target) return mid;
+//     if (nums[left] <= nums[mid]) {
+//       if (target >= nums[left] && target <= nums[mid]) {
+//         right = mid - 1;
+//       } else {
+//         left = mid + 1;
+//       }
+//     } else {
+//       if (target >= nums[mid] && target <= nums[right]) {
+//         left = mid + 1;
+//       } else {
+//         right = mid - 1;
+//       }
+//     }
+//   }
+//   return -1;
+// }
+// 斐波那契数列 1.暴力递归(自顶向下) O(2*n) 2.记忆化递归(自顶向下) O(n) 3.动态规划(自底向上) O(n)
+// function fib(n) {
+//   if (n <= 1) return n;
+//   return fib(n - 1) + fib(n - 2);
+// }
+// function fib(n) {
+//   let a = [];
+//   function recursion(n) {
+//     if (n <= 1) return n;
+//     if (a[n] == null) a[n] = (fib(n - 1) + fib(n - 2)) % 1000000007;
+//     return a[n]; 
+//   }
+//   return recursion(n);
+// }
+// function fib(n) {
+//   let a = [];
+//   a[0] = 0;
+//   a[1] = 1;
+//   for (let i = 2; i <= n; i++) {
+//     a[i] = (a[i - 1] + a[i - 2]) % 1000000007;
+//   }
+//   return a[n];
+// }
+// function fib(n) {
+//   if (n <= 1) return n;
+//   let a = 0;
+//   let b = 1;
+//   let r;
+//   for (let i = 0; i < n - 2; i++) {
+//     r = (a + b) % 1000000007;
+//     a = b;
+//     b = r;
+//   }
+//   return r;
+// }
