@@ -11615,19 +11615,205 @@
 //   [0, 1, 0],
 //   [0, 0, 0],
 // ]))
-function uniquePathsWithObstacles(obstacleGrid) {
-  let n = obstacleGrid.length;
-  let m = obstacleGrid[0].length;
-  let a = new Array(n + 1);
-  a[1] = 1;
-  for (let i = 0; i < n; i++) {
-    for (let j = 1; j <= m; j++) {
-      if (obstacleGrid[i][j] === 1) {
-        a[j] = 0;
-      } else {
-        a[j] += a[j - 1];
-      }
-    }
-  }
-  return a[m];
-}
+// function uniquePathsWithObstacles(obstacleGrid) {
+//   let n = obstacleGrid.length;
+//   let m = obstacleGrid[0].length;
+//   let a = new Array(n + 1);
+//   a[1] = 1;
+//   for (let i = 0; i < n; i++) {
+//     for (let j = 1; j <= m; j++) {
+//       if (obstacleGrid[i][j] === 1) {
+//         a[j] = 0;
+//       } else {
+//         a[j] += a[j - 1];
+//       }
+//     }
+//   }
+//   return a[m];
+// }
+// 二叉树的层序遍历 1.bfs 2.dfs
+// function levelOrder(root) {
+//   if (root == null) return [];
+//   let a = [];
+//   let q = [root];
+//   while (q.length) {
+//     let res = [];
+//     let n = q.length;
+//     for (let i = 0; i < n; i++) {
+//       let node = q.shift();
+//       res.push(node.val);
+//       if (node.left) q.push(node.left);
+//       if (node.right) q.push(node.right);
+//     }
+//     a.push(res);
+//   }
+//   return a;
+// }
+// function levelOrder(root) {
+//   let a = [];
+//   function dfs(root, index) {
+//     if (root == null) return;
+//     a[index] ? a[index].push(root.val) : a[index] = [root.val];
+//     dfs(root.left, index + 1);
+//     dfs(root.right, index + 1);
+//   }
+//   dfs(root, 0);
+//   return a;
+// }
+// 买卖股票最佳时机 1.贪心 O(n)
+// function maxProfit(prices) {
+//   let res = 0;
+//   for (let i = 0; i < prices.length - 1; i++) {
+//     if (prices[i] < prices[i + 1]) res += prices[i + 1] - prices[i];
+//   }
+//   return res;
+// }
+// 二分查找代码模版
+// function binarySearch(arr, target) {
+//   let left = 0;
+//   let right = arr.length - 1;
+//   while (left <= right) {
+//     let mid = (left + right) >> 1;
+//     if (arr[mid] === target) {
+//       return mid;
+//     } else if (arr[mid] < target) {
+//       left = mid + 1;
+//     } else {
+//       right = mid - 1;
+//     }
+//   }
+//   return -1;
+// }
+// x的平方根 1.二分查找
+// function mySqrt(x) {
+//   if (x === 0 || x === 1) return x;
+//   let left = 0;
+//   let right = x;
+//   while (left <= right) {
+//     let mid = (left + right) >> 1;
+//     if (mid * mid === x) {
+//       return mid;
+//     } else if (mid * mid < x) {
+//       left = mid + 1;
+//     } else {
+//       right = mid - 1;
+//     }
+//   }
+//   return right;
+// }
+// 有效的完全平方数 1.二分查找
+// function isPerfectSquare(num) {
+//   let left = 0;
+//   let right = num.length - 1;
+//   while (left <= right) {
+//     let mid = (left + right) >> 1;
+//     if (mid * mid === num) {
+//       return true;
+//     } else if (mid * mid < num) {
+//       left = mid + 1;
+//     } else {
+//       right = mid - 1;
+//     }
+//   }
+//   return false;
+// }
+// 搜索旋转排序数组 1.暴力枚举 O(n) 2.二分查找 O(logn)
+// function search(nums, target) {
+//   for (let i = 0; i < nums.length; i++) {
+//     if (nums[i] === target) return i;
+//   }
+//   return -1;
+// }
+// function search(nums, target) {
+//   let left = 0;
+//   let right = nums.length - 1;
+//   while (left <= right) {
+//     let mid = (left + right) >> 1;
+//     if (nums[mid] === target) return mid;
+//     if (nums[left] < nums[mid]) {
+//       if (target >= nums[left] && target <= nums[mid]) {
+//         right = mid - 1;
+//       } else {
+//         left = mid + 1;
+//       }
+//     } else {
+//       if (target >= nums[mid] && target <= nums[right]) {
+//         left = mid + 1;
+//       } else {
+//         right = mid - 1;
+//       }
+//     }
+//   }
+//   return -1;
+// }
+// 斐波那契数列 1.暴力递归 O(n^2) 2.记忆化递归 O(n) 3.动态规划 O(n)
+// function fib(n) {
+//   if (n <= 1) return n;
+//   return (fib(n - 1) + fib(n - 2)) % 1000000007;
+// }
+// function fib(n) {
+//   let a = [];
+//   function recursion(n) {
+//     if (n <= 1) return n;
+//     if (a[n] == null) a[n] = (recursion(n - 1) + recursion(n - 2)) % 1000000007;
+//     return a[n];
+//   }
+//   return recursion(n);
+// }
+// function fib(n) {
+//   let a = [];
+//   a[0] = 0;
+//   a[1] = 1;
+//   for (let i = 2; i <= n; i++) {
+//     a[i] = (a[i - 1] + a[i - 2]) % 1000000007;
+//   }
+//   return a[n];
+// }
+// function fib(n) {
+//   if (n <= 1) return 1;
+//   let a = 0;
+//   let b = 1;
+//   let r;
+//   for (let i = 2; i <= n; i++) {
+//     r = (a + b) % 1000000007;
+//     a = b;
+//     b = r;
+//   }
+//   return r;
+// }
+// 不同路径2 1.递归 2.记忆化递归 3.动态规划
+// f(i, j) = f(i + 1, j) + f(i, j + 1)
+// function uniquePathsWithObstacles(obstacleGrid) {
+//   let n = obstacleGrid.length;
+//   let m = obstacleGrid[0].length;
+//   function recursion(i, j) {
+//     if (obstacleGrid[i][j] === 1) return 0;
+//     if (i === n - 1 && j === m - 1) return 1;
+//     if (i === n - 1) return recursion(i, j + 1);
+//     if (j === m - 1) return recursion(i + 1, j);
+//     return recursion(i + 1, j) + recursion(i, j + 1);
+//   }
+//   return recursion(0, 0);
+// }
+// function uniquePathsWithObstacles(obstacleGrid) {
+//   let n = obstacleGrid.length;
+//   let m = obstacleGrid[0].length;
+//   let a = [];
+//   function recursion(i, j) {
+//     if (obstacleGrid[i][j] === 1) return 0;
+//     if (i === n - 1 && j === m - 1) return 1;
+//     if (a[i] == null) a[i] = [];
+//     if (a[i][j] != null) return a[i][j];
+//     let value = 0;
+//     if (i === n - 1) {
+//       value = recursion(i, j + 1);
+//     } else if (j === m - 1) {
+//       value = recursion(i + 1, j);
+//     } else {
+//       value = recursion(i + 1, j) + recursion(i, j + 1);
+//     }
+//     a[i][j] = value;
+//     return value;
+//   }
+//   return recursion(0, 0);
+// }
