@@ -11963,3 +11963,108 @@
 //   }
 //   return r;
 // }
+// 不同路径2 1.暴力递归(自顶向下) O(2^n) 2.记忆化递归(自顶向下) O(n) 3.动态规划(自底向上) O(n)
+// function uniquePathsWithObstacles(obstacleGrid) {
+//   let n = obstacleGrid.length;
+//   let m = obstacleGrid[0].length;
+//   function recursion(i, j) {
+//     if (obstacleGrid[i][j] === 1) return 0;
+//     if (i === n - 1 && j === m - 1) return 1;
+//     if (i === n - 1) return recursion(i, j + 1);
+//     if (j === m - 1) return recursion(i + 1, j);
+//     return recursion(i + 1, j) + recursion(i, j + 1);
+//   }
+//   return recursion(0, 0);
+// }
+// function uniquePathsWithObstacles(obstacleGrid) {
+//   let n = obstacleGrid.length;
+//   let m = obstacleGrid[0].length;
+//   let a = [];
+//   function recursion(i, j) {
+//     if (obstacleGrid[i][j] === 1) return 0;
+//     if (i === n - 1 && j === m - 1) return 1;
+//     if (a[i] == null) a[i] = [];
+//     if (a[i][j] != null) return a[i][j];
+//     let value = 0;
+//     if (i === n - 1) {
+//       value = recursion(i, j + 1);
+//     } else if (j === m - 1) {
+//       value = recursion(i + 1, j);
+//     } else {
+//       value = recursion(i + 1, j) + recursion(i, j+ 1);
+//     } 
+//     a[i][j] = value;
+//     return value;
+//   }
+//   return recursion(0, 0);
+// }
+// function uniquePathsWithObstacles(obstacleGrid) {
+//   let n = obstacleGrid.length;
+//   let m = obstacleGrid[0].length;
+//   let a = [];
+//   function recursion(i, j) {
+//     if (obstacleGrid[i][j] === 1) return 0;
+//     if (i === n - 1 && j === m - 1) return 1;
+//     if (a[i] == null) a[i] = [];
+//     if (a[i][j] != null) return a[i][j];
+//     let value = 0;
+//     if (i === n - 1) {
+//       value = recursion(i, j + 1);
+//     } else if (j === m - 1) {
+//       value = recursion(i + 1, j);
+//     } else {
+//       value = recursion(i, j + 1) + recursion(i + 1, j);
+//     }
+//     a[i][j] = value;
+//     return value;
+//   }
+//   return recursion(0, 0);
+// }
+// function uniquePathsWithObstacles(obstacleGrid) {
+//   let n = obstacleGrid.length;
+//   let m = obstacleGrid[0].length;
+//   let a = [];
+//   for (let i = n - 1; i >= 0; i--) {
+//     for (let j = m - 1; j >= 0; j--) {
+//       if (a[i] == null) a[i] = [];
+//       if (obstacleGrid[i][j] === 1) {
+//         a[i][j] = 0;
+//       } else {
+//         if (i === n - 1 && j === m - 1) {
+//           a[i][j] = 1;
+//         } else if (i === n - 1) {
+//           a[i][j] = a[i][j + 1];
+//         } else if (j === m - 1) {
+//           a[i][j] = a[i + 1][j];
+//         } else {
+//           a[i][j] = a[i + 1][j] + a[i][j + 1];
+//         }
+//       }
+//     }
+//   }
+//   return a[0][0];
+// }
+function uniquePathsWithObstacles(obstacleGrid) {
+  let n = obstacleGrid.length;
+  let m = obstacleGrid[0].length;
+  let a = [];
+  for (let i = 0; i < n; i++) {
+    a[i] = [];
+    for (let j = 0; j < m; j++) {
+      if (obstacleGrid[i][j] === 1) {
+        a[i][j] = 0;
+      } else {
+        if (i === 0 && j === 0) {
+          a[i][j] = 1;
+        } else if (i === 0) {
+          a[i][j] = a[i - 1][j];
+        } else if (j === 0) {
+          a[i][j] = a[i][j - 1];
+        } else {
+          a[i][j] = a[i][j - 1] + a[i - 1][j];
+        }
+      }
+    }
+  }
+  return a[n - 1][m - 1];
+}
