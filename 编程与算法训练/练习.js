@@ -12044,27 +12044,249 @@
 //   }
 //   return a[0][0];
 // }
-function uniquePathsWithObstacles(obstacleGrid) {
-  let n = obstacleGrid.length;
-  let m = obstacleGrid[0].length;
-  let a = [];
-  for (let i = 0; i < n; i++) {
-    a[i] = [];
-    for (let j = 0; j < m; j++) {
-      if (obstacleGrid[i][j] === 1) {
-        a[i][j] = 0;
-      } else {
-        if (i === 0 && j === 0) {
-          a[i][j] = 1;
-        } else if (i === 0) {
-          a[i][j] = a[i - 1][j];
-        } else if (j === 0) {
-          a[i][j] = a[i][j - 1];
-        } else {
-          a[i][j] = a[i][j - 1] + a[i - 1][j];
-        }
-      }
-    }
-  }
-  return a[n - 1][m - 1];
-}
+// function uniquePathsWithObstacles(obstacleGrid) {
+//   let n = obstacleGrid.length;
+//   let m = obstacleGrid[0].length;
+//   let a = [];
+//   for (let i = 0; i < n; i++) {
+//     a[i] = [];
+//     for (let j = 0; j < m; j++) {
+//       if (obstacleGrid[i][j] === 1) {
+//         a[i][j] = 0;
+//       } else {
+//         if (i === 0 && j === 0) {
+//           a[i][j] = 1;
+//         } else if (i === 0) {
+//           a[i][j] = a[i - 1][j];
+//         } else if (j === 0) {
+//           a[i][j] = a[i][j - 1];
+//         } else {
+//           a[i][j] = a[i][j - 1] + a[i - 1][j];
+//         }
+//       }
+//     }
+//   }
+//   return a[n - 1][m - 1];
+// }
+// 买卖股票的最佳时机2 1.贪心 O(n)
+// function maxProfit(prices) {
+//   let res = 0;
+//   for (let i = 0; i < prices.length - 1; i++) {
+//     if (prices[i + 1] - prices[i]) {
+//       res += prices[i + 1] - prices[i];
+//     }
+//   }
+//   return res;
+// }
+// x的平方根 1.二分查找
+// function mySqrt(x) {
+//   if (x === 0 || x === 1) return x;
+//   let left = 0;
+//   let right = x;
+//   while (left <= right) {
+//     let mid = (left + right) >> 1;
+//     if (mid * mid === x) {
+//       return mid;
+//     } else if (mid * mid < x) {
+//       left = mid + 1;
+//     } else {
+//       right = mid - 1;
+//     }
+//   }
+//   return right;
+// }
+// 有效的完全平方数 1.二分查找
+// function isPerfectSquare(num) {
+//   let left = 0;
+//   let right = num;
+//   while (left <= right) {
+//     let mid = (left + right) >> 1;
+//     if (mid * mid === num) {
+//       return true;
+//     } else if (mid * mid < num) {
+//       left = mid + 1;
+//     } else {
+//       right = mid - 1;
+//     }
+//   }
+//   return false;
+// }
+// 搜索旋转排序数组 1.暴力枚举 O(n) 2.二分查找 O(logn)
+// function search(nums, target) {
+//   for (let i = 0; i < nums.length; i++) {
+//     if (nums[i] === target) return i;
+//   }
+//   return -1;
+// }
+// function search(nums, target) {
+//   let left = 0;
+//   let right = nums.length - 1;
+//   while (left <= right) {
+//     let mid = (left + right) >> 1;
+//     if (nums[mid] === target) return mid;
+//     if (nums[left] <= nums[mid]) {
+//       if (target >= nums[left] && target <= nums[mid]) {
+//         right = mid - 1;
+//       } else {
+//         left = mid + 1;
+//       }
+//     } else {
+//       if (target >= nums[mid] && target <= nums[right]) {
+//         left = mid + 1;
+//       } else {
+//         right = mid - 1;
+//       }
+//     }
+//   }
+//   return -1;
+// }
+// 斐波那契数列 1.暴力递归（自顶向下） O(n^2) 2.记忆化递归（自顶向下） O(n) 3.动态规划（自底向上） O(n)
+// function fib(n) {
+//   if (n <= 1) return n;
+//   return fib(n - 1) + fib(n - 2);
+// }
+// function fib(n) {
+//   let a = [];
+//   function recursion(n) {
+//     if (n <= 1) return n;
+//     if (a[n] == null) a[n] = (recursion(n - 1) + recursion(n - 2)) % 1000000007;
+//     return a[n];
+//   }
+//   return recursion(n);
+// }
+// function fib(n) {
+//   let a = [];
+//   a[0] = 0;
+//   a[1] = 1;
+//   for (let i = 2; i <= n; i++) {
+//     a[i] = a[i - 1] + a[i - 2];
+//   }
+//   return a[n];
+// }
+// function fib(n) {
+//   if (n <= 1) return n;
+//   let a = 0;
+//   let b = 1;
+//   let r;
+//   for (let i = 2; i <= n; i++) {
+//     r = a + b;
+//     a = b;
+//     b = r;
+//   }
+//   return r;
+// }
+// 不同路径2 1.暴力递归（自顶向下）O(n^2) 2.记忆化递归（自顶向下）O(n) 3.动态规划（自底向上）O(n)
+// function uniquePathsWithObstacles(obstacleGrid) {
+//   let n = obstacleGrid.length;
+//   let m = obstacleGrid[0].length - 1;
+//   function recursion(i, j) {
+//     if (obstacleGrid[i][j] === 1) return 0;
+//     if (i === n - 1 && j === m - 1) return 1;
+//     let value = 0;
+//     if (i === n - 1) {
+//       value = recursion(i, j + 1);
+//     } else if (j === m - 1) {
+//       value = recursion(i + 1, j);
+//     } else {
+//       value = recursion(i + 1, j) + recursion(i, j + 1);
+//     }
+//     return value;
+//   }
+//   return recursion(0, 0);
+// }
+// function uniquePathsWithObstacles(obstacleGrid) {
+//   let n = obstacleGrid.length;
+//   let m = obstacleGrid[0].length;
+//   let a = [];
+//   function recursion(i, j) {
+//     if (obstacleGrid[i][j] === 1) return 0;
+//     if (i === n - 1 && j === m - 1) return 1;
+//     if (a[i] == null) a[i] = [];
+//     if (a[i][j] == null) {
+//       let value = 0;
+//       if (i === n - 1) {
+//         value = recursion(i, j + 1);
+//       } else if (j === m - 1) {
+//         value = recursion(i + 1, j);
+//       } else {
+//         value = recursion(i, j + 1) + recursion(i + 1, j);
+//       }
+//       a[i][j] = value;
+//     }
+//     return a[i][j];
+//   }
+//   return recursion(0, 0);
+// }
+// function uniquePathsWithObstacles(obstacleGrid) {
+//   let n = obstacleGrid.length;
+//   let m = obstacleGrid[0].length;
+//   let a = [];
+//   for (let i = n - 1; i >= 0; i--) {
+//     a[i] = [];
+//     for (let j = m - 1; j >= 0; j--) {
+//       if (obstacleGrid[i][j] === 1) {
+//         a[i][j] = 0;
+//       } else if (i === n - 1 && j === m - 1) {
+//         a[i][j] = 1;
+//       } else if (i === n - 1) {
+//         a[i][j] = a[i][j + 1];
+//       } else if (j === m - 1) {
+//         a[i][j] = a[i + 1][j];
+//       } else {
+//         a[i][j] = a[i + 1][j] + a[i][j + 1];
+//       }
+//     }
+//   }
+//   return a[0][0];
+// }
+// function uniquePathsWithObstacles(obstacleGrid) {
+//   let n = obstacleGrid.length;
+//   let m = obstacleGrid[0].length;
+//   let a = [];
+//   for (let i = 0; i < n; i++) {
+//     a[i] = [];
+//     for (let j = 0; j < m; j++) {
+//       if (obstacleGrid[i][j] === 1) {
+//         a[i][j] = 0;
+//       } else if (i === 0 && j === 0) {
+//         a[i][j] = 1;
+//       } else if (i === 0) {
+//         a[i][j] = a[i - 1][j];
+//       } else if (j === 0) {
+//         a[i][j] = a[i][j - 1];
+//       } else {
+//         a[i][j] = a[i - 1][j] + a[i][ j - 1];
+//       }
+//     }
+//   }
+//   return a[n - 1][m - 1];
+// }
+// function minimumTotal(triangle) {
+//   let n = triangle.length;
+//   function recursion(i, j) {
+//     if (i === n - 1) return triangle[i, j];
+//     return Math.min(recursion(i + 1, j), recursion(i + 1, j + 1)) + triangle[i, j];
+//   }
+//   return recursion(0, 0);
+// }
+// function minimumTotal(triangle) {
+//   let n = triangle.length;
+//   let a = [];
+//   function recursion(i, j) {
+//     if (i === n - 1) return triangle[i, j];
+//     a[i] = [];
+//     if (a[i][j] != null) return a[i][j];
+//     let value = recursion(i + 1, j) + recursion(i + 1, j + 1);
+//     a[i][j] = value;
+//     return value;
+//   }
+//   return recursion(0, 0);
+// }
+// function minimumTotal(triangle) {
+//   for (let i = triangle.length - 2; i >= 0; i--) {
+//     for (let j = 0; j < triangle[i].length; j++) {
+//       triangle[i][j] += Math.min(triangle[i + 1][j], triangle[i + 1][j + 1]);
+//     }
+//   }
+//   return triangle[0][0];
+// }
