@@ -12743,17 +12743,233 @@
 //   }
 //   return Math.max.apply(null, nums);
 // }
-function maxSubArray(nums) {
-  let a = [];
-  function recursion(index) {
-    if (index === nums.length - 1) {
-      a.push(nums[nums.length - 1]);
-      return nums[nums.length - 1];
-    }
-    let max = Math.max(nums[index], recursion(index + 1) + nums[index]);
-    a.push(max);
-    return max;
-  }
-  recursion(0);
-  return Math.max.apply(null, a);
-}
+// function maxSubArray(nums) {
+//   let a = [];
+//   function recursion(index) {
+//     if (index === nums.length - 1) {
+//       a.push(nums[nums.length - 1]);
+//       return nums[nums.length - 1];
+//     }
+//     let max = Math.max(nums[index], recursion(index + 1) + nums[index]);
+//     a.push(max);
+//     return max;
+//   }
+//   recursion(0);
+//   return Math.max.apply(null, a);
+// }
+// 斐波那契数列 1.递归（自顶向下）O(2^n) 2.记忆化递归（自顶向下）O(n) 3.动态规划(自底向上) O(n)
+// function fib(n) {
+//   if (n <= 1) return n;
+//   return fib(n - 1) + fib(n - 2);
+// }
+// function fib(n) {
+//   let a = [];
+//   function recursion(n) {
+//     if (n <= 1) return n;
+//     if (a[n] != null) return a[n];
+//     a[n] = (recursion(n - 1) + recursion(n - 2)) % 1000000007;
+//     return a[n];
+//   }
+//   return recursion(n);
+// }
+// function fib(n) {
+//   let a = [];
+//   a[0] = 0;
+//   a[1] = 1;
+//   for (let i = 2; i <= n; i++) {
+//     a[i] = (a[i - 1] + a[i - 2]) % 100000007;
+//   }
+//   return a[n];
+// }
+// function fib(n) {
+//   if (n <= 1) return n;
+//   let a = 0;
+//   let b = 1;
+//   let r = a + b;
+//   for (let i = 2; i <= n; i++) {
+//     r = (a + b) % 1000000007;
+//     a = b;
+//     b = r;
+//   }
+//   return r;
+// }
+// 不同路径2 1.暴力递归（自顶向下）2.记忆化递归（自顶向下）3.动态规划
+// function uniquePathsWithObstacles(obstacleGrid) {
+//   let n = obstacleGrid.length;
+//   let m = obstacleGrid[0].length;
+//   function recursion(i, j) {
+//     if (obstacleGrid[i][j] === 1) return 0;
+//     if (i === n - 1 && j === m - 1) return 1;
+//     let value = 0;
+//     if (i === n - 1) {
+//       value = recursion(i, j + 1);
+//     } else if (j === m - 1) {
+//       value = recursion(i + 1, j);
+//     } else {
+//       value = recursion(i + 1, j) + recursion(i, j + 1);
+//     }
+//     return value;
+//   }
+//   return recursion(0, 0);
+// }
+// function uniquePathsWithObstacles(obstacleGrid) {
+//   let n = obstacleGrid.length;
+//   let m = obstacleGrid[0].length;
+//   let a = [];
+//   function recursion(i, j) {
+//     if (obstacleGrid[i][j] === 1) return 0;
+//     if (i === n - 1 && j === m - 1) return 1;
+//     if (a[i] == null) a[i] = [];
+//     if (a[i][j] != null) return a[i][j];
+//     let value = 0;
+//     if (i === n - 1) {
+//       value = recursion(i, j + 1);
+//     } else if (j === m - 1) {
+//       value = recursion(i + 1, j);
+//     } else {
+//       value = recursion(i + 1, j) + recursion(i, j + 1);
+//     }
+//     a[i][j] = value;
+//     return value;
+//   }
+//   return recursion(0, 0);
+// }
+// function uniquePathsWithObstacles(obstacleGrid) {
+//   let n = obstacleGrid.length;
+//   let m = obstacleGrid[0].length;
+//   let a = [];
+//   for (let i = n - 1; i >= 0; i--) {
+//     a[i] = [];
+//     for (let j = m - 1; j >= 0; j--) {
+//       if (obstacleGrid[i][j] === 1) {
+//         a[i][j] = 0;
+//       } else {
+//         if (i === n - 1 && j === m - 1) {
+//           a[i][j] = 1;
+//         } else if (i === n - 1) {
+//           a[i][j] = a[i][j + 1];
+//         } else if (j === m - 1) {
+//           a[i][j] = a[i + 1][j];
+//         } else {
+//           a[i][j] = a[i + 1][j] + a[i][j + 1];
+//         }
+//       }
+//     }
+//   }
+//   return a[0][0];
+// }
+// function uniquePathsWithObstacles(obstacleGrid) {
+//   let n = obstacleGrid.length;
+//   let m = obstacleGrid[0].length;
+//   let a = [];
+//   for (let i = 0; i < n; i++) {
+//     a[i] = [];
+//     for (let j = 0; j < m; j++) {
+//       if (obstacleGrid[i][j] === 1) {
+//         a[i][j] = 0;
+//       } else {
+//         if (i === 0 && j === 0) {
+//           a[i][j] = 1;
+//         } else if (i === 0) {
+//           a[i][j] = a[i][j - 1];
+//         } else if (j === 0) {
+//           a[i][j] = a[i - 1][j];
+//         } else {
+//           a[i][j] = a[i - 1][j] + a[i][j - 1];
+//         }
+//       }
+//     }
+//   }
+//   return a[n - 1][m - 1];
+// }
+// 三角形最小路径和 1.暴力递归 2.记忆化递归 3.动态规划
+// function minimumTotal(triangle) {
+//   let n = triangle.length;
+//   function recursion(i, j) {
+//     if (i === n - 1) return triangle[i][j];
+//     return Math.min(recursion(i + 1, j), recursion(i + 1, j + 1)) + triangle[i][j]; 
+//   }
+//   return recursion(0, 0);
+// }
+// function minimumTotal(triangle) {
+//   let n = triangle.length;
+//   let a = [];
+//   function recursion(i, j) {
+//     if (i === n - 1) return triangle[i][j];
+//     if (a[i] === null) a[i] = [];
+//     if (a[i][j] != null) return a[i][j];
+//     a[i][j] = Math.min(recursion(i + 1, j), recursion(i + 1, j + 1)) + triangle[i][j];
+//     return a[i][j];
+//   }
+//   return recursion(0, 0);
+// }
+// function minimumTotal(triangle) {
+//   let n = triangle.length;
+//   for (let i = n - 2; i >= 0; i--) {
+//     for (let j = 0; i < triangle[i].length; j++) {
+//       triangle[i][j] += Math.min(triangle[i + 1][j], triangle[i + 1][j + 1]) + triangle[i][j];
+//     }
+//   }
+//   return triangle[0][0];
+// }
+// 最大子序和 1.暴力枚举 2.递归 3.动态规划
+// function maxSubArray(nums) {
+//   let max = -Infinity;
+//   for (let i = 0; i < nums.length; i++) {
+//     let subMax = nums[i];
+//     let sum = nums[i];
+//     for (let j = i + 1; i < nums.length; j++) {
+//       sum += nums[j];
+//       subMax = Math.max(subMax, sum);
+//     }
+//     max = Math.max(max, subMax);
+//   }
+//   return max;
+// }
+// function maxSubArray(nums) {
+//   let a = [];
+//   function recursion(index) {
+//     if (index === nums.length - 1) {
+//       a.push(nums[nums.length - 1]);
+//       return nums[nums.length - 1];
+//     }
+//     let max = Math.max(recursion(index + 1) + nums[index], nums[index]);
+//     a.push(max);
+//     return max;
+//   }
+//   recursion(0);
+//   return Math.max.apply(null, a);
+// }
+// function maxSubArray(nums) {
+//   let a = [];
+//   function recursion(index) {
+//     if (index === 0) {
+//       a.push(nums[0]);
+//       return nums[0];
+//     }
+//     let max = Math.max(nums[index], recursion(index - 1) + nums[index]);
+//     a.push(max);
+//     return max;
+//   }
+//   recursion(nums.length - 1);
+//   return Math.max.apply(null, a);
+// }
+// function maxSubArray(nums) {
+//   for (let i = 1; i < nums.length; i++) {
+//     nums[i] = Math.max(nums[i], nums[i - 1] + nums[i]);
+//   }
+//   return Math.max.apply(null, nums);
+// }
+// function maxSubArray(nums) {
+//   for (let i = nums.length - 2; i >= 0; i--) {
+//     nums[i] = Math.max(nums[i], nums[i + 1] + nums[i]);
+//   }
+//   return Math.max.apply(null, nums);
+// }
+// function maxSubArray(nums) {
+//   let a = nums;
+//   for (let i = 1; i < nums.length; i++) {
+//     a[i] = Math.max(nums[i], a[i - 1] + nums[i]);
+//   }
+//   return Math.max.apply(null, a);
+// }
