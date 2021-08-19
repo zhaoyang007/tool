@@ -12973,3 +12973,220 @@
 //   }
 //   return Math.max.apply(null, a);
 // }
+// 深度优先搜索代码模版
+// let visited = new Set();
+// function dfs(root) {
+//   if (visited.has(root)) return;
+//   visited.add(root);
+//   dfs(root.left);
+//   dfs(root.right);
+// }
+// let visited = new Set();
+// function dfs(root) {
+//   if (visited.has(root)) return;
+//   visited.add(root);
+//   for (let node of root.children) {
+//     dfs(node);
+//   }
+// }
+// function dfs(root) {
+//   if (root == null) return;
+//   let stack = [root];
+//   let visited = new Set();
+//   while (stack.length) {
+//     let node = stack.pop();
+//     if (visited.has(node)) continue;
+//     visited.add(node);
+//     for (let i = node.children.length - 1; i >= 0; i--) {
+//       stack.push(node.children[i]);
+//     }
+//   }
+// }
+// 广度优先搜索代码模版
+// function bfs(root) {
+//   if (root == null) return [];
+//   let q = [root];
+//   let a = [];
+//   while (q.length) {
+//     let n = q.length;
+//     let res = [];
+//     for (let i = 0; i < n; i++) {
+//       let node = q.shift();
+//       res.push(node.val);
+//       if (node.left) q.push(node.left);
+//       if (node.right) q.push(node.right);
+//     }
+//     a.push(res);
+//   }
+//   return a;
+// }
+// 不同路径2 1.暴力递归（自顶向下）O(2^n) 2.记忆化递归（自顶向下）O(n) 3.动态规划（自底向上）O(n)
+// function uniquePathsWithObstacles(obstacleGrid) {
+//   let n = obstacleGrid.length;
+//   let m = obstacleGrid[0].length;
+//   function recursion(i, j) {
+//     if (obstacleGrid[i][j] === 1) return 0;
+//     if (i === n - 1 && j === m - 1) return 1;
+//     let value = 0;
+//     if (i === n - 1) {
+//       value = recursion(i, j + 1);
+//     } else if (j === m - 1) {
+//       value = recursion(i + 1, j);
+//     } else {
+//       value = recursion(i + 1, j) + recursion(i, j + 1);
+//     }
+//     return value;
+//   }
+//   return recursion(0, 0);
+// }
+// function uniquePathsWithObstacles(obstacleGrid) {
+//   let n = obstacleGrid.length;
+//   let m = obstacleGrid[0].length;
+//   let a = [];
+//   function recursion(i, j) {
+//     if (obstacleGrid[i][j] === 1) return 0;
+//     if (i === n - 1 && j === m - 1) return 1;
+//     if (a[i] == null) a[i] = [];
+//     if (a[i][j] != null) return a[i][j];
+//     let value = 0;
+//     if (i === n - 1) {
+//       value = recursion(i, j + 1);
+//     } else if (j === m - 1) {
+//       value = recursion(i + 1, j);
+//     } else {
+//       value = recursion(i + 1, j) + recursion(i, j + 1);
+//     }
+//     a[i][j] = value;
+//     return value;
+//   } 
+//   return recursion(0, 0);
+// }
+// function uniquePathsWithObstacles(obstacleGrid) {
+//   let n = obstacleGrid.length;
+//   let m = obstacleGrid[0].length;
+//   let a = [];
+//   for (let i = n - 1; i >= 0; i--) {
+//     for (let j = m - 1; j >= 0; j--) {
+//       if (obstacleGrid[i][j] === 1) {
+//         obstacleGrid[i][j] = 0;
+//       } else {
+//         if (i === n - 1 && j === m - 1) {
+//           obstacleGrid[i][j] = 1;
+//         } else if (i === n - 1) {
+//           obstacleGrid[i][j] = obstacleGrid[i][j + 1];
+//         } else if (j === m - 1) {
+//           obstacleGrid[i][j] = obstacleGrid[i + 1][j];
+//         } else {
+//           obstacleGrid[i][j] = obstacleGrid[i + 1][j] + obstacleGrid[i][j + 1];
+//         }
+//       }
+//     }
+//   }
+//   return obstacleGrid[0][0];
+// }
+// function uniquePathsWithObstacles(obstacleGrid) {
+//   let n = obstacleGrid.length;
+//   let m = obstacleGrid[0].length;
+//   let a = [];
+//   for (let i = 0; i < n; i++) {
+//     for (let j = 0; j < m; j++) {
+//       if (obstacleGrid[i][j] === 1) {
+//         obstacleGrid[i][j] = 0;
+//       } else {
+//         if (i === 0 && j === 0) {
+//           obstacleGrid[i][j] = 1;
+//         } else if (i === 0) {
+//           obstacleGrid[i][j] = obstacleGrid[i][j - 1];
+//         } else if (j === 0) {
+//           obstacleGrid[i][j] = obstacleGrid[i - 1][j];
+//         } else {
+//           obstacleGrid[i][j] = obstacleGrid[i - 1][j] + obstacleGrid[i][j - 1];
+//         }
+//       }
+//     }
+//   }
+//   return obstacleGrid[n - 1][m - 1];
+// }
+// 三角形最小路径和 1.暴力递归 2.记忆化递归 3.动态规划
+// function minimumTotal(triangle) {
+//   let n = triangle.length;
+//   function recursion(i, j) {
+//     if (i === n - 1) return triangle[i][j];
+//     return Math.min(recursion(i + 1, j), recursion(i + 1, j + 1)) + triangle[i][j];
+//   }
+//   return recursion(0, 0);
+// }
+// function minimumTotal(triangle) {
+//   let n = triangle.length;
+//   let a = [];
+//   function recursion(i, j) {
+//     if (i === n - 1) return triangle[i][j];
+//     if (a[i] == null) a[i] = [];
+//     if (a[i][j] != null) return a[i][j];
+//     a[i][j] = Math.min(recursion(i + 1, j), recursion(i + 1, j + 1)) + triangle[i][j];
+//     return a[i][j];
+//   }
+//   return recursion(0, 0);
+// }
+// function minimumTotal(triangle) {
+//   let n = triangle.length;
+//   for (let i = n - 2; i >= 0; i--) {
+//     for (let j = 0; j < triangle[i].length; j++) {
+//       triangle[i][j] = Math.min(triangle[i + 1][j], triangle[i + 1][j + 1]) + triangle[i][j];
+//     }
+//   }
+//   return triangle[0][0];
+// }
+// 最大子序和 1.暴力枚举 2.递归 3.动态规划
+// function maxSubArray(nums) {
+//   let max = nums[i];
+//   for (let i = 0; i < nums.length; i++) {
+//     let sum = nums[i];
+//     for (let j = i + 1; j < nums.length; j++) {
+//       sum += nums[j];
+//       max = Math.max(max, sum);
+//     }
+//   }
+//   return max;
+// }
+// function maxSubArray(nums) {
+//   let a = [];
+//   function recursion(index) {
+//     if (index === nums.length - 1) {
+//       a.push(nums[nums.length - 1]);
+//       return nums[nums.length - 1];
+//     }
+//     let max = Math.max(recursion(index + 1) + nums[index], nums[index]);
+//     a.push(max);
+//     return max;
+//   }
+//   recursion(0);
+//   return Math.max.apply(null, a);
+// }
+// function maxSubArray(nums) {
+//   let a = [];
+//   function recursion(index) {
+//     if (index === 0) {
+//       a.push(nums[index]);
+//       return nums[index];
+//     }
+//     let max = Math.max(recursion(index - 1) + nums[index], nums[index]);
+//     a.push(max);
+//     return max;
+//   }
+//   recursion(nums.length - 1);
+//   return Math.max.apply(null, a);
+// }
+// function maxSubArray(nums) {
+//   for (let i = 1; i < nums.length; i++) {
+//     nums[i] = Math.max(nums[i - 1] + nums[i], nums[i]);
+//   }
+//   return Math.max.apply(null, nums);
+// }
+// function maxSubArray(nums) {
+//   let a = nums;
+//   for (let i = nums.length - 2; i >= 0; i--) {
+//     a[i] = Math.max(a[i + 1] + nums[i], nums[i]);
+//   }
+//   return Math.max.apply(null, nums);
+// }
