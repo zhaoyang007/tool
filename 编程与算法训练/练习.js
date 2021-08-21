@@ -13474,3 +13474,171 @@
 //   }
 //   return Math.max.apply(null, a);
 // }
+// 选择排序
+// function selectionSort(arr) {
+//   let minIndex, c;
+//   for (let i = 0; i < arr.length - 1; i++) {
+//     minIndex = i;
+// 		for (let j = i + 1; j < arr.length; j++) {
+// 			if (arr[j] < arr[minIndex]) {
+//         minIndex = j;
+//       }
+//     }
+//     if (minIndex !== i) {
+//       c = arr[i];
+//       arr[i] = arr[minIndex];
+//       arr[minIndex] = c;
+//     }
+//   }
+//   return arr;
+// }
+// console.log(selectionSort([1,5,7,4,8,9,14,81,5,2,71,62]))
+// function insertionSort(arr) {
+//   for (let i = 0; i < arr.length; i++) {
+//     for (let j = i; j > 0; j--) {
+//       // console.log('i', i)
+//       // console.log('j', j)
+//       if (arr[j] < arr[j - 1]) {
+//         let c = arr[j - 1]
+//         arr[j - 1] = arr[j];
+//         arr[j] = c;
+//       }
+//     }
+//   }
+//   return arr;
+// }
+// console.log(insertionSort([1,5,7,4,8,9,14,81,5,2,71,62]));
+// function bubbleSort(arr) {
+//   for (let i = 0; i < arr.length; i++) {
+//     for (let j = 0; j < arr.length - i - 1; j++) {
+//       if (arr[j + 1] < arr[j]) {
+//         let c = arr[j];
+//         arr[j] = arr[j + 1];
+//         arr[j + 1] = c;
+//       }
+//     }
+//   }
+//   return arr;
+// }
+// console.log(bubbleSort([1,5,7,4,8,9,81,5,2,71,62]))
+// 买卖股票的最佳时机2 1.贪心
+// function maxProfit(prices) {
+//   let count = 0;
+//   for (let i = 0; i < prices.length - 1; i++) {
+//     if (prices[i] < prices[i + 1]) {
+//       count += prices[i + 1] - prices[i];
+//     }
+//   }
+//   return count;
+// }
+// function mySqrt(x) {
+//   let left = 0;
+//   let right = x;
+//   while (left <= right) {
+//     let mid = (left + right) >> 1;
+//     if (mid * mid === x) {
+//       return mid;
+//     } else if (mid * mid < x) {
+//       left = mid + 1;
+//     } else {
+//       right = mid - 1;
+//     }
+//   } 
+//   return right;
+// }
+// 有效的完全平方数 1.二分查找
+// function isPerfectSquare(num) {
+//   let left = 0;
+//   let right = num;
+//   while (left <= right) {
+//     let mid = (left + right) >> 1;
+//     if (mid * mid === num) {
+//       return true;
+//     } else if (mid * mid < num) {
+//       left = mid + 1;
+//     } else {
+//       right = mid - 1;
+//     }
+//   }
+//   return false;
+// }
+// 最大子序和 1.暴力枚举 2.递归 3.动态规划
+// function maxSubArray(nums) {
+//   let max = -Infinity;
+//   for (let i = 0; i < nums.length; i++) {
+//     let sum = nums[i];
+//     let subMax = nums[i];
+//     for (let j = i + 1; j < nums.length; j++) {
+//       sum += nums[j];
+//       subMax = Math.max(subMax, sum);
+//     }
+//     max = Math.max(max, subMax);
+//   }
+//   return max;
+// }
+// function maxSubArray(nums) {
+//   let max = -Infinity;
+//   for (let i = 0; i < nums.length; i++) {
+//     let sum = nums[i];
+//     max = Math.max(max, sum);
+//     for (let j = i + 1; j < nums.length; j++) {
+//       sum += nums[j];
+//       max = Math.max(max, sum);
+//     }
+//   }
+//   return max;
+// }
+// function maxSubArray(nums) {
+//   let a = [];
+//   function recursion(index) {
+//     if (index === nums.length - 1) {
+//       a.push(nums[nums.length - 1]);
+//       return nums[nums.length - 1];
+//     }
+//     let max = Math.max(recursion(index + 1) + nums[index], nums[index]);
+//     a.push(max);
+//     return max;
+//   }
+//   recursion(0);
+//   return Math.max.apply(null, a);
+// }
+// function maxSubArray(nums) {
+//   let a = [];
+//   function recursion(index) {
+//     if (index === 0) {
+//       a.push(nums[0]);
+//       return nums[0];
+//     }
+//     let max = Math.max(nums[index], recursion(index - 1) + nums[index]);
+//     a.push(max);
+//     return max;
+//   }
+//   recursion(nums.length - 1);
+//   return Math.max.apply(null, a);
+// }
+// function maxSubArray(nums) {
+//   let a = nums;
+//   for (let i = 1; i < nums.length; i++) {
+//     a[i] = Math.max(nums[i], a[i - 1] + nums[i]);
+//   }
+//   return Math.max.apply(null, a);
+// }
+// function maxSubArray(nums) {
+//   for (let i = 1; i < nums.length; i++) {
+//     nums[i] = Math.max(nums[i - 1] + nums[i], nums[i]);
+//   }
+//   return Math.max.apply(null, nums);
+// }
+// function maxSubArray(nums) {
+//   for (let i = nums.length - 2; i >= 0; i--) {
+//     nums[i] = Math.max(nums[i], nums[i + 1] + nums[i]);
+//   }
+//   return Math.max.apply(null, nums);
+// }
+// function maxSubArray(nums) {
+//   let a = nums;
+//   for (let i = nums.length - 2; i >= 0; i--) {
+//     a[i] = Math.max(nums[i], a[i + 1] + nums[i]);
+//   }
+//   return Math.max.apply(null, a);
+// }
