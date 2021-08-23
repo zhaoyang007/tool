@@ -13642,3 +13642,355 @@
 //   }
 //   return Math.max.apply(null, a);
 // }
+// 搜索旋转排序数组 1.暴力枚举 2.二分查找
+// function search(nums, target) {
+//   for (let i = 0; i < nums.length; i++) {
+//     if (nums[i] === target) return i;
+//   }
+//   return -1;
+// }
+// function search(nums, target) {
+//   let left = 0;
+//   let right = nums.length - 1;
+//   while (left <= right) {
+//     let mid = (left + right) >> 1;
+//     if (nums[mid] === target) return mid;
+//     if (nums[left] < nums[mid]) {
+//       if (target >= nums[left] && target <= nums[mid]) {
+//         right = mid - 1;
+//       } else {
+//         left = mid + 1;
+//       }
+//     } else {
+//       if (target >= nums[mid] && target <= nums[right]) {
+//         left = mid + 1;
+//       } else {
+//         right = mid - 1;
+//       }
+//     }
+//   }
+//   return -1;
+// }
+// 最大子序和 1.暴力枚举 2.递归 3.动态规划
+// function maxSubArray(nums) {
+//   let max = -Infinity;
+//   for (let i = 0; i < nums.length; i++) {
+//     let sum = nums[i];
+//     let subMax = nums[i];
+//     for (let j = i + 1; j < nums.length; j++) {
+//       sum += nums[j];
+//       subMax = Math.max(subMax, sum);
+//     }
+//     max = Math.max(max, subMax);
+//   }
+//   return max;
+// }
+// function maxSubArray(nums) {
+//   let max = -Infinity;
+//   for (let i = 0; i < nums.length; i++) {
+//     let sum = nums[i];
+//     max = Math.max(max, nums[i]);
+//     for (let j = i + 1; j < nums.length; j++) {
+//       sum += nums[j];
+//       max = Math.max(max, sum);
+//     }
+//   }
+//   return max;
+// }
+// function maxSubArray(nums) {
+//   let a = [];
+//   function recursion(index) {
+//     if (index === nums.length - 1) {
+//       a.push(nums[nums.length - 1]);
+//       return nums[nums.length - 1];
+//     }
+//     let max = Math.max(nums[index], recusion(index + 1) + nums[index]);
+//     a.push(max);
+//     return max;
+//   }
+//   recursion(0);
+//   return Math.max.apply(null, a);
+// }
+// function maxSubArray(nums) {
+//   let a = [];
+//   function recursion(index) {
+//     if (index === 0) {
+//       a.push(nums[0]);
+//       return nums[0];
+//     }
+//     let max = Math.max(nums[index], recursion(index - 1) + nums[index]);
+//     a.push(max);
+//     return max;
+//   }
+//   recursion(nums.length -1);
+//   return Math.max.apply(null, a);
+// }
+// function maxSubArray(nums) {
+//   let a = nums;
+//   for (let i = 1; i < nums.length; i++) {
+//     a[i] = Math.max(nums[i], a[i - 1] + nums[i]);
+//   }
+//   return Math.max.apply(null, a);
+// }
+// function maxSubArray(nums) {
+//   for (let i = nums.length - 2; i >= 0; i--) {
+//     nums[i] = Math.max(nums[i], nums[i + 1] + nums[i]);
+//   }
+//   return Math.max.apply(null, nums);
+// }
+// 选择排序
+// 每次找最小值，放到待排序数组的起始位置
+// function selectionSort(arr) {
+//   for (let i = 0; i < arr.length - 1; i++) {
+//     let minIndex = i;
+//     for (let j = i + 1; j < arr.length; j++) {
+//       if (arr[j] < arr[minIndex]) {
+//         minIndex = j;
+//       }
+//     }
+//     if (minIndex !== i) {
+//       let c = arr[i];
+//       arr[i] = arr[minIndex];
+//       arr[minIndex] = c;
+//     }
+//   }
+//   return arr;
+// }
+// console.log(selectionSort([1,2,3,8,7,3,4,5,2,1]))
+// 插入排序 O(n^2)
+// 从前到后构建有序序列，对于未排序的数据，在已排序序列中从后向前扫描，找到相应的位置并插入。
+// function insertionSort(arr) {
+//   for (let i = 0; i < arr.length; i++) {
+//     for (let j = i; j > 0; j--) {
+//       if (arr[j] < arr[j - 1]) {
+//         let c = arr[j - 1];
+//         arr[j - 1] = arr[j];
+//         arr[j] = c;
+//       }
+//     }
+//   }
+//   return arr;
+// }
+// console.log(insertionSort([1,2,3,8,7,3,4,5,2,1]))
+// 冒泡排序
+// 两层嵌套循环，内层循环两两比较，每次把最大值放到最后
+// function bubbleSort(arr) {
+//   for (let i = 0; i < arr.length; i ++) {
+//     for (let j = 0; j < arr.length - i - 1; j ++) {
+//       if (arr[j] > arr[j + 1]) {
+//         let c = arr[j];
+//         arr[j] = arr[j + 1];
+//         arr[j + 1] = c;
+//       }
+//     }
+//   }
+//   return arr;
+// }
+// console.log(bubbleSort([1,2,3,8,7,3,4,5,2,1,9]))
+// function quickSort(arr) {
+//   function recursion(arr, start, end) {
+//     if (start === end) {
+//       return;
+//     }
+//     let pivot = arr[start];
+//     for (let i = start; i <= end; i++) {
+//       if (arr[i] < pivot) {
+//         arr[start] = arr[i];
+//         start++;
+//       }
+//     }
+//     arr[start] = pivot;
+//     recursion(arr.slice(0, start), 0, start - 1);
+//     recursion(arr.slice(start + 1, end), start + 1, end);
+//   }
+//   recursion(0, arr.length - 1);
+// }
+// let arr = [6,3,8,7,9,2,0];
+// quickSort(arr);
+// console(arr);
+// let arr = [6,3,8,7,9,2,0];
+// [3,2,0,7,9,6,8]
+// let start = 0, end = arr.length - 1;
+// let pivot = arr[start];
+// for (let i = start; i <= end; i++) {
+//   if (arr[i] < pivot) {
+//     let c = arr[start];
+//     arr[start] = arr[i];
+//     arr[i] = c;
+//     if (arr[i] === pivot) index = i;
+//     start++;
+//   }
+// }
+// let c = arr[start];
+// arr[start] = arr[index];
+// arr[index] = c;
+// console.log(arr)
+// function quickSort(arr) {
+//   function recursion(start, end) {
+//     if (start > end) {
+//       return;
+//     }
+//     function partition(nums, left, right) {
+//       let pivot = left, counter = left + 1;
+//       for (let i = left; i <= right; i++) {
+//         if (nums[i] < nums[pivot]) {
+//           [nums[i], nums[counter]] = [nums[counter], nums[i]];
+//           counter++;
+//         }
+//       }
+//       [nums[pivot], nums[counter - 1]] = [nums[counter - 1], nums[pivot]];
+//       return counter - 1;
+//     }
+//     index = partition(arr, start, end);
+//     recursion(start, index - 1);
+//     recursion(index + 1, end);
+//   }
+//   recursion(0, arr.length - 1);
+// }
+// let arr = [6,3,8,7,9,2,0,18,33,44,6,5,7];
+// quickSort(arr);
+// console.log(arr)
+// 选择排序
+// 每次找到最小值，放到未排序数组的起始位置。
+// function selectionSort(arr) {
+//   for (let i = 0; i < arr.length - 1; i++) {
+//     let minIndex = i;
+//     for (let j = i + 1; j < arr.length; j++) {
+//       if (arr[j] < arr[minIndex]) {
+//         minIndex = j;
+//       }
+//     }
+//     if (minIndex !== i) {
+//       let c = arr[i];
+//       arr[i] = arr[minIndex];
+//       arr[minIndex] = c;
+//     }
+//   }
+//   return arr;
+// }
+// console.log(selectionSort([9,4,9,8,3,3,2,2,5,6]))
+// function insertionSort(arr) {
+//   for (let i = 0; i < arr.length; i ++) {
+//     for (let j = i; j > 0; j--) {
+//       if (arr[j - 1] > arr[j]) {
+//         let c = arr[j - 1];
+//         arr[j - 1] = arr[j];
+//         arr[j] = c;
+//       }
+//     }
+//   }
+//   return arr;
+// }
+// console.log(insertionSort([2,2,5,6,7,3]))
+// 冒泡排序
+// 内层循环每次把最大值放到最后
+// function bubbleSort(arr) {
+//   for (let i = 0; i < arr.length - 1; i ++) {
+//     for (let j = 0; j < arr.length - i - 1; j++) {
+//       if (arr[j] > arr[j + 1]) {
+//         let c = arr[j];
+//         arr[j] = arr[j + 1];
+//         arr[j + 1] = c;
+//       }
+//     }
+//   }
+//   return arr;
+// }
+// console.log(bubbleSort([9,4,91,8,33,3,2,2,5,6]))
+// function insertionSort(arr) {
+//   for (let i = 0; i < arr.length; i++) {
+//     let temp = arr[i];
+//     let preIndex = i - 1;
+//     while (preIndex >= 0 && arr[preIndex] > temp) {
+//       arr[preIndex + 1] = arr[preIndex];
+//       preIndex--;
+//     }
+//     arr[preIndex + 1] = temp;
+//   }
+//   return arr;
+// }
+// console.log(insertionSort([9,4,91,8,33,3,2,2,5,6]))
+// [0,3,2,6,9,8,7];
+// counter: 1;2;3;4
+// pivot: 0;
+
+// function partition(nums, left, right) {
+//   let pivot = left;
+//   let counter = left + 1;
+//   for (let i = left; i <= right; i++) {
+//     if (nums[i] < nums[pivot]) {
+//       [nums[i], nums[counter]] = [nums[counter], nums[i]];
+//       counter++;
+//     }
+//   }
+//   [nums[pivot], nums[counter - 1]] = [nums[counter - 1], nums[pivot]];
+//   return counter - 1;
+// }
+// function quickSort(nums, left, right) {
+//   if (nums.length <= 1) return nums;
+//   if (right <= left) return;
+//   index = partition(nums, left, right);
+//   quickSort(nums, left, index - 1);
+//   quickSort(nums, index + 1, right);
+// }
+// let arr = [1,9,8,4,7,6,5,1,2];
+// quickSort(arr, 0, arr.length - 1);
+// console.log(arr);
+
+// const quickSort = (nums, left, right) => {  
+//   if (nums.length <= 1) return nums;
+//   if (left < right) {    
+//     index = partition(nums, left, right)    
+//     quickSort(nums, left, index-1)    
+//     quickSort(nums, index+1, right)  
+//   }
+// }      
+// const partition = (nums, left, right) => {  
+//   let pivot = left, index = left + 1; 
+//   for (let i = index; i <= right; i++) {    
+//     if (nums[i] < nums[pivot]) {      
+//       [nums[i], nums[index]] = [nums[index], nums[i]];      
+//       index++;
+//     }  
+//   }  
+//   [nums[pivot], nums[index-1]] = [nums[index-1], nums[pivot]];  
+//   return index -1;
+// }
+// function quickSort(nums) {
+//   if (nums.length <= 1) return nums;
+//   function recursion(left, right) {
+//     if (right <= left) return;
+//     let index = partition(left, right);
+//     recursion(left, index - 1);
+//     recursion(index + 1, right);
+//   }
+//   recursion(0, nums.length - 1);
+//   function partition(left, right) {
+//     let pivot = left, counter = left + 1;
+//     for (let i = left; i <= right; i++) {
+//       if (nums[i] < nums[pivot]) {
+//         [nums[counter], nums[i]] = [nums[i], nums[counter]];
+//         counter++;
+//       }
+//     }
+//     [nums[counter - 1], nums[pivot]] = [nums[pivot], nums[counter - 1]];
+//     return counter - 1;
+//   }
+//   return nums;
+// }
+// console.log(quickSort([0,2,7,8,44,3,2,6,7,55,32]))
+function quickSort(nums) {
+  if (nums.length < 2) return nums;
+  let tmp = nums[0];
+  let left = [];
+  let right = [];
+  for (let i = 1; i < nums.length; i++) {
+    if (nums[i] < tmp) {
+      left.push(nums[i]);
+    } else {
+      right.push(nums[i]);
+    }
+  }
+  return quickSort(left).concat(tmp, quickSort(right));
+}
+console.log(quickSort([0,5,3,2,4,4,7,7,5,10,66]))
