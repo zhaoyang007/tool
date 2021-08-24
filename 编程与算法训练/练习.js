@@ -13979,18 +13979,223 @@
 //   return nums;
 // }
 // console.log(quickSort([0,2,7,8,44,3,2,6,7,55,32]))
-function quickSort(nums) {
-  if (nums.length < 2) return nums;
-  let tmp = nums[0];
-  let left = [];
-  let right = [];
-  for (let i = 1; i < nums.length; i++) {
-    if (nums[i] < tmp) {
-      left.push(nums[i]);
-    } else {
-      right.push(nums[i]);
+// function quickSort(nums) {
+//   if (nums.length < 2) return nums;
+//   let tmp = nums[0];
+//   let left = [];
+//   let right = [];
+//   for (let i = 1; i < nums.length; i++) {
+//     if (nums[i] < tmp) {
+//       left.push(nums[i]);
+//     } else {
+//       right.push(nums[i]);
+//     }
+//   }
+//   return quickSort(left).concat(tmp, quickSort(right));
+// }
+// console.log(quickSort([0,5,3,2,4,4,7,7,5,10,66]))
+// function mergeSort(nums, left, right) {
+//   if (right <= left) return;    
+//   let mid = (left + right) >> 1; 
+//   mergeSort(nums, left, mid);   
+//   mergeSort(nums, mid + 1, right);    
+//   merge(nums, left, mid, right);
+// }
+// function merge(arr, left, mid, right) {
+//   let temp = []; 
+//   let i = left, j = mid + 1, k = 0;        
+//   while (i <= mid && j <= right) {            
+//     temp[k++] = arr[i] <= arr[j] ? arr[i++] : arr[j++];        
+//   }        
+//   while (i <= mid) temp[k++] = arr[i++];        
+//   while (j <= right) temp[k++] = arr[j++];        
+//   for (let p = 0; p < temp.length; p++) {            
+//     arr[left + p] = temp[p];        
+//   }
+// }
+// function mergeSort(nums) {
+//   function recursion(nums, left, right) {
+//     if (right <= left) return;
+//     let mid = (left + right) >> 1;
+//     recursion(nums, left, mid);
+//     recursion(nums, mid + 1, right);
+//     merge(nums, left, mid, right);
+//   }
+//   recursion(nums, 0, nums.length - 1);
+//   function merge(nums, left, mid, right) {
+//     let temp = [];
+//     let i = left, j = mid + 1, k = 0;
+//     while (i <= mid && j <= right) {
+//       temp[k++] = nums[i] <= nums[j] ? nums[i++] : nums[j++];
+//     }
+//     while (i <= mid) temp[k++] = nums[i++];
+//     while (j <= right) temp[k++] = nums[j++];
+//     for (let p = 0; p < temp.length; p++) {
+//       nums[left + p] = temp[p];
+//     } 
+//   }
+//   return nums;
+// }
+// let nums = [6,4,5,3,6,5,7,3,99,30];
+// console.log(mergeSort(nums, 0, nums.length - 1))
+// 选择排序
+// 每次选出最小值，放到待排序数组最前面
+// function selectionSort(nums) {
+//   for (let i = 0; i < nums.length - 1; i++) {
+//     let minIndex = i;
+//     for (let j = i + 1; j < nums.length; j++) {
+//       if (nums[j] < nums[minIndex]) {
+//         minIndex = j;
+//       }
+//     }
+//     if (minIndex !== i) {
+//       let c = nums[i];
+//       nums[i] = nums[minIndex];
+//       nums[minIndex] = c;
+//     }
+//   }
+//   return nums;
+// }
+// console.log(selectionSort([2,3,6,3,7,29,22]))
+// 插入排序
+// 每次将 i 放入已排序数组中，从后向前把 i 交换到相应的位置。
+// function insertionSort(nums) {
+//   for (let i = 0; i < nums.length; i++) {
+//     for (let j = i; j > 0; j--) {
+//       if (nums[j] < nums[j - 1]) {
+//         let c = nums[j - 1];
+//         nums[j - 1] = nums[j];
+//         nums[j] = c;
+//       }
+//     }
+//   }
+//   return nums;
+// }
+// console.log(insertionSort([9,2,4,34,4,5,8,1]))
+// 冒泡排序
+// 两层嵌套循环，内层循环每次把最大值放到最后
+// function bubbleSort(nums) {
+//   for (let i = 0; i < nums.length - 1; i++) {
+//     for (let j = 0; j < nums.length - i - 1; j++) {
+//       if (nums[j] > nums[j + 1]) {
+//         let c = nums[j];
+//         nums[j] = nums[j + 1];
+//         nums[j + 1] = c;
+//       }
+//     }
+//   }
+//   return nums;
+// }
+// console.log(bubbleSort([1,2,6,7,4,5,8,10,9,8]))
+// function insertSort(nums) {
+//   for (let i = 0; i < nums.length; i++) {
+//     let preIndex = i - 1;
+//     let temp = nums[i];
+//     while (preIndex >= 0 && nums[preIndex] > temp) {
+//       nums[preIndex + 1] = nums[preIndex];
+//       preIndex--;
+//     }
+//     nums[preIndex + 1] = temp;
+//   }
+//   return nums;
+// }
+// console.log(insertSort([9,3,4,5,1,6,22,10,16]))
+// 快速排序
+// function quickSort(nums) {
+//   if (nums.length <= 1) return nums;
+//   function recursion(nums, left, right) {
+//     if (right <= left) return;
+//     let index = partition(nums, left, right);
+//     recursion(nums, left, index - 1);
+//     recursion(nums, index + 1, right);
+//   }
+//   recursion(nums, 0, nums.length - 1);
+//   function partition(nums, left, right) {
+//     let pivot = left;
+//     let counter = left + 1;
+//     for (let i = left + 1; i <= right; i++) {
+//       if (nums[i] < nums[pivot]) {
+//         [nums[counter], nums[i]] = [nums[i], nums[counter]];
+//         counter++;
+//       }
+//     }
+//     [nums[pivot], nums[counter - 1]] = [nums[counter - 1], nums[pivot]];
+//     return counter - 1;
+//   }
+//   return nums;
+// }
+// console.log(quickSort([19,2,4,5,2,6,2,9,20,3]))
+// function quickSort(nums) {
+//   if (nums.length <= 1) return nums;
+//   function recursion(nums, left, right) {
+//     if (right <= left) return;
+//     let index = partition(nums, left, right);
+//     recursion(nums, left, index - 1);
+//     recursion(nums, index + 1, right);
+//   }
+//   recursion(nums, 0, nums.length -1);
+//   function partition(nums, left, right) {
+//     let pivot = left;
+//     let counter = left + 1;
+//     for (let i = left; i <= right; i++) {
+//       if (nums[i] < nums[pivot]) {
+//         [nums[counter], nums[i]] = [nums[i], nums[counter]];
+//         counter++;
+//       }
+//     }
+//     [nums[pivot], nums[counter - 1]] = [nums[counter - 1], nums[pivot]];
+//     return counter - 1;
+//   }
+//   return nums;
+// }
+// console.log(quickSort([0,3,9,4,86,7,4,2]))
+function mergeSort(nums) {
+  // if (nums.length <= 1) return nums;
+  function recursion(nums, left, right) {
+    if (right <= left) return;
+    let mid = (left + right) >> 1;
+    recursion(nums, left, mid);
+    recursion(nums, mid + 1, right);
+    merge(nums, left, mid, right);
+  }
+  recursion(nums, 0, nums.length - 1);
+  function merge(nums, left, mid, right) {
+    let temp = [];
+    let i = left, j = mid + 1, k = 0;
+    while (i <= mid && j <= right) {
+      temp[k++] = nums[i] <= nums[j] ? nums[i++] : nums[j++];
+    }
+    while (i <= mid) temp[k++] = nums[i++];
+    while (j <= right) temp[k++] = nums[j++];
+    for (let p = 0; p < temp.length; p++) {
+      nums[left + p] = temp[p];
     }
   }
-  return quickSort(left).concat(tmp, quickSort(right));
+  return nums;
 }
-console.log(quickSort([0,5,3,2,4,4,7,7,5,10,66]))
+console.log(mergeSort([]))
+// function mergeSort(nums) {
+//   // if (nums.length <= 1) return nums;
+//   function recursion(nums, left, right) {
+//     if (right <= left) return;
+//     let mid = (left + right) >> 1;
+//     recursion(nums, left, mid);
+//     recursion(nums, mid + 1, right);
+//     merge(nums, left, mid, right);
+//   }
+//   recursion(nums, 0, nums.length - 1);
+//   function merge(nums, left, mid, right) {
+//     let temp = [];
+//     let i = left, j = mid + 1, k = 0;
+//     while (i <= mid && j <= right) {
+//       temp[k++] = nums[i] <= nums[j] ? nums[i++] : nums[j++];
+//     }
+//     while (i <= mid) temp[k++] = nums[i++];
+//     while (j <= right) temp[k++] = nums[j++];
+//     for (let p = 0; p < temp.length; p++) {
+//       nums[left + p] = temp[p];
+//     }
+//   }
+//   return nums;
+// }
+// console.log(mergeSort([0]))
