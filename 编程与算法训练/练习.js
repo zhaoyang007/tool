@@ -14149,31 +14149,6 @@
 //   return nums;
 // }
 // console.log(quickSort([0,3,9,4,86,7,4,2]))
-function mergeSort(nums) {
-  // if (nums.length <= 1) return nums;
-  function recursion(nums, left, right) {
-    if (right <= left) return;
-    let mid = (left + right) >> 1;
-    recursion(nums, left, mid);
-    recursion(nums, mid + 1, right);
-    merge(nums, left, mid, right);
-  }
-  recursion(nums, 0, nums.length - 1);
-  function merge(nums, left, mid, right) {
-    let temp = [];
-    let i = left, j = mid + 1, k = 0;
-    while (i <= mid && j <= right) {
-      temp[k++] = nums[i] <= nums[j] ? nums[i++] : nums[j++];
-    }
-    while (i <= mid) temp[k++] = nums[i++];
-    while (j <= right) temp[k++] = nums[j++];
-    for (let p = 0; p < temp.length; p++) {
-      nums[left + p] = temp[p];
-    }
-  }
-  return nums;
-}
-console.log(mergeSort([]))
 // function mergeSort(nums) {
 //   // if (nums.length <= 1) return nums;
 //   function recursion(nums, left, right) {
@@ -14198,4 +14173,244 @@ console.log(mergeSort([]))
 //   }
 //   return nums;
 // }
-// console.log(mergeSort([0]))
+// console.log(mergeSort([]))
+// function mergeSort(nums) {
+//   // if (nums.length <= 1) return nums;
+//   function recursion(nums, left, right) {
+//     if (right <= left) return;
+//     let mid = (left + right) >> 1;
+//     recursion(nums, left, mid);
+//     recursion(nums, mid + 1, right);
+//     merge(nums, left, mid, right);
+//   }
+//   recursion(nums, 0, nums.length - 1);
+//   function merge(nums, left, mid, right) {
+//     let temp = [];
+//     let i = left, j = mid + 1, k = 0;
+//     while (i <= mid && j <= right) {
+//       temp[k++] = nums[i] <= nums[j] ? nums[i++] : nums[j++];
+//     }
+//     while (i <= mid) temp[k++] = nums[i++];
+//     while (j <= right) temp[k++] = nums[j++];
+//     for (let p = 0; p < temp.length; p++) {
+//       nums[left + p] = temp[p];
+//     }
+//   }
+//   return nums;
+// }
+// console.log(mergeSort([]))
+// function heapSort(nums) {
+//   // if (nums.length === 0) return;
+//   let len = nums.length;
+//   // 建堆
+//   for (let i = Math.floor(len / 2) - 1; i >= 0; i--) {
+//     heapify(nums, len, i);
+//   }
+//   // 排序
+//   for (let i = len - 1; i >= 0; i--) {
+//     [nums[0], nums[i]] = [nums[i], nums[0]];
+//     heapify(nums, i, 0);
+//   }
+//   // 维护堆
+//   // 从上至下维护。
+//   function heapify(nums, len, i) {
+//     let left = 2 * i + 1;
+//     let right = 2 * i + 2;
+//     let largest = i;
+//     if (left < len && nums[left] > nums[largest]) {
+//       largest = left;
+//     }
+//     if (right < len && nums[right] > nums[largest]) {
+//       largest = right;
+//     }
+//     if (largest !== i) {
+//       [nums[i], nums[largest]] = [nums[largest], nums[i]];
+//       heapify(nums, len, largest);
+//     }
+//   }
+//   return nums;
+// }
+// console.log(heapSort([1]))
+// 斐波那契额数列 1.暴力递归 2.记忆化递归 3.动态规划
+// function fib(n) {
+//   if (n <= 1) return n;
+//   return fib(n - 1) + fib(n - 2);
+// }
+// function fib(n) {
+//   let a = [];
+//   function recursion(n) {
+//     if (n <= 1) return n;
+//     if (a[n] != null) return a[n];
+//     a[n] = fib(n - 1) + fib(n - 2);
+//     return a[n];
+//   }
+//   return recursion(n);
+// }
+// function fib(n) {
+//   if (n <= 1) return n;
+//   let a = [];
+//   a[0] = 0, a[1] = 1;
+//   for (let i = 2; i <= n; i++) {
+//     a[i] = a[i - 1] + a[i - 2];
+//   }
+//   return a[n];
+// }
+// function fib(n) {
+//   if (n <= 1) return n;
+//   let a = 0, b = 1, r = 0;
+//   for (let i = 0; i < n - 1; i++) {
+//     r = (a + b) % 1000000007;
+//     a = b;
+//     b = r;
+//   }
+//   return r;
+// }
+// function fib(n) {
+//   if (n <= 1) return n;
+//   let a = 0, b = 1, r = 0;
+//   for (let i = 2; i <= n; i++) {
+//     r = (a + b) % 1000000007;
+//     a = b;
+//     b = r;
+//   }
+//   return r;
+// }
+// 选择排序
+// 每次选出最小值放到待排序序列的最前面
+// function selectionSort(nums) {
+//   for (let i = 0; i < nums.length - 1; i++) {
+//     let minIndex = i;
+//     for (let j = i + 1; j < nums.length; j++) {
+//       if (nums[j] < nums[minIndex]) {
+//         minIndex = j;
+//       }
+//     }
+//     if (minIndex !== i) {
+//       [nums[i], nums[minIndex]] = [nums[minIndex], nums[i]];
+//     }
+//   }
+//   return nums;
+// }
+// console.log(selectionSort([9,3,5,2,7,5,5,44,3]))
+// function insertionSort(nums) {
+//   for (let i = 0; i < nums.length; i++) {
+//     for (let j = i; j > 0; j--) {
+//       if (nums[j] < nums[j - 1]) {
+//         [nums[j - 1], nums[j]] = [nums[j], nums[j - 1]];
+//       }
+//     }
+//   }
+//   return nums;
+// }
+// console.log(insertionSort([0,3,5,2,94,8,4,5]))
+// 插入排序
+// 从前到后构建有序序列，从后到前遍历有序序列，把 i 插入相应的位置。
+// function insertionSort(nums) {
+//   for (let i = 0; i < nums.length; i++) {
+//     let preIndex = i - 1;
+//     let temp = nums[i];
+//     while (preIndex >= 0 && nums[preIndex] > temp) {
+//       nums[preIndex + 1] = nums[preIndex];
+//       preIndex--;
+//     }
+//     nums[preIndex + 1] = temp;
+//   }
+//   return nums;
+// }
+// console.log(insertionSort([0,2,3,49,4,2,3,5]))
+// function bubbleSort(nums) {
+//   for (let i = 0; i < nums.length - 1; i++) {
+//     for (let j = 0; j < nums.length - 1 - i; j++) {
+//       if (nums[j] > nums[j + 1]) {
+//         [nums[j], nums[j + 1]] = [nums[j + 1], nums[j]];
+//       }
+//     }
+//   }
+//   return nums;
+// }
+// console.log(bubbleSort([0,2,3,49,4,2,3,55]));
+// function quickSort(nums) {
+//   if (nums.length <= 1) return nums;
+//   function recursion(nums, left, right) {
+//     if (right <= left) return;
+//     let index = partition(nums, left, right);
+//     recursion(nums, left, index - 1);
+//     recursion(nums, index + 1, right);
+//   }
+//   recursion(nums, 0, nums.length -1);
+//   function partition(nums, left, right) {
+//     let pivot = left;
+//     let target = left + 1;
+//     for (let i = left; i <= right; i++) {
+//       if (nums[i] < nums[pivot]) {
+//         [nums[target], nums[i]] = [nums[i], nums[target]];
+//         target++;
+//       }
+//     }
+//     [nums[pivot], nums[target - 1]] = [nums[target - 1], nums[pivot]];
+//     return target - 1;
+//   }
+//   return nums;
+// }
+// console.log(quickSort([9,3,4,1,2,4,6,4,3,6,7]))
+// 归并排序
+// function mergeSort(nums) {
+//   if (nums.length <= 1) return nums;
+//   function recursion(nums, left, right) {
+//     if (right <= left) return;
+//     let mid = (left + right) >> 1;
+//     recursion(nums, left, mid);
+//     recursion(nums, mid + 1, right);
+//     merge(nums, left, mid, right);
+//   }
+//   recursion(nums, 0, nums.length - 1);
+//   function merge(nums, left, mid, right) {
+//     let temp = [];
+//     let i = left, j = mid + 1, k = 0;
+//     while (i <= mid && j <= right) {
+//       temp[k++] = nums[i] <= nums[j] ? nums[i++] : nums[j++];
+//     }
+//     while (i <= mid) temp[k++] = nums[i++];
+//     while (j <= right) temp[k++] = nums[j++];
+//     for (let p = 0; p < temp.length; p++) {
+//       nums[left + p] = temp[p];
+//     }
+//   }
+//   return nums;
+// }
+// console.log(mergeSort([0,3,2,8,4,23,4]))
+// function heapSort(nums) {
+//   if (nums.length <= 1) return nums;
+//   let len = nums.length;
+//   // 建堆
+//   for (let i = Math.floor(len / 2) - 1; i >= 0; i--) {
+  //   heapify(nums, len, i);
+  // }
+  // 排序
+  // for (let i = 0; i < len; i++) {
+  //   [nums[0], nums[len - i - 1]] = [nums[len - i - 1], nums[0]];
+  //   heapify(nums, len - i - 1, 0);
+  // }
+//   for (let i = len - 1; i >= 0; i--) {
+//     [nums[0], nums[i]] = [nums[i], nums[0]];
+//     heapify(nums, i, 0);
+//   }
+//   // 从上至下维护堆
+//   function heapify(nums, len, i) {
+//     let largest = i;
+//     let left = i * 2 + 1;
+//     let right = i * 2 + 2;
+//     if (left < len && nums[left] > nums[largest]) {
+//       largest = left;
+//     }
+//     if (right < len && nums[right] > nums[largest]) {
+//       largest = right;
+//     }
+//     if (largest !== i) {
+//       [nums[i], nums[largest]] = [nums[largest], nums[i]];
+//       heapify(nums, len, largest);
+//     }
+//   }
+//   return nums;
+// }
+// console.log(heapSort([9,3,42,2,5,3,9,4,10]))
