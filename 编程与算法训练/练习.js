@@ -14414,3 +14414,287 @@
 //   return nums;
 // }
 // console.log(heapSort([9,3,42,2,5,3,9,4,10]))
+// relativeSortArray = function(arr1, arr2) {
+//   let a = [];
+//   for (let i = 0; i < arr2.length; i++) {
+//       for (let j = 0; j < arr1.length; j++) {
+//           if (arr2[i] === arr1[j]) {
+//               a.push(arr2[i]);
+//               arr1.splice(j, 1);
+//               j--;
+//           }
+//       }
+//   }
+//   console.log(a);
+//   return a.concat(arr1);
+// };
+// relativeSortArray([2,3,1,3,2,4,6,7,9,2,19], [2,1,4,3,9,6])
+// reversePairs = function(nums) {
+//   let count = 0;
+//   if (nums.length <= 1) return nums;
+//   function recursion(nums, left, right) {
+//     if (right <= left) return;
+//     let mid = (left + right) >> 1;
+//     recursion(nums, left, mid);
+//     recursion(nums, mid + 1, right);
+//     merge(nums, left, mid, right);
+//   }
+//   recursion(nums, 0, nums.length - 1);
+//   function merge(nums, left, mid, right) {
+//     let temp = [];
+//     let i = left, j = mid + 1, k = 0;
+//     while (i <= mid && j <= right) {
+//       if (nums[i] > nums[j]) count++;
+//       temp[k++] = nums[i] <= nums[j] ? nums[i++] : nums[j++];
+//     }
+//     while (i <= mid) {
+//       temp[k++] = nums[i++];
+//       if (left <= mid - 1) count++;
+//     }
+//     // while (i <= mid) temp[k++] = nums[i++],count++;
+//     while (j <= right) temp[k++] = nums[j++];
+//     for (let p = 0; p < temp.length; p++) {
+//       nums[left + p] = temp[p];
+//     } 
+//   }
+//   return count;
+//   };
+// console.log(reversePairs([7,5,6,4]))
+//   // [7,5] [6,4]
+//   // [5,7,4,6]
+// 选择排序
+// 每次选出最小值，放到待排序数组的最前面
+// function selectionSort(nums) {
+//   for (let i = 0; i < nums.length - 1; i++) {
+//     let minIndex = i;
+//     for (let j = i + 1; j < nums.length; j++) {
+//       if (nums[j] < nums[minIndex]) {
+//         minIndex = j;
+//       }
+//     }
+//     if (minIndex !== i) {
+//       [nums[i], nums[minIndex]] = [nums[minIndex], nums[i]];
+//     }
+//   }
+//   return nums;
+// }
+// console.log(selectionSort([9,34,2,5,3,6,5]))
+// 插入排序
+// 从前到后排序，待排序数据在已排序序列从后向前，找到相应位置并插入。
+// function insertionSort(nums) {
+//   for (let i = 0; i < nums.length; i++) {
+//     let preIndex = i - 1;
+//     let temp = nums[i];
+//     while (preIndex >= 0 && nums[preIndex] > temp) {
+//       nums[preIndex + 1] = nums[preIndex];
+//       preIndex--;
+//     }
+//     nums[preIndex + 1] = temp;
+//   }
+//   return nums;
+// }
+// console.log(insertionSort([9,34,1,482,394,34,5,9]))
+// function insertionSort(nums) {
+//   for (let i = 0; i < nums.length; i++) {
+//     for (let j = i; j > 0; j--) {
+//       if (nums[j] < nums[j - 1]) {
+//         [nums[j - 1], nums[j]] = [nums[j], nums[j - 1]];
+//       }
+//     }
+//   }
+//   return nums;
+// }
+// console.log(insertionSort([3,8,5,23,4,6,8]))
+// 冒泡排序
+// 每次将最大值冒泡到最后面
+// function bubbleSort(nums) {
+//   for (let i = 0; i < nums.length - 1; i++) {
+//     for (let j = 0; j < nums.length - i - 1; j++) {
+//       if (nums[j] > nums[j + 1]) {
+//         [nums[j], nums[j + 1]] = [nums[j + 1], nums[j]];
+//       }
+//     }
+//   }
+//   return nums;
+// }
+// console.log(bubbleSort([8,3,5,6,2,35,6,9,42,2]))
+// 快速排序
+// function quickSort(nums) {
+//   function recursion(nums, left, right) {
+//     if (right <= left) return;
+//     let index = partition(nums, left, right);
+//     recursion(nums, left, index - 1);
+//     recursion(nums, index + 1, right); 
+//   }
+//   recursion(nums, 0, nums.length - 1);
+//   function partition(nums, left, right) {
+//     let pivot = left;
+//     let counter = left + 1;
+//     for (let i = left; i <= right; i++) {
+//       if (nums[i] < nums[pivot]) {
+//         [nums[counter], nums[i]] = [nums[i], nums[counter]];
+//         counter++;
+//       }
+//     }
+//     [nums[pivot], nums[counter - 1]] = [nums[counter - 1], nums[pivot]];
+//     return counter - 1;
+//   }
+//   return nums;
+// }
+// console.log(quickSort([]))
+// 归并排序
+// function mergeSort(nums) {
+//   function recursion(nums, left, right) {
+//     if (right <= left) return;
+//     let mid = (left + right) >> 1;
+//     recursion(nums, left, mid);
+//     recursion(nums, mid + 1, right);
+//     merge(nums, left, mid, right);
+//   }
+//   recursion(nums, 0, nums.length - 1);
+//   function merge(nums, left, mid, right) {
+//     let temp = [];
+//     let i = left, j = mid + 1, k = 0;
+//     while (i <= mid && j <= right) {
+//       temp[k++] = nums[i] <= nums[j] ? nums[i++] : nums[j++];
+//     }
+//     while (i <= mid) temp[k++] = nums[i++];
+//     while (j <= right) temp[k++] = nums[j++];
+//     // nums.splice(left, right - left + 1, ...temp);
+//     for (let p = 0; p < temp.length; p++) {
+//       nums[left + p] = temp[p];
+//     }
+//   }
+//   return nums;
+// }
+// console.log(mergeSort([]))
+// 堆排序
+// function heapSort(nums) {
+//   let len = nums.length;
+//   // 建堆
+//   for (let i = Math.floor(len / 2) - 1; i >= 0; i--) {
+//     heapify(nums, len, i);
+//   }
+//   // 排序
+//   for (let i = len - 1; i >= 0; i--) {
+//     [nums[i], nums[0]] = [nums[0], nums[i]];
+//     heapify(nums, i, 0);
+//   }
+//   function heapify(nums, len, i) {
+//     let left = i * 2 + 1;
+//     let right = i * 2 + 2;
+//     let largest = i;
+//     if (left < len && nums[left] > nums[largest]) {
+//       largest = left;
+//     }
+//     if (right < len && nums[right] > nums[largest]) {
+//       largest = right;
+//     }
+//     if (largest !== i) {
+//       [nums[i], nums[largest]] = [nums[largest], nums[i]];
+//       heapify(nums, len, largest);
+//     }
+//   }
+//   return nums;
+// }
+// console.log(heapSort([93,32,3,5,6,2,4,6]))
+// 合并区间
+// function merge(intervals) {
+//   if (intervals.length <= 1) return intervals;
+//   intervals.sort((a, b) => a[0] - b[0]);
+//   for (let i = 0; i < intervals.length - 1; i++) {
+//     if (intervals[i][1] >= intervals[i + 1][0]) {
+//       intervals.splice(i, 2, [intervals[i][0], Math.max(intervals[i][1], intervals[i + 1][1])]);
+//       i--;
+//     }
+//   }
+//   return intervals;
+// }
+// 路径计数 1.暴力递归 2.记忆化递归 3.动态规划
+// function uniquePathsWithObstacles(obstacleGrid) {
+//   let n = obstacleGrid.length;
+//   let m = obstacleGrid[0].length;
+//   function recursion(i, j) {
+//     if (obstacleGrid[i][j] === 1) return 0;
+//     if (i === n - 1 && j === m - 1) return 1;
+//     let value = 0;
+//     if (i === n - 1) {
+//       value = recursion(i, j + 1);
+//     } else if (j === m - 1) {
+//       value = recursion(i + 1, j);
+//     } else {
+//       value = recursion(i + 1, j) + recursion(i, j + 1);
+//     }
+//     return value;
+//   }
+//   return recursion(0, 0);
+// }
+// function uniquePathsWithObstacles(obstacleGrid) {
+//   let n = obstacleGrid.length;
+//   let m = obstacleGrid[0].length;
+//   let a = [];
+//   function recursion(i, j) {
+//     if (obstacleGrid[i][j] === 1) return 0;
+//     if (i === n - 1 & j === m - 1) return 1;
+//     if (a[i] == null) a[i] = [];
+//     if (a[i][j] != null) return a[i][j];
+//     a[i][j] = 0;
+//     if (i === n - 1) {
+//       a[i][j] = recursion(i, j + 1);
+//     } else if (j === m - 1) {
+//       a[i][j] = recursion(i + 1, j);
+//     } else {
+//       a[i][j] = recursion(i + 1, j) + recursion(i, j + 1);
+//     }
+//     return a[i][j];
+//   }
+//   return recursion(0, 0);
+// }
+// function uniquePathsWithObstacles(obstacleGrid) {
+//   let n = obstacleGrid.length;
+//   let m = obstacleGrid[0].length;
+//   let a = [];
+//   for (let i = n - 1; i >= 0; i--) {
+//     a[i] = [];
+//     for (let j = m - 1; j >= 0; j--) {
+//       if (obstacleGrid[i][j] === 1) {
+//         a[i][j] = 0;
+//       } else {
+//         if (i === n - 1 && j === m - 1) {
+//           a[i][j] = 1;
+//         } else if (i === n - 1) {
+//           a[i][j] = a[i][j + 1];
+//         } else if (j === m - 1) {
+//           a[i][j] = a[i + 1][j];
+//         } else {
+//           a[i][j] = a[i + 1][j] + a[i][j + 1];
+//         }
+//       }
+//     }
+//   }
+//   return a[0][0];
+// }
+// function uniquePathsWithObstacles(obstacleGrid) {
+//   let n = obstacleGrid.length;
+//   let m = obstacleGrid[0].length;
+//   let a = [];
+//   for (let i = 0; i < n; i++) {
+//     a[i] = [];
+//     for (let j = 0; j < m; j++) {
+//       if (obstacleGrid[i][j] === 1) {
+//         a[i][j] = 0;
+//       } else {
+//         if (i === 0 && j === 0) {
+//           a[i][j] = 1;
+//         } else if (i === 0) {
+//           a[i][j] = a[i][j - 1];
+//         } else if (j === 0) {
+//           a[i][j] = a[i - 1][j];
+//         } else {
+//           a[i][j] = a[i - 1][j] + a[i][j - 1];
+//         }
+//       }
+//     }
+//   }
+//   return a[n - 1][m - 1];
+// }
