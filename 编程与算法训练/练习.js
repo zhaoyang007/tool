@@ -14698,3 +14698,179 @@
 //   }
 //   return a[n - 1][m - 1];
 // }
+// 三角形最小路径和 1.暴力递归 2.记忆化递归 3.动态规划
+// function minimumTotal(triangle) {
+//   let n = triangle.length;
+//   function recursion(i, j) {
+//     if (i === n - 1) return triangle[i][j];
+//     return Math.min(recursion(i + 1, j), recursion(i + 1, j + 1)) + triangle[i][j];
+//   }
+//   return recursion(0, 0);
+// }
+// function minimumTotal(triangle) {
+//   let n = triangle.length;
+//   let a = [];
+//   function recursion(i, j) {
+//     if (i === n - 1) return triangle[i][j];
+//     if (a[i] == null) a[i] = [];
+//     if (a[i][j] != null) return a[i][j];
+//     a[i][j] = Math.min(recursion(i + 1, j), recursion(i + 1, j + 1)) + triangle[i][j];
+//     return a[i][j];
+//   }
+//   return recursion(0, 0);
+// }
+// function minimumTotal(triangle) {
+//   let n = triangle.length;
+//   for (let i = n - 2; i >= 0; i--) {
+//     for (let j = 0; j < triangle[i].length; j++) {
+//       triangle[i][j] += Math.min(triangle[i + 1][j], triangle[i + 1][j + 1]);
+//     }
+//   }
+//   return triangle[0][0];
+// }
+// 选择排序
+// 每次选出最小值放到待排序序列的最前面
+// function selectionSort(nums) {
+//   for (let i = 0; i < nums.length - 1; i++) {
+//     let minIndex = i;
+//     for (let j = i + 1; j < nums.length; j++) {
+//       if (nums[j] < nums[minIndex]) {
+//         minIndex = j;
+//       }
+//     }
+//     if (minIndex !== i)
+//       [nums[i], nums[minIndex]] = [nums[minIndex], nums[i]];
+//   }
+//   return nums;
+// }
+// console.log(selectionSort([0,3,4,1,3,5,3,4,6,4,4]))
+// 插入排序
+// 在已排序序列从后向前扫描，将待排序数据插入到相应位置
+// function insertionSort(nums) {
+//   for (let i = 0; i < nums.length; i++) {
+//     let preIndex = i - 1;
+//     let temp = nums[i];
+//     while (preIndex >= 0 && nums[preIndex] > temp) {
+//       nums[preIndex + 1] = nums[preIndex];
+//       preIndex--;
+//     }
+//     nums[preIndex + 1] = temp;
+//   }
+//   return nums;
+// }
+// console.log(insertionSort([0,3,4,2,5,6,3,9,5]))
+// function insertionSort(nums) {
+//   for (let i = 0; i < nums.length; i++) {
+//     for (let j = i; j > 0; j--) {
+//       if (nums[j - 1] > nums[j]) {
+//         [nums[j - 1], nums[j]] = [nums[j], nums[j - 1]];
+//       }
+//     }
+//   }
+//   return nums;
+// }
+// console.log(insertionSort([10,3,4,2,5,6,3,9,5]))
+// 冒泡排序
+// 每次冒泡将最大值放到最后面
+// function bubbleSort(nums) {
+//   for (let i = 0; i < nums.length - 1; i++) {
+//     for (let j = 0; j < nums.length - i - 1; j++) {
+//       if (nums[j] > nums[j + 1]) {
+//         [nums[j], nums[j + 1]] = [nums[j + 1], nums[j]];
+//       }
+//     }
+//   }
+//   return nums;
+// }
+// console.log(bubbleSort([10,3,4,2,5,9,5]))
+// 快速排序
+// function quickSort(nums) {
+//   function recursion(nums, left, right) {
+//     if (right <= left) return;
+//     let index = partition(nums, left, right);
+//     recursion(nums, left, index - 1);
+//     recursion(nums, index + 1, right);
+//   } 
+//   recursion(nums, 0, nums.length - 1);
+//   function partition(nums, left, right) {
+//     let pivot = left;
+//     let counter = left + 1;
+//     for (let i = left; i <= right; i++) {
+//       if (nums[i] < nums[pivot]) {
+//         [nums[counter], nums[i]] = [nums[i], nums[counter]];
+//         counter++;
+//       }
+//     }
+//     [nums[pivot], nums[counter - 1]] = [nums[counter - 1], nums[pivot]];
+//     return counter - 1;
+//   }
+//   return nums;
+// }
+// console.log(quickSort([0,35,3,23,5,7,4,4,9]))
+// 归并排序
+// function mergeSort(nums) {
+//   function recursion(nums, left, right) {
+//     if (right <= left) return;
+//     let mid = (left + right) >> 1;
+//     recursion(nums, left, mid);
+//     recursion(nums, mid + 1, right);
+//     merge(nums, left, mid, right);
+//   }
+//   recursion(nums, 0, nums.length - 1);
+//   function merge(nums, left, mid, right) {
+//     let temp = [];
+//     let i = left, j = mid + 1, k = 0;
+//     while (i <= mid && j <= right) {
+//       temp[k++] = nums[i] <= nums[j] ? nums[i++] : nums[j++];
+//     }
+//     while (i <= mid) temp[k++] = nums[i++];
+//     while (j <= right) temp[k++] = nums[j++];
+//     for (let p = 0; p < temp.length; p++) {
+//       nums[left + p] = temp[p];
+//     }
+//   }
+//   return nums;
+// }
+// console.log(mergeSort([0,3,2,3,4,5,6,3]))
+// 堆排序
+// function heapSort(nums) {
+//   let len = nums.length;
+//   // 建堆
+//   for (let i = Math.floor(len / 2) - 1; i >= 0; i--) {
+//     heapify(nums, len, i);
+//   }
+//   // 排序
+//   for (let i = len - 1; i >= 0; i--) {
+//     [nums[0], nums[i]] = [nums[i], nums[0]];
+//     heapify(nums, i, 0);
+//   }
+//   // 从上至下维护堆
+//   function heapify(nums, len, i) {
+//     let left = i * 2 + 1;
+//     let right = i * 2 + 2;
+//     let largest = i;
+//     if (left < len && nums[left] > nums[largest]) {
+//       largest = left;
+//     }
+//     if (right < len && nums[right] > nums[largest]) {
+//       largest = right;
+//     }
+//     if (largest !== i) {
+//       [nums[i], nums[largest]] = [nums[largest], nums[i]];
+//       heapify(nums, len, largest);
+//     }
+//   }
+//   return nums;
+// }
+// console.log(heapSort([]))
+// 合并区间
+// function merge(intervals) {
+//   if (intervals.length <= 1) return intervals;
+//   intervals.sort((a, b) => a[0] - b[0]);
+//   for (let i = 0; i < intervals.length - 1; i++) {
+//     if (intervals[i][1] >= intervals[i + 1][0]) {
+//       intervals.splice(i, 2, [intervals[i][0], Math.max(intervals[i][1], intervals[i + 1][1])]);
+//     }
+//   }
+//   return intervals;
+// }
