@@ -15021,3 +15021,167 @@
 //   }
 //   return intervals;
 // }
+// 最大子序和 1.暴力枚举 2.分治递归 3.动态规划
+// function maxSubArray(nums) {
+//   let max = -Infinity;
+//   for (let i = 0; i < nums.length; i++) {
+//     let subMax = nums[i];
+//     let sum = nums[i];
+//     for (let j = i + 1; j < nums.length; j++) {
+//       sum += nums[j];
+//       subMax = Math.max(subMax, sum);
+//     }
+//     max = Math.max(max, subMax);
+//   }
+//   return max;
+// }
+// function maxSubArray(nums) {
+//   let max = -Infinity;
+//   for (let i = 0; i < nums.length; i++) {
+//     let sum = nums[i];
+//     max = Math.max(max, sum);
+//     for (let j = i + 1; j < nums.length; j++) {
+//       sum += nums[j];
+//       max = Math.max(max, sum);
+//     }
+//   }
+//   return max;
+// }
+// function maxSubArray(nums) {
+//   let a = [];
+//   function recursion(index) {
+//     if (index === nums.length - 1) {
+//       a.push(nums[nums.length - 1]);
+//       return nums[nums.length - 1];
+//     }
+//     let max = Math.max(recursion(index + 1) + nums[index], nums[index]);
+//     a.push(max);
+//     return max;
+//   }
+//   recursion(0);
+//   return Math.max.apply(null, a);
+// }
+// function maxSubArray(nums) {
+//   let a = [];
+//   function recursion(index) {
+//     if (index === 0) {
+//       a.push(nums[0]);
+//       return nums[0];
+//     }
+//     let max = Math.max(recursion(index - 1) + nums[index], nums[index]);
+//     a.push(max);
+//     return max;
+//   }
+//   recursion(nums.length - 1);
+//   return Math.max.apply(null, a);
+// }
+// function maxSubArray(nums) {
+//   for (let i = 1; i < nums.length; i++) {
+//     nums[i] = Math.max(nums[i - 1] + nums[i], nums[i]);
+//   }
+//   return Math.max.apply(null, nums);
+// }
+// function maxSubArray(nums) {
+//   let a = nums;
+//   for (let i = 1; i < nums.length; i++) {
+//     a[i] = Math.max(a[i - 1] + nums[i], nums[i]);
+//   }
+//   return Math.max.apply(null, a);
+// }
+// function maxSubArray(nums) {
+//   for (let i = nums.length - 2; i >= 0; i--) {
+//     nums[i] = Math.max(num[i + 1] + nums[i], nums[i]);
+//   }
+//   return Math.max.apply(null. nums);
+// }
+// 快速排序
+// function quickSort(nums) {
+//   function recursion(nums, left, right) {
+//     if (right <= left) return;
+//     let index = partition(nums, left, right);
+//     recursion(nums, left, index - 1);
+//     recursion(nums, index + 1, right);
+//   }
+//   recursion(nums, 0, nums.length - 1);
+//   function partition(nums, left, right) {
+//     let pivot = left;
+//     let counter = left + 1;
+//     for (let i = left + 1; i <= right; i++) {
+//       if (nums[i] < nums[pivot]) {
+//         [nums[counter], nums[i]] = [nums[i], nums[counter]];
+//         counter++;
+//       }
+//     }
+//     [nums[pivot], nums[counter - 1]] = [nums[counter - 1], nums[pivot]];
+//     return counter - 1;
+//   }
+//   return nums;
+// }
+// console.log(quickSort([9,3,2,5,4,2,5,9,8]))
+// 归并排序
+// function mergeSort(nums) {
+//   function recursion(nums, left, right) {
+//     if (right <= left) return;
+//     let mid = (left + right) >> 1;
+//     recursion(nums, left, mid);
+//     recursion(nums, mid + 1, right);
+//     merge(nums, left, mid, right);
+//   }
+//   recursion(nums, 0, nums.length - 1);
+//   function merge(nums, left, mid, right) {
+//     let i = left, j = mid + 1, k = 0;
+//     let temp = [];
+//     while (i <= mid && j <= right) {
+//       temp[k++] = nums[i] <= nums[j] ? nums[i++] : nums[j++];
+//     }
+//     while (i <= mid) temp[k++] = nums[i++];
+//     while (j <= right) temp[k++] = nums[j++];
+//     for (let p = 0; p < temp.length; p++) {
+//       nums[left + p] = temp[p];
+//     }
+//   }
+//   return nums;
+// }
+// console.log(mergeSort([9,4,2,5,3,6,7,3]))
+// 堆排序
+// function heapSort(nums) {
+//   let len = nums.length;
+//   // 建堆
+//   for (let i = Math.floor(len / 2) - 1; i >= 0; i--) {
+//     heapify(nums, len, i);
+//   }
+//   // 排序
+//   for (let i = nums.length - 1; i >= 0; i--) {
+//     [nums[0], nums[i]] = [nums[i], nums[0]];
+//     heapify(nums, i, 0);
+//   }
+//   // 从上至下维护堆
+//   function heapify(nums, len, i) {
+//     let left = i * 2 + 1;
+//     let right = i * 2 + 2;
+//     let largest = i;
+//     if (left < len && nums[left] > nums[largest]) {
+//       largest = left;
+//     }
+//     if (right < len && nums[right] > nums[largest]) {
+//       largest = right;
+//     }
+//     if (largest !== i) {
+//       [nums[i], nums[largest]] = [nums[largest], nums[i]];
+//       heapify(nums, len, largest);
+//     }
+//   }
+//   return nums;
+// }
+// console.log(heapSort([9,3,2,5,6,3,7,3]))
+// 合并区间
+function merge(intervals) {
+  intervals.sort((a, b) => a[0] - b[0]);
+  for (let i = 0; i < intervals.length - 1; i++) {
+    if (intervals[i][1] >= intervals[i + 1][0]) {
+      intervals.splice(i, 2, [intervals[i][0], Math.max(intervals[i][1], intervals[i + 1][1])]);
+      i--;
+    }
+  }
+  return intervals;
+}
