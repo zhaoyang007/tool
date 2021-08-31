@@ -15175,13 +15175,81 @@
 // }
 // console.log(heapSort([9,3,2,5,6,3,7,3]))
 // 合并区间
-function merge(intervals) {
-  intervals.sort((a, b) => a[0] - b[0]);
-  for (let i = 0; i < intervals.length - 1; i++) {
-    if (intervals[i][1] >= intervals[i + 1][0]) {
-      intervals.splice(i, 2, [intervals[i][0], Math.max(intervals[i][1], intervals[i + 1][1])]);
-      i--;
-    }
-  }
-  return intervals;
-}
+// function merge(intervals) {
+//   intervals.sort((a, b) => a[0] - b[0]);
+//   for (let i = 0; i < intervals.length - 1; i++) {
+//     if (intervals[i][1] >= intervals[i + 1][0]) {
+//       intervals.splice(i, 2, [intervals[i][0], Math.max(intervals[i][1], intervals[i + 1][1])]);
+//       i--;
+//     }
+//   }
+//   return intervals;
+// }
+// 归并排序
+// function mergeSort(nums) {
+//   function recursion(nums, left, right) {
+//     if (right <= left) return;
+//     let mid = (left + right) >> 1;
+//     recursion(nums, left, mid);
+//     recursion(nums, mid + 1, right);
+//     merge(nums, left, mid, right);
+//   }
+//   recursion(nums, 0, nums.length - 1);
+//   function merge(nums, left, mid, right) {
+//     let i = left, j = mid + 1, k = 0;
+//     let temp = [];
+//     while (i <= mid && j <= right) {
+//       temp[k++] = nums[i] <= nums[j] ? nums[i++] : nums[j++];
+//     }
+//     while (i <= mid) temp[k++] = nums[i++];
+//     while (j <= right) temp[k++] = nums[j++];
+//     for (let p = 0; p < temp.length; p++) {
+//       nums[left + p] = temp[p];
+//     }
+//   }
+//   return nums;
+// }
+// console.log(mergeSort([9,4,3,4,5,2,45]));
+// 堆排序
+// function heapSort(nums) {
+//   let len = nums.length;
+//   // 建堆
+//   for (let i = Math.floor(len / 2) - 1; i >= 0; i--) {
+//     heapify(nums, len, i);
+//   }
+//   // 排序
+//   for (let i = nums.length - 1; i > 0; i--) {
+//     [nums[i], nums[0]] = [nums[0], nums[i]];
+//     heapify(nums, i, 0);
+//   }
+//   // 从上至下维护堆
+//   function heapify(nums, len, i) {
+//     let left = i * 2 + 1;
+//     let right = i * 2 + 2;
+//     let largest = i;
+//     if (left < len && nums[left] > nums[largest]) {
+//       largest = left;
+//     }
+//     if (right < len && nums[right] > nums[largest]) {
+//       largest = right;
+//     }
+//     if (largest !== i) {
+//       [nums[i], nums[largest]] = [nums[largest], nums[i]];
+//       heapify(nums, len, largest);
+//     }
+//   }
+//   return nums;
+// }
+// console.log(heapSort([93,3,4,35,6,7,8,3]))
+// 合并区间
+// function merge(intervals) {
+//   intervals.sort((a, b) => a[0] - b[0]);
+//   for (let i = 0; i < intervals.length - 1; i++) {
+//     if (intervals[i][1] >= intervals[i + 1][0]) {
+//       intervals.splice(i, 2, [intervals[i][0], Math.max(intervals[i][1], intervals[i + 1][1])])
+//       i--;  
+//     }
+    
+//   }
+//   return intervals;
+// }
