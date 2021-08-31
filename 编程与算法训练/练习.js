@@ -15253,3 +15253,45 @@
 //   }
 //   return intervals;
 // }
+// 堆排序
+// function heapSort(nums) {
+//   let len = nums.length;
+//   // 建堆
+//   for (let i = Math.floor(len / 2) - 1; i > 0; i--) {
+//     heapify(nums, len, i);
+//   }
+//   // 排序
+//   for (let i = nums.length - 1; i >= 0; i--) {
+//     [nums[0], nums[i]] = [nums[i], nums[0]];
+//     heapify(nums, i, 0);
+//   }
+//   // 从i开始向下维护堆
+//   function heapify(nums, len, i) {
+//     let left = i * 2 + 1;
+//     let right = i * 2 + 2;
+//     let largest = i;
+//     if (nums[left] > nums[largest]) {
+//       largest = left;
+//     }
+//     if (nums[right] > nums[largest]) {
+//       largest = right;
+//     }
+//     if (largest !== i) {
+//       [nums[i], nums[largest]] = [nums[largest], nums[i]];
+//       heapify(nums, len, largest);
+//     }
+//   }
+//   return nums;
+// }
+// console.log(heapSort([93,53,3,6,4,3,6]))
+// 合并区间
+function merge(intervals) {
+  intervals.sort((a, b) => a[0] - b[0]);
+  for (let i = 0; i < intervals.length - 1; i++) {
+    if (intervals[i][1] >= intervals[i + 1][0]) {
+      intervals.splice(i, 2, [intervals[i][0], Math.max(intervals[i][1], intervals[i + 1][1])]);
+      i--;
+    }
+  }
+  return intervals;
+}
