@@ -45,13 +45,13 @@ babel 两个比较重要的概念，presets 和 plugins。plugins 可以理解�
 
 ### 解析 react jsx
 
-#### 安装 react 相关
+安装 react 相关
 
 ```bash
 npm i react react-dom @babel/preset-react -D
 ```
 
-#### 增加 react 的 babel 预设，就可以解析 react 相关的语法了。
+增加 react 的 babel 预设，就可以解析 react 相关的语法了。
 
 ```json
 {
