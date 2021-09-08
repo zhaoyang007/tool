@@ -1,6 +1,16 @@
+##### node 安装
+
+1. `brew install node`
+2. `nvm install 10.15.3`
+3. 官网下载安装包
+
 ##### node 基础
 
-js 在前端操作的对象是针对浏览器，DOM/BOM/XMLHttpRequest(网络通讯)。
+js 在前端操作的对象是针对浏览器：
+
+* DOM
+* BOM
+* XMLHttpRequest 网络通讯
 
 js 在后端操作的对象主要是：
 
@@ -20,94 +30,85 @@ global（全局对象）
 process
 
 ```js
-// argv 启动prcess时的参数
-const { argv, argv0, execArgv, execPath } = process;
-argv.forEach(item => {
-	console.log(item);
-});
-console.log(argv0);
-console.log(execArgv);
-console.log(execPath);
-// 环境
-const { env } = process;
-console.log(env);
-// cwd() 当前process命令执行的路径，和linux pwd命令是一样的
-const { env } = process;
-console.log(cwd());
-// 下一个事件执行队列
-// 执行早于setImmediate
+// 读取环境变量
+// Node.js 的 process 核心模块提供了 env 属性，该属性承载了在启动进程时设置的所有环境变量。
+process.env.NODE_ENV
+
+// 从命令行接收参数
+// argv 属性是一个包含了所有命令行调用参数的数组。
+// 第一个参数是 node 命令的完整路径。
+// 第二个参数是正被执行的文件的完整路径。
+// 所有其他的参数从第三个位置开始。
+process.argv // [ '/Users/dxm/.nvm/versions/node/v8.17.0/bin/node','/Users/dxm/tool/前端知识体系/架构/练习.js' ]
+process.argv0 // node
+process.execArgv // []
+process.execPath // /Users/dxm/.nvm/versions/node/v8.17.0/bin/node
+// 可以使用 minimist 库来处理参数
+
+// process.cwd() 
+// 当前命令执行的路径，和linux pwd命令是一样的。
+process.cwd();
+
+// 输出到命令行
+// 标准输入输出错误流。
+process.stdin 
+process.stdout 
+process.stderr
+// chalk 控制台打印着色，progress 控制台进度条
+// 如何使 Node.js CLI 程序具有交互性：readline readline-sync inquirer
+```
+
+timer
+
+```js
+// nextTick早于另外两个，是在当前事件循环的最后执行
 process.nextTick(() => {
 	console.log('nextTick');
 });
+// 延迟 0 毫秒的 setTimeout() 回调与 setImmediate() 非常相似。 执行顺序取决于各种因素，但是它们都会在事件循环的下一个迭代中运行。
 setImmediate(() => {
   console.log('setImmediate');
 });
-```
-
-path
-
-```js
-path.basename('/foo/bar/baz/asdf/quux.html'); // 返回: 'quux.html'
-path.basename('/foo/bar/baz/asdf/quux.html', '.html'); // 返回: 'quux'
-path.dirname('/foo/bar/baz/asdf/quux.html'); // 返回: '/foo/bar/baz/asdf'
-path.extname('index.html'); // 返回: '.html'
-
-path.normalize(); // 规范化给定的 path
-path.join(); // 拼接路径，内部调用了normalize使不规范的路径更规范，传入非字符串则抛出TypeError
-path.resolve(); // 把相对路径解析成绝对路径
-
-path.parse('/home/user/dir/file.txt');
-// 返回:
-// { root: '/',
-//   dir: '/home/user/dir',
-//   base: 'file.txt',
-//   ext: '.txt',
-//   name: 'file'}
-path.format({
-  root: '/ignored',
-  dir: '/home/user/dir',
-  base: 'file.txt'
-});
-// 返回: '/home/user/dir/file.txt'
-// 如果提供 dir，则忽略 root
-// 如果 pathObject.base 存在，则忽略 ext 和 name
-
-// __dirname __filename 总是返回文件的绝对路径
-// process.cwd() 总是返回执行node命令所在的文件夹
-// path.resolve('./') 相对node执行命令的文件夹的路径
-```
-
-buffer
-
-buffer 用于处理二进制数据流。
-
-buffer 实例类似整数数组，大小固定。
-
-buffer 是 c++ 代码在 v8 堆外分配的物理内存。
-
-event
-
-```js
-const EventEmitter = require('events');
-class CustomEvent extends EventEmitter {}
-const ce = new CustomEvent();
-ce.on('test', () => {
-	console.log('this is a test')
-});
-
-setInterval(() => {
-	ce.emit('test')
-}, 500);
-
 setTimeout(() => {
-  ce.removeListener('test', fn);
-  ce.removeAllListeners('test');
-});
+  console.log('setTimeout');
+}, 0)
+```
+
+```js
+// 利用setTimeout实现setInterval
+function mySetInterval(fn, time) {
+	function myFunction() {
+    fn();
+    setTimeout(myFunction, time);
+  }
+  return setTimeout(myFunction, time);
+}
+let timer = mySetInterval(() => console.log(666), 1000);
+setTimeout(()=>{clearTimeout(timer)}, 3000);
 ```
 
 fs
 
 ```js
+// 文件描述符
+// 在与位于文件系统中的文件进行交互之前，需要先获取文件的描述符。
+fs.open('/Users/joe/test.txt', 'r', (err, fd) => {
+  //fd 是文件描述符。
+});
+
+// 文件属性
+// stat 文件信息
+fs.stat('/Users/joe/test.txt', (err, stats) => {
+  if (err) {
+    console.error(err)
+    return
+  }
+ 	stats.isFile() //true
+  stats.isDirectory() //false
+  stats.isSymbolicLink() //false
+  stats.size //1024000 //= 1MB
+})
+
 // 文件读写
 fs.readFile('./path.js', 'utf8',(err, data) => {
   if (err) throw err;
@@ -116,18 +117,6 @@ fs.readFile('./path.js', 'utf8',(err, data) => {
 fs.writeFile('./text', 'this is a text', 'utf8', (err) => {
   if (err) throw err;
   console.log('done!');
-});
-
-// stat 文件信息
-fs.stat('./test.js', (err, stats) => {
-  if (err) {
-    // throw err;
-    console.log('文件不存在');
-    return;
-  }
-  console.log(stats.isFile());
-	console.log(stats.isDirectory());
-  console.log(stats)
 });
 
 fs.rename('./text', './text.txt', err => {
@@ -171,24 +160,115 @@ ws.on('finish', () => {
 });
 ```
 
+path
+
+```js
+// 从路径中获取信息
+// 给定一个路径，可以使用以下方法从其中提取信息：
+const notes = '/users/joe/notes.txt'
+path.dirname(notes) // /users/joe
+path.basename(notes) // notes.txt
+path.extname(notes) // .txt
+// 可以通过为 basename 指定第二个参数来获取不带扩展名的文件名：
+path.basename(notes, path.extname(notes)) // notes
+
+// 使用路径
+// 规范化给定的 path，当包含诸如 .、.. 或双斜杠之类的相对说明符时，其会尝试计算实际的路径
+// 解析和规范化都不会检查路径是否存在。 它只是根据获得的信息来计算路径。
+path.normalize('/users/joe/..//test.txt') // '/users/test.txt'
+// 可以使用 path.join() 连接路径的两个或多个片段
+// 内部调用了normalize使不规范的路径更规范
+const name = 'joe';
+path.join('/', 'users', name, 'notes.txt'); // '/users/joe/notes.txt'
+// 获得相对路径的绝对路径
+path.resolve('joe.txt'); // '/Users/joe/joe.txt' 如果从主文件夹运行。
+// 在此示例中，Node.js 只是简单地将 /joe.txt 附加到当前工作目录。 如果指定第二个文件夹参数，则 resolve 会使用第一个作为第二个的基础：
+path.resolve('tmp', 'joe.txt') // '/Users/joe/tmp/joe.txt' 如果从主文件夹运行。
+// 如果第一个参数以斜杠开头，则表示它就是绝对路径：
+path.resolve('/etc', 'joe.txt') // '/etc/joe.txt'
+
+path.parse('/home/user/dir/file.txt');
+// 返回:
+// { root: '/',
+//   dir: '/home/user/dir',
+//   base: 'file.txt',
+//   ext: '.txt',
+//   name: 'file'}
+path.format({
+  root: '/ignored',
+  dir: '/home/user/dir',
+  base: 'file.txt'
+});
+// 返回: '/home/user/dir/file.txt'
+// 如果提供 dir，则忽略 root
+// 如果 pathObject.base 存在，则忽略 ext 和 name
+
+// __dirname __filename 总是返回文件的绝对路径
+// process.cwd() 总是返回执行node命令所在的文件夹
+// path.resolve('./') 相对node执行命令的文件夹的路径
+```
+
 http
+
+requestListener 会自动添加到 'request' 事件，每次有请求时触发。
+
+搭建 node 服务（2次）
+
+```js
+const axios = require('axios');
+axios.post('http://nodejs.cn/todos', {
+  todo: '做点事情'
+});
+```
 
 ```js
 const http = require('http');
-// requestListener 会自动添加到 'request' 事件，每次有请求时触发。
 const server = http.createServer((req, res) => {
+  let data = '';
+  req.on('data', chunk => {
+    data += chunk;
+  });
+  req.on('end', () => {
+    JSON.parse(data).todo;
+  });
 	res.statusCode = 200;
   res.setHeader('Content-Type', 'text/plain');
   res.end('hello world');
 });
+const hostname = '127.0.0.1';
 const port = 9527;
-const host = '127.0.0.1';
 server.listen(port, host, () => {
-	console.log(`serve is listening on ${host}:${port}`);
+	console.log(`serve is listening on ${hostname}:${port}`);
 });
 ```
 
+buffer
 
+buffer 用于处理二进制数据流。
+
+buffer 实例类似整数数组，大小固定。
+
+buffer 是 c++ 代码在 v8 堆外分配的物理内存。
+
+event
+
+```js
+const EventEmitter = require('events');
+class CustomEvent extends EventEmitter {}
+const ce = new CustomEvent();
+ce.on('test', () => {
+	console.log('this is a test')
+});
+
+setInterval(() => {
+	ce.emit('test')
+}, 500);
+
+setTimeout(() => {
+  ce.removeListener('test', fn);
+  ce.removeAllListeners('test');
+});
+```
 
 ##### koa
 
@@ -506,6 +586,36 @@ app.use(controller());
 
 ##### npm
 
+安装所有依赖
+
+```bash
+npm install
+```
+
+安装某个依赖
+
+```bash
+npm install <package-name>
+```
+
+安装旧依赖
+
+```bash
+npm install <package>@<version>
+```
+
+更新所有依赖
+
+```bash
+npm update
+```
+
+更新某个依赖
+
+```bash
+npm update <package-name>
+```
+
 重装所有依赖
 
 ```bash
@@ -523,6 +633,65 @@ npm uninstall ant-design-vue
 ```bash
 npm install ant-design-vue@1.4.11
 ```
+
+删除依赖
+
+```bash
+npm uninstall <package-name>
+# 如果使用 -S 或 --save 标志，则此操作还会移除 package.json 文件中的引用。
+npm uninstall -S <package-name>
+npm uninstall -D <package-name>
+npm uninstall -g <package-name>
+```
+
+列出软件包所有的以前的版本。 可以使用 `npm view <package> versions`
+
+查看软件包在 npm 仓库上最新的可用版本，则运行 `npm view [package_name] version`
+
+查看系统上安装的全局软件包 `npm list -g --depth 0`
+
+查看项目上安装的软件包 `npm list --depth=0`
+
+当程序包提供了可从 shell（CLI）运行的可执行命令、且可在项目间复用时，则该程序包应被全局安装。其余情况都应该项目本地安装。
+
+当投入生产环境时，需要设置 `--production` 标志（`npm install --production`），以避免安装开发依赖项。
+
+运行任务：
+
+package.json 文件支持一种用于指定命令行任务（可通过使用以下方式运行）的格式：
+
+```bash
+npm run <task-name>
+```
+
+```json
+{
+  "scripts": {
+    "start-dev": "node lib/server-development",
+    "start": "node lib/server-production"
+  },
+}
+```
+
+使用此特性运行 Webpack 是很常见的：
+
+```json
+{
+  "scripts": {
+    "watch": "webpack --watch --progress --colors --config webpack.conf.js",
+    "dev": "webpack --progress --colors --config webpack.conf.js",
+    "prod": "NODE_ENV=production webpack -p --config webpack.conf.js",
+  },
+}
+```
+
+`npm root -g` 命令会告知全局安装的 node_modules 在计算机上的确切位置。
+
+npm 包是可执行文件时，本地安装它会把可执行文件放到 `node_modules/.bin/` 文件夹下。可以输入 `./node_modules/.bin/cowsay` 来运行它或者使用 `npx cowsay` 来运行，npx 会找到程序包的位置。
+
+全局安装的可执行命令是放在 /usr/local/bin 下，使用 nvm 的话是在 /Users/dxm/.nvm/versions/node/v8.17.0/bin/ 目录下。
+
+全局的包是放在 /usr/local/lib/node_modules，使用 nvm /Users/dxm/.nvm/versions/node/v8.17.0/lib/node_modules
 
 ##### MIME 类型
 
