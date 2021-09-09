@@ -132,7 +132,7 @@ git push origin master  # 推送到远程库
  git push origin :refs/tags/tagname  删除远程标签。
 ```
 
-##### 待研究
+##### todo
 
 git 原理：
 
