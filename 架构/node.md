@@ -1,10 +1,22 @@
 ##### node 安装
 
+当安装 Node.js 之后，就可以在命令行中访问 `node` 可执行程序。
+
 1. `brew install node`
 2. `nvm install 10.15.3`
 3. 官网下载安装包
 
 ##### node 基础
+
+浏览器和 Node.js 均使用 JavaScript 作为其编程语言。
+
+区别是：
+
+* API 不同，没有浏览器提供的 `document`、`window`、以及所有其他的对象。浏览器中，不存在 Node.js 通过其模块提供的所有不错的 API，例如文件系统访问功能。
+* 在 Node.js 中，可以控制运行环境的版本。这意味着可以编写 Node.js 版本支持的所有现代的 ES6-7-8-9 JavaScript。
+* 模块系统的不同。Node.js 使用 CommonJS 模块系统，而在浏览器中，则还正在实现 ES 模块标准。
+
+当 Node.js 执行 I/O 操作时（例如从网络读取、访问数据库或文件系统），Node.js 会在响应返回时恢复操作，而不是阻塞线程并浪费 CPU 循环等待。
 
 js 在前端操作的对象是针对浏览器：
 
@@ -19,15 +31,13 @@ js 在后端操作的对象主要是：
 * fs 文件系统
 * net 网络通讯
 
-##### node 基础 API
-
-global（全局对象）
+##### global（全局对象）
 
 * CommonJS
 * Buffer、process、console
 * timer
 
-os
+##### os
 
 ```js
 // 该模块提供了许多函数，可用于从底层的操作系统和程序运行所在的计算机上检索信息并与其进行交互。
@@ -48,29 +58,91 @@ os.uptime()
 os.userInfo()
 ```
 
-process
+##### process
+
+1.从 nodejs 程序退出
 
 ```js
-// 读取环境变量
-// Node.js 的 process 核心模块提供了 env 属性，该属性承载了在启动进程时设置的所有环境变量。
-process.env.NODE_ENV
+// 当 Node.js 运行此行代码时，进程会被立即强制终止。
+// 这意味着任何待处理的回调、仍在发送中的任何网络请求、任何文件系统访问、或正在写入 stdout 或 stderr 的进程，所有这些都会被立即非正常地终止。
+process.exit();
+// 可以传入一个整数，向操作系统发送退出码
+// 默认情况下，退出码为 0，表示成功。 不同的退出码具有不同的含义，可以在系统中用于程序与其他程序的通信。
+process.exit(1);
+// 也可以设置 process.exitCode 属性：
+// 当进程完成所有处理后，程序会正常地退出，Node.js 会返回该退出码
+process.exitCode = 1;
+// SIGTERM 是告诉进程要正常终止的信号。它是从进程管理者（如 upstart 或 supervisord）等发出的信号。
+process.on('SIGTERM', () => {
+  server.close(() => {
+    console.log('进程已终止');
+  });
+});
+// 可以从程序内部另一个函数中、另一个正在运行的 Node.js 程序、或从系统中运行的其他任何的应用程序（能知道要终止的进程的 PID）。发送此信号
+process.kill(process.pid, 'SIGTERM')
+```
 
-// 从命令行接收参数
+2.读取环境变量
+
+```js
+// Node.js 的 process 核心模块提供了 env 属性，该属性承载了在启动进程时设置的所有环境变量。
+// 这是访问 NODE_ENV 环境变量的示例，该环境变量默认情况下被设置为 development。
+// 在脚本运行之前将其设置为 "production"，则可告诉 Node.js 这是生产环境。
+process.env.NODE_ENV
+```
+
+3.从命令行接收参数
+
+当使用以下命令调用 Node.js 应用程序时，可以传入任意数量的参数：
+
+```bash
+node app.js
+```
+
+参数可以是独立的，也可以具有键和值。这会改变在 Node.js 代码中获取参数值的方式。
+
+```bash
+node app.js joe
+# 或
+node app.js name=joe
+```
+
+获取参数值的方法是使用 Node.js 中内置的 `process` 对象。它公开了 `argv` 属性。
+
+```js
 // argv 属性是一个包含了所有命令行调用参数的数组。
 // 第一个参数是 node 命令的完整路径。
 // 第二个参数是正被执行的文件的完整路径。
 // 所有其他的参数从第三个位置开始。
-process.argv // [ '/Users/dxm/.nvm/versions/node/v8.17.0/bin/node','/Users/dxm/tool/前端知识体系/架构/练习.js' ]
+process.argv // [ '/Users/dxm/.nvm/versions/node/v8.17.0/bin/node', '/Users/dxm/tool/架构/lianxi/app.js' ]
 process.argv0 // node
-process.execArgv // []
 process.execPath // /Users/dxm/.nvm/versions/node/v8.17.0/bin/node
-// 可以使用 minimist 库来处理参数
 
-// process.cwd() 
-// 当前命令执行的路径，和linux pwd命令是一样的。
+// 可以通过创建一个排除了前两个参数的新数组来仅获取其他的参数：
+const args = process.argv.slice(2)
+// node app.js joe
+args[0]; // joe
+// node app.js name=joe
+args[0]; // name=joe
+```
+
+使用 minimist 库来处理参数
+
+```js
+// 但是需要在每个参数名称之前使用双破折号 node app.js --name=joe
+const args = require('minimist')(process.argv.slice(2))
+args['name'] // joe
+```
+
+4.当前命令执行的路径，和 linux pwd 命令是一样的。
+
+```js
 process.cwd();
+```
 
-// 输出到命令行
+5.输出到命令行
+
+```js
 // 标准输入输出错误流。
 process.stdin 
 process.stdout 
@@ -79,7 +151,7 @@ process.stderr
 // 如何使 Node.js CLI 程序具有交互性：readline readline-sync inquirer
 ```
 
-timer
+##### timer
 
 ```js
 // nextTick早于另外两个，是在当前事件循环的最后执行
@@ -417,7 +489,19 @@ ws.on('finish', () => {
 
 http
 
+`http` 的 `createServer()` 方法会创建新的 HTTP 服务器并返回它。
+
+服务器被设置为监听指定的端口和主机名。 当服务器就绪后，回调函数会被调用，在此示例中会通知我们服务器正在运行。
+
 requestListener 会自动添加到 'request' 事件，每次有请求时触发。
+
+每当接收到新的请求时，[`request` 事件](http://nodejs.cn/api/http.html#http_event_request)会被调用，并提供两个对象：一个请求（[`http.IncomingMessage`](http://nodejs.cn/api/http.html#http_class_http_incomingmessage) 对象）和一个响应（[`http.ServerResponse`](http://nodejs.cn/api/http.html#http_class_http_serverresponse) 对象）。
+
+这两个对象对于处理 HTTP 调用至关重要。
+
+第一个对象提供了请求的详细信息。 在这个简单的示例中没有使用它，但是你可以访问请求头和请求数据。
+
+第二个对象用于返回数据给调用方。
 
 搭建 node 服务（3次）
 
@@ -458,6 +542,10 @@ buffer 实例类似整数数组，大小固定。
 buffer 是 c++ 代码在 v8 堆外分配的物理内存。
 
 stream
+
+##### todo
+
+
 
 ##### npm
 

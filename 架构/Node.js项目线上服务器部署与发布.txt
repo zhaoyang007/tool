@@ -46,7 +46,7 @@
     fdisk -l 查看服务器上的磁盘
     df -h 查看硬盘使用情况
     control + d 退出当前的命令行环境
-
+    
     使用其他用户而不是root这个超级权限的管理员的身份进去登陆服务器进行各种操作，因为会很危险，可能会删掉或修改掉一些敏感文件的内容
     如果我们是通过一个相对低权限的用户来操作现对不那么敏感的一些内容的话，那整个运维的安全性就能得到一个提升
     配置root权限的一些账号
@@ -55,19 +55,19 @@
     adduser 用户名 
     输入这个用户的密码
     输入用户的信息
-
+    
     对刚刚创建的用户进行授权
     gpasswd -a 用户名 sudo
     通过pgasswd可以让这个用户它以sudo的角色来调用系统命令，这样它有一个相对比较高的权限能够调用到只有超级权限才能调用到的一些命令，但是必须输入密码
     这时这个用户就进入到了sudo这个组里面去了
-
+    
     sudo visudo
     找到# User privilege specification
     增加一行
     用户名 ALL=(ALL:ALL) ALL
-
+    
     service ssh restart 重启ssh这个功能
-
+    
     3.通过私钥认证的方式无密码登陆服务器
         本地操作
             1.生成ssh公钥，私钥
@@ -161,7 +161,7 @@ control + e 光标到尾
         sudo service fail2ban stop
         5.开启fail2ban
         sudo service fail2ban start
-
+    
     综上都是一些基础性的相对比较简单的安全配置，这些配置都算是举手之劳，却可以让一台很裸的服务器大大提高安全的一个防护等级，虽然目前等级还不够，但是比起一台裸的服务器
     已经高了很多了，那对付一些常规简单的恶意行为也是绰绰有余，如果想要更高的安全等级，需要我们做更多的运维知识的储备，就比如说我们可以对这个生产的服务器它的登陆设置一个
     ip的绑定或者是限制，只有特定内网的ip的及其才能登陆到这台服务器。也就是我们通俗所讲的在内网架设一台跳板机，通过我们本地的电脑连上跳板机，再从跳板机登陆到生产服务器
@@ -283,14 +283,14 @@ control + e 光标到尾
             proxy_set_header X-Forward-For $proxy_add_x_forwarded_for;
             proxy_set_header Host $http_host;
             proxy_set_header X-Nginx-Proxy true;
-
+    
             # 配置指令来实现代理，把域名代理到集群的名字上面或者说应用的名字上面
             proxy_pass http://imooc;
             proxy_redirect off;
-
+    
         }
     }
-
+    
     ## nginx的原理就是访问的服务器代理到另一台服务器上面，一个是访问的服务器，一个是代理的服务器
     8.找到nginx.conf这个配置文件
     # 会把conf.d文件夹下面的所有配置文件都加载进来
@@ -892,11 +892,11 @@ control + e 光标到尾
             proxy_set_header X-Forward-For $proxy_add_x_forwarded_for;
             proxy_set_header Host $http_host;
             proxy_set_header X-Nginx-Proxy true;
-
+    
             # 配置指令来实现代理，把域名代理到集群的名字上面或者说应用的名字上面
             proxy_pass http://website;
             proxy_redirect off;
-
+    
         }
     }
     6.来把这个服务重启
@@ -1002,13 +1002,13 @@ control + e 光标到尾
             proxy_set_header X-Forward-For $proxy_add_x_forwarded_for;
             proxy_set_header Host $http_host;
             proxy_set_header X-Nginx-Proxy true;
-
+    
             # 配置指令来实现代理，把域名代理到集群的名字上面或者说应用的名字上面
             proxy_pass http://movie;
             proxy_redirect off;
-
+    
         }
-
+    
         location ~* ^.+\.(jpg|jpeg|gif|png|ico|css|js|pdf|txt) {
             root /www/movei/production/current/public;
         }
@@ -1136,11 +1136,11 @@ control + e 光标到尾
             proxy_set_header X-Forward-For $proxy_add_x_forwarded_for;
             proxy_set_header Host $http_host;
             proxy_set_header X-Nginx-Proxy true;
-
+    
             # 配置指令来实现代理，把域名代理到集群的名字上面或者说应用的名字上面
             proxy_pass http://app;
             proxy_redirect off;
-
+    
         }
     }
     9.然后来编辑这个防火墙
@@ -1235,21 +1235,16 @@ control + e 光标到尾
                 proxy_set_header X-Forward-For $proxy_add_x_forwarded_for;
                 proxy_set_header Host $http_host;
                 proxy_set_header X-Nginx-Proxy true;
-
+    
                 # 配置指令来实现代理，把域名代理到集群的名字上面或者说应用的名字上面
                 proxy_pass http://free;
                 proxy_redirect off;
-
+    
             }
-
+    
         }
         检查nginx配置文件
         sudo nginx -t
         重启nginx
         sudo nginx -s reload
-            
-课程总结
-    本期课程帮大家打通了从本地到线上的发布流程，从开发到生产环境的操作方式，大家可以沿着这个线继续往下挖，无论是2017年还是2018年，nodejs这个
-    有点年纪的新技术啊，都会在这个市场上得到更加充分的验证和使用，也对我们有着更多更大的挑战啊，无论是nodejs本身在线上环境的进程守护，进程通信
-    ，错误的处理，日志的收集，性能的监控，还是多端口多服务器的集群管理，基于docker的环境部署，nodejs新老版本的交替兼容，还是es新语法的普及和
-    使用，前后端的模块的重用，静态资源的打包，和服务器渲染等等这些常见的课题啊都值得我们尝试，多去总结。
+
