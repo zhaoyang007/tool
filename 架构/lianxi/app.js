@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2021-09-06 22:40:22
- * @LastEditTime: 2021-09-10 14:03:46
+ * @LastEditTime: 2021-09-13 08:29:21
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: /tool/前端知识体系/架构/lianxi/app.js
@@ -194,4 +194,32 @@
 // console.log(args);
 // console.log(args.name);
 // console.log('%o', Number)
-console.log('我的%s已经%d岁', '猫', 2)
+// console.log('我的%s已经%d岁', '猫', 2)
+// const x = 1
+// const y = 2
+// const z = 3
+// console.count(
+//   'x 的值为 ' + x + ' 且已经检查了几次？'
+// )
+// console.count(
+//   'x 的值为 ' + x + ' 且已经检查了几次？'
+// )
+// console.count(
+//   'y 的值为 ' + y + ' 且已经检查了几次？'
+// )
+// const oranges = ['橙子', '橙子']
+// const apples = ['苹果']
+// oranges.forEach(fruit => {
+//   console.count(fruit)
+// })
+// apples.forEach(fruit => {
+//   console.count(fruit)
+// })
+const doSomething = () => console.log('测试')
+const measureDoingSomething = () => {
+  console.time('doSomething()')
+  //做点事，并测量所需的时间。
+  doSomething()
+  console.timeEnd('doSomething()')
+}
+measureDoingSomething()

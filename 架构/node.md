@@ -114,9 +114,9 @@ node app.js name=joe
 // 第一个参数是 node 命令的完整路径。
 // 第二个参数是正被执行的文件的完整路径。
 // 所有其他的参数从第三个位置开始。
-process.argv // [ '/Users/dxm/.nvm/versions/node/v8.17.0/bin/node', '/Users/dxm/tool/架构/lianxi/app.js' ]
+process.argv // [ '/Users/Joe/.nvm/versions/node/v8.17.0/bin/node', '/Users/Joe/tool/架构/lianxi/app.js' ]
 process.argv0 // node
-process.execPath // /Users/dxm/.nvm/versions/node/v8.17.0/bin/node
+process.execPath // /Users/Joe/.nvm/versions/node/v8.17.0/bin/node
 
 // 可以通过创建一个排除了前两个参数的新数组来仅获取其他的参数：
 const args = process.argv.slice(2)
@@ -147,8 +147,24 @@ process.cwd();
 process.stdin 
 process.stdout 
 process.stderr
-// chalk 控制台打印着色，progress 控制台进度条
-// 如何使 Node.js CLI 程序具有交互性：readline readline-sync inquirer
+
+// 为输出着色
+const chalk = require('chalk')
+console.log(chalk.yellow('你好'))
+
+// 控制台进度条
+// 创建一个 10 步的进度条，每 100 毫秒完成一步
+const ProgressBar = require('progress')
+const bar = new ProgressBar(':bar', { total: 10 })
+const timer = setInterval(() => {
+  bar.tick()
+  if (bar.complete) {
+    clearInterval(timer)
+  }
+}, 100)
+
+// 使 Node.js CLI 程序具有交互性
+// readline readline-sync inquirer
 ```
 
 ##### timer
@@ -543,118 +559,85 @@ buffer 是 c++ 代码在 v8 堆外分配的物理内存。
 
 stream
 
-##### todo
-
-
-
 ##### npm
 
-安装所有依赖
+安装
+
+当程序包提供了可从 shell（CLI）运行的可执行命令、且可在项目间复用时，则该程序包应被全局安装。其余情况都应该项目本地安装。
 
 ```bash
+# 安装所有依赖
 npm install
-```
-
-安装某个依赖
-
-```bash
+# 安装某个依赖
 npm install <package-name>
-```
-
-安装旧依赖
-
-```bash
+# 安装旧依赖
 npm install <package>@<version>
-```
 
-更新所有依赖
-
-```bash
-npm update
-```
-
-更新某个依赖
-
-```bash
-npm update <package-name>
-```
-
-重装所有依赖
-
-```bash
-npm reinstall
-# 或
-rm -rf node_modules && npm cache clean && npm install
-```
-
-重装某个依赖
-
-```bash
-npm uninstall ant-design-vue
-```
-
-```bash
-npm install ant-design-vue@1.4.11
-```
-
-删除依赖
-
-```bash
+# 删除某个依赖
 npm uninstall <package-name>
 # 如果使用 -S 或 --save 标志，则此操作还会移除 package.json 文件中的引用。
 npm uninstall -S <package-name>
 npm uninstall -D <package-name>
 npm uninstall -g <package-name>
+
+# 重装某个依赖
+npm uninstall ant-design-vue
+npm install ant-design-vue@1.4.11
+# 重装所有依赖
+rm -rf node_modules && npm cache clean --force && npm install
+
+# 发觉软件包的新版本
+npm outdated
+
+# 更新所有依赖，update永远不会更新主版本
+npm update
+# 更新某个依赖
+npm update <package-name>
+
+# 将所有软件包更新到新的主版本，则全局安装 npm-check-updates 软件包
+npm install -g npm-check-updates
+# 然后运行
+ncu -u
+# 这会升级 package.json 文件的 dependencies 和 devDependencies 中的所有版本，以便 npm 可以安装新的主版本。
+# 再运行更新
+npm update
+
+# 当投入生产环境时，需要设置 --production 标志，以避免安装开发依赖项。
+npm install --production
 ```
 
-列出软件包所有的以前的版本。 可以使用 `npm view <package> versions`
-
-查看软件包在 npm 仓库上最新的可用版本，则运行 `npm view [package_name] version`
-
-查看系统上安装的全局软件包 `npm list -g --depth 0`
-
-查看项目上安装的软件包 `npm list --depth=0`
-
-当程序包提供了可从 shell（CLI）运行的可执行命令、且可在项目间复用时，则该程序包应被全局安装。其余情况都应该项目本地安装。
-
-当投入生产环境时，需要设置 `--production` 标志（`npm install --production`），以避免安装开发依赖项。
-
-运行任务：
-
-package.json 文件支持一种用于指定命令行任务（可通过使用以下方式运行）的格式：
+查看安装的 npm 软件包版本 
 
 ```bash
-npm run <task-name>
+# 查看所有已安装的 npm 软件包（包括它们的依赖包）的版本
+npm list
+npm list -g
+# 仅获取顶层的软件包（基本上就是告诉 npm 要安装并在 package.json 中列出的软件包）
+npm list --depth=0
+npm list -g --depth=0
+npm list -g --depth 0
+# 通过指定名称来获取特定软件包的版本, 也适用于安装的软件包的依赖
+npm list cowsay
+# 查看软件包在 npm 仓库上最新的可用版本
+npm view [package_name] version
+# 列出软件包所有的以前的版本
+npm view <package> versions
 ```
 
-```json
-{
-  "scripts": {
-    "start-dev": "node lib/server-development",
-    "start": "node lib/server-production"
-  },
-}
+全局 node_modules 位置
+
+`npm root -g` 命令会告知全局安装的 node_modules 在计算机上的确切位置。在 macOS 或 Linux 上，此位置可能是 `/usr/local/lib/node_modules`。 在 Windows 上，可能是 `C:\Users\YOU\AppData\Roaming\npm\node_modules`。使用 `nvm`，则软件包的位置可能为 `/Users/joe/.nvm/versions/node/v8.9.0/lib/node_modules`。
+
+npm 包是可执行文件时
+
+```bash
+# 全局安装的可执行命令是放在 /usr/local/bin 下，使用 nvm 的话是在 /Users/Joe/.nvm/versions/node/v8.17.0/bin/ 目录下。直接使用命令运行。
+
+# 本地安装它会把可执行文件放到 node_modules/.bin/ 文件夹下。可以输入来运行它 
+./node_modules/.bin/cowsay 
+# 或者使用 npx 来运行，npx 会找到程序包的位置。
+npx cowsay 
 ```
-
-使用此特性运行 Webpack 是很常见的：
-
-```json
-{
-  "scripts": {
-    "watch": "webpack --watch --progress --colors --config webpack.conf.js",
-    "dev": "webpack --progress --colors --config webpack.conf.js",
-    "prod": "NODE_ENV=production webpack -p --config webpack.conf.js",
-  },
-}
-```
-
-`npm root -g` 命令会告知全局安装的 node_modules 在计算机上的确切位置。
-
-npm 包是可执行文件时，本地安装它会把可执行文件放到 `node_modules/.bin/` 文件夹下。可以输入 `./node_modules/.bin/cowsay` 来运行它或者使用 `npx cowsay` 来运行，npx 会找到程序包的位置。
-
-全局安装的可执行命令是放在 /usr/local/bin 下，使用 nvm 的话是在 /Users/dxm/.nvm/versions/node/v8.17.0/bin/ 目录下。
-
-全局的包是放在 /usr/local/lib/node_modules，使用 nvm /Users/dxm/.nvm/versions/node/v8.17.0/lib/node_modules
 
 ##### MIME 类型
 
@@ -724,3 +707,8 @@ MIME 嗅探：
 X-Content-Type-Options: nosniff
 ```
 
+##### todo
+
+1. 模块化
+2. npm 命令是否就是 node 可执行文件的名字
+3. 
