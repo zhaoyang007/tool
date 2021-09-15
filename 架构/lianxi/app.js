@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2021-09-06 22:40:22
- * @LastEditTime: 2021-09-13 08:29:21
+ * @LastEditTime: 2021-09-15 14:41:20
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: /tool/前端知识体系/架构/lianxi/app.js
@@ -215,11 +215,88 @@
 // apples.forEach(fruit => {
 //   console.count(fruit)
 // })
-const doSomething = () => console.log('测试')
-const measureDoingSomething = () => {
-  console.time('doSomething()')
-  //做点事，并测量所需的时间。
-  doSomething()
-  console.timeEnd('doSomething()')
-}
-measureDoingSomething()
+// const doSomething = () => console.log('测试')
+// const measureDoingSomething = () => {
+//   console.time('doSomething()')
+//   //做点事，并测量所需的时间。
+//   doSomething()
+//   console.timeEnd('doSomething()')
+// }
+// measureDoingSomething()
+// const http = require('http');
+// const server = http.createServer((req, res) => {
+//   res.statusCode = 200;
+//   res.setHeader('Content-Type', 'text/plain');
+//   res.end('Hello World!');
+// });
+// const hostname = '127.0.0.1';
+// const port = 9000;
+// server.listen(port, hostname, () => {
+//   console.log(`server is listening at ${hostname}:${port}`);
+// });
+// const fs = require('fs');
+// const path = require('path');
+// console.log(fs.readdirSync('./src'));
+// fs.readdirSync('./src').map(filename => {
+//   console.log(path.join('/src', filename));
+// })
+// console.log(fs.statSync('./src/a').isFile());
+// const isFile = filename => {
+//   return fs.lstatSync(filename).isFile();
+// };
+// console.log(
+//   fs.readdirSync('/')
+    // .map(filename => {
+    //   return path.join('./src', filename);
+    // })
+    // .filter(isFile)
+// );
+// try {
+//   fs.renameSync('./src/b', './src/c')
+// } catch (error) {
+//   console.log(error);
+// } 
+// fs.rename('./src/b.txt', './src/c.txt', err => {
+//   // if (err) throw err;
+// })
+// fs.rmdir('./src/b', err => {
+//   console.error(err)
+// })
+const fs = require('fs');
+// fs.remove('./src/b', err => {
+//   console.err(err);
+// })
+// console.log(fs.readdirSync('src'));
+// fs.unlink('./src/a.txt', err => {});
+// console.log(fs.lstatSync('./src/c/c.txt').isFile());
+// fs.watchFile('./src', (eventType, filename) => {
+//   console.log(filename)
+// })
+// const rs = fs.createReadStream('./src/aa.txt');
+// rs.pipe(process.stdout);
+// const ws = fs.createWriteStream('./src/test.txt');
+// ws.write('hahahaha!');
+// ws.end();
+// ws.on('finish', () => {
+//   console.log('done!');
+// });
+// const http = require('http');
+// // console.log(http.STATUS_CODES['404']);
+// const server = http.createServer((req, res) => {
+// 	// 使用此回调处理每个单独请求
+//   res.writeHead(200, { 'Content-Type': 'application/json'});
+//   res.end(JSON.stringify({
+//     data: 'hello world!'
+//   }));
+// });
+// server.listen(8000)
+// const buf = Buffer.from('Hey!');
+// console.log(buf[0]);
+// console.log(buf[1]);
+// console.log(buf[2]);
+// console.log(buf[4]);
+// console.log(buf.toString());
+const buf = Buffer.from('Hey!')
+let bufcopy = Buffer.alloc(4) //分配 4 个字节。
+buf.copy(bufcopy)
+console.log(bufcopy.toString());

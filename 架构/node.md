@@ -6,11 +6,89 @@
 2. `nvm install 10.15.3`
 3. 官网下载安装包
 
+##### npm
+
+安装
+
+当程序包提供了可从 shell（CLI）运行的可执行命令、且可在项目间复用时，则该程序包应被全局安装。其余情况都应该项目本地安装。
+
+```bash
+# 安装所有依赖
+npm install
+# 安装某个依赖
+npm install <package-name>
+# 安装旧依赖
+npm install <package>@<version>
+
+# 删除某个依赖
+npm uninstall <package-name>
+# 如果使用 -S 或 --save 标志，则此操作还会移除 package.json 文件中的引用。
+npm uninstall -S <package-name>
+npm uninstall -D <package-name>
+npm uninstall -g <package-name>
+
+# 重装某个依赖
+npm uninstall ant-design-vue
+npm install ant-design-vue@1.4.11
+# 重装所有依赖
+rm -rf node_modules && npm cache clean --force && npm install
+
+# 发觉软件包的新版本
+npm outdated
+
+# 更新所有依赖，update永远不会更新主版本
+npm update
+# 更新某个依赖
+npm update <package-name>
+
+# 将所有软件包更新到新的主版本，则全局安装 npm-check-updates 软件包
+npm install -g npm-check-updates
+# 然后运行
+ncu -u
+# 这会升级 package.json 文件的 dependencies 和 devDependencies 中的所有版本，以便 npm 可以安装新的主版本。
+# 再运行更新
+npm update
+
+# 当投入生产环境时，需要设置 --production 标志，以避免安装开发依赖项。
+npm install --production
+```
+
+查看安装的 npm 软件包版本 
+
+```bash
+# 查看所有已安装的 npm 软件包（包括它们的依赖包）的版本
+npm list
+npm list -g
+# 仅获取顶层的软件包（基本上就是告诉 npm 要安装并在 package.json 中列出的软件包）
+npm list --depth=0
+npm list -g --depth=0
+npm list -g --depth 0
+# 通过指定名称来获取特定软件包的版本, 也适用于安装的软件包的依赖
+npm list cowsay
+# 查看软件包在 npm 仓库上最新的可用版本
+npm view [package_name] version
+# 列出软件包所有的以前的版本
+npm view <package> versions
+```
+
+全局 node_modules 位置
+
+`npm root -g` 命令会告知全局安装的 node_modules 在计算机上的确切位置。在 macOS 或 Linux 上，此位置可能是 `/usr/local/lib/node_modules`。 在 Windows 上，可能是 `C:\Users\YOU\AppData\Roaming\npm\node_modules`。使用 `nvm`，则软件包的位置可能为 `/Users/joe/.nvm/versions/node/v8.9.0/lib/node_modules`。
+
+npm 包是可执行文件时
+
+```bash
+# 全局安装的可执行命令是放在 /usr/local/bin 下，使用 nvm 的话是在 /Users/Joe/.nvm/versions/node/v8.17.0/bin/ 目录下。直接使用命令运行。
+
+# 本地安装它会把可执行文件放到 node_modules/.bin/ 文件夹下。可以输入来运行它 
+./node_modules/.bin/cowsay 
+# 或者使用 npx 来运行，npx 会找到程序包的位置。
+npx cowsay 
+```
+
 ##### node 基础
 
-浏览器和 Node.js 均使用 JavaScript 作为其编程语言。
-
-区别是：
+浏览器和 Node.js 均使用 JavaScript 作为其编程语言。区别是：
 
 * API 不同，没有浏览器提供的 `document`、`window`、以及所有其他的对象。浏览器中，不存在 Node.js 通过其模块提供的所有不错的 API，例如文件系统访问功能。
 * 在 Node.js 中，可以控制运行环境的版本。这意味着可以编写 Node.js 版本支持的所有现代的 ES6-7-8-9 JavaScript。
@@ -18,44 +96,39 @@
 
 当 Node.js 执行 I/O 操作时（例如从网络读取、访问数据库或文件系统），Node.js 会在响应返回时恢复操作，而不是阻塞线程并浪费 CPU 循环等待。
 
-js 在前端操作的对象是针对浏览器：
-
-* DOM
-* BOM
-* XMLHttpRequest 网络通讯
-
-js 在后端操作的对象主要是：
-
-* os 操作系统
-* process 进程
-* fs 文件系统
-* net 网络通讯
-
 ##### global（全局对象）
 
 * CommonJS
 * Buffer、process、console
 * timer
 
-##### os
+##### timer
 
 ```js
-// 该模块提供了许多函数，可用于从底层的操作系统和程序运行所在的计算机上检索信息并与其进行交互。
-os.arch()
-os.cpus()
-os.endianness()
-os.freemem()
-os.homedir()
-os.hostname()
-os.loadavg()
-os.networkInterfaces()
-os.platform()
-os.release()
-os.tmpdir()
-os.totalmem()
-os.type()
-os.uptime()
-os.userInfo()
+// nextTick早于另外两个，是在当前事件循环的最后执行
+process.nextTick(() => {
+	console.log('nextTick');
+});
+// 延迟 0 毫秒的 setTimeout() 回调与 setImmediate() 非常相似。 执行顺序取决于各种因素，但是它们都会在事件循环的下一个迭代中运行。
+setImmediate(() => {
+  console.log('setImmediate');
+});
+setTimeout(() => {
+  console.log('setTimeout');
+}, 0)
+```
+
+```js
+// 利用setTimeout实现setInterval
+function mySetInterval(fn, time) {
+	function myFunction() {
+    fn();
+    setTimeout(myFunction, time);
+  }
+  return setTimeout(myFunction, time);
+}
+let timer = mySetInterval(() => console.log(666), 1000);
+setTimeout(()=>{clearTimeout(timer)}, 3000);
 ```
 
 ##### process
@@ -167,75 +240,7 @@ const timer = setInterval(() => {
 // readline readline-sync inquirer
 ```
 
-##### timer
-
-```js
-// nextTick早于另外两个，是在当前事件循环的最后执行
-process.nextTick(() => {
-	console.log('nextTick');
-});
-// 延迟 0 毫秒的 setTimeout() 回调与 setImmediate() 非常相似。 执行顺序取决于各种因素，但是它们都会在事件循环的下一个迭代中运行。
-setImmediate(() => {
-  console.log('setImmediate');
-});
-setTimeout(() => {
-  console.log('setTimeout');
-}, 0)
-```
-
-```js
-// 利用setTimeout实现setInterval
-function mySetInterval(fn, time) {
-	function myFunction() {
-    fn();
-    setTimeout(myFunction, time);
-  }
-  return setTimeout(myFunction, time);
-}
-let timer = mySetInterval(() => console.log(666), 1000);
-setTimeout(()=>{clearTimeout(timer)}, 3000);
-```
-
-event
-
-```js
-// events 模块为提供了 EventEmitter 类，这是在 Node.js 中处理事件的关键。
-const EventEmitter = require('events')
-const emitter = new EventEmitter();
-emitter.addListener()
-emitter.emit()
-emitter.eventNames()
-emitter.getMaxListeners()
-emitter.listenerCount()
-emitter.listeners()
-emitter.off()
-emitter.on()
-emitter.once()
-emitter.prependListener()
-emitter.prependOnceListener()
-emitter.removeAllListeners()
-emitter.removeListener()
-emitter.setMaxListeners()
-
-
-const EventEmitter = require('events');
-class CustomEvent extends EventEmitter {}
-const ce = new CustomEvent();
-ce.on('test', () => {
-	console.log('this is a test')
-});
-
-setInterval(() => {
-	ce.emit('test')
-}, 500);
-
-setTimeout(() => {
-  ce.removeListener('test', fn);
-  ce.removeAllListeners('test');
-});
-```
-
-path
+##### path
 
 ```js
 // 从路径中获取信息
@@ -250,7 +255,7 @@ path.basename(notes, path.extname(notes)) // notes
 // 使用路径
 // 解析和规范化都不会检查路径是否存在。它只是根据获得的信息来计算路径。
 
-// 规范化给定的 path，当包含诸如 .、.. 或双斜杠之类的相对说明符时，其会尝试计算实际的路径。
+// 规范化给定的 path，当包含诸如 .、.. 或双斜杠之类的相对说明符时，会尝试计算实际的路径。
 path.normalize('/users/joe/..//test.txt') // '/users/test.txt'
 // 可以使用 path.join() 连接路径的两个或多个片段
 // 内部调用了normalize使不规范的路径更规范
@@ -258,22 +263,24 @@ const name = 'joe';
 path.join('/', 'users', name, 'notes.txt'); // '/users/joe/notes.txt'
 // 获得相对路径的绝对路径（执行node命令所在的文件夹的绝对路径 + 传入的参数）
 path.resolve('joe.txt'); // '/Users/joe/joe.txt' 
-// 在此示例中，Node.js 只是简单地将 /joe.txt 附加到当前工作目录。如果指定第二个文件夹参数，则 resolve 会使用第一个作为第二个的基础：
+// 如果指定第二个文件夹参数，则 resolve 会使用第一个作为第二个的基础
 path.resolve('tmp', 'joe.txt') // '/Users/joe/tmp/joe.txt'
-// 如果第一个参数以斜杠开头，则表示它就是绝对路径：
+// 如果第一个参数以斜杠开头，则表示它就是绝对路径
 path.resolve('/etc', 'joe.txt') // '/etc/joe.txt'
 // 接受 2 个路径作为参数。 基于当前工作目录，返回从第一个路径到第二个路径的相对路径。
 path.relative('/Users/joe', '/Users/joe/test.txt') //'test.txt'
 path.relative('/Users/joe', '/Users/joe/something/test.txt') //'something/test.txt'
-// path.parse() 方法返回一个对象，其属性表示 path 的重要元素。
+// path.parse() 将路径解析成对象。
 path.parse('/home/user/dir/file.txt');
 // 返回:
-// { root: '/',
+// { 
+//   root: '/',
 //   dir: '/home/user/dir',
 //   base: 'file.txt',
 //   ext: '.txt',
-//   name: 'file'}
-// path.format() 方法从对象返回路径字符串。 这与 path.parse() 相反。
+//   name: 'file'
+// }
+// path.format() 将对象解析成路径字符串。与 path.parse() 相反。
 // 如果提供 dir，则忽略 root
 // 如果提供 base，则忽略 ext 和 name
 path.format({
@@ -293,17 +300,24 @@ path.isAbsolute('./test/something') // false
 // path.resolve('./') 执行node命令所在的文件夹的绝对路径
 ```
 
-fs
+##### fs
+
+文件
 
 ```js
 // 文件描述符
 // 在与位于文件系统中的文件进行交互之前，需要先获取文件的描述符。
+// fs.open() 调用的第二个参数：
+// r+ 打开文件用于读写。
+// w+ 打开文件用于读写，将流定位到文件的开头。如果文件不存在则创建文件。
+// a 打开文件用于写入，将流定位到文件的末尾。如果文件不存在则创建文件。
+// a+ 打开文件用于读写，将流定位到文件的末尾。如果文件不存在则创建文件。
 fs.open('/Users/joe/test.txt', 'r', (err, fd) => {
-  //fd 是文件描述符。
+  // fd 是文件描述符。
 });
 
 // 文件属性
-// stat 文件信息
+// 每个文件都带有一组详细信息，可以使用 fs.stat() 方法查看。
 fs.stat('/Users/joe/test.txt', (err, stats) => {
   if (err) {
     console.error(err)
@@ -312,12 +326,12 @@ fs.stat('/Users/joe/test.txt', (err, stats) => {
  	stats.isFile() //true
   stats.isDirectory() //false
   stats.isSymbolicLink() //false
-  stats.size //1024000 //= 1MB
+  stats.size //1024000字节 //= 1MB
 });
 
 // 读取文件
 // fs.readFile() 和 fs.readFileSync() 都会在返回数据之前将文件的全部内容读取到内存中。这意味着大文件会对内存的消耗和程序执行的速度产生重大的影响。在这种情况下，更好的选择是使用流来读取文件的内容。
-fs.readFile('/Users/joe/test.txt', 'utf8',(err, data) => {
+fs.readFile('/Users/joe/test.txt', 'utf8', (err, data) => {
   if (err) {
     console.error(err);
     return;
@@ -363,11 +377,31 @@ fs.appendFile('file.log', content, err => {
   //完成！
 })
 
-// 使用文件夹
+// 创建可读的文件流。跟readFile是很像的，但是比readFile实现的更加优雅
+const rs = fs.createReadStream('./test.js');
+rs.pipe(process.stdout);
 
+// 创建可写的文件流
+const ws = fs.createWriteStream('./src/test.txt');
+ws.write('hahahaha!');
+ws.end();
+ws.on('finish', () => {
+  console.log('done!');
+});
+
+// 删除文件
+fs.unlink('./text.txt', err => {
+  if (err) throw err;
+});
+```
+
+文件夹
+
+```js
 // 检查文件夹是否存在
 // 使用 fs.access() 检查文件夹是否存在以及 Node.js 是否具有访问权限。
 fs.access();
+
 // 创建新的文件夹
 // 使用 fs.mkdir() 或 fs.mkdirSync() 可以创建新的文件夹。
 const folderName = '/Users/joe/test';
@@ -378,7 +412,8 @@ try {
 } catch (err) {
   console.error(err)
 }
-// 读取目录的内容
+
+// 读取目录内容
 // 使用 fs.readdir() 或 fs.readdirSync() 可以读取目录的内容。
 // 这段代码会读取文件夹的内容（全部的文件和子文件夹），并返回它们的相对路径：
 const folderPath = '/Users/joe';
@@ -395,6 +430,7 @@ fs.readdirSync(folderPath).map(fileName => {
   return path.join(folderPath, fileName)
 })
 .filter(isFile);
+
 // 重命名文件夹
 // 使用 fs.rename() 或 fs.renameSync() 可以重命名文件夹。 第一个参数是当前的路径，第二个参数是新的路径：
 fs.rename('/Users/joe', '/Users/roger', err => {
@@ -407,11 +443,11 @@ try {
 } catch (err) {
   console.error(err)
 }
+
 // 删除文件夹
-// 使用 fs.rmdir() 或 fs.rmdirSync() 可以删除文件夹。
+// 使用 fs.rmdir() 或 fs.rmdirSync() 可以删除文件夹。只能删除空文件夹
 // 删除包含内容的文件夹可能会更复杂。
 // 在这种情况下，最好安装 fs-extra 模块，该模块非常受欢迎且维护良好。 它是 fs 模块的直接替代品，在其之上提供了更多的功能。
-// 在此示例中，需要的是 remove() 方法。
 // npm install fs-extra
 const fs = require('fs-extra');
 const folder = '/Users/joe';
@@ -435,109 +471,27 @@ async function removeFolder(folder) {
     console.error(err)
   }
 }
-
 const folder = '/Users/joe'
 removeFolder(folder)
-fs.unlink('./text.txt', err => {
-  if (err) throw err;
-});
-
-fs.readdir('./', (err, files) => {
-  if (err) throw err;
-  // files是该文件夹下的所有文件名。
-  console.log(files);
-})
-fs.mkdir('test', err => {});
-fs.rmdir('./test', err => {});
-
-fs.watch('./', () => {
-  recursive: true,
-}, (eventType, filename) => {
-	console.log(eventType, filename);
-});
-  
-// fs 模块提供了许多非常实用的函数来访问文件系统并与文件系统进行交互。
-fs.access(): 检查文件是否存在，以及 Node.js 是否有权限访问。
-fs.appendFile(): 追加数据到文件。如果文件不存在，则创建文件。
-fs.chmod(): 更改文件（通过传入的文件名指定）的权限。相关方法：fs.lchmod()、fs.fchmod()。
-fs.chown(): 更改文件（通过传入的文件名指定）的所有者和群组。相关方法：fs.fchown()、fs.lchown()。
-fs.close(): 关闭文件描述符。
-fs.copyFile(): 拷贝文件。
-fs.createReadStream(): 创建可读的文件流。
-fs.createWriteStream(): 创建可写的文件流。
-fs.link(): 新建指向文件的硬链接。
-fs.mkdir(): 新建文件夹。
-fs.mkdtemp(): 创建临时目录。
-fs.open(): 设置文件模式。
-fs.readdir(): 读取目录的内容。
-fs.readFile(): 读取文件的内容。相关方法：fs.read()。
-fs.readlink(): 读取符号链接的值。
-fs.realpath(): 将相对的文件路径指针（.、..）解析为完整的路径。
-fs.rename(): 重命名文件或文件夹。
-fs.rmdir(): 删除文件夹。
-fs.stat(): 返回文件（通过传入的文件名指定）的状态。相关方法：fs.fstat()、fs.lstat()。
-fs.symlink(): 新建文件的符号链接。
-fs.truncate(): 将传递的文件名标识的文件截断为指定的长度。相关方法：fs.ftruncate()。
-fs.unlink(): 删除文件或符号链接。
-fs.unwatchFile(): 停止监视文件上的更改。
-fs.utimes(): 更改文件（通过传入的文件名指定）的时间戳。相关方法：fs.futimes()。
-fs.watchFile(): 开始监视文件上的更改。相关方法：fs.watch()。
-fs.writeFile(): 将数据写入文件。相关方法：fs.write()。
-
-// 这个含义跟readFile是很像的，但是比readFile实现的更加优雅
-const rs = fs.createReadStream('./test.js');
-rs.pipe(process.stdout);
-  
-const ws = fs.createWriteStream('./test.txt');
-const timer = setInterVal(() => {
-  const num = parseInt(Math.random() * 10);
-  if (num < 7) {
-		ws.write(num + '');
-  } else {
-    clearInterval(timer);
-		ws.end();
-  }
-}, 200);
-ws.on('finish', () => {
-  console.log('done!');
-});
 ```
 
-http
+##### http
 
-`http` 的 `createServer()` 方法会创建新的 HTTP 服务器并返回它。
+`http` 的 `createServer()` 方法会创建新的 HTTP 服务器并返回它，传入一个回调函数 requestListener。
 
-服务器被设置为监听指定的端口和主机名。 当服务器就绪后，回调函数会被调用，在此示例中会通知我们服务器正在运行。
-
-requestListener 会自动添加到 'request' 事件，每次有请求时触发。
-
-每当接收到新的请求时，[`request` 事件](http://nodejs.cn/api/http.html#http_event_request)会被调用，并提供两个对象：一个请求（[`http.IncomingMessage`](http://nodejs.cn/api/http.html#http_class_http_incomingmessage) 对象）和一个响应（[`http.ServerResponse`](http://nodejs.cn/api/http.html#http_class_http_serverresponse) 对象）。
+requestListener 会自动添加到 'request' 事件，每当接收到新的请求时，[`request` 事件](http://nodejs.cn/api/http.html#http_event_request)会被调用，并提供两个对象：一个请求（[`http.IncomingMessage`](http://nodejs.cn/api/http.html#http_class_http_incomingmessage) 对象）和一个响应（[`http.ServerResponse`](http://nodejs.cn/api/http.html#http_class_http_serverresponse) 对象）。
 
 这两个对象对于处理 HTTP 调用至关重要。
 
-第一个对象提供了请求的详细信息。 在这个简单的示例中没有使用它，但是你可以访问请求头和请求数据。
+`request` 提供了请求的详细信息。 通过它可以访问请求头和请求数据。
 
-第二个对象用于返回数据给调用方。
+`response` 构造要返回的数据给客户端。
 
-搭建 node 服务（3次）
-
-```js
-const axios = require('axios');
-axios.post('http://nodejs.cn/todos', {
-  todo: '做点事情'
-});
-```
+搭建 node 服务（4次）
 
 ```js
 const http = require('http');
 const server = http.createServer((req, res) => {
-  let data = '';
-  req.on('data', chunk => {
-    data += chunk;
-  });
-  req.on('end', () => {
-    JSON.parse(data).todo;
-  });
 	res.statusCode = 200;
   res.setHeader('Content-Type', 'text/plain');
   res.end('hello world');
@@ -549,95 +503,78 @@ server.listen(port, host, () => {
 });
 ```
 
-buffer
+属性
 
-buffer 用于处理二进制数据流。
+```js
+// http.METHODS
+// 此属性列出了所有支持的 HTTP 方法：
 
-buffer 实例类似整数数组，大小固定。
+// http.STATUS_CODES
+// 此属性列出了所有的 HTTP 状态代码及其描述
 
-buffer 是 c++ 代码在 v8 堆外分配的物理内存。
-
-stream
-
-##### npm
-
-安装
-
-当程序包提供了可从 shell（CLI）运行的可执行命令、且可在项目间复用时，则该程序包应被全局安装。其余情况都应该项目本地安装。
-
-```bash
-# 安装所有依赖
-npm install
-# 安装某个依赖
-npm install <package-name>
-# 安装旧依赖
-npm install <package>@<version>
-
-# 删除某个依赖
-npm uninstall <package-name>
-# 如果使用 -S 或 --save 标志，则此操作还会移除 package.json 文件中的引用。
-npm uninstall -S <package-name>
-npm uninstall -D <package-name>
-npm uninstall -g <package-name>
-
-# 重装某个依赖
-npm uninstall ant-design-vue
-npm install ant-design-vue@1.4.11
-# 重装所有依赖
-rm -rf node_modules && npm cache clean --force && npm install
-
-# 发觉软件包的新版本
-npm outdated
-
-# 更新所有依赖，update永远不会更新主版本
-npm update
-# 更新某个依赖
-npm update <package-name>
-
-# 将所有软件包更新到新的主版本，则全局安装 npm-check-updates 软件包
-npm install -g npm-check-updates
-# 然后运行
-ncu -u
-# 这会升级 package.json 文件的 dependencies 和 devDependencies 中的所有版本，以便 npm 可以安装新的主版本。
-# 再运行更新
-npm update
-
-# 当投入生产环境时，需要设置 --production 标志，以避免安装开发依赖项。
-npm install --production
+// http.globalAgent
+// 指向 Agent 对象的全局实例，该实例是 http.Agent 类的实例。
 ```
 
-查看安装的 npm 软件包版本 
+方法
 
-```bash
-# 查看所有已安装的 npm 软件包（包括它们的依赖包）的版本
-npm list
-npm list -g
-# 仅获取顶层的软件包（基本上就是告诉 npm 要安装并在 package.json 中列出的软件包）
-npm list --depth=0
-npm list -g --depth=0
-npm list -g --depth 0
-# 通过指定名称来获取特定软件包的版本, 也适用于安装的软件包的依赖
-npm list cowsay
-# 查看软件包在 npm 仓库上最新的可用版本
-npm view [package_name] version
-# 列出软件包所有的以前的版本
-npm view <package> versions
+```js
+// http.createServer()
+// 返回 http.Server 类的新实例。
+const server = http.createServer((req, res) => {
+	// 使用此回调处理每个单独请求
+  res.writeHead(200, { 'Content-Type': 'application/json'});
+  res.end(JSON.stringify({
+    data: 'hello world!'
+  }));
+});
+server.listen(8000);
+
+// http.request()
+// 发送 HTTP 请求到服务器，并创建 http.ClientRequest 类的实例。
+
+// http.get()
+// 类似于 http.request()，但会自动地设置 HTTP 方法为 GET，并自动地调用 req.end()。
 ```
 
-全局 node_modules 位置
+类
 
-`npm root -g` 命令会告知全局安装的 node_modules 在计算机上的确切位置。在 macOS 或 Linux 上，此位置可能是 `/usr/local/lib/node_modules`。 在 Windows 上，可能是 `C:\Users\YOU\AppData\Roaming\npm\node_modules`。使用 `nvm`，则软件包的位置可能为 `/Users/joe/.nvm/versions/node/v8.9.0/lib/node_modules`。
+```js
+// http.Agent
+// Node.js 会创建 http.Agent 类的全局实例，以管理 HTTP 客户端连接的持久性和复用，这是 Node.js HTTP 网络的关键组成部分。
 
-npm 包是可执行文件时
+// http.ClientRequest
+// 当 http.request() 或 http.get() 被调用时，会创建 http.ClientRequest 对象。
+// 当响应被接收时，则会使用响应（http.IncomingMessage 实例作为参数）来调用 response 事件。
 
-```bash
-# 全局安装的可执行命令是放在 /usr/local/bin 下，使用 nvm 的话是在 /Users/Joe/.nvm/versions/node/v8.17.0/bin/ 目录下。直接使用命令运行。
+// http.Server
+// 当使用 http.createServer() 创建新的服务器时，通常会实例化并返回此类。
 
-# 本地安装它会把可执行文件放到 node_modules/.bin/ 文件夹下。可以输入来运行它 
-./node_modules/.bin/cowsay 
-# 或者使用 npx 来运行，npx 会找到程序包的位置。
-npx cowsay 
+// http.ServerResponse
+// 由 http.Server 创建，此对象由 HTTP 服务器内部创建，而不是由用户创建。 它作为第二个参数传给 'request' 事件。
+
+// http.IncomingMessage
+// IncomingMessage 对象由 http.Server 或 http.ClientRequest 创建，并分别作为第一个参数传给 'request' 和 'response' 事件。 它可用于访问响应状态、标头和数据。
+
+// http.OutgoingMessage
+// 该类作为 http.ClientRequest 和 http.ServerResponse 的父类。 从 HTTP 事务的参与者的角度来看，它是对传出消息的抽象。
 ```
+
+##### buffer
+
+Buffer 是内存区域。
+
+它表示在 V8 JavaScript 引擎外部分配的固定大小的内存块（无法调整大小）。
+
+可以将 buffer 视为整数数组，每个整数代表一个数据字节。
+
+Buffer 被引入用以帮助开发者处理二进制数据，在此生态系统中传统上只处理字符串而不是二进制数据。
+
+Buffer 与流紧密相连。 当流处理器接收数据的速度快于其消化的速度时，则会将数据放入 buffer 中。
+
+##### stream
+
+在传统的方式中，当告诉程序读取文件时，这会将文件从头到尾读入内存，然后进行处理。使用流，则可以逐个片段地读取并处理（而无需全部保存在内存中）。
 
 ##### MIME 类型
 
@@ -711,4 +648,8 @@ X-Content-Type-Options: nosniff
 
 1. 模块化
 2. npm 命令是否就是 node 可执行文件的名字
-3. 
+3. 事件循环
+4. 使用setTimeout制作setInterval
+5. promise 原理，async/await 原理
+6. 观察者模式事件系统
+7. 错误处理
