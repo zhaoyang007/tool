@@ -220,24 +220,6 @@ process.cwd();
 process.stdin 
 process.stdout 
 process.stderr
-
-// 为输出着色
-const chalk = require('chalk')
-console.log(chalk.yellow('你好'))
-
-// 控制台进度条
-// 创建一个 10 步的进度条，每 100 毫秒完成一步
-const ProgressBar = require('progress')
-const bar = new ProgressBar(':bar', { total: 10 })
-const timer = setInterval(() => {
-  bar.tick()
-  if (bar.complete) {
-    clearInterval(timer)
-  }
-}, 100)
-
-// 使 Node.js CLI 程序具有交互性
-// readline readline-sync inquirer
 ```
 
 ##### path
@@ -477,17 +459,44 @@ removeFolder(folder)
 
 ##### http
 
-`http` 的 `createServer()` 方法会创建新的 HTTP 服务器并返回它，传入一个回调函数 requestListener。
+属性
 
-requestListener 会自动添加到 'request' 事件，每当接收到新的请求时，[`request` 事件](http://nodejs.cn/api/http.html#http_event_request)会被调用，并提供两个对象：一个请求（[`http.IncomingMessage`](http://nodejs.cn/api/http.html#http_class_http_incomingmessage) 对象）和一个响应（[`http.ServerResponse`](http://nodejs.cn/api/http.html#http_class_http_serverresponse) 对象）。
+```js
+// http.METHODS
+// 此属性列出了所有支持的 HTTP 方法：
+
+// http.STATUS_CODES
+// 此属性列出了所有的 HTTP 状态代码及其描述
+
+// http.globalAgent
+// Agent 的全局实例，用作所有 HTTP 客户端请求的默认值。
+// 用于管理 HTTP 客户端连接的持久性和复用，它是 Node.js HTTP 网络的关键组件。
+
+// http.maxHeaderSize
+// 只读属性，HTTP 头的最大允许大小（以字节为单位）。默认为 8 KB。 
+```
+
+方法
+
+http.createServer(\[options][, requestListener])
+
+创建 http 服务器并返回。
+
+* options <Object>
+  * `IncomingMessage`  <http.IncomingMessage> 指定要使用的` IncomingMessage` 类。 用于扩展原始的 `IncomingMessage`。 默认值: `IncomingMessage`。
+  * `ServerResponse` <http.ServerResponse> 指定要使用的 `ServerResponse` 类。 用于扩展原始的 `ServerResponse`。 默认值: `ServerResponse`。
+  * `insecureHTTPParser` <boolean> 使用不安全的 HTTP 解析器，当为 true 时接受无效的 HTTP 标头。 应避免使用不安全的解析器。 有关详细信息，请参阅 --insecure-http-parser。 默认值: false
+  * `maxHeaderSize` <number> 可选地覆盖此服务器接收到的请求的 --max-http-header-size 值，即请求头的最大长度（以字节为单位）。 默认值: 16384 (16 KB)。
+* `requestListener` <Function>
+* 返回:  <http.Server>
+
+`requestListener` 会自动添加到 'request' 事件，每当接收到新的请求时，[`request` 事件](http://nodejs.cn/api/http.html#http_event_request)会被调用，并提供两个对象：一个请求（[`http.IncomingMessage`](http://nodejs.cn/api/http.html#http_class_http_incomingmessage) 对象）和一个响应（[`http.ServerResponse`](http://nodejs.cn/api/http.html#http_class_http_serverresponse) 对象）。
 
 这两个对象对于处理 HTTP 调用至关重要。
 
 `request` 提供了请求的详细信息。 通过它可以访问请求头和请求数据。
 
 `response` 构造要返回的数据给客户端。
-
-搭建 node 服务（4次）
 
 ```js
 const http = require('http');
@@ -503,39 +512,112 @@ server.listen(port, host, () => {
 });
 ```
 
-属性
+http.request(options[, callback])
+
+http.request(url\[, options][, callback])
+
+发送 HTTP 请求到服务器，创建 http.ClientRequest 类的实例并返回。
+
+可选的 `callback` 参数将被添加为 [`'response'`](http://nodejs.cn/api/http.html#http_event_response) 事件的单次监听器。
+
+`callback` 使用单个参数（[`http.IncomingMessage`](http://nodejs.cn/api/http.html#http_class_http_incomingmessage) 的实例）调用。
+
+使用 `http.request()` 必须始终调用 `req.end()` 来表示请求的结束 - 即使没有数据写入请求正文。
+
+- `url` <string> | <URL>
+- `options` <Object>
+  - `agent` <http.Agent> | <boolean> 控制 `Agent`的行为。 可能的值：
+    - `undefined`（默认）: 为此主机和端口使用 [`http.globalAgent`](http://nodejs.cn/api/http.html#http_http_globalagent)。
+    - `Agent` 对象: 显式使用传入的 `Agent`。
+    - `false`: 使用具有默认值的新 `Agent`。
+  - `auth` <string> 基本身份验证，即 `'user:password'` 计算授权标头。
+  - `createConnection` <function> 当不使用 `agent` 选项时，生成用于请求的套接字/流的函数。 这可用于避免创建自定义 `Agent` 类只是为了覆盖默认的 `createConnection` 函数。 有关详细信息，请参阅 [`agent.createConnection()`](http://nodejs.cn/api/http.html#http_agent_createconnection_options_callback)。 任何 [`Duplex`](http://nodejs.cn/api/stream.html#stream_class_stream_duplex) 流都是有效的返回值。
+  - `defaultPort` <number> 协议的默认端口。 **默认值:** 如果使用 `Agent` 则为 `agent.defaultPort`，否则为 `undefined`。
+  - `family` <number>  解析 `host` 或 `hostname` 时要使用的 IP 地址族。 有效值为 `4` 或 `6`。 当未指定时，则将使用 IP v4 和 v6。
+  - `headers` <Object> 包含请求头的对象。
+  - `hints` <number> 可选的 [`dns.lookup()` 提示](http://nodejs.cn/api/dns.html#dns_supported_getaddrinfo_flags)。
+  - `host` <string> 要向其发出请求的服务器的域名或 IP 地址。 **默认值:** `'localhost'`。
+  - `hostname` <string> `host` 的别名。 为了支持 [`url.parse()`](http://nodejs.cn/api/url.html#url_url_parse_urlstring_parsequerystring_slashesdenotehost)，如果同时指定了 `host` 和 `hostname`，则将使用 `hostname`。
+  - `insecureHTTPParser` <boolean> 使用不安全的 HTTP 解析器，当为 `true` 时接受无效的 HTTP 标头。 应避免使用不安全的解析器。 有关详细信息，请参阅 [`--insecure-http-parser`](http://nodejs.cn/api/cli.html#cli_insecure_http_parser)。 **默认值:** `false`
+  - `localAddress` <string> 用于绑定网络连接的本地接口。
+  - `localPort` <number> 连接的本地端口。
+  - `lookup` <Function> 自定义查找函数。 **默认值:** [`dns.lookup()`](http://nodejs.cn/api/dns.html#dns_dns_lookup_hostname_options_callback).
+  - `maxHeaderSize` <number> 可选地覆盖从此服务器接收到的请求的 [`--max-http-header-size`](http://nodejs.cn/api/cli.html#cli_max_http_header_size_size) 值，即响应头的最大长度（以字节为单位）。 **默认值:** 16384 (16 KB).
+  - `method` <string> 指定 HTTP 请求方法的字符串。 **默认值:** `'GET'`。
+  - `path` <string> 请求的路径。 应包括查询字符串（如果有）。 例如 `'/index.html?page=12'`。 当请求路径包含非法字符时抛出异常。 目前，只有空格被拒绝，但将来可能会改变。 **默认值:** `'/'`。
+  - `port` <number> 远程服务器的端口。 **默认值:** 如果有设置则为 `defaultPort`，否则为 `80`。
+  - `protocol` <string> 要使用的协议。 **默认值:** `'http:'`。
+  - `setHost` <boolean> 指定是否自动添加 `Host` 标头。 默认为 `true`。
+  - `socketPath` <string> Unix 域套接字（如果指定了 `host` 或 `port` 之一，则不能使用，因为其指定了 TCP 套接字）。
+  - `timeout` <number> 指定套接字超时的数值（以毫秒为单位）。 这将在连接套接字之前设置超时。
+  - `signal` <AbortSignal> 可用于中止正在进行的请求的中止信号。
+- `callback` <Function>
+- 返回 <http.ClientRequest>
 
 ```js
-// http.METHODS
-// 此属性列出了所有支持的 HTTP 方法：
+const http = require('http');
 
-// http.STATUS_CODES
-// 此属性列出了所有的 HTTP 状态代码及其描述
-
-// http.globalAgent
-// 指向 Agent 对象的全局实例，该实例是 http.Agent 类的实例。
-```
-
-方法
-
-```js
-// http.createServer()
-// 返回 http.Server 类的新实例。
-const server = http.createServer((req, res) => {
-	// 使用此回调处理每个单独请求
-  res.writeHead(200, { 'Content-Type': 'application/json'});
-  res.end(JSON.stringify({
-    data: 'hello world!'
-  }));
+const postData = JSON.stringify({
+  'msg': 'Hello World!'
 });
-server.listen(8000);
 
-// http.request()
-// 发送 HTTP 请求到服务器，并创建 http.ClientRequest 类的实例。
+const options = {
+  hostname: 'www.google.com',
+  port: 80,
+  path: '/upload',
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+    'Content-Length': Buffer.byteLength(postData)
+  }
+};
 
-// http.get()
-// 类似于 http.request()，但会自动地设置 HTTP 方法为 GET，并自动地调用 req.end()。
+const req = http.request(options, (res) => {
+  console.log(`STATUS: ${res.statusCode}`);
+  console.log(`HEADERS: ${JSON.stringify(res.headers)}`);
+  res.setEncoding('utf8');
+  res.on('data', (chunk) => {
+    console.log(`BODY: ${chunk}`);
+  });
+  res.on('end', () => {
+    console.log('No more data in response.');
+  });
+});
+
+req.on('error', (e) => {
+  console.error(`problem with request: ${e.message}`);
+});
+
+// 将数据写入请求正文
+req.write(postData);
+req.end();
 ```
+
+http.get(options[, callback])
+
+http.get(url\[, options][, callback])
+
+由于大多数请求是没有正文的 GET 请求，因此 Node.js 提供了这个便捷的方法。 此方法与 [`http.request()`](http://nodejs.cn/api/http.html#http_http_request_options_callback) 的唯一区别在于，它将方法设置为 GET 并自动调用 `req.end()`。
+
+http.validateHeaderName(name)
+
+在调用 res.setHeader(name, value) 时对提供的 name 执行低层验证。
+
+将非法值作为 name 传入将导致抛出 TypeError，由 code: 'ERR_INVALID_HTTP_TOKEN' 标识。
+
+在将标头传给 HTTP 请求或响应之前，不必使用此方法。 HTTP 模块将自动验证此类标头。
+
+http.validateHeaderValue(name, value)
+
+在调用 res.setHeader(name, value) 时对提供的 value 执行低层验证。
+
+将非法值作为 value 传入将导致抛出 TypeError。
+
+未定义值错误由 code: 'ERR_HTTP_INVALID_HEADER_VALUE' 标识。
+
+无效值字符错误由 code: 'ERR_INVALID_CHAR' 标识。
+
+在将标头传给 HTTP 请求或响应之前，不必使用此方法。 HTTP 模块将自动验证此类标头。
 
 类
 
