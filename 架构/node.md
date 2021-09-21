@@ -86,26 +86,10 @@ npm 包是可执行文件时
 npx cowsay 
 ```
 
-##### node 基础
-
-浏览器和 Node.js 均使用 JavaScript 作为其编程语言。区别是：
-
-* API 不同，没有浏览器提供的 `document`、`window`、以及所有其他的对象。浏览器中，不存在 Node.js 通过其模块提供的所有不错的 API，例如文件系统访问功能。
-* 在 Node.js 中，可以控制运行环境的版本。这意味着可以编写 Node.js 版本支持的所有现代的 ES6-7-8-9 JavaScript。
-* 模块系统的不同。Node.js 使用 CommonJS 模块系统，而在浏览器中，则还正在实现 ES 模块标准。
-
-当 Node.js 执行 I/O 操作时（例如从网络读取、访问数据库或文件系统），Node.js 会在响应返回时恢复操作，而不是阻塞线程并浪费 CPU 循环等待。
-
-##### global（全局对象）
-
-* CommonJS
-* Buffer、process、console
-* timer
-
 ##### timer
 
 ```js
-// nextTick早于另外两个，是在当前事件循环的最后执行
+// nextTick 早于另外两个，是在当前事件循环的最后执行
 process.nextTick(() => {
 	console.log('nextTick');
 });
@@ -115,20 +99,7 @@ setImmediate(() => {
 });
 setTimeout(() => {
   console.log('setTimeout');
-}, 0)
-```
-
-```js
-// 利用setTimeout实现setInterval
-function mySetInterval(fn, time) {
-	function myFunction() {
-    fn();
-    setTimeout(myFunction, time);
-  }
-  return setTimeout(myFunction, time);
-}
-let timer = mySetInterval(() => console.log(666), 1000);
-setTimeout(()=>{clearTimeout(timer)}, 3000);
+}, 0);
 ```
 
 ##### process
@@ -459,26 +430,25 @@ removeFolder(folder)
 
 ##### http
 
-属性
+`http.METHODS`
 
-```js
-// http.METHODS
-// 此属性列出了所有支持的 HTTP 方法：
+此属性列出了所有支持的 HTTP 方法
 
-// http.STATUS_CODES
-// 此属性列出了所有的 HTTP 状态代码及其描述
+`http.STATUS_CODES`
 
-// http.globalAgent
-// Agent 的全局实例，用作所有 HTTP 客户端请求的默认值。
-// 用于管理 HTTP 客户端连接的持久性和复用，它是 Node.js HTTP 网络的关键组件。
+此属性列出了所有的 HTTP 状态代码及其描述
 
-// http.maxHeaderSize
-// 只读属性，HTTP 头的最大允许大小（以字节为单位）。默认为 8 KB。 
-```
+`http.globalAgent`
 
-方法
+Agent 的全局实例，用作所有 HTTP 客户端请求的默认值。
 
-http.createServer(\[options][, requestListener])
+用于管理 HTTP 客户端连接的持久性和复用，它是 Node.js HTTP 网络的关键组件。
+
+`http.maxHeaderSize`
+
+只读属性，HTTP 头的最大允许大小（以字节为单位）。默认为 8 KB。 
+
+`http.createServer([options][, requestListener])`
 
 创建 http 服务器并返回。
 
@@ -490,9 +460,7 @@ http.createServer(\[options][, requestListener])
 * `requestListener` <Function>
 * 返回:  <http.Server>
 
-`requestListener` 会自动添加到 'request' 事件，每当接收到新的请求时，[`request` 事件](http://nodejs.cn/api/http.html#http_event_request)会被调用，并提供两个对象：一个请求（[`http.IncomingMessage`](http://nodejs.cn/api/http.html#http_class_http_incomingmessage) 对象）和一个响应（[`http.ServerResponse`](http://nodejs.cn/api/http.html#http_class_http_serverresponse) 对象）。
-
-这两个对象对于处理 HTTP 调用至关重要。
+`requestListener` 会自动添加到 'request' 事件，每当接收到新的请求时，`request` 事件会被调用，并提供两个对象：一个请求（[`http.IncomingMessage`](http://nodejs.cn/api/http.html#http_class_http_incomingmessage) 对象）和一个响应（[`http.ServerResponse`](http://nodejs.cn/api/http.html#http_class_http_serverresponse) 对象）。
 
 `request` 提供了请求的详细信息。 通过它可以访问请求头和请求数据。
 
@@ -512,17 +480,17 @@ server.listen(port, host, () => {
 });
 ```
 
-http.request(options[, callback])
+`http.request(options[, callback])`
 
-http.request(url\[, options][, callback])
+`http.request(url[, options][, callback])`
 
-发送 HTTP 请求到服务器，创建 http.ClientRequest 类的实例并返回。
+发送 HTTP 请求到服务器，创建 http.ClientRequest 类的实例并返回，http.ClientRequest 的实例是可写流。如果需要使用 POST 请求上传文件，则写入 `ClientRequest` 对象。
 
-可选的 `callback` 参数将被添加为 [`'response'`](http://nodejs.cn/api/http.html#http_event_response) 事件的单次监听器。
-
-`callback` 使用单个参数（[`http.IncomingMessage`](http://nodejs.cn/api/http.html#http_class_http_incomingmessage) 的实例）调用。
+可选的 `callback` 参数将被添加为 `'response'` 事件的单次监听器。使用单个参数（[`http.IncomingMessage`](http://nodejs.cn/api/http.html#http_class_http_incomingmessage) 的实例）调用。
 
 使用 `http.request()` 必须始终调用 `req.end()` 来表示请求的结束 - 即使没有数据写入请求正文。
+
+如果在请求期间遇到任何错误（无论是 DNS 解析、TCP 级别错误还是实际的 HTTP 解析错误），都会在返回的请求对象上触发 `'error'` 事件。 与所有 `'error'` 事件一样，如果没有注册监听器，则会抛出错误。
 
 - `url` <string> | <URL>
 - `options` <Object>
@@ -552,7 +520,7 @@ http.request(url\[, options][, callback])
   - `timeout` <number> 指定套接字超时的数值（以毫秒为单位）。 这将在连接套接字之前设置超时。
   - `signal` <AbortSignal> 可用于中止正在进行的请求的中止信号。
 - `callback` <Function>
-- 返回 <http.ClientRequest>
+- 返回 <http.ClientRequest> 可写流
 
 ```js
 const http = require('http');
@@ -572,7 +540,7 @@ const options = {
   }
 };
 
-const req = http.request(options, (res) => {
+const request = http.request(options, (res) => {
   console.log(`STATUS: ${res.statusCode}`);
   console.log(`HEADERS: ${JSON.stringify(res.headers)}`);
   res.setEncoding('utf8');
@@ -584,62 +552,291 @@ const req = http.request(options, (res) => {
   });
 });
 
-req.on('error', (e) => {
+request.on('error', (e) => {
   console.error(`problem with request: ${e.message}`);
 });
 
 // 将数据写入请求正文
-req.write(postData);
-req.end();
+request.write(postData);
+request.end();
 ```
 
-http.get(options[, callback])
+`http.get(options[, callback])`
 
-http.get(url\[, options][, callback])
+`http.get(url[, options][, callback])`
 
-由于大多数请求是没有正文的 GET 请求，因此 Node.js 提供了这个便捷的方法。 此方法与 [`http.request()`](http://nodejs.cn/api/http.html#http_http_request_options_callback) 的唯一区别在于，它将方法设置为 GET 并自动调用 `req.end()`。
-
-http.validateHeaderName(name)
-
-在调用 res.setHeader(name, value) 时对提供的 name 执行低层验证。
-
-将非法值作为 name 传入将导致抛出 TypeError，由 code: 'ERR_INVALID_HTTP_TOKEN' 标识。
-
-在将标头传给 HTTP 请求或响应之前，不必使用此方法。 HTTP 模块将自动验证此类标头。
-
-http.validateHeaderValue(name, value)
-
-在调用 res.setHeader(name, value) 时对提供的 value 执行低层验证。
-
-将非法值作为 value 传入将导致抛出 TypeError。
-
-未定义值错误由 code: 'ERR_HTTP_INVALID_HEADER_VALUE' 标识。
-
-无效值字符错误由 code: 'ERR_INVALID_CHAR' 标识。
-
-在将标头传给 HTTP 请求或响应之前，不必使用此方法。 HTTP 模块将自动验证此类标头。
-
-类
+由于大多数请求是没有正文的 GET 请求，因此 Node.js 提供了这个便捷的方法。 此方法与 `http.request()` 的唯一区别在于，它将方法设置为 GET 并自动调用 `req.end()`。
 
 ```js
-// http.Agent
-// Node.js 会创建 http.Agent 类的全局实例，以管理 HTTP 客户端连接的持久性和复用，这是 Node.js HTTP 网络的关键组成部分。
+const http = require('http');
+http.get('http://localhost:8000/', (res) => {
+  const { statusCode } = res;
+  const contentType = res.headers['content-type'];
 
-// http.ClientRequest
-// 当 http.request() 或 http.get() 被调用时，会创建 http.ClientRequest 对象。
-// 当响应被接收时，则会使用响应（http.IncomingMessage 实例作为参数）来调用 response 事件。
+  let error;
+  // 任何 2xx 状态码都表示成功响应，但这里只检查 200。
+  if (statusCode !== 200) {
+    error = new Error('Request Failed.\n' +
+                      `Status Code: ${statusCode}`);
+  } else if (!/^application\/json/.test(contentType)) {
+    error = new Error('Invalid content-type.\n' +
+                      `Expected application/json but received ${contentType}`);
+  }
+  if (error) {
+    console.error(error.message);
+    // 消费响应数据以释放内存
+    res.resume();
+    return;
+  }
 
-// http.Server
-// 当使用 http.createServer() 创建新的服务器时，通常会实例化并返回此类。
+  res.setEncoding('utf8');
+  let rawData = '';
+  res.on('data', (chunk) => { rawData += chunk; });
+  res.on('end', () => {
+    try {
+      const parsedData = JSON.parse(rawData);
+      console.log(parsedData);
+    } catch (e) {
+      console.error(e.message);
+    }
+  });
+}).on('error', (e) => {
+  console.error(`Got error: ${e.message}`);
+});
 
-// http.ServerResponse
-// 由 http.Server 创建，此对象由 HTTP 服务器内部创建，而不是由用户创建。 它作为第二个参数传给 'request' 事件。
+// 创建本地服务器来从其接收数据
+const server = http.createServer((req, res) => {
+  res.writeHead(200, { 'Content-Type': 'application/json' });
+  res.end(JSON.stringify({
+    data: 'Hello World!'
+  }));
+});
 
-// http.IncomingMessage
-// IncomingMessage 对象由 http.Server 或 http.ClientRequest 创建，并分别作为第一个参数传给 'request' 和 'response' 事件。 它可用于访问响应状态、标头和数据。
+server.listen(8000);
+```
 
-// http.OutgoingMessage
-// 该类作为 http.ClientRequest 和 http.ServerResponse 的父类。 从 HTTP 事务的参与者的角度来看，它是对传出消息的抽象。
+`http.Agent`
+
+Node.js 会创建 http.Agent 类的全局实例，以管理 HTTP 客户端连接的持久性和复用，这是 Node.js HTTP 网络的关键组成部分。
+
+`http.Server`
+
+当使用 http.createServer() 创建新的服务器时，通常会实例化并返回此类。
+
+`http.OutgoingMessage`
+
+- 继承自: <Stream> 可写流
+
+该类作为 http.ClientRequest 和 http.ServerResponse 的父类。 从 HTTP 事务的参与者的角度来看，它是对传出消息的抽象。
+
+`http.ClientRequest`
+
+- 继承自: <Stream> 可写流
+
+此对象从 `http.request()` 内部创建并返回。 它表示正在进行的请求。
+
+当响应被接收时，则会使用响应（http.IncomingMessage 实例作为参数）来调用 response 事件。
+
+`http.ServerResponse`
+
+* 继承自: <Stream> 可写流
+
+此对象由 HTTP 服务器内部 http.Server 创建，而不是由用户创建。 并作为第二个参数传给 [`'request'`](http://nodejs.cn/api/http.html#http_event_request) 事件。
+
+header
+
+```js
+// response.getHeader(name)
+// 读取已排队但未发送到客户端的标头。该名称不区分大小写。返回值的类型取决于提供给 response.setHeader() 的参数。
+response.setHeader('Content-Type', 'text/html');
+response.setHeader('Set-Cookie', ['type=ninja', 'language=javascript']);
+response.getHeader('content-type'); // 'text/html'
+response.getHeader('set-cookie'); // ['type=ninja', 'language=javascript']
+
+// response.getHeaderNames()
+// 返回当前传出标头的数组，所有标头名称均为小写。
+response.setHeader('Foo', 'bar');
+response.setHeader('Set-Cookie', ['foo=bar', 'bar=baz']);
+response.getHeaderNames(); // ['foo', 'set-cookie']
+
+// response.getHeaders()
+// 返回当前传出标头的浅拷贝。 
+response.setHeader('Foo', 'bar');
+response.setHeader('Set-Cookie', ['foo=bar', 'bar=baz']);
+response.getHeaders(); // { foo: 'bar', 'set-cookie': ['foo=bar', 'bar=baz'] }
+
+// response.hasHeader(name)
+
+// response.removeHeader(name)
+// 删除排队等待隐式发送的标头。
+response.removeHeader('Content-Encoding');
+
+// response.req
+// 对原始的 HTTP request 对象的引用。
+
+// response.setHeader(name, value)
+// 为隐式标头设置单个标头值。
+response.setHeader('Content-Type', 'text/html');
+response.setHeader('Set-Cookie', ['type=ninja', 'language=javascript']);
+// 当标头已使用 response.setHeader() 设置时，则它们将与任何传给 response.writeHead() 的标头合并，其中传给 response.writeHead() 的标头优先。
+const server = http.createServer((req, res) => {
+  res.setHeader('Content-Type', 'text/html');
+  res.setHeader('X-Foo', 'bar');
+  res.writeHead(200, { 'Content-Type': 'text/plain' });
+  res.end('ok');
+});
+// 如果调用了 response.writeHead() 方法而该方法没有被调用，则会直接将提供的标头值写入网络通道，而不进行内部缓存，标头的 response.getHeader() 不会产生预期的结果。 如果希望在将来可能进行检索和修改时逐步填充标头，则使用 response.setHeader() 而不是 response.writeHead()。
+```
+
+response.statusCode
+
+```js
+response.statusCode = 404;
+```
+
+response.statusMessage
+
+```js
+response.statusMessage = 'Not found';
+```
+
+response.writeHead(statusCode\[, statusMessage][, headers])
+
+- `statusCode` <number>
+- `statusMessage` <string>
+- `headers` <Object> | <Array>
+- 返回: <http.ServerResponse>
+
+向请求发送响应头。 状态码是 3 位的 HTTP 状态码，如 `404`。 最后一个参数 `headers` 是响应头。 可选地给定人类可读的 `statusMessage` 作为第二个参数。
+
+此方法只能在消息上调用一次，并且必须在调用 [`response.end()`](http://nodejs.cn/api/http.html#http_response_end_data_encoding_callback) 之前调用。
+
+response.write(chunk\[, encoding][, callback])
+
+- `chunk` <string> | <Buffer>
+- `encoding` <string> 默认值: `'utf8'`
+- `callback` <Function>
+- 返回: <boolean>
+
+这会发送一块响应正文。 可以多次调用此方法以提供正文的连续部分。
+
+在 `http` 模块中，当请求是 HEAD 请求时，响应正文会被省略。 同样，`204` 和 `304` 响应不得包含消息正文。
+
+`chunk` 可以是字符串或缓冲区。 如果 `chunk` 是字符串，则第二个参数指定如何将其编码为字节流。 当刷新数据块时将调用 `callback`。
+
+response.end(\[data\[, encoding]][, callback])
+
+- `data` <string> | <Buffer>
+- `encoding` <string> 
+- `callback` <Function>
+- 返回: <this>
+
+此方法向服务器发出信号，表明所有响应头和正文都已发送；该服务器应认为此消息已完成。 `response.end()` 方法必须在每个响应上调用。
+
+如果指定了 `data`，则其效果类似于调用 `response.write(data, encoding)` 后跟 `response.end(callback)`。
+
+如果指定了 `callback`，则将在响应流完成时调用。
+
+`http.IncomingMessage`
+
+继承自: <stream.Readable>
+
+IncomingMessage 对象由 http.Server 或 http.ClientRequest 创建，并分别作为第一个参数传给 'request' 和 'response' 事件。 它可用于访问响应状态、标头和数据。
+
+```js
+request.headers
+// 标头名称和值的键值对。 标头名称是小写的。
+
+request.url
+// 仅适用于从 http.Server 获得的请求。
+// 请求的网址字符串。
+
+request.method
+// 仅适用于从 http.Server 获得的请求。
+// 请求方法作为字符串。 只读。 示例：'GET'、'DELETE'。
+
+request.statusCode
+// 仅对从 http.ClientRequest 获得的响应有效。
+// 3 位 HTTP 响应状态码。 例如 `404`。
+
+request.statusMessage
+// 仅对从 http.ClientRequest 获得的响应有效。
+// HTTP 响应状态消息（原因短语）。
+```
+
+继承自 <stream.Readable> 的重要属性：
+
+为从 Readable 流读取的数据设置字符编码。
+
+默认情况下，没有分配编码，流数据将作为 Buffer 对象返回。 设置编码会导致流数据作为指定编码的字符串而不是 Buffer 对象返回。
+
+```js
+readable.setEncoding(encoding);
+```
+
+继承自 <stream.Readable> 的重要事件：
+
+`'data'` 事件
+
+- `chunk` <Buffer> | <string> | <any> 数据块。 对于不在对象模式下操作的流，块将是字符串或 `Buffer`。 对于处于对象模式的流，块可以是除 `null` 之外的任何 JavaScript 值。
+
+每当流将数据块的所有权移交给消费者时，则会触发 `'data'` 事件。
+
+```js
+const readable = getReadableStreamSomehow();
+readable.on('data', (chunk) => {
+  console.log(`Received ${chunk.length} bytes of data.`);
+});
+```
+
+`'end'` 事件
+
+当流中没有更多数据可供消费时，则会触发 `'end'` 事件。
+
+除非数据被完全地消费，否则不会触发 `'end'` 事件。
+
+```js
+const readable = getReadableStreamSomehow();
+readable.on('data', (chunk) => {
+  console.log(`Received ${chunk.length} bytes of data.`);
+});
+readable.on('end', () => {
+  console.log('There will be no more data.');
+});
+```
+
+获取客户端请求数据
+
+```js
+// 获取客户端 get 请求数据
+// 用 url 模块的 parse 函数解析请求就行了
+const http = require('http');
+const url = require('url');
+const server = http.createServer((req, res) => {
+	let params = url.parse(req.url, true).query;
+  res.writeHead(200, { 'Content-Type': 'text/html'});
+  res.write('参数：' + params.key);
+  res.end();
+});
+server.listen(8000);
+
+// 获取客户端 post 请求数据
+// 首先通过req的data事件监听函数，把请求参数累加到自定义的postdata里，再在触发end事件监听函数时用querystring模块的parse函数解析。
+const http = require('http');
+const qs = require('querystring');
+const server = http.createServer((req, res) => {
+  let postData = '';
+  req.on('data', chunk => {
+		postData += chunk;
+  });
+  req.on('end', () => {
+    const username = qs.parse(postData).username;
+    const password = qs.parse(postData).password;
+		res.writeHead(200, { 'Content-Type': 'text/html'});
+    res.end(`username: ${username}, password: ${password}`);
+  });
+});
+server.listen(8000);
 ```
 
 ##### buffer
@@ -657,6 +854,14 @@ Buffer 与流紧密相连。 当流处理器接收数据的速度快于其消化
 ##### stream
 
 在传统的方式中，当告诉程序读取文件时，这会将文件从头到尾读入内存，然后进行处理。使用流，则可以逐个片段地读取并处理（而无需全部保存在内存中）。
+
+##### Error
+
+##### events
+
+##### url
+
+##### 模块化
 
 ##### MIME 类型
 
@@ -726,12 +931,155 @@ MIME 嗅探：
 X-Content-Type-Options: nosniff
 ```
 
+##### 客户端提交数据
+
+1.form 表单提交
+
+form 表单
+
+* action：url 地址，服务器接收表单数据的地址
+* method：提交服务器的http方法，一般为post和get
+* name：name属性的唯一性
+* enctype: 表单数据提交时使用的编码类型，默认使用"pplication/x-www-form-urlencoded"，如果是使用POST请求，则请求头中的content-type指定值就是该值。如果表单中有上传文件，编码类型需要使用"multipart/form-data"类型，才能完成传递文件数据。
+
+浏览器提交表单时，会默认执行如下步骤
+
+1. 识别出表单中表单元素的有效项，作为提交项
+2. 构建一个表单数据集
+3. 根据form表单中的enctype属性的值作为content-type对数据进行编码
+4. 根据form表单中的action属性和method属性向指定的地址发送数据
+
+提交方式
+
+1. get：表单数据会被encodeURIComponent后以参数的形式:name1=value1&name2=value2 附带在url?后面，再发送给服务器，并在url中显示出来。
+2. post：enctype 默认"application/x-www-form-urlencoded"对表单数据进行编码，数据以键值对在http请求体中发送给服务器；如果enctype 属性为"multipart/form-data"，则以消息的形式发送给服务器。
+
+2.四种常见的 POST 提交数据方式
+
+HTTP 请求分为三个部分：状态行、请求头、消息主体。
+
+```
+<method> <request-URL> <version>
+<headers>
+
+<entity-body>
+```
+
+服务端根据请求头（headers）中的 Content-Type 字段来获知请求中的消息主体是用何种方式编码，再对请求主体数据进行解析。
+
+1.application/x-www-form-urlencoded
+
+浏览器的原生 <form> 表单，如果不设置 `enctype` 属性，那么最终就会以 application/x-www-form-urlencoded 方式提交数据。Content-Type 被指定为 application/x-www-form-urlencoded，提交的数据按照 key1=val1&key2=val2 的方式进行编码，key 和 val 都进行了 URL 转码。可以使用 qs.stringify(data) 将data转换为url格式。
+
+```
+POST http://www.example.com HTTP/1.1
+Content-Type: application/x-www-form-urlencoded;charset=utf-8
+
+title=test&sub%5B%5D=1&sub%5B%5D=2&sub%5B%5D=3
+```
+
+2.multipart/form-data
+
+使用表单上传文件时，必须让 <form> 表单的 `enctype` 等于 multipart/form-data。
+
+```
+POST http://www.example.com HTTP/1.1
+Content-Type:multipart/form-data; boundary=----WebKitFormBoundaryrGKCBY7qhFd3TrwA
+
+------WebKitFormBoundaryrGKCBY7qhFd3TrwA
+Content-Disposition: form-data; name="text"
+
+title
+------WebKitFormBoundaryrGKCBY7qhFd3TrwA
+Content-Disposition: form-data; name="file"; filename="chrome.png"
+Content-Type: image/png
+
+PNG ... content of chrome.png ...
+------WebKitFormBoundaryrGKCBY7qhFd3TrwA--
+```
+
+3.application/json
+
+这种方案，可以方便的提交复杂的结构化数据。
+
+```
+POST http://www.example.com HTTP/1.1 
+Content-Type: application/json;charset=utf-8
+
+{"title":"test","sub":[1,2,3]}
+```
+
+4.text/xml
+
+它是一种使用 HTTP 作为传输协议，XML 作为编码方式的远程调用规范。
+
+```
+POST http://www.example.com HTTP/1.1 
+Content-Type: text/xml
+
+<?xml version="1.0"?>
+<methodCall>
+    <methodName>examples.getStateName</methodName>
+    <params>
+        <param>
+            <value><i4>41</i4></value>
+        </param>
+    </params>
+</methodCall>
+```
+
+##### 字符集和字符编码
+
+通俗的说，按照何种规则将字符存储在计算机中，如'a'用什么表示，称为"编码"；反之，将存储在计算机中的二进制数解析显示出来，称为"解码"。
+
+字符集就是规定了某个文字对应的二进制数字存放方式（编码）和某串二进制数值代表了哪个文字（解码）的转换关系。
+
+字符集只是一个规则集合的名字，对应到真实生活中，字符集就是对某种语言的称呼。例如：英语，汉语，日语。
+
+对于一个字符集来说要正确编码转码一个字符需要三个关键元素：字库表（character repertoire）、编码字符集（coded character set）、字符编码（character encoding form）。
+
+* 字库表是一个相当于所有可读或者可显示字符的数据库，字库表决定了整个字符集能够展现表示的所有字符的范围。
+* 编码字符集，即用一个编码值`code point`来表示一个字符在字库中的位置。
+* 字符编码，编码字符集和实际存储数值之间的转换关系。
+
+Unicode就是上文中提到的编码字符集，而UTF-8就是字符编码，即Unicode规则字库的一种实现形式。
+
+随着互联网的发展，对同一字库集的要求越来越迫切，Unicode标准也就自然而然的出现。它几乎涵盖了各个国家语言可能出现的符号和文字，并将为他们编号。
+
+Unicode的编号从`0000`开始一直到`10FFFF`共分为17个Plane，每个Plane中有65536个字符。而UTF-8则只实现了第一个Plane，可见UTF-8虽然是一个当今接受度最广的字符集编码，但是它并没有涵盖整个Unicode的字库，这也造成了它在某些场景下对于特殊字符的处理困难。
+
+**UTF-8**（8-bit Unicode Transformation Format）是一种针对 Unicode 的可变长度字符编码（定长码），也是一种前缀码。它可以用来表示Unicode标准中的任何字符，且其编码中的第一个字节仍与ASCII兼容，这使得原来处理ASCII字符的软件无须或只须做少部份修改，即可继续使用。因此，它逐渐成为电子邮件、网页及其他存储或传送文字的应用中，优先采用的编码。[互联网工程工作小组](http://zh.wikipedia.org/wiki/網際網路工程工作小組)（IETF）要求所有互联网协议都必须支持UTF-8编码。
+
+在HTTP中，与字符集和字符编码相关的消息头是Accept-Charset/Content-Type，另外主区区分Accept-Charset/Accept-Encoding/Accept-Language/Content-Type/Content-Encoding/Content-Language：
+
+* Accept-Charset：浏览器申明自己接收的字符集，这就是本文前面介绍的各种字符集和字符编码，如gb2312，utf-8（通常我们说Charset包括了相应的字符编码方案）；
+* Accept-Encoding：浏览器申明自己接收的编码方法，通常指定压缩方法，是否支持压缩，支持什么压缩方法（gzip，deflate），（注意：这不是只字符编码）；
+* Accept-Language：浏览器申明自己接收的语言。语言跟字符集的区别：中文是语言，中文有多种字符集，比如big5，gb2312，gbk等等；
+* Content-Type：WEB服务器告诉浏览器自己响应的对象的类型和字符集。例如：Content-Type: text/html; charset='gb2312'
+* Content-Encoding：WEB服务器表明自己使用了什么压缩方法（gzip，deflate）压缩响应中的对象。例如：Content-Encoding：gzip
+* Content-Language：WEB服务器告诉浏览器自己响应的对象的语言。
+
 ##### todo
 
-1. 模块化
-2. npm 命令是否就是 node 可执行文件的名字
-3. 事件循环
-4. 使用setTimeout制作setInterval
-5. promise 原理，async/await 原理
-6. 观察者模式事件系统
-7. 错误处理
+1. npm 命令是否就是 node 可执行文件的名字
+
+2. 事件循环
+
+3. 使用setTimeout制作setInterval
+
+   ```js
+   // 利用setTimeout实现setInterval
+   function mySetInterval(fn, time) {
+   	function myFunction() {
+       fn();
+       setTimeout(myFunction, time);
+     }
+     return setTimeout(myFunction, time);
+   }
+   let timer = mySetInterval(() => console.log(666), 1000);
+   setTimeout(()=>{clearTimeout(timer)}, 3000);
+   ```
+
+4. promise 原理，async/await 原理
+
+5. 错误处理

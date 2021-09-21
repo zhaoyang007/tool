@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2021-09-06 22:40:22
- * @LastEditTime: 2021-09-15 14:41:20
+ * @LastEditTime: 2021-09-21 12:14:36
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: /tool/前端知识体系/架构/lianxi/app.js
@@ -296,7 +296,115 @@ const fs = require('fs');
 // console.log(buf[2]);
 // console.log(buf[4]);
 // console.log(buf.toString());
-const buf = Buffer.from('Hey!')
-let bufcopy = Buffer.alloc(4) //分配 4 个字节。
-buf.copy(bufcopy)
-console.log(bufcopy.toString());
+// const buf = Buffer.from('Hey!')
+// let bufcopy = Buffer.alloc(4) //分配 4 个字节。
+// buf.copy(bufcopy)
+// console.log(bufcopy.toString());
+// const http = require('http');
+// http.get('http://localhost:8000/', (res) => {
+//   const { statusCode } = res;
+//   const contentType = res.headers['content-type'];
+
+//   let error;
+//   // 任何 2xx 状态码都表示成功响应，但这里只检查 200。
+//   if (statusCode !== 200) {
+//     error = new Error('Request Failed.\n' +
+//                       `Status Code: ${statusCode}`);
+//   } else if (!/^application\/json/.test(contentType)) {
+//     error = new Error('Invalid content-type.\n' +
+//                       `Expected application/json but received ${contentType}`);
+//   }
+//   if (error) {
+//     console.error(error.message);
+//     // 消费响应数据以释放内存
+//     res.resume();
+//     return;
+//   }
+//   res.setEncoding('utf8');
+//   let rawData = '';
+//   res.on('data', (chunk) => { rawData += chunk; });
+//   res.on('end', () => {
+//     try {
+//       const parsedData = JSON.parse(rawData);
+//       console.log(parsedData);
+//     } catch (e) {
+//       console.error(e.message);
+//     }
+//   });
+// }).on('error', (e) => {
+//   console.error(`Got error: ${e.message}`);
+// });
+// 创建本地服务器来从其接收数据
+// const server = http.createServer((req, response) => {
+// //   res.writeHead(200, { 'Content-Type': 'application/json' });
+//     response.setHeader('Content-Type', 'text/html');
+//     // response.setHeader('Content-Length', Buffer.byteLength(body));
+//     response.setHeader('Set-Cookie', ['type=ninja', 'language=javascript']);
+//     const contentType = response.getHeader('content-type');
+//     console.log(contentType);
+//     // contentType 是 'text/html'
+//     const contentLength = response.getHeader('Content-Length');
+//     // contentLength 是数字类型
+//     const setCookie = response.getHeader('set-cookie');
+//     console.log(typeof setCookie);
+//     // setCookie 是 string[] 类型
+//     response.end(JSON.stringify({
+//         data: 'Hello World!'
+//     }));
+// });
+// server.listen(8000);
+// const url = require('url');
+// const http = require('http');
+// const server = http.createServer((req, res) => {
+//     let params = url.parse(req.url, true).query;
+//     // console.log('new URL', new URL(req.url, `http://${req.headers.host}`));
+//     console.log(params);
+//     res.end('123')
+// });
+// server.listen(8000);
+// const http = require('http');
+// http.get('http://localhost:8000/', (res) => {
+//   const { statusCode } = res;
+//   const contentType = res.headers['content-type'];
+
+//   let error;
+//   // 任何 2xx 状态码都表示成功响应，但这里只检查 200。
+//   if (statusCode !== 200) {
+//     error = new Error('Request Failed.\n' +
+//                       `Status Code: ${statusCode}`);
+//   } else if (!/^application\/json/.test(contentType)) {
+//     error = new Error('Invalid content-type.\n' +
+//                       `Expected application/json but received ${contentType}`);
+//   }
+//   if (error) {
+//     console.error(error.message);
+//     // 消费响应数据以释放内存
+//     res.resume();
+//     return;
+//   }
+
+//   res.setEncoding('utf8');
+//   let rawData = '';
+//   i = 0
+//   res.on('data', (chunk) => { rawData += chunk;i++; });
+//   res.on('end', () => {
+//     try {
+//       const parsedData = JSON.parse(rawData);
+//       console.log(parsedData);
+//     } catch (e) {
+//       console.error(e.message);
+//     }
+//   });
+// }).on('error', (e) => {
+//   console.error(`Got error: ${e.message}`);
+// });
+
+// // 创建本地服务器来从其接收数据
+// const server = http.createServer((req, res) => {
+//   res.writeHead(200, { 'Content-Type': 'application/json' });
+//   res.end(JSON.stringify({
+//     data: 'Hello World!'
+//   }));
+// });
+
+// server.listen(8000);
