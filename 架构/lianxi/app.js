@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2021-09-06 22:40:22
- * @LastEditTime: 2021-09-21 12:14:36
+ * @LastEditTime: 2021-09-22 15:03:15
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: /tool/前端知识体系/架构/lianxi/app.js
@@ -262,7 +262,7 @@
 // fs.rmdir('./src/b', err => {
 //   console.error(err)
 // })
-const fs = require('fs');
+// const fs = require('fs');
 // fs.remove('./src/b', err => {
 //   console.err(err);
 // })
@@ -366,7 +366,6 @@ const fs = require('fs');
 // http.get('http://localhost:8000/', (res) => {
 //   const { statusCode } = res;
 //   const contentType = res.headers['content-type'];
-
 //   let error;
 //   // 任何 2xx 状态码都表示成功响应，但这里只检查 200。
 //   if (statusCode !== 200) {
@@ -382,7 +381,6 @@ const fs = require('fs');
 //     res.resume();
 //     return;
 //   }
-
 //   res.setEncoding('utf8');
 //   let rawData = '';
 //   i = 0
@@ -398,7 +396,6 @@ const fs = require('fs');
 // }).on('error', (e) => {
 //   console.error(`Got error: ${e.message}`);
 // });
-
 // // 创建本地服务器来从其接收数据
 // const server = http.createServer((req, res) => {
 //   res.writeHead(200, { 'Content-Type': 'application/json' });
@@ -406,5 +403,96 @@ const fs = require('fs');
 //     data: 'Hello World!'
 //   }));
 // });
-
 // server.listen(8000);
+// brew install node
+// nvm install 10.15.3
+// nvm install 10.15.3
+// 官网下载安装包
+// 当程序包提供了可从shell运行的可执行命令并且可以在项目间复用时
+// 当要安装的程序包提供了可在命令行shell运行的可执行命令并且可在项目间复用的时候，应该全局安装，其余情况都应该在项目本地安装。
+// node 安装
+// brew install node
+// nvm install 10
+// 官网下载安装包
+// npm 安装
+// 安装所有依赖
+// npm install
+// 安装某个依赖
+// npm install <package-name>
+// 安装某个依赖的指定版本
+// npm install <package-mame>@<version>
+// 卸载某个依赖
+// npm uninstall <package-name>
+// 按依赖安装时的方式卸载
+// npm uninstall -S <package-name>
+// npm uninstall -D <package-name>
+// npm uninstall -g <package-name>
+// 重装某个依赖
+// npm uninstall <package-name>
+// npm install <package-name>
+// 重装所有依赖
+// rm -rf node_modules && npm cahce clean -force && npm install
+// 发觉软件包新版本
+// npm outdated
+// 更新所有依赖, update永远不会跟新主版本
+// npm update
+// 更新某个依赖
+// npm update <package-name>
+// 更新到主版本
+// npm install -g npm-check-updates
+// ncu -u
+// npm update
+// 投入生产环境，只安装生产依赖
+// npm install --production
+// npm install -g npm-check-updates
+// ncu -u
+// npm update
+// npm outdated
+// npm list
+// npm list -g
+// npm list --depth=0
+// npm list -g --depth=0
+// npm list -g --depth 0
+// npm list <package-name>
+// npm view <package-name> version
+// npm view <package-name> versions
+// npm root -g
+// ./node_modules/.bin/saycow
+// npx cowsay
+// npm root -g
+// const process = require('process');
+// const minimist = require('minimist');
+// process.exit(1);
+// console.log(process.cwd())
+// console.log(process.env.NODE_ENV)
+// console.log(process.argv)
+// console.log(process.argv.slice(2));
+// console.log(process.execArgv);
+// const args = minimist(process.argv.slice(2));
+// console.log(args.a, args.b);
+// const minimist = require('minimist');
+// console.log(minimist(process.argv.slice(2)).a, minimist(process.argv.slice(2)).b);
+// 从给定的path路径中获取信息
+// const path = require('path');
+// const paths = '/users/joe/app.js';
+// console.log(path.dirname(paths));
+// console.log(path.basename(paths));
+// console.log(path.extname(paths));
+// 可以指定basename的第二个参数来去掉文件后缀名
+// console.log(path.basename(paths, path.extname(paths)));
+const path = require('path');
+// console.log(path.normalize('./users/log/../a/b/c//d.js'));
+// console.log(path.join(__dirname, 'b/c.js'));
+// console.log(path.resolve('/b','c.txt','a.js'));
+// console.log(path.relative('/d/c.js', '/a/b/c'));
+// console.log(path.parse('/a/b/c/d/e.js'));
+// const url = {
+//     root: '/',
+//     dir: 'a/b',
+//     base: 'c.js',
+//     ext: '.js',
+//     name: 'e'
+// }
+// console.log(path.format(url));
+// console.log(path.isAbsolute('//bab'));
+console.log(__filename);

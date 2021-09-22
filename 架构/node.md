@@ -1,4 +1,4 @@
-##### node 安装
+##### node 安装（1次）
 
 当安装 Node.js 之后，就可以在命令行中访问 `node` 可执行程序。
 
@@ -6,19 +6,19 @@
 2. `nvm install 10.15.3`
 3. 官网下载安装包
 
-##### npm
+##### npm（1次）
 
 安装
 
-当程序包提供了可从 shell（CLI）运行的可执行命令、且可在项目间复用时，则该程序包应被全局安装。其余情况都应该项目本地安装。
+当要安装的程序包提供了可执行命令且可在项目间复用时，则应全局安装。其余情况都应该在项目本地安装。
 
 ```bash
 # 安装所有依赖
 npm install
-# 安装某个依赖
+# 安装某个依赖	
 npm install <package-name>
 # 安装旧依赖
-npm install <package>@<version>
+npm install <package-name>@<version>
 
 # 删除某个依赖
 npm uninstall <package-name>
@@ -28,8 +28,8 @@ npm uninstall -D <package-name>
 npm uninstall -g <package-name>
 
 # 重装某个依赖
-npm uninstall ant-design-vue
-npm install ant-design-vue@1.4.11
+npm uninstall <package-name>
+npm install <package-name>
 # 重装所有依赖
 rm -rf node_modules && npm cache clean --force && npm install
 
@@ -61,99 +61,52 @@ npm list
 npm list -g
 # 仅获取顶层的软件包（基本上就是告诉 npm 要安装并在 package.json 中列出的软件包）
 npm list --depth=0
+npm list --depth 0
 npm list -g --depth=0
 npm list -g --depth 0
-# 通过指定名称来获取特定软件包的版本, 也适用于安装的软件包的依赖
-npm list cowsay
+# 查看某个软件包版本
+npm list <package-name>
 # 查看软件包在 npm 仓库上最新的可用版本
-npm view [package_name] version
+npm view <package-name> version
 # 列出软件包所有的以前的版本
-npm view <package> versions
+npm view <package-name> versions
 ```
 
 全局 node_modules 位置
 
-`npm root -g` 命令会告知全局安装的 node_modules 在计算机上的确切位置。在 macOS 或 Linux 上，此位置可能是 `/usr/local/lib/node_modules`。 在 Windows 上，可能是 `C:\Users\YOU\AppData\Roaming\npm\node_modules`。使用 `nvm`，则软件包的位置可能为 `/Users/joe/.nvm/versions/node/v8.9.0/lib/node_modules`。
+`npm root -g` 命令会告知全局安装的 node_modules 在计算机上的确切位置。
+
+* 在 macOS 或 Linux 上，此位置可能是 `/usr/local/lib/node_modules`。 
+* 在 Windows 上，可能是 `C:\Users\YOU\AppData\Roaming\npm\node_modules`。
+* 使用 `nvm`，则软件包的位置可能为 `/Users/joe/.nvm/versions/node/v8.9.0/lib/node_modules`。
 
 npm 包是可执行文件时
 
-```bash
-# 全局安装的可执行命令是放在 /usr/local/bin 下，使用 nvm 的话是在 /Users/Joe/.nvm/versions/node/v8.17.0/bin/ 目录下。直接使用命令运行。
+全局安装的可执行命令是放在 `/usr/local/bin` 目录下，使用 `nvm` 的话是在 `/Users/Joe/.nvm/versions/node/v8.17.0/bin/` 目录下，直接使用全局命令运行。
 
-# 本地安装它会把可执行文件放到 node_modules/.bin/ 文件夹下。可以输入来运行它 
-./node_modules/.bin/cowsay 
-# 或者使用 npx 来运行，npx 会找到程序包的位置。
-npx cowsay 
-```
+本地安装它会把可执行文件放到 `node_modules/.bin/`文件夹下。可以输入文件位置来运行它。
 
-##### timer
+`./node_modules/.bin/cowsay`
 
-```js
-// nextTick 早于另外两个，是在当前事件循环的最后执行
-process.nextTick(() => {
-	console.log('nextTick');
-});
-// 延迟 0 毫秒的 setTimeout() 回调与 setImmediate() 非常相似。 执行顺序取决于各种因素，但是它们都会在事件循环的下一个迭代中运行。
-setImmediate(() => {
-  console.log('setImmediate');
-});
-setTimeout(() => {
-  console.log('setTimeout');
-}, 0);
-```
+或者使用 `npx` 来运行，`npx` 会找到程序包的位置。
 
-##### process
+`npx cowsay`
 
-1.从 nodejs 程序退出
+##### process（1次）
 
 ```js
-// 当 Node.js 运行此行代码时，进程会被立即强制终止。
-// 这意味着任何待处理的回调、仍在发送中的任何网络请求、任何文件系统访问、或正在写入 stdout 或 stderr 的进程，所有这些都会被立即非正常地终止。
-process.exit();
-// 可以传入一个整数，向操作系统发送退出码
-// 默认情况下，退出码为 0，表示成功。 不同的退出码具有不同的含义，可以在系统中用于程序与其他程序的通信。
+// 程序退出
+// 当 Node.js 运行此行代码时，进程会被立即强制终止。任何待处理的回调、仍在发送中的任何网络请求、任何文件系统访问、或正在写入 stdout 或 stderr 的进程，所有这些都会被立即非正常地终止。
 process.exit(1);
-// 也可以设置 process.exitCode 属性：
-// 当进程完成所有处理后，程序会正常地退出，Node.js 会返回该退出码
-process.exitCode = 1;
-// SIGTERM 是告诉进程要正常终止的信号。它是从进程管理者（如 upstart 或 supervisord）等发出的信号。
-process.on('SIGTERM', () => {
-  server.close(() => {
-    console.log('进程已终止');
-  });
-});
-// 可以从程序内部另一个函数中、另一个正在运行的 Node.js 程序、或从系统中运行的其他任何的应用程序（能知道要终止的进程的 PID）。发送此信号
-process.kill(process.pid, 'SIGTERM')
-```
 
-2.读取环境变量
+// 当前命令执行的路径，和 linux pwd 命令是一样的。
+process.cwd(); 
 
-```js
-// Node.js 的 process 核心模块提供了 env 属性，该属性承载了在启动进程时设置的所有环境变量。
-// 这是访问 NODE_ENV 环境变量的示例，该环境变量默认情况下被设置为 development。
-// 在脚本运行之前将其设置为 "production"，则可告诉 Node.js 这是生产环境。
+// 环境变量
+// Node.js 的 process 核心模块提供了 env 属性，该属性承载了在启动进程时设置的所有环境变量。默认情况下被设置为 development。
 process.env.NODE_ENV
-```
 
-3.从命令行接收参数
-
-当使用以下命令调用 Node.js 应用程序时，可以传入任意数量的参数：
-
-```bash
-node app.js
-```
-
-参数可以是独立的，也可以具有键和值。这会改变在 Node.js 代码中获取参数值的方式。
-
-```bash
-node app.js joe
-# 或
-node app.js name=joe
-```
-
-获取参数值的方法是使用 Node.js 中内置的 `process` 对象。它公开了 `argv` 属性。
-
-```js
+// 从命令行接收参数
 // argv 属性是一个包含了所有命令行调用参数的数组。
 // 第一个参数是 node 命令的完整路径。
 // 第二个参数是正被执行的文件的完整路径。
@@ -161,39 +114,19 @@ node app.js name=joe
 process.argv // [ '/Users/Joe/.nvm/versions/node/v8.17.0/bin/node', '/Users/Joe/tool/架构/lianxi/app.js' ]
 process.argv0 // node
 process.execPath // /Users/Joe/.nvm/versions/node/v8.17.0/bin/node
-
 // 可以通过创建一个排除了前两个参数的新数组来仅获取其他的参数：
 const args = process.argv.slice(2)
 // node app.js joe
 args[0]; // joe
 // node app.js name=joe
 args[0]; // name=joe
-```
-
-使用 minimist 库来处理参数
-
-```js
+// 使用 minimist 库来处理参数
 // 但是需要在每个参数名称之前使用双破折号 node app.js --name=joe
 const args = require('minimist')(process.argv.slice(2))
 args['name'] // joe
 ```
 
-4.当前命令执行的路径，和 linux pwd 命令是一样的。
-
-```js
-process.cwd();
-```
-
-5.输出到命令行
-
-```js
-// 标准输入输出错误流。
-process.stdin 
-process.stdout 
-process.stderr
-```
-
-##### path
+##### path（1次）
 
 ```js
 // 从路径中获取信息
@@ -202,16 +135,14 @@ const notes = '/users/joe/notes.txt'
 path.dirname(notes) // /users/joe
 path.basename(notes) // notes.txt
 path.extname(notes) // .txt
-// 可以通过为 basename 指定第二个参数来获取不带扩展名的文件名：
+// 可以为 basename 指定第二个参数来获取不带扩展名的文件名：
 path.basename(notes, path.extname(notes)) // notes
 
 // 使用路径
 // 解析和规范化都不会检查路径是否存在。它只是根据获得的信息来计算路径。
-
 // 规范化给定的 path，当包含诸如 .、.. 或双斜杠之类的相对说明符时，会尝试计算实际的路径。
 path.normalize('/users/joe/..//test.txt') // '/users/test.txt'
-// 可以使用 path.join() 连接路径的两个或多个片段
-// 内部调用了normalize使不规范的路径更规范
+// 可以使用 path.join() 连接路径的两个或多个片段，内部调用了normalize使不规范的路径更规范
 const name = 'joe';
 path.join('/', 'users', name, 'notes.txt'); // '/users/joe/notes.txt'
 // 获得相对路径的绝对路径（执行node命令所在的文件夹的绝对路径 + 传入的参数）
@@ -223,7 +154,7 @@ path.resolve('/etc', 'joe.txt') // '/etc/joe.txt'
 // 接受 2 个路径作为参数。 基于当前工作目录，返回从第一个路径到第二个路径的相对路径。
 path.relative('/Users/joe', '/Users/joe/test.txt') //'test.txt'
 path.relative('/Users/joe', '/Users/joe/something/test.txt') //'something/test.txt'
-// path.parse() 将路径解析成对象。
+// 将路径解析成对象。
 path.parse('/home/user/dir/file.txt');
 // 返回:
 // { 
@@ -233,7 +164,7 @@ path.parse('/home/user/dir/file.txt');
 //   ext: '.txt',
 //   name: 'file'
 // }
-// path.format() 将对象解析成路径字符串。与 path.parse() 相反。
+// 将对象解析成路径字符串。与 path.parse() 相反。
 // 如果提供 dir，则忽略 root
 // 如果提供 base，则忽略 ext 和 name
 path.format({
@@ -249,8 +180,7 @@ path.isAbsolute('./test/something') // false
 
 // 各种绝对路径的区别
 // __dirname __filename 总是返回文件的绝对路径
-// process.cwd() 执行node命令所在的文件夹的绝对路径
-// path.resolve('./') 执行node命令所在的文件夹的绝对路径
+// process.cwd() path.resolve('./') 返回执行node命令所在的文件夹的绝对路径
 ```
 
 ##### fs
@@ -855,14 +785,6 @@ Buffer 与流紧密相连。 当流处理器接收数据的速度快于其消化
 
 在传统的方式中，当告诉程序读取文件时，这会将文件从头到尾读入内存，然后进行处理。使用流，则可以逐个片段地读取并处理（而无需全部保存在内存中）。
 
-##### Error
-
-##### events
-
-##### url
-
-##### 模块化
-
 ##### MIME 类型
 
 媒体类型（通常称为 Multipurpose Internet Mail Extensions 或 MIME 类型 ）是一种标准，用来表示文档、文件或字节流的性质和格式。
@@ -1065,7 +987,7 @@ Unicode的编号从`0000`开始一直到`10FFFF`共分为17个Plane，每个Plan
 
 2. 事件循环
 
-3. 使用setTimeout制作setInterval
+3. 使用setTimeout封装setInterval
 
    ```js
    // 利用setTimeout实现setInterval
@@ -1083,3 +1005,29 @@ Unicode的编号从`0000`开始一直到`10FFFF`共分为17个Plane，每个Plan
 4. promise 原理，async/await 原理
 
 5. 错误处理
+
+6. Error
+
+7. events
+
+8. url
+
+9. 模块化
+
+10. timer
+
+    ```js
+    // nextTick 早于另外两个，是在当前事件循环的最后执行
+    process.nextTick(() => {
+    	console.log('nextTick');
+    });
+    // 延迟 0 毫秒的 setTimeout() 回调与 setImmediate() 非常相似。 执行顺序取决于各种因素，但是它们都会在事件循环的下一个迭代中运行。
+    setImmediate(() => {
+      console.log('setImmediate');
+    });
+    setTimeout(() => {
+      console.log('setTimeout');
+    }, 0);
+    ```
+
+11. 
