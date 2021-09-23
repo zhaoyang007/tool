@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2021-09-06 22:40:22
- * @LastEditTime: 2021-09-22 15:03:15
+ * @LastEditTime: 2021-09-23 19:16:33
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: /tool/前端知识体系/架构/lianxi/app.js
@@ -480,7 +480,7 @@
 // console.log(path.extname(paths));
 // 可以指定basename的第二个参数来去掉文件后缀名
 // console.log(path.basename(paths, path.extname(paths)));
-const path = require('path');
+// const path = require('path');
 // console.log(path.normalize('./users/log/../a/b/c//d.js'));
 // console.log(path.join(__dirname, 'b/c.js'));
 // console.log(path.resolve('/b','c.txt','a.js'));
@@ -495,4 +495,192 @@ const path = require('path');
 // }
 // console.log(path.format(url));
 // console.log(path.isAbsolute('//bab'));
-console.log(__filename);
+// console.log(__filename);
+// const fs = require('fs');
+// fs.stat('./lianxi/package.json', (err, stats) => {
+//     if (err) {
+//         console.error(err);
+//         return;
+//     }
+//     console.log(stats.isFile());
+//     console.log(stats.isDirectory());
+//     console.log(stats.size);
+// })
+// fs.readFile('./package.json', (err, data) => {
+//     if (err) {
+//         console.error(err);
+//         return;
+//     }
+//     console.log(JSON.parse(data.toString()).name);
+// })
+// try {
+//     const data = fs.readFileSync('package.json', 'utf-8');
+//     console.log(typeof data);
+// } catch(err) {
+//     console.error(err);
+// }
+// fs.unlink('a.txt', err => {
+//     if (err) throw err;
+// })
+// const fs = require('fs');
+// fs.writeFile('./a.txt', 'bbbb', 'utf8', (err) => {
+//     if (err) throw err;
+//     console.log('写入成功');
+// });
+// try {
+//     fs.writeFileSync('./a.txt', 'ddd', { flag: 'a' });
+//     console.log('写入成功');
+// } catch(err) {
+//     throw err;
+// }
+// fs.appendFile('a.txt', 'ggggg', err => {
+//     if (err) throw err;
+//     console.log('done');
+// })
+// const rs = fs.createReadStream('a.txt');
+// rs.pipe(process.stdout);
+// const ws = fs.createWriteStream('a.txt');
+// ws.write('hhh');
+// ws.write('iii')
+// ws.end();
+// ws.on('finish', () => {
+//     console.log('done!');
+// });
+// fs.access('a.txt', err => {
+//     if (err) {
+//         console.error('不存在');
+//         return;
+//     };
+//     console.log('存在')
+// });
+// try {
+//     fs.accessSync('a.txt');
+//     console.log(a);
+// } catch(err) {
+//     console.error(err);
+// }
+// try {
+//     if (!fs.existsSync('a')) {
+//         fs.mkdirSync('a');
+//     }
+// } catch(err) {
+//     console.error(err);
+// }
+// fs.mkdir('a', err => {
+//     if (err) throw err;
+//     console.log('done');
+// })
+// const path = require('path');
+// // const dir = fs.readdirSync('./src').map(name => path.join('./src', name));
+// const dir = fs.readdirSync('src').filter(name => {
+//     // console.log(name);
+//     return fs.statSync('src/' + name).isFile();
+// });
+// console.log(dir);
+// const fs = require('fs');
+// const fs = require('fs-extra');
+// // fs.rmdirSync('./src/d');
+// fs.remove('./src/c/c.txt', err => {
+//     // if (err) throw err;
+//     console.log('done');
+// })
+// node 安装
+// brew install node
+// nvm install 10
+// 官网下载安装包安装
+// npm 
+// 安装所有依赖
+// npm install
+// 安装某个依赖
+// npm install <package-name>
+// 安装指定版本
+// npm install <package-name>@10.10.2
+// 删除某个依赖
+// npm uninstall <package-name>
+// 按安装方式删除，这样能够修改package.json的内容
+// npm uninstall -S <package-name>
+// npm uninstall -D <package-name>
+// npm uninstall -g <package-name>
+// 重装某个依赖
+// npm uninstall <package-name>
+// npm install <package-name>
+// 重装所有依赖
+// rm -rf node_modules && npm cache clean --force && npm install
+// 发现软件包新版本
+// npm outdated
+// npm outdated
+// 更新某个依赖
+// npm update <package-name>
+// 更新所有依赖
+// npm update
+// npm update
+// npm update <package-name>
+// 永远不会更新主版本
+// 使用 npm-check-updates 可以更新主版本
+// npm install np-check-updates
+// ncu -u
+// npm update
+// 投入生产环境的时候要使用--production来安装线上依赖，默认是开发环境
+// npm install --production
+// 查看npm 软件包版本
+// npm list
+// npm list -g
+// 查看顶层软件包
+// npm list --depth=0
+// npm list --depth 0
+// npm list -g --depth=0
+// npm list -g --depth 0
+// npm list <package-name>
+// 查看软件包在npm上的罪行版本
+// npm view <package-name> version
+// 查看软件包以前的所有版本
+// npm view <package-name> versions
+// 查看全局node_modules软件包的位置
+// npm root -g
+// ./node_modules/.bin/cowsay
+// npx cowsay
+// process
+// 退出进程
+// process.exit(1)
+// 查看当前命令执行的绝对路径，和linux pwd命令是一样的。
+// process.cwd();
+// 获取环境变量
+// process.env.NODE_ENV
+// 从命令行接收参数
+// 第一个参数是node命令的位置，第二个参数是正在执行的文件的位置
+// 从第三个开始才是执行命令传进去的参数
+// console.log(process.execPath);
+// console.log(process.argv.slice(2));
+// 使用minimist库来处理参数
+// 参数前面必须加--
+// const minimist = require('minimist');
+// const args = process.argv.slice(2);
+// console.log(minimist(args));
+// console.log(minimist(args).a);
+// console.log(minimist(args).b);
+// path
+// 从路径中获取信息
+// const path = require('path');
+// const url = '/users/a/b/c.js'
+// console.log(path.dirname(url));
+// console.log(path.basename(url));
+// console.log(path.extname(url));
+// console.log(path.basename(url, path.extname(url)));
+// 使用路径
+const path = require('path');
+// console.log(path.normalize('/a/b/c//../d/e.js'));
+// console.log(path.join('/a', 'b', '../', 'c'));
+// console.log(path.resolve('/a/b/c.js'));
+// console.log(path.relative('a/b', 'c.js'));
+// console.log(path.parse('./a/b/c/d/e.js'));
+// let url = {
+//     root: '../',
+//     // dir: '/a/b/c',
+//     name: 'd',
+//     ext: '.js'
+// }
+// console.log(path.format(url));
+// console.log(path.isAbsolute('/'));
+__dirname
+process.cwd()
+path.resolve()

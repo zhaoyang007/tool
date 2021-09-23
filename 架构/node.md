@@ -1,4 +1,4 @@
-##### node 安装（1次）
+##### node 安装（2次）
 
 当安装 Node.js 之后，就可以在命令行中访问 `node` 可执行程序。
 
@@ -6,7 +6,7 @@
 2. `nvm install 10.15.3`
 3. 官网下载安装包
 
-##### npm（1次）
+##### npm（2次）
 
 安装
 
@@ -26,20 +26,18 @@ npm uninstall <package-name>
 npm uninstall -S <package-name>
 npm uninstall -D <package-name>
 npm uninstall -g <package-name>
+# 删除所有依赖
+rm -rf node_modules && npm cache clean --force
 
-# 重装某个依赖
-npm uninstall <package-name>
-npm install <package-name>
-# 重装所有依赖
-rm -rf node_modules && npm cache clean --force && npm install
+# 重装：先删除再安装
 
 # 发觉软件包的新版本
 npm outdated
 
-# 更新所有依赖，update永远不会更新主版本
-npm update
 # 更新某个依赖
 npm update <package-name>
+# 更新所有依赖，update永远不会更新主版本
+npm update
 
 # 将所有软件包更新到新的主版本，则全局安装 npm-check-updates 软件包
 npm install -g npm-check-updates
@@ -56,6 +54,8 @@ npm install --production
 查看安装的 npm 软件包版本 
 
 ```bash
+# 查看某个软件包版本
+npm list <package-name>
 # 查看所有已安装的 npm 软件包（包括它们的依赖包）的版本
 npm list
 npm list -g
@@ -64,8 +64,7 @@ npm list --depth=0
 npm list --depth 0
 npm list -g --depth=0
 npm list -g --depth 0
-# 查看某个软件包版本
-npm list <package-name>
+
 # 查看软件包在 npm 仓库上最新的可用版本
 npm view <package-name> version
 # 列出软件包所有的以前的版本
@@ -92,7 +91,7 @@ npm 包是可执行文件时
 
 `npx cowsay`
 
-##### process（1次）
+##### process（2次）
 
 ```js
 // 程序退出
@@ -112,21 +111,20 @@ process.env.NODE_ENV
 // 第二个参数是正被执行的文件的完整路径。
 // 所有其他的参数从第三个位置开始。
 process.argv // [ '/Users/Joe/.nvm/versions/node/v8.17.0/bin/node', '/Users/Joe/tool/架构/lianxi/app.js' ]
-process.argv0 // node
-process.execPath // /Users/Joe/.nvm/versions/node/v8.17.0/bin/node
 // 可以通过创建一个排除了前两个参数的新数组来仅获取其他的参数：
-const args = process.argv.slice(2)
+const args = process.argv.slice(2);
 // node app.js joe
 args[0]; // joe
 // node app.js name=joe
 args[0]; // name=joe
 // 使用 minimist 库来处理参数
 // 但是需要在每个参数名称之前使用双破折号 node app.js --name=joe
-const args = require('minimist')(process.argv.slice(2))
+const minimist = require('minimist');
+const args = minimist(process.argv.slice(2));
 args['name'] // joe
 ```
 
-##### path（1次）
+##### path（2次）
 
 ```js
 // 从路径中获取信息
@@ -153,7 +151,6 @@ path.resolve('tmp', 'joe.txt') // '/Users/joe/tmp/joe.txt'
 path.resolve('/etc', 'joe.txt') // '/etc/joe.txt'
 // 接受 2 个路径作为参数。 基于当前工作目录，返回从第一个路径到第二个路径的相对路径。
 path.relative('/Users/joe', '/Users/joe/test.txt') //'test.txt'
-path.relative('/Users/joe', '/Users/joe/something/test.txt') //'something/test.txt'
 // 将路径解析成对象。
 path.parse('/home/user/dir/file.txt');
 // 返回:
@@ -183,37 +180,25 @@ path.isAbsolute('./test/something') // false
 // process.cwd() path.resolve('./') 返回执行node命令所在的文件夹的绝对路径
 ```
 
-##### fs
+##### fs（1次）
 
 文件
 
 ```js
-// 文件描述符
-// 在与位于文件系统中的文件进行交互之前，需要先获取文件的描述符。
-// fs.open() 调用的第二个参数：
-// r+ 打开文件用于读写。
-// w+ 打开文件用于读写，将流定位到文件的开头。如果文件不存在则创建文件。
-// a 打开文件用于写入，将流定位到文件的末尾。如果文件不存在则创建文件。
-// a+ 打开文件用于读写，将流定位到文件的末尾。如果文件不存在则创建文件。
-fs.open('/Users/joe/test.txt', 'r', (err, fd) => {
-  // fd 是文件描述符。
-});
-
 // 文件属性
 // 每个文件都带有一组详细信息，可以使用 fs.stat() 方法查看。
 fs.stat('/Users/joe/test.txt', (err, stats) => {
   if (err) {
-    console.error(err)
-    return
+    console.error(err);
+    return;
   }
- 	stats.isFile() //true
-  stats.isDirectory() //false
-  stats.isSymbolicLink() //false
-  stats.size //1024000字节 //= 1MB
+ 	stats.isFile(); //true
+  stats.isDirectory(); //false
+  stats.size; //1024000字节 //= 1MB
 });
 
 // 读取文件
-// fs.readFile() 和 fs.readFileSync() 都会在返回数据之前将文件的全部内容读取到内存中。这意味着大文件会对内存的消耗和程序执行的速度产生重大的影响。在这种情况下，更好的选择是使用流来读取文件的内容。
+// fs.readFile() 会将文件的全部内容读取到内存中再返回数据。这意味着大文件会对内存的消耗和程序执行的速度产生重大的影响。更好的选择是使用流来读取文件的内容。
 fs.readFile('/Users/joe/test.txt', 'utf8', (err, data) => {
   if (err) {
     console.error(err);
@@ -230,7 +215,7 @@ try {
 }
 
 // 写入文件
-// 所有这些方法都是在将全部内容写入文件之后才会将控制权返回给程序（在异步的版本中，这意味着执行回调）。在这种情况下，更好的选择是使用流写入文件的内容。
+// 将全部内容写入文件之后才会将控制权返回给程序。更好的选择是使用流写入文件的内容。
 const content = 'this is a text';
 fs.writeFile('/Users/joe/test.txt', content, 'utf8', (err) => {
   if (err) throw err; // 阻止程序运行，把错误消息打印到控制台
@@ -243,51 +228,37 @@ try {
 } catch(err) {
   console.error(err);
 }
-// 默认情况下，上面两个 API 会替换文件的内容（如果文件已经存在）。
-// 可以通过指定标志来修改默认的行为：
-fs.writeFile('/Users/joe/test.txt', content, { flag: 'a+' }, err => {})
-// 可能会使用的标志有：
-// r+ 打开文件用于读写。
-// w+ 打开文件用于读写，将流定位到文件的开头。如果文件不存在则创建文件。
-// a 打开文件用于写入，将流定位到文件的末尾。如果文件不存在则创建文件。
-// a+ 打开文件用于读写，将流定位到文件的末尾。如果文件不存在则创建文件。
-// 将内容追加到文件末尾的便捷方法
 fs.appendFile('file.log', content, err => {
   if (err) {
-    console.error(err)
-    return
+    console.error(err);
+    return;
   }
-  //完成！
-})
+  console.log('写入文件成功！');
+});
 
-// 创建可读的文件流。跟readFile是很像的，但是比readFile实现的更加优雅
+// 创建可读的文件流。
 const rs = fs.createReadStream('./test.js');
 rs.pipe(process.stdout);
-
 // 创建可写的文件流
 const ws = fs.createWriteStream('./src/test.txt');
-ws.write('hahahaha!');
+ws.write('aaa');
+ws.write('bbb');
 ws.end();
 ws.on('finish', () => {
   console.log('done!');
-});
-
-// 删除文件
-fs.unlink('./text.txt', err => {
-  if (err) throw err;
 });
 ```
 
 文件夹
 
 ```js
-// 检查文件夹是否存在
-// 使用 fs.access() 检查文件夹是否存在以及 Node.js 是否具有访问权限。
-fs.access();
-
-// 创建新的文件夹
+// 创建文件夹
 // 使用 fs.mkdir() 或 fs.mkdirSync() 可以创建新的文件夹。
 const folderName = '/Users/joe/test';
+fs.mkdir(folderName, err => {
+    if (err) throw err;
+    console.log('done');
+})
 try {
   if (!fs.existsSync(folderName)) {
     fs.mkdirSync(folderName)
@@ -299,63 +270,18 @@ try {
 // 读取目录内容
 // 使用 fs.readdir() 或 fs.readdirSync() 可以读取目录的内容。
 // 这段代码会读取文件夹的内容（全部的文件和子文件夹），并返回它们的相对路径：
-const folderPath = '/Users/joe';
-fs.readdirSync(folderPath);
+fs.readdirSync('/Users/joe');
 // 可以获取完整的路径
-fs.readdirSync(folderPath).map(fileName => {
+fs.readdirSync('/Users/joe').map(fileName => {
   return path.join(folderPath, fileName)
 })
-// 也可以过滤结果以仅返回文件（排除文件夹）：
+// 仅返回文件（排除文件夹）：
 const isFile = fileName => {
   return fs.lstatSync(fileName).isFile()
 }
 fs.readdirSync(folderPath).map(fileName => {
   return path.join(folderPath, fileName)
-})
-.filter(isFile);
-
-// 重命名文件夹
-// 使用 fs.rename() 或 fs.renameSync() 可以重命名文件夹。 第一个参数是当前的路径，第二个参数是新的路径：
-fs.rename('/Users/joe', '/Users/roger', err => {
-  if (err) throw err;
-  console.log('done!')
-});
-// 同步版本
-try {
-  fs.renameSync('/Users/joe', '/Users/roger')
-} catch (err) {
-  console.error(err)
-}
-
-// 删除文件夹
-// 使用 fs.rmdir() 或 fs.rmdirSync() 可以删除文件夹。只能删除空文件夹
-// 删除包含内容的文件夹可能会更复杂。
-// 在这种情况下，最好安装 fs-extra 模块，该模块非常受欢迎且维护良好。 它是 fs 模块的直接替代品，在其之上提供了更多的功能。
-// npm install fs-extra
-const fs = require('fs-extra');
-const folder = '/Users/joe';
-fs.remove(folder, err => {
-  console.error(err);
-})
-// 使用 promise
-fs.remove(folder)
-  .then(() => {
-    //完成
-  })
-  .catch(err => {
-    console.error(err)
-  })
-// 使用 async/await
-async function removeFolder(folder) {
-  try {
-    await fs.remove(folder)
-    //完成
-  } catch (err) {
-    console.error(err)
-  }
-}
-const folder = '/Users/joe'
-removeFolder(folder)
+}).filter(isFile);
 ```
 
 ##### http

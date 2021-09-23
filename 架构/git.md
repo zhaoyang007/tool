@@ -145,9 +145,7 @@ rebase, merge 区别：rebase 把提交线变成直线。
 
 ##### 每次 pull 和 push 的时候都要输入密码
 
-方法一：`git config --global credential.helper store`
-
-方法二：将私钥添加到钥匙串 `ssh-add -K ~/.ssh/id_rsa`
+将私钥添加到钥匙串 `ssh-add -K ~/.ssh/id_rsa`
 
 ##### git svn 对比
 
