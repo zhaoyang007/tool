@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2021-09-06 22:40:22
- * @LastEditTime: 2021-09-23 19:16:33
+ * @LastEditTime: 2021-09-25 21:36:08
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: /tool/前端知识体系/架构/lianxi/app.js
@@ -667,7 +667,7 @@
 // console.log(path.extname(url));
 // console.log(path.basename(url, path.extname(url)));
 // 使用路径
-const path = require('path');
+// const path = require('path');
 // console.log(path.normalize('/a/b/c//../d/e.js'));
 // console.log(path.join('/a', 'b', '../', 'c'));
 // console.log(path.resolve('/a/b/c.js'));
@@ -681,6 +681,257 @@ const path = require('path');
 // }
 // console.log(path.format(url));
 // console.log(path.isAbsolute('/'));
-__dirname
-process.cwd()
-path.resolve()
+// __dirname
+// process.cwd()
+// path.resolve()
+// const http = require('http');
+// http.get('http://localhost:8000/', (res) => {
+//   const { statusCode } = res;
+//   const contentType = res.headers['content-type'];
+
+//   let error;
+//   // 任何 2xx 状态码都表示成功响应，但这里只检查 200。
+//   if (statusCode !== 200) {
+//     error = new Error('Request Failed.\n' +
+//                       `Status Code: ${statusCode}`);
+//   } else if (!/^application\/json/.test(contentType)) {
+//     error = new Error('Invalid content-type.\n' +
+//                       `Expected application/json but received ${contentType}`);
+//   }
+//   if (error) {
+//     console.error(error.message);
+//     // 消费响应数据以释放内存
+//     res.resume();
+//     return;
+//   }
+
+//   res.setEncoding('utf8');
+//   let rawData = '';
+//   res.on('data', (chunk) => { rawData += chunk; });
+//   res.on('end', () => {
+//     try {
+//       const parsedData = JSON.parse(rawData);
+//       console.log(parsedData);
+//     } catch (e) {
+//       console.error(e.message);
+//     }
+//   });
+// }).on('error', (e) => {
+//   console.error(`Got error: ${e.message}`);
+// });
+
+// // 创建本地服务器来从其接收数据
+// const server = http.createServer((req, res) => {
+//   res.writeHead(200, { 'Content-Type': 'application/json' });
+//   res.end(JSON.stringify({
+//     data: 'Hello World!'
+//   }));
+// });
+
+// server.listen(8000);
+// const http = require('http');
+// const server = http.createServer((req, res) => {
+//     res.statusCode = 200;
+//     res.setHeader('Content-Type', 'text/plain');
+//     res.end('Hello World!');
+// });
+// const hostname = '127.0.0.1';
+// const port = 8000;
+// server.listen(port, hostname, () => {
+//     console.log(`server is listening at ${hostname}:${port}`);
+// });
+// const http = require('http');
+// const server = http.createServer((req, res) => {
+//     let data = '';
+//     req.on('data', chunk => {
+//         data += chunk;
+//     });
+//     req.on('end', () => {
+//         console.log('server recived data:', JSON.parse(data).msg);
+//     });
+//     res.end('hello world2222');
+// })
+// server.listen(8000);
+
+
+// const postData = JSON.stringify({
+//     msg: 'hello world'
+// });
+// const options = {
+//     hostname: 'localhost',
+//     port: 8000,
+//     path: '/',
+//     methods: 'GET',
+//     headers: {
+//         'Content-Type': 'application/json',
+//         'Content-Length': Buffer.byteLength(postData),
+//     }
+// }
+// const request = http.request(options, res => {
+//     console.log(`STATUS: ${res.statusCode}`);
+//     console.log(`HEADERS: ${JSON.stringify(res.headers)}`);
+//     // res.setEncoding('utf8');
+//     res.on('data', chunk => {
+//         console.log(`send request recived data: ${chunk}`);
+//     });
+//     res.on('end', () => {
+//         console.log('响应数据接收成功');
+//     });
+// });
+// request.on('error', err => {
+//     console.error(err.message);
+// });
+// // 将请求数据写入请求正文
+// request.write(postData);
+// request.end();
+// const http = require('http');
+// http.get('http://localhost:8000/', res => {
+//     const { statusCode } = res;
+//     const contentType = res.headers['Content-Type'];
+//     let error;
+//     if (statusCode !== 200) {
+//         error = new Error('Request Failed.\n' + `Status Code: ${statusCode}`);
+//     } else if (!/^application\/json/.test(contentType)) {
+//         error = new Error('Invalid content-type.\n' + `Expected application/json but received ${contentType}`);
+//     }
+//     if (error) {
+//         console.error(error.message);
+//         res.resume();
+//         return;
+//     }
+//     res.setEncoding('utf8');
+//     let data = '';
+//     res.on('data', chunk => {
+//         data += chunk;
+//     });
+//     res.on('end', () => {
+//         try {
+//             console.log(JSON.parse(data));
+//         } catch(err) {
+//             console.error(err.message);
+//         }
+//     });
+// }).on('error', err => {
+//     console.error(err);
+// });
+
+// http.createServer((req, res) => {
+//     res.writeHead(200, {
+//         'Content-Type': 'application/json'
+//     });
+//     res.end(JSON.stringify({
+//         data: 'hello world'
+//     }));
+// });
+// http.listen(8000);
+// res.setHeader('Content-Type', 'application/json');
+// res.getHeader('content-type')
+// res.getHeaderNames();
+// res.getHeaders();
+// res.hasHeader('Content-Type')
+// res.removeHeader('Content-Type')
+// res.statusCode = 200
+// res.statusMessage = 'Not Found'
+// request.url
+// request.method
+// request.headers
+// request.statusCode
+// request.statusMessage
+// request.setEncoding('utf8')
+// request.on('data', chunk => {
+
+// });
+// request.on('end', () => {
+
+// });
+// const http = require('http');
+// const qs = require('querystring');
+// const data = JSON.stringify({a: '456'});
+// const options = {
+//     hostname: 'localhost',
+//     port: 8000,
+//     url: '/',
+//     method: 'POST',
+//     header: {
+//         'Content-Type': 'application/json',
+//         'Content-Length': Buffer.byteLength(data)
+//     }
+// }
+// const req = http.request(options, res => {
+
+// })
+// req.write(data)
+// req.end();
+// const server = http.createServer((req, res) => {
+//     req.setEncoding('utf8')
+//     let postdata = '';
+//     let a = ''
+//     // if (req.method === 'POST') {
+//         req.on('data', chunk => {
+//             postdata += chunk;
+//         });
+//         req.on('end', () => {
+//             console.log(postdata);
+//             a = JSON.parse(postdata).a;
+            
+//         });
+//     // }
+//     // const a = JSON.parse(postdata) || '123';
+//     res.end(a || '123');
+// });
+// server.listen(8000);
+// node 安装
+// 1.brew install node
+// 2.nvm install 10
+// 3.官网下载安装包安装
+// npm 
+// npm install <package-name>
+// npm install
+// npm install <package-name>@10.0.1
+// npm uninstall <package-name>
+// rm -rf node_modules && npm cache clean --force
+// npm outdated
+// npm update
+// npm install -g npm-check-updates
+// ncu -u
+// npm update
+// npm install --production
+// npm list
+// npm list -g
+// npm list --depth 0
+// npm list -g --depth=0
+// npm view <package-name> version
+// npm view <package-name> versions
+// npm root -g
+// ./node_modules/.bin/cowsay
+// npx cowsay
+// process.exit(1)
+// process.cwd()
+// process.env.NODE_ENV
+// process.argv
+// npm install minimist
+// const minimist = require('minimist');
+// args = minimist(process.argv.slice(2));
+// node app.js --a=1 --b=2
+// args.a = 1
+// args.b = 2;
+// const path = require('path')
+// console.log(path.normalize('/a/b/c/d/..//e'));
+// console.log(path.join('a', 'b', '..', 'b', 'b'));
+// console.log(path.resolve('a', '/b', 'c'));
+// console.log(path.relative('a/', 'a/b'));
+// console.log(path.parse('/a/b/c/d.js'));
+// const url = {
+//     root: '/q/v',
+//     dir: 'a/c',
+//     base: 'a/b.js',
+
+// }
+// console.log(path.format(url));
+// console.log(path.isAbsolute('a'));
+// const path = require('path')
+// const url = '/a/b/c/d.js'
+// console.log(path.dirname(url));
+// console.log(path.basename(url));
+// console.log(path.extname(url));
+// console.log(path.basename(url, path.extname(url)));

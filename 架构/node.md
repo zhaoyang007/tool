@@ -1,4 +1,4 @@
-##### node 安装（2次）
+##### node 安装（3次）
 
 当安装 Node.js 之后，就可以在命令行中访问 `node` 可执行程序。
 
@@ -6,7 +6,7 @@
 2. `nvm install 10.15.3`
 3. 官网下载安装包
 
-##### npm（2次）
+##### npm（3次）
 
 安装
 
@@ -15,6 +15,8 @@
 ```bash
 # 安装所有依赖
 npm install
+# 只安装生产环境依赖
+npm install --production
 # 安装某个依赖	
 npm install <package-name>
 # 安装旧依赖
@@ -46,9 +48,6 @@ ncu -u
 # 这会升级 package.json 文件的 dependencies 和 devDependencies 中的所有版本，以便 npm 可以安装新的主版本。
 # 再运行更新
 npm update
-
-# 当投入生产环境时，需要设置 --production 标志，以避免安装开发依赖项。
-npm install --production
 ```
 
 查看安装的 npm 软件包版本 
@@ -91,7 +90,7 @@ npm 包是可执行文件时
 
 `npx cowsay`
 
-##### process（2次）
+##### process（3次）
 
 ```js
 // 程序退出
@@ -124,7 +123,7 @@ const args = minimist(process.argv.slice(2));
 args['name'] // joe
 ```
 
-##### path（2次）
+##### path（3次）
 
 ```js
 // 从路径中获取信息
@@ -284,25 +283,7 @@ fs.readdirSync(folderPath).map(fileName => {
 }).filter(isFile);
 ```
 
-##### http
-
-`http.METHODS`
-
-此属性列出了所有支持的 HTTP 方法
-
-`http.STATUS_CODES`
-
-此属性列出了所有的 HTTP 状态代码及其描述
-
-`http.globalAgent`
-
-Agent 的全局实例，用作所有 HTTP 客户端请求的默认值。
-
-用于管理 HTTP 客户端连接的持久性和复用，它是 Node.js HTTP 网络的关键组件。
-
-`http.maxHeaderSize`
-
-只读属性，HTTP 头的最大允许大小（以字节为单位）。默认为 8 KB。 
+##### http（1次）
 
 `http.createServer([options][, requestListener])`
 
@@ -316,7 +297,7 @@ Agent 的全局实例，用作所有 HTTP 客户端请求的默认值。
 * `requestListener` <Function>
 * 返回:  <http.Server>
 
-`requestListener` 会自动添加到 'request' 事件，每当接收到新的请求时，`request` 事件会被调用，并提供两个对象：一个请求（[`http.IncomingMessage`](http://nodejs.cn/api/http.html#http_class_http_incomingmessage) 对象）和一个响应（[`http.ServerResponse`](http://nodejs.cn/api/http.html#http_class_http_serverresponse) 对象）。
+`requestListener` 会自动添加到 'request' 事件，每当接收到新的请求时，`request` 事件会被调用，并提供两个对象：一个请求 `http.IncomingMessage` 对象和一个响应 `http.ServerResponse` 对象。
 
 `request` 提供了请求的详细信息。 通过它可以访问请求头和请求数据。
 
@@ -332,7 +313,7 @@ const server = http.createServer((req, res) => {
 const hostname = '127.0.0.1';
 const port = 9527;
 server.listen(port, host, () => {
-	console.log(`serve is listening on ${hostname}:${port}`);
+	console.log(`serve is listening at ${hostname}:${port}`);
 });
 ```
 
@@ -340,79 +321,55 @@ server.listen(port, host, () => {
 
 `http.request(url[, options][, callback])`
 
+- `url` <string> | <URL>
+- `options` <Object>
+  - `hostname` <string> `host` 的别名。 为了支持 `url.parse()`，如果同时指定了 `host` 和 `hostname`，则将使用 `hostname`。
+  - `port` <number> 远程服务器的端口。 默认值: 如果有设置则为 `defaultPort`，否则为 `80`。
+  - `path` <string> 请求的路径。 应包括查询字符串（如果有）。 例如 `'/index.html?page=12'`。 当请求路径包含非法字符时抛出异常。 目前，只有空格被拒绝，但将来可能会改变。默认值: `'/'`。
+  - `method` <string> 指定 HTTP 请求方法的字符串。默认值: `'GET'`。
+  - `headers` <Object> 包含请求头的对象。
+- `callback` <Function>
+- 返回 <http.ClientRequest> 可写流
+
 发送 HTTP 请求到服务器，创建 http.ClientRequest 类的实例并返回，http.ClientRequest 的实例是可写流。如果需要使用 POST 请求上传文件，则写入 `ClientRequest` 对象。
 
-可选的 `callback` 参数将被添加为 `'response'` 事件的单次监听器。使用单个参数（[`http.IncomingMessage`](http://nodejs.cn/api/http.html#http_class_http_incomingmessage) 的实例）调用。
+`url` 可以是字符串或 `URL` 对象。 如果 `url` 是字符串，则会自动使用 `new URL()` 解析。 如果是 `URL` 对象，则会自动转换为普通的 `options` 对象。如果同时指定了 `url` 和 `options`，则合并对象，`options` 属性优先。
+
+`callback` 参数将被添加为 `'response'` 事件的单次监听器。使用单个参数（`http.IncomingMessage` 的实例）调用。
 
 使用 `http.request()` 必须始终调用 `req.end()` 来表示请求的结束 - 即使没有数据写入请求正文。
 
 如果在请求期间遇到任何错误（无论是 DNS 解析、TCP 级别错误还是实际的 HTTP 解析错误），都会在返回的请求对象上触发 `'error'` 事件。 与所有 `'error'` 事件一样，如果没有注册监听器，则会抛出错误。
 
-- `url` <string> | <URL>
-- `options` <Object>
-  - `agent` <http.Agent> | <boolean> 控制 `Agent`的行为。 可能的值：
-    - `undefined`（默认）: 为此主机和端口使用 [`http.globalAgent`](http://nodejs.cn/api/http.html#http_http_globalagent)。
-    - `Agent` 对象: 显式使用传入的 `Agent`。
-    - `false`: 使用具有默认值的新 `Agent`。
-  - `auth` <string> 基本身份验证，即 `'user:password'` 计算授权标头。
-  - `createConnection` <function> 当不使用 `agent` 选项时，生成用于请求的套接字/流的函数。 这可用于避免创建自定义 `Agent` 类只是为了覆盖默认的 `createConnection` 函数。 有关详细信息，请参阅 [`agent.createConnection()`](http://nodejs.cn/api/http.html#http_agent_createconnection_options_callback)。 任何 [`Duplex`](http://nodejs.cn/api/stream.html#stream_class_stream_duplex) 流都是有效的返回值。
-  - `defaultPort` <number> 协议的默认端口。 **默认值:** 如果使用 `Agent` 则为 `agent.defaultPort`，否则为 `undefined`。
-  - `family` <number>  解析 `host` 或 `hostname` 时要使用的 IP 地址族。 有效值为 `4` 或 `6`。 当未指定时，则将使用 IP v4 和 v6。
-  - `headers` <Object> 包含请求头的对象。
-  - `hints` <number> 可选的 [`dns.lookup()` 提示](http://nodejs.cn/api/dns.html#dns_supported_getaddrinfo_flags)。
-  - `host` <string> 要向其发出请求的服务器的域名或 IP 地址。 **默认值:** `'localhost'`。
-  - `hostname` <string> `host` 的别名。 为了支持 [`url.parse()`](http://nodejs.cn/api/url.html#url_url_parse_urlstring_parsequerystring_slashesdenotehost)，如果同时指定了 `host` 和 `hostname`，则将使用 `hostname`。
-  - `insecureHTTPParser` <boolean> 使用不安全的 HTTP 解析器，当为 `true` 时接受无效的 HTTP 标头。 应避免使用不安全的解析器。 有关详细信息，请参阅 [`--insecure-http-parser`](http://nodejs.cn/api/cli.html#cli_insecure_http_parser)。 **默认值:** `false`
-  - `localAddress` <string> 用于绑定网络连接的本地接口。
-  - `localPort` <number> 连接的本地端口。
-  - `lookup` <Function> 自定义查找函数。 **默认值:** [`dns.lookup()`](http://nodejs.cn/api/dns.html#dns_dns_lookup_hostname_options_callback).
-  - `maxHeaderSize` <number> 可选地覆盖从此服务器接收到的请求的 [`--max-http-header-size`](http://nodejs.cn/api/cli.html#cli_max_http_header_size_size) 值，即响应头的最大长度（以字节为单位）。 **默认值:** 16384 (16 KB).
-  - `method` <string> 指定 HTTP 请求方法的字符串。 **默认值:** `'GET'`。
-  - `path` <string> 请求的路径。 应包括查询字符串（如果有）。 例如 `'/index.html?page=12'`。 当请求路径包含非法字符时抛出异常。 目前，只有空格被拒绝，但将来可能会改变。 **默认值:** `'/'`。
-  - `port` <number> 远程服务器的端口。 **默认值:** 如果有设置则为 `defaultPort`，否则为 `80`。
-  - `protocol` <string> 要使用的协议。 **默认值:** `'http:'`。
-  - `setHost` <boolean> 指定是否自动添加 `Host` 标头。 默认为 `true`。
-  - `socketPath` <string> Unix 域套接字（如果指定了 `host` 或 `port` 之一，则不能使用，因为其指定了 TCP 套接字）。
-  - `timeout` <number> 指定套接字超时的数值（以毫秒为单位）。 这将在连接套接字之前设置超时。
-  - `signal` <AbortSignal> 可用于中止正在进行的请求的中止信号。
-- `callback` <Function>
-- 返回 <http.ClientRequest> 可写流
-
 ```js
 const http = require('http');
-
 const postData = JSON.stringify({
-  'msg': 'Hello World!'
+  msg: 'Hello World!'
 });
-
 const options = {
-  hostname: 'www.google.com',
-  port: 80,
-  path: '/upload',
+  hostname: '127.0.0.1',
+  port: 8000,
+  path: '/',
   method: 'POST',
   headers: {
     'Content-Type': 'application/json',
     'Content-Length': Buffer.byteLength(postData)
   }
 };
-
 const request = http.request(options, (res) => {
-  console.log(`STATUS: ${res.statusCode}`);
-  console.log(`HEADERS: ${JSON.stringify(res.headers)}`);
   res.setEncoding('utf8');
-  res.on('data', (chunk) => {
-    console.log(`BODY: ${chunk}`);
+  let data = '';
+  res.on('data', chunk => {
+    data += chunk;
   });
   res.on('end', () => {
-    console.log('No more data in response.');
+    console.log(data);
   });
 });
-
-request.on('error', (e) => {
-  console.error(`problem with request: ${e.message}`);
+request.on('error', err => {
+  console.error(err);
 });
-
-// 将数据写入请求正文
+// 将请求数据写入请求正文
 request.write(postData);
 request.end();
 ```
@@ -425,15 +382,13 @@ request.end();
 
 ```js
 const http = require('http');
-http.get('http://localhost:8000/', (res) => {
+http.get('http://localhost:8000/', res => {
   const { statusCode } = res;
   const contentType = res.headers['content-type'];
-
   let error;
   // 任何 2xx 状态码都表示成功响应，但这里只检查 200。
   if (statusCode !== 200) {
-    error = new Error('Request Failed.\n' +
-                      `Status Code: ${statusCode}`);
+    error = new Error('Request Failed.\n' + `Status Code: ${statusCode}`);
   } else if (!/^application\/json/.test(contentType)) {
     error = new Error('Invalid content-type.\n' +
                       `Expected application/json but received ${contentType}`);
@@ -444,22 +399,19 @@ http.get('http://localhost:8000/', (res) => {
     res.resume();
     return;
   }
-
   res.setEncoding('utf8');
-  let rawData = '';
-  res.on('data', (chunk) => { rawData += chunk; });
+  let data = '';
+  res.on('data', chunk => { data += chunk; });
   res.on('end', () => {
     try {
-      const parsedData = JSON.parse(rawData);
-      console.log(parsedData);
-    } catch (e) {
-      console.error(e.message);
+      console.log(JSON.parse(data));
+    } catch (err) {
+      console.error(err.message);
     }
   });
-}).on('error', (e) => {
-  console.error(`Got error: ${e.message}`);
+}).on('error', err => {
+  console.error(err);
 });
-
 // 创建本地服务器来从其接收数据
 const server = http.createServer((req, res) => {
   res.writeHead(200, { 'Content-Type': 'application/json' });
@@ -467,7 +419,6 @@ const server = http.createServer((req, res) => {
     data: 'Hello World!'
   }));
 });
-
 server.listen(8000);
 ```
 
@@ -497,51 +448,24 @@ Node.js 会创建 http.Agent 类的全局实例，以管理 HTTP 客户端连接
 
 * 继承自: <Stream> 可写流
 
-此对象由 HTTP 服务器内部 http.Server 创建，而不是由用户创建。 并作为第二个参数传给 [`'request'`](http://nodejs.cn/api/http.html#http_event_request) 事件。
+此对象由 HTTP 服务器内部 http.Server 创建，而不是由用户创建。 并作为第二个参数传给 `'request'` 事件。
 
-header
+Headers
 
 ```js
-// response.getHeader(name)
-// 读取已排队但未发送到客户端的标头。该名称不区分大小写。返回值的类型取决于提供给 response.setHeader() 的参数。
 response.setHeader('Content-Type', 'text/html');
 response.setHeader('Set-Cookie', ['type=ninja', 'language=javascript']);
+
 response.getHeader('content-type'); // 'text/html'
 response.getHeader('set-cookie'); // ['type=ninja', 'language=javascript']
 
-// response.getHeaderNames()
-// 返回当前传出标头的数组，所有标头名称均为小写。
-response.setHeader('Foo', 'bar');
-response.setHeader('Set-Cookie', ['foo=bar', 'bar=baz']);
-response.getHeaderNames(); // ['foo', 'set-cookie']
+response.getHeaderNames(); // ['Content-Type', 'set-cookie']
 
-// response.getHeaders()
-// 返回当前传出标头的浅拷贝。 
-response.setHeader('Foo', 'bar');
-response.setHeader('Set-Cookie', ['foo=bar', 'bar=baz']);
-response.getHeaders(); // { foo: 'bar', 'set-cookie': ['foo=bar', 'bar=baz'] }
+response.getHeaders(); // { 'content-type': 'text/html', 'set-cookie': ['type=ninja', 'language=javascript'] }
 
-// response.hasHeader(name)
+response.hasHeader('Content-Type') // true
 
-// response.removeHeader(name)
-// 删除排队等待隐式发送的标头。
-response.removeHeader('Content-Encoding');
-
-// response.req
-// 对原始的 HTTP request 对象的引用。
-
-// response.setHeader(name, value)
-// 为隐式标头设置单个标头值。
-response.setHeader('Content-Type', 'text/html');
-response.setHeader('Set-Cookie', ['type=ninja', 'language=javascript']);
-// 当标头已使用 response.setHeader() 设置时，则它们将与任何传给 response.writeHead() 的标头合并，其中传给 response.writeHead() 的标头优先。
-const server = http.createServer((req, res) => {
-  res.setHeader('Content-Type', 'text/html');
-  res.setHeader('X-Foo', 'bar');
-  res.writeHead(200, { 'Content-Type': 'text/plain' });
-  res.end('ok');
-});
-// 如果调用了 response.writeHead() 方法而该方法没有被调用，则会直接将提供的标头值写入网络通道，而不进行内部缓存，标头的 response.getHeader() 不会产生预期的结果。 如果希望在将来可能进行检索和修改时逐步填充标头，则使用 response.setHeader() 而不是 response.writeHead()。
+response.removeHeader('Content-Type');
 ```
 
 response.statusCode
@@ -600,24 +524,11 @@ response.end(\[data\[, encoding]][, callback])
 IncomingMessage 对象由 http.Server 或 http.ClientRequest 创建，并分别作为第一个参数传给 'request' 和 'response' 事件。 它可用于访问响应状态、标头和数据。
 
 ```js
-request.headers
-// 标头名称和值的键值对。 标头名称是小写的。
-
 request.url
-// 仅适用于从 http.Server 获得的请求。
-// 请求的网址字符串。
-
 request.method
-// 仅适用于从 http.Server 获得的请求。
-// 请求方法作为字符串。 只读。 示例：'GET'、'DELETE'。
-
+request.headers
 request.statusCode
-// 仅对从 http.ClientRequest 获得的响应有效。
-// 3 位 HTTP 响应状态码。 例如 `404`。
-
 request.statusMessage
-// 仅对从 http.ClientRequest 获得的响应有效。
-// HTTP 响应状态消息（原因短语）。
 ```
 
 继承自 <stream.Readable> 的重要属性：
@@ -640,7 +551,7 @@ readable.setEncoding(encoding);
 
 ```js
 const readable = getReadableStreamSomehow();
-readable.on('data', (chunk) => {
+readable.on('data', chunk => {
   console.log(`Received ${chunk.length} bytes of data.`);
 });
 ```
