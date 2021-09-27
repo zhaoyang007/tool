@@ -1,4 +1,4 @@
-##### node 安装（3次）
+##### node 安装（5次）
 
 当安装 Node.js 之后，就可以在命令行中访问 `node` 可执行程序。
 
@@ -6,7 +6,7 @@
 2. `nvm install 10.15.3`
 3. 官网下载安装包
 
-##### npm（3次）
+##### npm（5次）
 
 安装
 
@@ -90,7 +90,7 @@ npm 包是可执行文件时
 
 `npx cowsay`
 
-##### process（3次）
+##### process（5次）
 
 ```js
 // 程序退出
@@ -123,7 +123,7 @@ const args = minimist(process.argv.slice(2));
 args['name'] // joe
 ```
 
-##### path（3次）
+##### path（5次）
 
 ```js
 // 从路径中获取信息
@@ -179,7 +179,7 @@ path.isAbsolute('./test/something') // false
 // process.cwd() path.resolve('./') 返回执行node命令所在的文件夹的绝对路径
 ```
 
-##### fs（1次）
+##### fs（2次）
 
 文件
 
@@ -195,6 +195,14 @@ fs.stat('/Users/joe/test.txt', (err, stats) => {
   stats.isDirectory(); //false
   stats.size; //1024000字节 //= 1MB
 });
+try {
+    const stats = fs.statSync("a.txt");
+    console.log(stats.isFile());
+    console.log(stats.isDirectory());
+    console.log(stats.size);
+} catch(err) {
+    console.error(err);
+}
 
 // 读取文件
 // fs.readFile() 会将文件的全部内容读取到内存中再返回数据。这意味着大文件会对内存的消耗和程序执行的速度产生重大的影响。更好的选择是使用流来读取文件的内容。
@@ -205,7 +213,6 @@ fs.readFile('/Users/joe/test.txt', 'utf8', (err, data) => {
   }
   console.log(data);
 });
-// 同步版本
 try {
 	const data = fs.readFileSync('/Users/joe/test.txt', 'utf8');
   console.log(data);
@@ -220,7 +227,6 @@ fs.writeFile('/Users/joe/test.txt', content, 'utf8', (err) => {
   if (err) throw err; // 阻止程序运行，把错误消息打印到控制台
   console.log('写入文件成功！');
 });
-// 同步版本
 try {
   fs.writeFileSync('/Users/joe/test.txt', content, 'utf8');
   console.log('写入文件成功！');
@@ -243,44 +249,35 @@ const ws = fs.createWriteStream('./src/test.txt');
 ws.write('aaa');
 ws.write('bbb');
 ws.end();
-ws.on('finish', () => {
-  console.log('done!');
-});
 ```
 
 文件夹
 
 ```js
 // 创建文件夹
-// 使用 fs.mkdir() 或 fs.mkdirSync() 可以创建新的文件夹。
-const folderName = '/Users/joe/test';
-fs.mkdir(folderName, err => {
+fs.mkdir('/Users/joe/test', err => {
     if (err) throw err;
     console.log('done');
 })
 try {
-  if (!fs.existsSync(folderName)) {
-    fs.mkdirSync(folderName)
+  if (!fs.existsSync('/Users/joe/test')) {
+    fs.mkdirSync('/Users/joe/test')
   }
 } catch (err) {
   console.error(err)
 }
 
 // 读取目录内容
-// 使用 fs.readdir() 或 fs.readdirSync() 可以读取目录的内容。
-// 这段代码会读取文件夹的内容（全部的文件和子文件夹），并返回它们的相对路径：
-fs.readdirSync('/Users/joe');
-// 可以获取完整的路径
-fs.readdirSync('/Users/joe').map(fileName => {
-  return path.join(folderPath, fileName)
-})
-// 仅返回文件（排除文件夹）：
-const isFile = fileName => {
-  return fs.lstatSync(fileName).isFile()
+// 会读取文件夹的内容，返回全部的文件和子文件夹的相对路径
+fs.readdir('src', (err, files) => {
+  if (err) throw err;
+  console.log(files);
+});
+try {
+  const files = fs.readdirSync('src');
+} catch(err) {
+	console.error(err);
 }
-fs.readdirSync(folderPath).map(fileName => {
-  return path.join(folderPath, fileName)
-}).filter(isFile);
 ```
 
 ##### http（1次）
@@ -290,18 +287,18 @@ fs.readdirSync(folderPath).map(fileName => {
 创建 http 服务器并返回。
 
 * options <Object>
-  * `IncomingMessage`  <http.IncomingMessage> 指定要使用的` IncomingMessage` 类。 用于扩展原始的 `IncomingMessage`。 默认值: `IncomingMessage`。
-  * `ServerResponse` <http.ServerResponse> 指定要使用的 `ServerResponse` 类。 用于扩展原始的 `ServerResponse`。 默认值: `ServerResponse`。
-  * `insecureHTTPParser` <boolean> 使用不安全的 HTTP 解析器，当为 true 时接受无效的 HTTP 标头。 应避免使用不安全的解析器。 有关详细信息，请参阅 --insecure-http-parser。 默认值: false
-  * `maxHeaderSize` <number> 可选地覆盖此服务器接收到的请求的 --max-http-header-size 值，即请求头的最大长度（以字节为单位）。 默认值: 16384 (16 KB)。
-* `requestListener` <Function>
+  * IncomingMessage  <http.IncomingMessage> 指定要使用的 IncomingMessage 类。 用于扩展原始的 IncomingMessage。 默认值: IncomingMessage。
+  * ServerResponse <http.ServerResponse> 指定要使用的 ServerResponse 类。 用于扩展原始的 ServerResponse。 默认值: ServerResponse。
+  * insecureHTTPParser <boolean> 使用不安全的 HTTP 解析器，当为 true 时接受无效的 HTTP 标头。 应避免使用不安全的解析器。 有关详细信息，请参阅 --insecure-http-parser。 默认值: false
+  * maxHeaderSize <number> 可选地覆盖此服务器接收到的请求的 --max-http-header-size 值，即请求头的最大长度（以字节为单位）。 默认值: 16384 (16 KB)。
+* requestListener <Function>
 * 返回:  <http.Server>
 
-`requestListener` 会自动添加到 'request' 事件，每当接收到新的请求时，`request` 事件会被调用，并提供两个对象：一个请求 `http.IncomingMessage` 对象和一个响应 `http.ServerResponse` 对象。
+requestListener 会自动添加到 'request' 事件，每当接收到新的请求时，'request' 事件会被调用，并提供两个对象：一个请求 http.IncomingMessage 对象和一个响应 http.ServerResponse 对象。
 
-`request` 提供了请求的详细信息。 通过它可以访问请求头和请求数据。
+request 提供了请求的详细信息。 通过它可以访问请求头和请求数据。
 
-`response` 构造要返回的数据给客户端。
+response 构造要返回的数据给客户端。
 
 ```js
 const http = require('http');
@@ -321,28 +318,27 @@ server.listen(port, host, () => {
 
 `http.request(url[, options][, callback])`
 
-- `url` <string> | <URL>
-- `options` <Object>
-  - `hostname` <string> `host` 的别名。 为了支持 `url.parse()`，如果同时指定了 `host` 和 `hostname`，则将使用 `hostname`。
-  - `port` <number> 远程服务器的端口。 默认值: 如果有设置则为 `defaultPort`，否则为 `80`。
-  - `path` <string> 请求的路径。 应包括查询字符串（如果有）。 例如 `'/index.html?page=12'`。 当请求路径包含非法字符时抛出异常。 目前，只有空格被拒绝，但将来可能会改变。默认值: `'/'`。
-  - `method` <string> 指定 HTTP 请求方法的字符串。默认值: `'GET'`。
-  - `headers` <Object> 包含请求头的对象。
-- `callback` <Function>
+- url <string> | <URL>
+- options <Object>
+  - hostname <string> host 的别名。 为了支持 url.parse()，如果同时指定了 host 和 hostname，则将使用 hostname。
+  - port <number> 远程服务器的端口。 默认值: 如果有设置则为 defaultPort，否则为 80。
+  - path <string> 请求的路径。 应包括查询字符串（如果有）。 例如 '/index.html?page=12'。 当请求路径包含非法字符时抛出异常。 目前，只有空格被拒绝，但将来可能会改变。默认值: '/'。
+  - method <string> 指定 HTTP 请求方法的字符串。默认值: 'GET'。
+  - headers <Object> 包含请求头的对象。
+- callback <Function>
 - 返回 <http.ClientRequest> 可写流
 
-发送 HTTP 请求到服务器，创建 http.ClientRequest 类的实例并返回，http.ClientRequest 的实例是可写流。如果需要使用 POST 请求上传文件，则写入 `ClientRequest` 对象。
+发送 HTTP 请求到服务器，创建 http.ClientRequest 类的实例并返回，http.ClientRequest 的实例是可写流。如果需要使用 POST 请求上传文件，则写入 ClientRequest 对象。
 
-`url` 可以是字符串或 `URL` 对象。 如果 `url` 是字符串，则会自动使用 `new URL()` 解析。 如果是 `URL` 对象，则会自动转换为普通的 `options` 对象。如果同时指定了 `url` 和 `options`，则合并对象，`options` 属性优先。
+url 可以是字符串或 URL 对象。 如果 url 是字符串，则会自动使用 new URL() 解析。 如果是 URL 对象，则会自动转换为普通的 options 对象。如果同时指定了 url 和 options，则合并对象，options 属性优先。
 
-`callback` 参数将被添加为 `'response'` 事件的单次监听器。使用单个参数（`http.IncomingMessage` 的实例）调用。
+callback 参数将被添加为 'response' 事件的单次监听器。使用单个参数（http.IncomingMessage 的实例）调用。
 
-使用 `http.request()` 必须始终调用 `req.end()` 来表示请求的结束 - 即使没有数据写入请求正文。
+使用 http.request() 必须始终调用 req.end() 来表示请求的结束 - 即使没有数据写入请求正文。
 
-如果在请求期间遇到任何错误（无论是 DNS 解析、TCP 级别错误还是实际的 HTTP 解析错误），都会在返回的请求对象上触发 `'error'` 事件。 与所有 `'error'` 事件一样，如果没有注册监听器，则会抛出错误。
+如果在请求期间遇到任何错误（无论是 DNS 解析、TCP 级别错误还是实际的 HTTP 解析错误），都会在返回的请求对象上触发 'error' 事件。 与所有 'error' 事件一样，如果没有注册监听器，则会抛出错误。
 
 ```js
-const http = require('http');
 const postData = JSON.stringify({
   msg: 'Hello World!'
 });
@@ -356,7 +352,7 @@ const options = {
     'Content-Length': Buffer.byteLength(postData)
   }
 };
-const request = http.request(options, (res) => {
+const request = http.request(options, res => {
   res.setEncoding('utf8');
   let data = '';
   res.on('data', chunk => {
@@ -378,10 +374,9 @@ request.end();
 
 `http.get(url[, options][, callback])`
 
-由于大多数请求是没有正文的 GET 请求，因此 Node.js 提供了这个便捷的方法。 此方法与 `http.request()` 的唯一区别在于，它将方法设置为 GET 并自动调用 `req.end()`。
+由于大多数请求是没有正文的 GET 请求，因此 Node.js 提供了这个便捷的方法。 此方法与 http.request() 的唯一区别在于，它将方法设置为 GET 并自动调用 req.end()。
 
 ```js
-const http = require('http');
 http.get('http://localhost:8000/', res => {
   const { statusCode } = res;
   const contentType = res.headers['content-type'];
@@ -440,7 +435,7 @@ Node.js 会创建 http.Agent 类的全局实例，以管理 HTTP 客户端连接
 
 - 继承自: <Stream> 可写流
 
-此对象从 `http.request()` 内部创建并返回。 它表示正在进行的请求。
+此对象从 http.request() 内部创建并返回。 它表示正在进行的请求。
 
 当响应被接收时，则会使用响应（http.IncomingMessage 实例作为参数）来调用 response 事件。
 
@@ -448,7 +443,7 @@ Node.js 会创建 http.Agent 类的全局实例，以管理 HTTP 客户端连接
 
 * 继承自: <Stream> 可写流
 
-此对象由 HTTP 服务器内部 http.Server 创建，而不是由用户创建。 并作为第二个参数传给 `'request'` 事件。
+此对象由 HTTP 服务器内部 http.Server 创建，而不是由用户创建。 并作为第二个参数传给 'request' 事件。
 
 Headers
 
@@ -482,40 +477,40 @@ response.statusMessage = 'Not found';
 
 response.writeHead(statusCode\[, statusMessage][, headers])
 
-- `statusCode` <number>
-- `statusMessage` <string>
-- `headers` <Object> | <Array>
+- statusCode <number>
+- statusMessage <string>
+- headers <Object> | <Array>
 - 返回: <http.ServerResponse>
 
-向请求发送响应头。 状态码是 3 位的 HTTP 状态码，如 `404`。 最后一个参数 `headers` 是响应头。 可选地给定人类可读的 `statusMessage` 作为第二个参数。
+向请求发送响应头， 状态码，状态消息。
 
-此方法只能在消息上调用一次，并且必须在调用 [`response.end()`](http://nodejs.cn/api/http.html#http_response_end_data_encoding_callback) 之前调用。
+此方法只能在消息上调用一次，并且必须在调用 response.end() 之前调用。
 
 response.write(chunk\[, encoding][, callback])
 
-- `chunk` <string> | <Buffer>
-- `encoding` <string> 默认值: `'utf8'`
-- `callback` <Function>
+- chunk <string> | <Buffer>
+- encoding <string> 默认值: 'utf8'
+- callback <Function>
 - 返回: <boolean>
 
 这会发送一块响应正文。 可以多次调用此方法以提供正文的连续部分。
 
-在 `http` 模块中，当请求是 HEAD 请求时，响应正文会被省略。 同样，`204` 和 `304` 响应不得包含消息正文。
+在 http 模块中，当请求是 HEAD 请求时，响应正文会被省略。 同样，204 和 304 响应不得包含消息正文。
 
-`chunk` 可以是字符串或缓冲区。 如果 `chunk` 是字符串，则第二个参数指定如何将其编码为字节流。 当刷新数据块时将调用 `callback`。
+chunk 可以是字符串或缓冲区。 如果 chunk 是字符串，则第二个参数指定如何将其编码为字节流。 当刷新数据块时将调用 callback。
 
 response.end(\[data\[, encoding]][, callback])
 
-- `data` <string> | <Buffer>
-- `encoding` <string> 
-- `callback` <Function>
+- data <string> | <Buffer>
+- encoding <string> 
+- callback <Function>
 - 返回: <this>
 
-此方法向服务器发出信号，表明所有响应头和正文都已发送；该服务器应认为此消息已完成。 `response.end()` 方法必须在每个响应上调用。
+此方法向服务器发出信号，表明所有响应头和正文都已发送；该服务器应认为此消息已完成。 response.end() 方法必须在每个响应上调用。
 
-如果指定了 `data`，则其效果类似于调用 `response.write(data, encoding)` 后跟 `response.end(callback)`。
+如果指定了 data，则其效果类似于调用 response.write(data, encoding) 后跟 response.end(callback)。
 
-如果指定了 `callback`，则将在响应流完成时调用。
+如果指定了 callback，则将在响应流完成时调用。
 
 `http.IncomingMessage`
 
@@ -524,11 +519,11 @@ response.end(\[data\[, encoding]][, callback])
 IncomingMessage 对象由 http.Server 或 http.ClientRequest 创建，并分别作为第一个参数传给 'request' 和 'response' 事件。 它可用于访问响应状态、标头和数据。
 
 ```js
-request.url
-request.method
+request.url // 仅适用于从 http.Server 获得的请求。
+request.method // 仅适用于从 http.Server 获得的请求。
 request.headers
-request.statusCode
-request.statusMessage
+request.statusCode // 仅对从 http.ClientRequest 获得的响应有效。
+request.statusMessage // 仅对从 http.ClientRequest 获得的响应有效。
 ```
 
 继承自 <stream.Readable> 的重要属性：
@@ -543,11 +538,11 @@ readable.setEncoding(encoding);
 
 继承自 <stream.Readable> 的重要事件：
 
-`'data'` 事件
+'data' 事件
 
-- `chunk` <Buffer> | <string> | <any> 数据块。 对于不在对象模式下操作的流，块将是字符串或 `Buffer`。 对于处于对象模式的流，块可以是除 `null` 之外的任何 JavaScript 值。
+- chunk <Buffer> | <string> | <any> 数据块。 对于不在对象模式下操作的流，块将是字符串或 Buffer。 对于处于对象模式的流，块可以是除 null 之外的任何 JavaScript 值。
 
-每当流将数据块的所有权移交给消费者时，则会触发 `'data'` 事件。
+每当流将数据块的所有权移交给消费者时，则会触发 'data' 事件。
 
 ```js
 const readable = getReadableStreamSomehow();
@@ -556,11 +551,11 @@ readable.on('data', chunk => {
 });
 ```
 
-`'end'` 事件
+'end' 事件
 
-当流中没有更多数据可供消费时，则会触发 `'end'` 事件。
+当流中没有更多数据可供消费时，则会触发 'end' 事件。
 
-除非数据被完全地消费，否则不会触发 `'end'` 事件。
+除非数据被完全地消费，否则不会触发 'end' 事件。
 
 ```js
 const readable = getReadableStreamSomehow();

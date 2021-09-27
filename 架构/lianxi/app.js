@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2021-09-06 22:40:22
- * @LastEditTime: 2021-09-25 21:36:08
+ * @LastEditTime: 2021-09-27 11:30:16
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: /tool/前端知识体系/架构/lianxi/app.js
@@ -935,3 +935,267 @@
 // console.log(path.basename(url));
 // console.log(path.extname(url));
 // console.log(path.basename(url, path.extname(url)));
+// node 安装
+// brew install node
+// nvm install 10
+// 官网下载安装包
+// npm 安装依赖
+// npm install <package-name>
+// npm install <package-name>@10.9.2
+// npm install -S <package-name>
+// npm install -D <package-name>
+// npm install -g <package-name>
+// npm install
+// npm install --production
+// npm uninstall <package-name>
+// npm uninstall -S <package-name>
+// npm uninstall -D <package-name>
+// npm uninstall -g <package-name>
+// rm -rf node_modules && npm cache clean --force
+// npm update <package-name>
+// npm undate
+// npm install -g npm-check-updates
+// ncu -u
+// npm update
+// npm outdated
+// npm list
+// npm list -g
+// npm list --depth=0
+// npm list -g --depth 0
+// npm list <package-name>
+// npm view <package-name> version
+// npm view <package-name> versions
+// npm root -g
+// ./node_modules/.bin/cowsay
+// npx cowsay
+// process.exit(1)
+// process.cwd()
+// process.env.NODE_ENV
+// console.log(process.argv);
+// const minimist = require('minimist');
+// console.log(minimist(process.argv.slice(2)));
+// 参数需要加--
+// path
+// 从路径中获取信息
+// const path = require('path')
+// const url = '/a/b/c/d.js'
+// console.log(path.dirname(url));
+// console.log(path.basename(url));
+// console.log(path.extname(url));
+// console.log(path.basename(url, path.extname(url)));
+// 使用路径
+// console.log(path.normalize('/a/b/c/d//e/..//f.js'));
+// console.log(path.join('a','/b', 'c'));
+// console.log(path.resolve('a', 'b', 'b'));
+// console.log(path.resolve('c', 'd'));
+// console.log(path.parse('/a/b/c/d.js'));
+// const url = {
+//     root: '/',
+//     // dir: '/a/b',
+//     // base: 'c.js',
+//     name: 'c',
+//     ext: '.js'
+// }
+// console.log(path.format(url));
+// console.log(path.relative('/a', '/a/b.js'));
+// console.log(path.isAbsolute("a"));
+// __dirname __filename
+// process.cwd()
+// path.resolve();
+// console.log(path.resolve());
+// const fs = require('fs');
+// fs.stat('/a/b/c/d', (err, stat) => {
+//     if (err) {
+//         console.error(err);
+//         return;
+//     }
+//     console.log(stat.isFile());
+//     console.log(stat.isDirectory());
+//     console.log(stat.size);
+// })
+// fs.readFile('a.txt', 'utf8', (err, data) => {
+//     if (err) {
+//         console.error(err);
+//         return;
+//     }
+//     console.log(data);
+// });
+// try {
+//     const data = fs.readFileSync('a.txt', 'utf8');
+//     console.log(data);
+// } catch(err) {
+//     console.error(err);
+// }
+// fs.writeFile('a.txt', 'bbb', 'utf8', err => {
+//     if (err) {
+//         console.error(err);
+//         return;
+//     }
+//     console.log(data);
+// })
+// try {
+//     fs.writeFileSync('a.txt', 'aaa', 'utf8');
+//     console.log(data);
+// } catch(err) {
+//     console.error(err);
+// }
+// fs.appendFile('a.txt', content, err => {
+//     if (err) {
+//         console.error(err);
+//         return
+//     }
+//     console.log('写入文件成功！');
+// })
+// const rs = fs.createReadStream('a.txt');
+// rs.pipe(process.stdout);
+// const ws = fs.createWriteStream('a.txt');
+// ws.write('aaa')
+// ws.write('bbb')
+// ws.end();
+// ws.on('finish', () => {
+//     console.log('done');
+// })
+// const fs = require('fs');
+// fs.stat('a.txt', (err, stats) => {
+//     console.log(stats.isFile());
+//     console.log(stats.isDirectory());
+//     console.log(stats.size);
+// })
+// try {
+//     const stats = fs.statSync("a.txt");
+//     console.log(stats.isFile());
+//     console.log(stats.isDirectory());
+//     console.log(stats.size);
+// } catch(err) {
+//     console.error(err);
+// }
+// const fs = require('fs');
+// fs.readFile('a.txt', 'utf8', (err, data) => {
+//     if (err) {
+//         console.error(err);
+//         return;
+//     }
+//     console.log(data);
+// })
+// try {
+//     const data = fs.readFileSync('a.txt', 'utf8')
+//     console.log(data);
+// } catch(err) {
+//     console.error(err);
+// }
+// const fs = require('fs');
+// fs.writeFile('b.txt', 'ccc', 'utf8', (err, data) => {
+//     if (err) throw err;
+//     console.log('write done!');
+// });
+// try {
+//     fs.writeFileSync('b.txt', '好的', 'utf8');
+//     console.log('write done!');
+// } catch(err) {
+//     console.error(err);
+// }
+// fs.appendFile('b.txt', 'ddd', 'utf8', (err, data) => {
+//     if (err) throw err;
+//     console.log('append done!');
+// });
+// const fs = require('fs');
+// const rs = fs.createReadStream('a.txt');
+// rs.pipe(process.stdout);
+// const ws = fs.createWriteStream('c.txt');
+// ws.write('a')
+// ws.write('b')
+// ws.write('c')
+// ws.end();
+// ws.on('finish', ()=> {
+//     console.log('done!');
+// })
+// const fs = require("fs");
+// if (!fs.existsSync('f')) {
+//     fs.mkdir('f', err => {
+//         if (err) throw err;
+//         console.log('done');
+//     })
+// }
+// try {
+//     if (!fs.existsSync('e')) {
+//         fs.mkdirSync('e');
+//     } 
+// } catch(err) {
+//     console.log(1);
+//     // console.error(err);
+//     throw err
+// }
+// const fs = require('fs');
+// fs.readdir('src', (err, files) => {
+//     if (err) throw err;
+//     console.log(files);
+// });
+// try {
+//     const files = fs.readdirSync('src').map(file => {
+//         return path.join('src', file)
+//     }).filter(file => {
+//         return fs.statSync(file).isFile();
+//     });
+//     console.log(files);
+// } catch(err) {
+//     console.error();
+// }
+// node安装
+// brew install node
+// nvm install 10
+// 官网下载安装包
+// npm
+// npm install
+// npm install --production
+// npm install <package-name>
+// npm install <package-name>@<version>
+// npm install -g <package-name>
+// npm install -S <package-name>
+// npm install -D <package-name>
+// npm uninstall <package-name>
+// npm uninstall -g <package-name>
+// npm uninstall -S <package-name>
+// npm uninstall -D <package-name>
+// rm -rf node_modules && npm cache clean --force
+// npm update
+// npm update <package-name>
+// npm outdated
+// npm install -g npm-check-updates
+// ncu -u
+// npm update
+// npm list
+// npm list -g
+// npm list --depth 0
+// npm list <package-name>
+// npm list -g --depth=0
+// npm view <package-name> version
+// npm view <package-name> versions
+// npm root
+// npm root -g
+// ./node_modules/.bin/cowsay
+// npx cowsay
+// process.exit(1)
+// process.cwd();
+// process.env.NODE_ENV
+// process.argv
+// npm install minimist
+// const minimist = require('minimist');
+// console.log(minimist(process.argv.slice(2)));
+// console.log(process.argv);
+// path
+// const path = require('path');
+// console.log(path.normalize('a/b/c/..//d/e///f.js'));
+// console.log(path.join('a', '/b'));
+// console.log(path.resolve('a', '/b'));
+// console.log(path.relative('a', 'a/b.js'));
+// console.log(path.isAbsolute('/a'));
+// console.log(path.parse('/a/b/bc/c/d.js'));
+// console.log(path.format({
+//     dir: '/a/b',
+//     base: '/../c.js',
+// }));
+// const path = require('path')
+// console.log(__dirname);
+// console.log(__filename);
+// console.log(process.cwd());
+// console.log(path.resolve());
