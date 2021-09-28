@@ -1,4 +1,4 @@
-##### node 安装（5次）
+##### node 安装（6次）
 
 当安装 Node.js 之后，就可以在命令行中访问 `node` 可执行程序。
 
@@ -6,7 +6,7 @@
 2. `nvm install 10.15.3`
 3. 官网下载安装包
 
-##### npm（5次）
+##### npm（6次）
 
 安装
 
@@ -90,7 +90,7 @@ npm 包是可执行文件时
 
 `npx cowsay`
 
-##### process（5次）
+##### process（6次）
 
 ```js
 // 程序退出
@@ -123,7 +123,7 @@ const args = minimist(process.argv.slice(2));
 args['name'] // joe
 ```
 
-##### path（5次）
+##### path（6次）
 
 ```js
 // 从路径中获取信息
@@ -179,7 +179,7 @@ path.isAbsolute('./test/something') // false
 // process.cwd() path.resolve('./') 返回执行node命令所在的文件夹的绝对路径
 ```
 
-##### fs（2次）
+##### fs（3次）
 
 文件
 
@@ -223,7 +223,7 @@ try {
 // 写入文件
 // 将全部内容写入文件之后才会将控制权返回给程序。更好的选择是使用流写入文件的内容。
 const content = 'this is a text';
-fs.writeFile('/Users/joe/test.txt', content, 'utf8', (err) => {
+fs.writeFile('/Users/joe/test.txt', content, 'utf8', err => {
   if (err) throw err; // 阻止程序运行，把错误消息打印到控制台
   console.log('写入文件成功！');
 });

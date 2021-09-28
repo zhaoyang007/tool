@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2021-09-06 22:40:22
- * @LastEditTime: 2021-09-27 11:30:16
+ * @LastEditTime: 2021-09-28 18:52:07
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: /tool/前端知识体系/架构/lianxi/app.js
@@ -1199,3 +1199,147 @@
 // console.log(__filename);
 // console.log(process.cwd());
 // console.log(path.resolve());
+// node安装
+// brew install node
+// nvm install 10
+// 官网下载安装包
+// npm
+// npm install
+// npm install --production
+// npm install <package-name>
+// npm install <package-name>@10.0.1
+// npm install -g <package-name>
+// npm install -S <package-name>
+// npm install -D <package-name>
+// npm uninstall <package-name>
+// npm uninstall -g <package-name>
+// npm uninstall -S <package-name>
+// npm uninstall -D <package-name>
+// rm -rf node_modules && npm cache clean --force
+// npm install
+// npm update
+// npm outdated
+// npm update <package-name>
+// npm install -g npm-check-updates
+// ncu -u
+// npm update
+// npm list
+// npm list -g
+// npm list --depth=0
+// npm list -g --depth 0
+// npm view <package-name> version
+// npm view <package-name> versions
+// npm root
+// npm root -g
+// ./node_modules/.bin/cowsay
+// npx cowsay
+// process
+// process.exit(1)
+// process.cwd()
+// process.env.NODE_ENV
+// process.argv
+// npm install minimist
+// const minimist = require('minimist')
+// console.log(minimist(process.argv.slice(2)));
+// path
+// const path = require('path')
+// console.log(path.normalize('a/b/c./d./../e/f./g.js'));
+// console.log(path.join('a', 'b', 'c', 'd.js'));
+// console.log(path.resolve('a', 'b'));
+// console.log(path.relative('a/b', 'c/b'));
+// console.log(path.isAbsolute('.'));
+// console.log(path.parse('a/b/c/d.js'));
+// console.log(path.format({
+//     dir: 'a/b',
+//     base: 'c.js'
+// }));
+// console.log(__dirname);
+// console.log(__filename);
+// console.log(process.cwd());
+// console.log(path.resolve());
+// fs
+// const fs = require('fs');
+// fs.stat('a.txt', (err, stats) => {
+//     if (err) {
+//         console.error(err);
+//         return;
+//     }
+//     console.log(stats.isFile());
+//     console.log(stats.isDirectory());
+//     console.log(stats.size);
+// })
+// try {
+//     const stats = fs.statSync('a.txt');
+//     console.log(stats.isFile());
+//     console.log(stats.isDirectory());
+//     console.log(stats.size);
+// } catch(err) {
+//     console.error(err);
+// }
+// fs.readFile('a.txt', 'utf8', (err, data) => {
+//     if (err) {
+//         console.error(err);
+//         return;
+//     }
+//     console.log(data);
+// })
+// try {
+//     const data = fs.readFileSync('a.txt', 'utf-8');
+//     console.log(data);
+// } catch(err) {
+//     console.error(err);
+// }
+// const fs = require('fs');
+// fs.writeFile('a.txt', '的', (err, data) => {
+//     if (err) {
+//         console.error(err);
+//         return;
+//     }
+//     console.log('done');
+// })
+// try {
+//     fs.writeFileSync('a.txt', 'bbb')
+//     console.log('done');
+// } catch(err) {
+//     console.error(err);
+// }
+// fs.appendFile('a.txt', 'ccc', 'utf8', err => {
+//     if (err) throw err;
+//     console.log('append done');
+// })
+// try {
+//     fs.appendFile('a.txt', 'fff', 'utf8')
+//     console.log('done');
+// } catch(err) {
+//     console.error(err);
+// }
+// const rs = fs.createReadSteam('a.txt');
+// rs.pipe(process.stdout)
+// const fs = require('fs');
+// const rs = fs.createReadStream('a.txt');
+// rs.pipe(process.stdout)
+// const ws = fs.createWriteStream('a.txt');
+// ws.write('1');
+// ws.write('2');
+// ws.write('3');
+// ws.end();
+// const fs = require('fs');
+// fs.mkdir('h', err => {
+//     if (err) throw err;
+//     console.log('done');
+// })
+// try {
+//     if (!fs.existsSync('i')) {
+//         fs.mkdirSync('i');
+//         console.log('done2');
+//     }
+    
+// } catch(err) {
+//     console.error(err);
+// }
+// const fs = require('fs')
+// // console.log(fs.existsSync('a.txt'));
+// fs.readdir('src', (err, files) => {
+//     if (err) throw err;
+//     console.log(files.map(file => fs.statSync('src/'+file).isFile()));
+// });
