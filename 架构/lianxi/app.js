@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2021-09-06 22:40:22
- * @LastEditTime: 2021-09-28 18:52:07
+ * @LastEditTime: 2021-09-30 11:30:34
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: /tool/前端知识体系/架构/lianxi/app.js
@@ -1343,3 +1343,227 @@
 //     if (err) throw err;
 //     console.log(files.map(file => fs.statSync('src/'+file).isFile()));
 // });
+// fs
+// const fs = require('fs');
+// fs.stat('a.txt', (err, stats) => {
+//     if (err) throw err;
+//     console.log(stats.isFile());
+//     console.log(stats.isDirectory());
+//     console.log(stats.size);
+// });
+// try {
+//     const stats = fs.statSync('a.txt');
+//     console.log(stats.isFile());
+//     console.log(stats.isDirectory());
+//     console.log(stats.size);
+// } catch(err) {
+//     console.error(err);
+// }
+// fs.readFile('a.txt', 'utf8', (err, data) => {
+//     if (err) throw err;
+//     console.log(file);
+// });
+// try {
+//     const data = fs.readFileSync('a.txt', 'utf8');
+//     console.log(file);
+// } catch(err) {
+//     console.error(err);
+// }
+// fs.writeFile('a.txt', 'aaa', 'utf8', err => {
+//     if (err) throw err;
+//     console.log('done!');
+// })
+// try {
+//     fs.writeFileSync('a.txt', 'ccc', 'utf8')
+//     console.log('done');
+// } catch(err) {
+//     console.error(err);
+// }
+// fs.writeFile('a.txt', 'ddd', 'utf8')
+// fs.appendFile('d.txt', 'bbb', 'utf8', err => {
+//     if (err) throw err;
+//     console.log('append done!');
+// })
+// try {
+//     fs.appendFileSync('a.txt', 'eee', 'utf8')
+//     console.log('done');
+// } catch(err) {
+//     console.error(err);
+// }
+// const rs = fs.createReadStream('a.txt');
+// rs.pipe(process.stdout)
+// const ws = fs.createWriteStream('e.txt');
+// ws.write('fff')
+// ws.write('ggg');
+// ws.end();
+// const fs = require('fs');
+// fs.mkdir('a', err =>{
+//     if (err) throw err;
+//     console.log('done');
+// })
+// console.log(11);
+// try {
+    // if (!fs.existsSync('b/a')) {
+        // fs.mkdirSync('b/a');
+        // console.log('done');
+    // }
+// } catch(err) {
+//     console.error(err);
+// }
+// fs.readdir('src', (err, files) => {
+//     if (err) throw err;
+//     console.log(files);
+// });
+// try {
+//     const files = fs.readdirSync('src');
+//     console.log(files.filter(file => fs.statSync('src/' + file).isFile()));
+// } catch(err) {
+//     console.error(err);
+// }
+// console.log(require('path').join(__dirname + '/src'));
+// const http = require('http');
+// const server = http.createServer((req, res) => {
+// });
+// node 安装
+// brew install node
+// nvm install 10.0.0
+// 官网下载安装包安装
+// npm
+// npm install
+// npm install --production
+// npm install <package-name>
+// npm install <package-name>@1.0.1
+// npm install -g <package-name>
+// npm install -S <package-name>
+// npm install -D <package-name>
+// npm uninstall <package-name>
+// npm uninstall -g <package-name>
+// npm uninstall -S <package-name>
+// npm uninstall -D <package-name>
+// rm -rf node_modules && npm cache clean --force
+// npm install
+// npm update
+// npm update <package-name>
+// npm outdated
+// npm install npm-check-updates
+// ncu -u
+// npm update
+// ./node_modules/.bin/cowsay
+// cowsay
+// npx cowsay
+// npm list 
+// npm list -g
+// npm list --depth=0
+// npm list -g --depth 0
+// npm view <package-name> version
+// npm view <package-name> versions
+// npm root 
+// npm root -g
+// process
+// process.exit(1);
+// process.cwd();
+// process.env.NODE_ENV;
+// process.argv
+// console.log(process.argv);
+// npm install minimist
+// const minimist = require('minimist')
+// console.log(minimist(process.argv));
+// path
+const path = require("path")
+// console.log(path.normalize('a/b/c/../d//e/./f/g.js'));
+// console.log(path.join('a', 'b'));
+// console.log(path.resolve('a', 'b'));
+// console.log(path.relative('a/c', 'a/c/b'));
+// console.log(path.parse('/a/b/c/d.js'));
+// console.log(path.format({
+//     dir: 'a/b',
+//     base:'c.js'
+// }));
+// console.log(path.isAbsolute('/a'));
+// console.log(__dirname);
+// console.log(__filename);
+// console.log(process.cwd());
+// console.log(path.resolve());
+// const url = '/a/b/c/d.js'
+// console.log(path.dirname(url));
+// console.log(path.basename(url));
+// console.log(path.extname(url));
+// console.log(path.basename(url,path.extname(url)));
+// fs
+// const fs = require('fs')
+// fs.stat('a.txt', (err, stats) => {
+//     if (err) {
+//         console.error(err);
+//         return;
+//     }
+//     console.log(stats.isFile());
+//     console.log(stats.isDirectory());
+//     console.log(stats.size);
+// });
+// const stats = fs.statSync('a.txt');
+// console.log(stats.isFile());
+// console.log(stats.isDirectory());
+// console.log(stats.size);
+// fs.readFile('a.txt', 'utf8', (err, data) => {
+//     if (err) {
+//         console.error(err);
+//         return;
+//     }
+//     console.log(data);
+// })
+// try {
+//     const data = fs.readFileSync('a.txt', 'utf-8');
+//     console.log(data);
+// } catch(err) {
+//     console.error(err);
+// }
+// fs.writeFile('a.txt', 'ccc', 'utf8', err => {
+//     if (err) throw err;
+//     console.log('文件写入成功！');
+// });
+// try {
+//     fs.writeFileSync('a.txt', 'ddd', 'utf8');
+//     console.log('done!');
+// } catch(err) {
+//     console.error(err);
+// }
+// fs.appendFile('a.txt', 'eee', 'utf8', err => {
+//     if (err) throw err;
+//     console.log('done');
+// })
+// try {
+//     fs.appendFileSync('a.txt', 'fff', 'utf8');
+//     console.log('done!');
+// } catch(err) {
+//     console.error(err);
+// }
+// const fs = require('fs');
+// fs.mkdir('f/e', err => {
+//     if (err) throw err;
+//     console.log('done');
+// });
+// try {
+//     if (!fs.existsSync('e')) {
+//         fs.mkdirSync('e');
+//         console.log('done');
+//     }
+// } catch(err) {
+//     console.error(err);
+// }
+// fs.readdir('src', (err, files) => {
+//     if (err) throw err;
+//     console.log(files);
+// })
+// try {
+//     const files = fs.readdirSync('src');
+//     console.log(files.filter(file => fs.statSync('src' + file).isFile()));
+// } catch(err) {
+//     console.error(err);
+// }
+// const fs = require('fs');
+// // const rs = fs.createReadStream('a.txt');
+// // rs.pipe(process.stdout);
+// const ws = fs.createWriteStream('a.txt');
+// ws.write('还好');
+// ws.write('b')
+// ws.end();
