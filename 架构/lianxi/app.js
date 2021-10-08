@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2021-09-06 22:40:22
- * @LastEditTime: 2021-09-30 11:30:34
+ * @LastEditTime: 2021-10-08 16:41:35
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: /tool/前端知识体系/架构/lianxi/app.js
@@ -1469,7 +1469,7 @@
 // const minimist = require('minimist')
 // console.log(minimist(process.argv));
 // path
-const path = require("path")
+// const path = require("path")
 // console.log(path.normalize('a/b/c/../d//e/./f/g.js'));
 // console.log(path.join('a', 'b'));
 // console.log(path.resolve('a', 'b'));
@@ -1567,3 +1567,160 @@ const path = require("path")
 // ws.write('还好');
 // ws.write('b')
 // ws.end();
+// node安装
+// brew install node
+// nvm install 10.0.0
+// 官网下载安装包安装
+// npm
+// npm install
+// npm install --production
+// npm install <package-name>
+// npm install <package-name>@1.1.2
+// npm install -g <package-name>
+// npm install -S <package-name>
+// npm install -D <package-name>
+// npm uninstall <package-name>
+// npm uninstall -g <package-name>
+// npm uninstall -S <package-name>
+// npm uninstall -D <package-name>
+// rm -rf node_modules && npm cache clean --force
+// npm install
+// npm update
+// npm outdated
+// npm install -g npm-check-updates
+// ncu -u
+// npm update
+// npm list
+// npm list -g
+// npm list --depth 0
+// npm list -g --depth=0 
+// npm view <package-name> version
+// npm view <package-name> versions
+// npm root
+// npm root -g
+// ./node_modules/.bin/cowsay
+// npx cowsay
+// process
+// process.exit(0)
+// process.env.NODE_ENV
+// process.cwd();
+// process.argv
+// npm install minimist
+// const minimist = require('minimist')
+// console.log(minimist(process.argv.slice(2)));
+// path
+// const path = require('path');
+// console.log(path.normalize('/a/b/c/../d//e//./.f'));
+// console.log(path.join('a', 'b'));
+// console.log(path.resolve('/a', 'b'));
+// console.log(path.parse('/a/b/c/d.js'));
+// console.log(path.format({
+//     dir: '/a/b/c',
+//     base: '/d.js'
+// }));
+// console.log(path.isAbsolute('/a'));
+// console.log(path.relative('/a/b', 'b'));
+// // __dirname __filename
+// // process.cwd() 
+// console.log(path.resolve());
+// console.log(path.format({
+//     root: '/ignored',
+//     dir: '/home/user/dir',
+//     base: 'file.txt'
+//   }));
+// const path = require('path')
+// console.log(path.dirname('/ab/c/d.js'));
+// console.log(path.extname('a/b/c.js'));
+// console.log(path.basename('a/b/c/d.js'));
+// console.log(path.basename('a/b/c/d.js', path.extname('a/b/c/d.js')));
+// console.log(path.relative('a/b', 'a/c'));
+// fs
+// const fs = require('fs');
+// fs.stat('a.txt', (err, stats) => {
+//     if (err) throw err;
+//     console.log(stats.isDirectory());
+//     console.log(stats.isFile());
+//     console.log(stats.size);
+// });
+// try {
+//     const stats = fs.statSync('a.txt');
+//     console.log(stats.isDirectory());
+//     console.log(stats.isFile());
+//     console.log(stats.size);
+// } catch(err) {
+//     console.error(err);
+// }
+// fs.readFile('a.txt', 'utf8', (err, data) => {
+//     if (err) {
+//         console.error(err);
+//         return;
+//     }
+//     console.log(data);
+// });
+// try {
+//     const data = fs.readFileSync('a.txt', 'utf8');
+//     console.log(data);
+// } catch(err) {
+//     console.error(err);
+// }
+// fs.writeFile('a.txt', 'aaa', 'utf8', err => {
+//     if (err) throw err;
+//     console.log('done!');
+// });
+// try {
+//     fs.writeFileSync('a.txt', '地方');
+//     console.log('done');
+// } catch(err) {
+//     console.error(err);
+// }
+// fs.appendFile('a.txt', 'ccc', 'utf8', err => {
+//     if (err) throw err;
+//     console.log('done!');
+// })
+// try {
+//     fs.appendFileSync('a.txt', 'ddd', 'utf8');
+//     console.log('done');
+// } catch(err) {
+//     console.error(err);
+// }
+// const rs = fs.createReadStream('a.txt');
+// rs.pipe(process.stdout)
+// const ws = fs.createWriteStream('a.txt');
+// ws.write('aaa');
+// ws.write('bbb')
+// ws.end('done');
+const fs = require('fs');
+// fs.mkdir('a/b', err => {
+//     if (err) throw err;
+//     console.log('done');
+// })
+// fs.mkdir('a/c/d', err => {
+//     if (err) throw err;
+//     console.log('done');
+// })
+// try {
+//     fs.mkdirSync('b');
+//     console.log('done');
+// } catch(err) {
+//     console.error(err);
+// }
+// fs.readdir('a', (err, files) => {
+//     if (err) throw err;
+//     console.log(files);
+// });
+// console.log(fs.existsSync('c'));
+// try {
+//     if (fs.existsSync('c')) {
+//         const files = fs.readdirSync('c');
+//         console.log(files);
+//     }
+// } catch(err) {
+//     console.error(err);
+// }
+const path = require('path')
+try {
+    const files = fs.readdirSync('a').filter(file => fs.statSync('a/' + file).isFile());
+    console.log(files);
+} catch(err) {
+    console.error(err);
+}
