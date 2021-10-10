@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2021-09-06 22:40:22
- * @LastEditTime: 2021-10-08 16:41:35
+ * @LastEditTime: 2021-10-09 10:36:33
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: /tool/前端知识体系/架构/lianxi/app.js
@@ -1689,7 +1689,7 @@
 // ws.write('aaa');
 // ws.write('bbb')
 // ws.end('done');
-const fs = require('fs');
+// const fs = require('fs');
 // fs.mkdir('a/b', err => {
 //     if (err) throw err;
 //     console.log('done');
@@ -1717,10 +1717,86 @@ const fs = require('fs');
 // } catch(err) {
 //     console.error(err);
 // }
-const path = require('path')
-try {
-    const files = fs.readdirSync('a').filter(file => fs.statSync('a/' + file).isFile());
-    console.log(files);
-} catch(err) {
-    console.error(err);
-}
+// const path = require('path')
+// try {
+//     const files = fs.readdirSync('a').filter(file => fs.statSync('a/' + file).isFile());
+//     console.log(files);
+// } catch(err) {
+//     console.error(err);
+// }
+// fs
+// fs.stat('a.txt', (err, stats) => {
+//     if (err) throw err;
+//     console.log(stats.isFile());
+//     console.log(stats.isDirectory());
+//     console.log(stats.size);
+// })
+// const fs = require('fs');
+// try {
+//     const stats = fs.statSync('a.txt');
+//     console.log(stats.isDirectory());
+//     console.log(stats.isFile());
+//     console.log(stats.size);
+// } catch(err) {
+//     console.error(err);
+// }
+// fs.readFile('a.txt', 'utf8', (err, data) => {
+//     if (err) throw err;
+//     console.log(data);
+// })
+// try {
+//     const data = fs.readFileSync('a.txt', 'utf8');
+//     console.log(data);
+// } catch(err) {
+//     console.error(err);
+// }
+// fs.writeFile('a.txt', 'hello', 'utf8', err => {
+//     if (err) throw err;
+//     console.log('done');
+// });
+// try {
+//     fs.writeFileSync('a.txt', 'hello world', 'utf8');
+//     console.log('done');
+// } catch(err) {
+//     console.error(err);
+// }
+// fs.appendFile('a.txt', ', hi', 'utf8', err => {
+//     if (err) throw err;
+//     console.log('done');
+// })
+// try {
+//     const data = fs.appendFileSync('a.txt', ' world', 'utf8');
+//     console.log(data);
+// } catch(err) {
+//     console.error(err);
+// }
+// const rs = fs.createReadStream('a.txt');
+// rs.pipe(process.stdout);
+// const ws = fs.createWriteStream('a.txt');
+// ws.write('hello');
+// ws.write(' world');
+// ws.end();
+// const fs = require('fs');
+// const path = require('path');
+// fs.mkdir('c', err => {
+//     if (err) throw err;
+//     console.log('done');
+// })
+// if (!fs.existsSync('f')) {
+//     try {
+//         fs.mkdir('f');
+//         console.log('done');
+//     } catch(err) {
+//         console.error(err);
+//     }
+// }
+// fs.readdir('a', (err, files) => {
+//     if (err) throw err;
+//     console.log(files);
+// });
+// try {   
+//     const files = fs.readdirSync('a');
+//     console.log(files.map(file => path.join('a', file)).filter(file => fs.statSync(file).isFile()));
+// } catch (error) {
+//     console.error(error);
+// }

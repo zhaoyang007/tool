@@ -179,7 +179,7 @@ path.isAbsolute('./test/something') // false
 // process.cwd() path.resolve('./') 返回执行node命令所在的文件夹的绝对路径
 ```
 
-##### fs（6次）
+##### fs（7次）2021.10.09
 
 文件
 
@@ -290,29 +290,39 @@ try {
 
 `http.createServer([options][, requestListener])`
 
-创建 http 服务器并返回。
-
-* options <Object>
-  * IncomingMessage  <http.IncomingMessage> 指定要使用的 IncomingMessage 类。 用于扩展原始的 IncomingMessage。 默认值: IncomingMessage。
-  * ServerResponse <http.ServerResponse> 指定要使用的 ServerResponse 类。 用于扩展原始的 ServerResponse。 默认值: ServerResponse。
-  * insecureHTTPParser <boolean> 使用不安全的 HTTP 解析器，当为 true 时接受无效的 HTTP 标头。 应避免使用不安全的解析器。 有关详细信息，请参阅 --insecure-http-parser。 默认值: false
-  * maxHeaderSize <number> 可选地覆盖此服务器接收到的请求的 --max-http-header-size 值，即请求头的最大长度（以字节为单位）。 默认值: 16384 (16 KB)。
-* requestListener <Function>
-* 返回:  <http.Server>
-
-requestListener 会自动添加到 'request' 事件，每当接收到新的请求时，'request' 事件会被调用，并提供两个对象：一个请求 http.IncomingMessage 对象和一个响应 http.ServerResponse 对象。
-
-request 提供了请求的详细信息。 通过它可以访问请求头和请求数据。
-
-response 构造要返回的数据给客户端。
+创建 http 服务器并返回。requestListener 会自动添加到 'request' 事件，每当接收到新的请求时，'request' 事件会被调用。
 
 ```js
 const http = require('http');
+const url = require('url');
+const qs = require('querystring');
+
 const server = http.createServer((req, res) => {
-	res.statusCode = 200;
-  res.setHeader('Content-Type', 'text/plain');
-  res.end('hello world');
+  const method = req.method;
+  let params;
+  if (method === 'GET') {
+    // 获取 get 请求数据
+		params = url.parse(req.url, true).query;
+  } else if (method === 'POST') {
+    // 获取 post 请求数据
+  	let data = '';
+    req.on('data', chunk => {
+      data += chunk;
+    });
+    req.on('end', () => {
+      const contentType = req.headers['content-type'];
+      if (contentType === 'application/x-www-form-urlencoded') {
+				params = qs.parse(data);
+      } else if (contentType === 'application/json') {
+				params = JSON.parse(data);
+      }
+    });  
+  }
+  res.writeHead(200, { 'Content-Type': 'text/html'});
+  res.write('参数：' + params.key);
+  res.end();
 });
+
 const hostname = '127.0.0.1';
 const port = 9527;
 server.listen(port, host, () => {
@@ -338,13 +348,13 @@ server.listen(port, host, () => {
 
 url 可以是字符串或 URL 对象。 如果 url 是字符串，则会自动使用 new URL() 解析。 如果是 URL 对象，则会自动转换为普通的 options 对象。如果同时指定了 url 和 options，则合并对象，options 属性优先。
 
-callback 参数将被添加为 'response' 事件的单次监听器。使用单个参数（http.IncomingMessage 的实例）调用。
-
-使用 http.request() 必须始终调用 req.end() 来表示请求的结束 - 即使没有数据写入请求正文。
+callback 参数将被添加为 'response' 事件的单次监听器。
 
 如果在请求期间遇到任何错误（无论是 DNS 解析、TCP 级别错误还是实际的 HTTP 解析错误），都会在返回的请求对象上触发 'error' 事件。 与所有 'error' 事件一样，如果没有注册监听器，则会抛出错误。
 
 ```js
+const http = require('http');
+
 const postData = JSON.stringify({
   msg: 'Hello World!'
 });
@@ -359,6 +369,21 @@ const options = {
   }
 };
 const request = http.request(options, res => {
+  const { statusCode } = res;
+  const contentType = res.headers['content-type'];
+  let error;
+  if (statusCode !== 200) {
+    error = new Error('Request Failed.\n' + `Status Code: ${statusCode}`);
+  } else if (!/^application\/json/.test(contentType)) {
+    error = new Error('Invalid content-type.\n' +
+                      `Expected application/json but received ${contentType}`);
+  }
+  if (error) {
+    console.error(error.message);
+    // 消费响应数据以释放内存
+    res.resume();
+    return;
+  }
   res.setEncoding('utf8');
   let data = '';
   res.on('data', chunk => {
@@ -382,55 +407,6 @@ request.end();
 
 由于大多数请求是没有正文的 GET 请求，因此 Node.js 提供了这个便捷的方法。 此方法与 http.request() 的唯一区别在于，它将方法设置为 GET 并自动调用 req.end()。
 
-```js
-http.get('http://localhost:8000/', res => {
-  const { statusCode } = res;
-  const contentType = res.headers['content-type'];
-  let error;
-  // 任何 2xx 状态码都表示成功响应，但这里只检查 200。
-  if (statusCode !== 200) {
-    error = new Error('Request Failed.\n' + `Status Code: ${statusCode}`);
-  } else if (!/^application\/json/.test(contentType)) {
-    error = new Error('Invalid content-type.\n' +
-                      `Expected application/json but received ${contentType}`);
-  }
-  if (error) {
-    console.error(error.message);
-    // 消费响应数据以释放内存
-    res.resume();
-    return;
-  }
-  res.setEncoding('utf8');
-  let data = '';
-  res.on('data', chunk => { data += chunk; });
-  res.on('end', () => {
-    try {
-      console.log(JSON.parse(data));
-    } catch (err) {
-      console.error(err.message);
-    }
-  });
-}).on('error', err => {
-  console.error(err);
-});
-// 创建本地服务器来从其接收数据
-const server = http.createServer((req, res) => {
-  res.writeHead(200, { 'Content-Type': 'application/json' });
-  res.end(JSON.stringify({
-    data: 'Hello World!'
-  }));
-});
-server.listen(8000);
-```
-
-`http.Agent`
-
-Node.js 会创建 http.Agent 类的全局实例，以管理 HTTP 客户端连接的持久性和复用，这是 Node.js HTTP 网络的关键组成部分。
-
-`http.Server`
-
-当使用 http.createServer() 创建新的服务器时，通常会实例化并返回此类。
-
 `http.OutgoingMessage`
 
 - 继承自: <Stream> 可写流
@@ -451,78 +427,30 @@ Node.js 会创建 http.Agent 类的全局实例，以管理 HTTP 客户端连接
 
 此对象由 HTTP 服务器内部 http.Server 创建，而不是由用户创建。 并作为第二个参数传给 'request' 事件。
 
-Headers
-
 ```js
+// header
 response.setHeader('Content-Type', 'text/html');
 response.setHeader('Set-Cookie', ['type=ninja', 'language=javascript']);
-
 response.getHeader('content-type'); // 'text/html'
 response.getHeader('set-cookie'); // ['type=ninja', 'language=javascript']
-
 response.getHeaderNames(); // ['Content-Type', 'set-cookie']
-
 response.getHeaders(); // { 'content-type': 'text/html', 'set-cookie': ['type=ninja', 'language=javascript'] }
-
 response.hasHeader('Content-Type') // true
-
 response.removeHeader('Content-Type');
-```
 
-response.statusCode
-
-```js
 response.statusCode = 404;
-```
-
-response.statusMessage
-
-```js
 response.statusMessage = 'Not found';
+
+response.writeHead(statusCode[,statusMessage][,headers]);
+response.write(chunk[,encoding][,callback]);
+response.end([data[,encoding]][,callback]);
 ```
-
-response.writeHead(statusCode\[, statusMessage][, headers])
-
-- statusCode <number>
-- statusMessage <string>
-- headers <Object> | <Array>
-- 返回: <http.ServerResponse>
-
-向请求发送响应头， 状态码，状态消息。
-
-此方法只能在消息上调用一次，并且必须在调用 response.end() 之前调用。
-
-response.write(chunk\[, encoding][, callback])
-
-- chunk <string> | <Buffer>
-- encoding <string> 默认值: 'utf8'
-- callback <Function>
-- 返回: <boolean>
-
-这会发送一块响应正文。 可以多次调用此方法以提供正文的连续部分。
-
-在 http 模块中，当请求是 HEAD 请求时，响应正文会被省略。 同样，204 和 304 响应不得包含消息正文。
-
-chunk 可以是字符串或缓冲区。 如果 chunk 是字符串，则第二个参数指定如何将其编码为字节流。 当刷新数据块时将调用 callback。
-
-response.end(\[data\[, encoding]][, callback])
-
-- data <string> | <Buffer>
-- encoding <string> 
-- callback <Function>
-- 返回: <this>
-
-此方法向服务器发出信号，表明所有响应头和正文都已发送；该服务器应认为此消息已完成。 response.end() 方法必须在每个响应上调用。
-
-如果指定了 data，则其效果类似于调用 response.write(data, encoding) 后跟 response.end(callback)。
-
-如果指定了 callback，则将在响应流完成时调用。
 
 `http.IncomingMessage`
 
-继承自: <stream.Readable>
+* 继承自: <stream.Readable>
 
-IncomingMessage 对象由 http.Server 或 http.ClientRequest 创建，并分别作为第一个参数传给 'request' 和 'response' 事件。 它可用于访问响应状态、标头和数据。
+IncomingMessage 对象由 http.Server 或 http.ClientRequest 创建，并分别作为第一个参数传给 'request' 和 'response' 事件。 
 
 ```js
 request.url // 仅适用于从 http.Server 获得的请求。
@@ -530,81 +458,15 @@ request.method // 仅适用于从 http.Server 获得的请求。
 request.headers
 request.statusCode // 仅对从 http.ClientRequest 获得的响应有效。
 request.statusMessage // 仅对从 http.ClientRequest 获得的响应有效。
-```
 
-继承自 <stream.Readable> 的重要属性：
+request.setEncoding(encoding) // 为读取的数据设置字符编码。默认情况下，没有分配编码，流数据将作为 Buffer 对象返回。设置编码会返回字符串。
 
-为从 Readable 流读取的数据设置字符编码。
-
-默认情况下，没有分配编码，流数据将作为 Buffer 对象返回。 设置编码会导致流数据作为指定编码的字符串而不是 Buffer 对象返回。
-
-```js
-readable.setEncoding(encoding);
-```
-
-继承自 <stream.Readable> 的重要事件：
-
-'data' 事件
-
-- chunk <Buffer> | <string> | <any> 数据块。 对于不在对象模式下操作的流，块将是字符串或 Buffer。 对于处于对象模式的流，块可以是除 null 之外的任何 JavaScript 值。
-
-每当流将数据块的所有权移交给消费者时，则会触发 'data' 事件。
-
-```js
-const readable = getReadableStreamSomehow();
-readable.on('data', chunk => {
-  console.log(`Received ${chunk.length} bytes of data.`);
+request.on('data', chunk => {
+  console.log(chunk);
 });
-```
-
-'end' 事件
-
-当流中没有更多数据可供消费时，则会触发 'end' 事件。
-
-除非数据被完全地消费，否则不会触发 'end' 事件。
-
-```js
-const readable = getReadableStreamSomehow();
-readable.on('data', (chunk) => {
-  console.log(`Received ${chunk.length} bytes of data.`);
+request.on('end', () => {
+  console.log('没有更多数据了');
 });
-readable.on('end', () => {
-  console.log('There will be no more data.');
-});
-```
-
-获取客户端请求数据
-
-```js
-// 获取客户端 get 请求数据
-// 用 url 模块的 parse 函数解析请求就行了
-const http = require('http');
-const url = require('url');
-const server = http.createServer((req, res) => {
-	let params = url.parse(req.url, true).query;
-  res.writeHead(200, { 'Content-Type': 'text/html'});
-  res.write('参数：' + params.key);
-  res.end();
-});
-server.listen(8000);
-
-// 获取客户端 post 请求数据
-// 首先通过req的data事件监听函数，把请求参数累加到自定义的postdata里，再在触发end事件监听函数时用querystring模块的parse函数解析。
-const http = require('http');
-const qs = require('querystring');
-const server = http.createServer((req, res) => {
-  let postData = '';
-  req.on('data', chunk => {
-		postData += chunk;
-  });
-  req.on('end', () => {
-    const username = qs.parse(postData).username;
-    const password = qs.parse(postData).password;
-		res.writeHead(200, { 'Content-Type': 'text/html'});
-    res.end(`username: ${username}, password: ${password}`);
-  });
-});
-server.listen(8000);
 ```
 
 ##### buffer

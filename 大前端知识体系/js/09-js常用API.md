@@ -8,7 +8,7 @@ push pop shift unshift reverse sort splice forEach some every reduce 会改变�
 Array: function Array() { [native code] }（共65个）
   function isArray() { [native code] }
   function from() { [native code] }
-  function of() { [native code] } // 创建新数组
+  function of() { [native code] }
 	Array.prototype: Array(0)，是个数组
     function forEach() { [native code] }
     function push() { [native code] }
@@ -22,8 +22,8 @@ Array: function Array() { [native code] }（共65个）
     function join() { [native code] }
     function sort() { [native code] }
     function concat() { [native code] }
-    function includes() { [native code] } // 判断一个数组是否包含一个指定的值
-    function fill() { [native code] } // 用一个固定值填充一个数组
+    function includes() { [native code] }
+    function fill() { [native code] }
     function every() { [native code] }
     function some() { [native code] }
     function reduce() { [native code] }
