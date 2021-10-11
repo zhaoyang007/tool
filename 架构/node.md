@@ -288,6 +288,68 @@ try {
 
 ##### http（1次）
 
+`http.OutgoingMessage`
+
+- 继承自: <Stream> 可写流
+
+该类作为 http.ClientRequest 和 http.ServerResponse 的父类。 从 HTTP 事务的参与者的角度来看，它是对传出消息的抽象。
+
+`http.ClientRequest`
+
+- 继承自: <Stream> 可写流
+
+此对象从 http.request() 内部创建并返回。 它表示正在进行的请求。
+
+当响应被接收时，则会使用响应 http.IncomingMessage 实例作为参数来调用 response 事件。
+
+`http.ServerResponse`
+
+* 继承自: <Stream> 可写流
+
+此对象由 HTTP 服务器内部 http.Server 创建，而不是由用户创建。 并作为第二个参数传给 'request' 事件。
+
+```js
+// header
+response.setHeader('Content-Type', 'text/html');
+response.setHeader('Set-Cookie', ['type=ninja', 'language=javascript']);
+response.getHeader('content-type'); // 'text/html'
+response.getHeader('set-cookie'); // ['type=ninja', 'language=javascript']
+response.getHeaderNames(); // ['Content-Type', 'set-cookie']
+response.getHeaders(); // { 'content-type': 'text/html', 'set-cookie': ['type=ninja', 'language=javascript'] }
+response.hasHeader('Content-Type') // true
+response.removeHeader('Content-Type');
+
+response.statusCode = 404;
+response.statusMessage = 'Not found';
+
+response.writeHead(statusCode[,statusMessage][,headers]);
+response.write(chunk[,encoding][,callback]);
+response.end([data[,encoding]][,callback]);
+```
+
+`http.IncomingMessage`
+
+* 继承自: <stream.Readable>
+
+IncomingMessage 对象由 http.Server 或 http.ClientRequest 创建，并分别作为第一个参数传给 'request' 和 'response' 事件。 
+
+```js
+request.url // 仅适用于从 http.Server 获得的请求。（获取请求信息）
+request.method // 仅适用于从 http.Server 获得的请求。（获取请求信息）
+request.headers // http.Server 获得的是请求头，http.ClientRequest 获得的是响应头
+request.statusCode // 仅对从 http.ClientRequest 获得的响应有效。（获取响应信息）
+request.statusMessage // 仅对从 http.ClientRequest 获得的响应有效。（获取响应信息）
+
+request.setEncoding(encoding) // 为读取的数据设置字符编码。默认情况下，没有分配编码，流数据将作为 Buffer 对象返回。设置编码会返回字符串。
+
+request.on('data', chunk => {
+  console.log(chunk);
+});
+request.on('end', () => {
+  console.log('没有更多数据了');
+});
+```
+
 `http.createServer([options][, requestListener])`
 
 创建 http 服务器并返回。requestListener 会自动添加到 'request' 事件，每当接收到新的请求时，'request' 事件会被调用。
@@ -310,7 +372,7 @@ const server = http.createServer((req, res) => {
       data += chunk;
     });
     req.on('end', () => {
-      const contentType = req.headers['content-type'];
+      const contentType = res.getHeader['content-type'];
       if (contentType === 'application/x-www-form-urlencoded') {
 				params = qs.parse(data);
       } else if (contentType === 'application/json') {
@@ -372,11 +434,10 @@ const request = http.request(options, res => {
   const { statusCode } = res;
   const contentType = res.headers['content-type'];
   let error;
-  if (statusCode !== 200) {
-    error = new Error('Request Failed.\n' + `Status Code: ${statusCode}`);
+  if (statusCode !== 200) {''
+    error = new Error(`Request Failed.\n Status Code: ${statusCode}`);
   } else if (!/^application\/json/.test(contentType)) {
-    error = new Error('Invalid content-type.\n' +
-                      `Expected application/json but received ${contentType}`);
+    error = new Error(`Invalid content-type.\n Expected application/json but received ${contentType}`);
   }
   if (error) {
     console.error(error.message);
@@ -406,68 +467,6 @@ request.end();
 `http.get(url[, options][, callback])`
 
 由于大多数请求是没有正文的 GET 请求，因此 Node.js 提供了这个便捷的方法。 此方法与 http.request() 的唯一区别在于，它将方法设置为 GET 并自动调用 req.end()。
-
-`http.OutgoingMessage`
-
-- 继承自: <Stream> 可写流
-
-该类作为 http.ClientRequest 和 http.ServerResponse 的父类。 从 HTTP 事务的参与者的角度来看，它是对传出消息的抽象。
-
-`http.ClientRequest`
-
-- 继承自: <Stream> 可写流
-
-此对象从 http.request() 内部创建并返回。 它表示正在进行的请求。
-
-当响应被接收时，则会使用响应（http.IncomingMessage 实例作为参数）来调用 response 事件。
-
-`http.ServerResponse`
-
-* 继承自: <Stream> 可写流
-
-此对象由 HTTP 服务器内部 http.Server 创建，而不是由用户创建。 并作为第二个参数传给 'request' 事件。
-
-```js
-// header
-response.setHeader('Content-Type', 'text/html');
-response.setHeader('Set-Cookie', ['type=ninja', 'language=javascript']);
-response.getHeader('content-type'); // 'text/html'
-response.getHeader('set-cookie'); // ['type=ninja', 'language=javascript']
-response.getHeaderNames(); // ['Content-Type', 'set-cookie']
-response.getHeaders(); // { 'content-type': 'text/html', 'set-cookie': ['type=ninja', 'language=javascript'] }
-response.hasHeader('Content-Type') // true
-response.removeHeader('Content-Type');
-
-response.statusCode = 404;
-response.statusMessage = 'Not found';
-
-response.writeHead(statusCode[,statusMessage][,headers]);
-response.write(chunk[,encoding][,callback]);
-response.end([data[,encoding]][,callback]);
-```
-
-`http.IncomingMessage`
-
-* 继承自: <stream.Readable>
-
-IncomingMessage 对象由 http.Server 或 http.ClientRequest 创建，并分别作为第一个参数传给 'request' 和 'response' 事件。 
-
-```js
-request.url // 仅适用于从 http.Server 获得的请求。
-request.method // 仅适用于从 http.Server 获得的请求。
-request.headers
-request.statusCode // 仅对从 http.ClientRequest 获得的响应有效。
-request.statusMessage // 仅对从 http.ClientRequest 获得的响应有效。
-
-request.setEncoding(encoding) // 为读取的数据设置字符编码。默认情况下，没有分配编码，流数据将作为 Buffer 对象返回。设置编码会返回字符串。
-
-request.on('data', chunk => {
-  console.log(chunk);
-});
-request.on('end', () => {
-  console.log('没有更多数据了');
-});
-```
 
 ##### buffer
 

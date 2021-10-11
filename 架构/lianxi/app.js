@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2021-09-06 22:40:22
- * @LastEditTime: 2021-10-09 10:36:33
+ * @LastEditTime: 2021-10-11 15:18:21
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: /tool/前端知识体系/架构/lianxi/app.js
@@ -1800,3 +1800,114 @@
 // } catch (error) {
 //     console.error(error);
 // }
+// http
+// http.OutgoingMessage
+// 继承自 <stream>可写流
+// http.OutgoingMessage 作为 http.ClientRequest 和 http.ServerResponse 的父类，从http事务的参与
+// 者的角度来看，是对传出消息的抽象。
+// http.ClientRequest
+// 此对象从http.request()内部创建，表示正在进行的请求
+// 当响应被接收时，会使用响应 http.IncomingMessage实例最为参数来调用 response 事件。
+// 继承自 <stream>可写流
+// http.ServerResponse
+// 继承自可写流
+// 此对象由 http 服务器内部的 http.Server 创建，而不是由用户创建，并作为第二个参数传给request事件。
+// header
+// response.setHeader('Content-Type', 'text/html');
+// response.setHeader('Set-Cookie', ['type=ninja', 'language=javascript']);
+// response.getHeader('Set-Cookie');
+// response.getHeader('Content-Type');
+// response.getHeaderNames();
+// response.getHeaders();
+// response.hasHeader('Content-Type');
+// response.removeHeader('Content-Type');
+// response.statusCode = 404;
+// response.statusMessage = 'Not Found'
+// response.writeHead(404, 'Not Found', {
+//     'Content-Type': 'text/html',
+//     'Set-Cookie': ['type=ninja', 'language=javascript'],
+// })
+// response.writeHead(statusCode[,statusMessage][,headers])
+// response.write(chunk[,encoding][,callback]);
+// response.end([data[,encoding]][,callback]);
+// request.url
+// request.method
+// request.headers
+// request.statusCode
+// request.statusMessage
+// request.setEncoding('utf8')
+// request.on('data', chunk => {})
+// request.on('end', () => {})
+// http.createServer
+// const http = require('http');
+// const url = require('url');
+// const qs = require('qs');
+// const server = http.createServer((req, res) => {
+//     const method = req.method;
+//     let params;
+//     if (method === 'GET') {
+//         params = url.parse(req.url, true).query;
+//     } else if (method === 'POST') {
+//         let data = '';
+//         req.on('data', chunk => {
+//             data += chunk;
+//         });
+//         req.on('end', () => {
+//             const contentType = req.headers['Content-Type'];
+//             if (contentType === 'application/x-www-form-urlencoded') {
+//                 params = qs.parse(data);
+//             } else if (contentType === 'application/json') {
+//                 params = JSON.parse(data);
+//             }
+//         });
+//     }
+//     res.writeHead(200, { 'Content-Type': 'text/html' });
+//     res.write('参数：' + params.key);
+//     res.end();
+// });
+// const hostname = '127.0.0.1';
+// const port = 8000;
+// server.listen(port, hostname, () => {
+//     console.log(`server is listening at ${hostname}:${port}`);
+// });
+// const http = require('http');
+// const postData = JSON.stringify({
+//     msg: 'Hello World'
+// })
+// const options = {
+//     hostname: '127.0.0.1',
+//     port: 8000,
+//     path: '/',
+//     method: 'GET',
+//     headers: {
+//         'Content-Type': 'application/json',
+//         'Content-Length': Buffer.byteLength(postData),
+//     }
+// }
+// const request = http.request(options, res => {
+//     const { statusCode } = res;
+//     const contentType = res.headers['Content-Type'];
+//     let error;
+//     if (statusCode !== 200) {
+//         error = new Error(`Request Failed.\n Status Code ${statusCode}`);
+//     } else if (!/^application\/json/.test(contentType)) {
+//         error = new Error(`Invilid content-type.\n Expected application/json but received ${contentType}`);
+//     }
+//     if (error) {
+//         console.error(error);
+//         res.resume();
+//         return;
+//     }
+//     let data = '';
+//     res.on('data', chunk => {
+//         data += chunk;
+//     });
+//     res.on('end', () => {
+//         console.log(data);
+//     });
+// });
+// request.on('error', err => {
+//     console.error(err);
+// });
+// request.write(postData);
+// request.end();
