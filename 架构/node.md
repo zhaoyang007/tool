@@ -286,7 +286,7 @@ try {
 }
 ```
 
-##### http（1次）
+##### http（2次）
 
 `http.OutgoingMessage`
 
@@ -360,35 +360,38 @@ const url = require('url');
 const qs = require('querystring');
 
 const server = http.createServer((req, res) => {
-  const method = req.method;
+  const { method } = req;
   let params;
   if (method === 'GET') {
     // 获取 get 请求数据
-		params = url.parse(req.url, true).query;
+    params = url.parse(req.url, true).query;
+    console.log(params);
   } else if (method === 'POST') {
     // 获取 post 请求数据
-  	let data = '';
+    req.setEncoding('utf8')
+    let data = '';
     req.on('data', chunk => {
       data += chunk;
     });
     req.on('end', () => {
-      const contentType = res.getHeader['content-type'];
+      const contentType = req.headers['content-type'];
       if (contentType === 'application/x-www-form-urlencoded') {
-				params = qs.parse(data);
+        params = qs.parse(data);
       } else if (contentType === 'application/json') {
-				params = JSON.parse(data);
+        params = JSON.parse(data);
       }
-    });  
+      console.log(params);
+    });
   }
-  res.writeHead(200, { 'Content-Type': 'text/html'});
-  res.write('参数：' + params.key);
+  res.writeHead(200, { 'Content-Type': 'application/json' });
+  res.write('resData');
   res.end();
 });
 
 const hostname = '127.0.0.1';
-const port = 9527;
-server.listen(port, host, () => {
-	console.log(`serve is listening at ${hostname}:${port}`);
+const port = 8000;
+server.listen(port, hostname, () => {
+  console.log(`server is listening at ${hostname}:${port}`);
 });
 ```
 
@@ -418,7 +421,7 @@ callback 参数将被添加为 'response' 事件的单次监听器。
 const http = require('http');
 
 const postData = JSON.stringify({
-  msg: 'Hello World!'
+  msg: 'hello world'
 });
 const options = {
   hostname: '127.0.0.1',
@@ -431,13 +434,13 @@ const options = {
   }
 };
 const request = http.request(options, res => {
-  const { statusCode } = res;
+  const statusCode = res.statusCode;
   const contentType = res.headers['content-type'];
   let error;
-  if (statusCode !== 200) {''
-    error = new Error(`Request Failed.\n Status Code: ${statusCode}`);
+  if (statusCode !== 200) {
+    error = new Error(`request failed. status code: ${statusCode}`);
   } else if (!/^application\/json/.test(contentType)) {
-    error = new Error(`Invalid content-type.\n Expected application/json but received ${contentType}`);
+    error = new Error(`invalid content-type. expected application/json but received ${contentType}`);
   }
   if (error) {
     console.error(error.message);
@@ -445,7 +448,7 @@ const request = http.request(options, res => {
     res.resume();
     return;
   }
-  res.setEncoding('utf8');
+  res.setEncoding('utf8')
   let data = '';
   res.on('data', chunk => {
     data += chunk;
