@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2021-09-06 22:40:22
- * @LastEditTime: 2021-10-12 14:49:55
+ * @LastEditTime: 2021-10-13 11:25:59
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: /tool/前端知识体系/架构/lianxi/app.js
@@ -1936,78 +1936,187 @@
 // request.setEncoding('utf8')
 // request.on('data', chunk => {})
 // request.on('end', () => {})
-const http = require('http');
-const url = require('url');
-const qs = require('querystring');
-const server = http.createServer((req, res) => {
-    const { method } = req;
-    let params;
-    if (method === 'GET') {
-        params = url.parse(req.url, true).query;
-        console.log(params);
-    } else if (method === 'POST') {
-        req.setEncoding('utf8')
-        let data = '';
-        req.on('data', chunk => {
-            data += chunk;
-        });
-        req.on('end', () => {
-            const contentType = req.headers['content-type'];
-            if (contentType === 'application/x-www-form-urlencoded') {
-                params = qs.parse(data);
-            } else if (contentType === 'application/json') {
-                params = JSON.parse(data);
-            }
-            console.log(params);
-        });
-    }
-    res.writeHead(200, { 'Content-Type': 'application/json' });
-    res.write('resData');
-    res.end();
-});
-const hostname = '127.0.0.1';
-const port = 8000;
-server.listen(port, hostname, () => {
-    console.log(`server is listening at ${hostname}:${port}`);
-});
-const postData = JSON.stringify({
-    msg: 'hello world'
-});
-const options = {
-    hostname: '127.0.0.1',
-    port: 8000,
-    path: '/',
-    method: 'POST',
-    headers: {
-        'Content-Type': 'application/json',
-        'Content-Length': Buffer.byteLength(postData)
-    }
-};
-const request = http.request(options, res => {
-    const statusCode = res.statusCode;
-    const contentType = res.headers['content-type'];
-    let error;
-    if (statusCode !== 200) {
-        error = new Error(`request failed.\n status code: ${statusCode}`);
-    } else if (!/^application\/json/.test(contentType)) {
-        error = new Error(`invalid content-type.\n expected application/json but received ${contentType}`);
-    }
-    if (error) {
-        console.error(error.message);
-        res.resume();
-        return;
-    }
-    res.setEncoding('utf8')
-    let data = '';
-    res.on('data', chunk => {
-        data += chunk;
-    });
-    res.on('end', () => {
-        console.log(data);
-    });
-});
-request.on('error', err => {
-    console.error(err);
-});
-request.write(postData);
-request.end();
+// const http = require('http');
+// const url = require('url');
+// const qs = require('querystring');
+// const server = http.createServer((req, res) => {
+//     const { method } = req;
+//     let params;
+//     if (method === 'GET') {
+//         params = url.parse(req.url, true).query;
+//         console.log(params);
+//     } else if (method === 'POST') {
+//         req.setEncoding('utf8')
+//         let data = '';
+//         req.on('data', chunk => {
+//             data += chunk;
+//         });
+//         req.on('end', () => {
+//             const contentType = req.headers['content-type'];
+//             if (contentType === 'application/x-www-form-urlencoded') {
+//                 params = qs.parse(data);
+//             } else if (contentType === 'application/json') {
+//                 params = JSON.parse(data);
+//             }
+//             console.log(params);
+//         });
+//     }
+//     res.writeHead(200, { 'Content-Type': 'application/json' });
+//     res.write('resData');
+//     res.end();
+// });
+// const hostname = '127.0.0.1';
+// const port = 8000;
+// server.listen(port, hostname, () => {
+//     console.log(`server is listening at ${hostname}:${port}`);
+// });
+// const postData = JSON.stringify({
+//     msg: 'hello world'
+// });
+// const options = {
+//     hostname: '127.0.0.1',
+//     port: 8000,
+//     path: '/',
+//     method: 'POST',
+//     headers: {
+//         'Content-Type': 'application/json',
+//         'Content-Length': Buffer.byteLength(postData)
+//     }
+// };
+// const request = http.request(options, res => {
+//     const statusCode = res.statusCode;
+//     const contentType = res.headers['content-type'];
+//     let error;
+//     if (statusCode !== 200) {
+//         error = new Error(`request failed.\n status code: ${statusCode}`);
+//     } else if (!/^application\/json/.test(contentType)) {
+//         error = new Error(`invalid content-type.\n expected application/json but received ${contentType}`);
+//     }
+//     if (error) {
+//         console.error(error.message);
+//         res.resume();
+//         return;
+//     }
+//     res.setEncoding('utf8')
+//     let data = '';
+//     res.on('data', chunk => {
+//         data += chunk;
+//     });
+//     res.on('end', () => {
+//         console.log(data);
+//     });
+// });
+// request.on('error', err => {
+//     console.error(err);
+// });
+// request.write(postData);
+// request.end();
+// http
+// http.OutgoingMessage 
+// http.ClientRequest
+// http.ServerResponse
+// response.setHeader('Content-Type', 'text/html');
+// response.setHeader('Set-Cookie', ['type=ninja', 'language=javascript']);
+// response.getHeader('Content-Type');
+// response.getHeaders();
+// response.getHeaserNames();
+// response.hasHeader('Content-Type');
+// response.removeHeader('Content-Type');
+// response.statusCode = 404;
+// response.statusMessage = 'Not Found';
+// response.writeHead(200, 'Success', {
+//     'Content-Type': 'application/json'
+// })
+// response.write('hello world')
+// response.end();
+// http.IncomingMessage
+// request.url
+// request.method
+// request.headers
+// request.statusCode
+// request.statusMessage
+// request.setEncoding('utf8')
+// let data = '';
+// request.on('data', chunk => {
+//     data += chunk;
+// });
+// request.on('end', () => { console.log(data); })
+// http.createServer()
+// http.request()
+// const http = require('http');
+// const url = require('url');
+// const qs = require('querystring');
+// const server = http.createServer((req, res) => {
+//     const method = req.method;
+//     let params;
+//     if (method === 'GET') {
+//         params = url.parse(req.url, true).query;
+//         console.log(params);
+//     } else if (method === 'POST') {
+//         let data = '';
+//         req.on('data', chunk => {
+//             data += chunk;
+//         });
+//         req.on('end', () => {
+//             const contentType = req.headers['content-type'];
+//             if (contentType === 'application/x-www-form-urlencoded') {
+//                 params = qs.parse(data);
+//             } else if (contentType === 'application/json') {
+//                 params = JSON.parse(data);
+//             }
+//             console.log(params);
+//         });
+//     }
+//     res.writeHead(200, {
+//         'content-type': 'application/json',
+        
+//     });
+//     res.write('resData');
+//     res.end();
+// });
+// const hostname = 'localhost';
+// const port = 8000;
+// server.listen(port, hostname, () => {
+//     console.log(`server is listenind at ${hostname}:${port}`);
+// });
+
+// const postData = JSON.stringify({
+//     msg: 'request'
+// });
+// const options = {
+//     hostname: '127.0.0.1',
+//     port: 8000,
+//     path: '/',
+//     method: 'POST',
+//     headers: {
+//         'Content-Type': 'application/json',
+//         'content-length': Buffer.byteLength(postData)
+//     }
+// }
+// const request = http.request(options, res => {
+//     const statusCode = res.statusCode;
+//     const contentType = res.headers['content-type'];
+//     let error;
+//     if (statusCode !== 200) {
+//         error = new Error(`request failed. statusCode: ${statusCode}`);
+//     } else if (!/^application\/json/.test(contentType)) {
+//         error = new Error(`invalid contentType. expected application/json but received ${contentType}`);
+//     }
+//     if (error) {
+//         console.error(error);
+//         res.resume();
+//         return;
+//     }
+//     let data = '';
+//     res.on('data', chunk => {
+//         data += chunk;
+//     });
+//     res.on('end', () => {
+//         console.log(data);
+//     });
+// });
+// request.on('error', err => {
+//     console.error(err);
+// });
+// request.write(postData);
+// request.end();

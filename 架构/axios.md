@@ -1,48 +1,4 @@
-### 安装
-
-```bash
-npm install axios -S
-```
-
-
-
-### 通过传递配置创建请求
-
-axios(config)
-
-```js
-axios({
-  method: 'post',
-  url: '/user/12345',
-  data: {
-    firstName: 'Fred',
-    lastName: 'Flintstone'
-  }
-})
-	.then(function (response) {
-    console.log(response)
-  })
-  .catch(function (error) {
-    console.log(error)
-  })
-```
-
-
-
-### 请求方法别名
-
-为所有支持的请求方法提供了别名
-
-* axios.request(config)
-* axios.get(url[, config])
-* axios.delete(url[, config])
-* axios.head(url[, config])
-* axios.options(url[, config])
-* axios.post(url[, data[, config]])
-* axios.put(url[, data[, config]])
-* axios.patch(url[, data[, config]])
-
-在使用别名方法时，url，method，data 可以不在配置中指定。
+##### 案例
 
 ```js
 // 发送 get 请求
@@ -69,11 +25,25 @@ axios.post('/user', {
   .catch(function (error) {
     console.log(error);
   })
+
+// 通过传递配置创建请求
+axios({
+  method: 'post',
+  url: '/user/12345',
+  data: {
+    firstName: 'Fred',
+    lastName: 'Flintstone'
+  }
+})
+	.then(function (response) {
+    console.log(response)
+  })
+  .catch(function (error) {
+    console.log(error)
+  })
 ```
 
-
-
-### 创建实例
+##### 创建实例
 
 可以使用配置新建一个 axios 实例
 

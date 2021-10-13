@@ -286,7 +286,7 @@ try {
 }
 ```
 
-##### http（2次）
+##### http（3次）
 
 `http.OutgoingMessage`
 
@@ -309,7 +309,6 @@ try {
 此对象由 HTTP 服务器内部 http.Server 创建，而不是由用户创建。 并作为第二个参数传给 'request' 事件。
 
 ```js
-// header
 response.setHeader('Content-Type', 'text/html');
 response.setHeader('Set-Cookie', ['type=ninja', 'language=javascript']);
 response.getHeader('content-type'); // 'text/html'
