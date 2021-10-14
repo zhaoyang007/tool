@@ -2120,3 +2120,109 @@
 // });
 // request.write(postData);
 // request.end();
+// http
+// http.OutgoingMessage
+// http.ClientRequest
+// http.ServerResponse
+// http.IncomingMessage
+// http.createServer()
+// http.request()
+// http.ServerResponse
+// response.setHeader('Content-Type', 'application/json');
+// response.setHeader('Set-Cookie', ['type=najia', 'language=javascript']);
+// response.getHeader('Content-Type');
+// response.getHeaders();
+// response.getHeaderNames();
+// response.hasHeader('Content-Type');
+// response.removeHeader('Content-Type');
+// response.statusCode = 404;
+// response.statusMessage = 'Not Found';
+// response.writeHead(200, 'Success', { 'Content-Type': 'text/html' })
+// response.write('hello world');
+// response.end();
+// http.IncomingMessage
+// request.url
+// request.method
+// request.headers
+// request.statusCode
+// request.statusMessage
+// request.setEncoding('utf8');
+// request.on('data', chunk => {})
+// request.on('end', () => {
+//     console.log('没有更多数据了');
+// })
+// http.createServer
+// const http = require('http');
+// const url = require('url');
+// const qs = require('querystring');
+// const server = http.createServer((req, res) => {
+//     const method = req.method;
+//     let params;
+//     if (method === 'GET') {
+//         params = url.parse(req.url, true).query;
+//         console.log(params);
+//     } else if (method === 'POST') {
+//         let data = '';
+//         req.on('data', chunk => {
+//             data += chunk;
+//         });
+//         req.on('end', () => {
+//             const contentType = req.headers['content-type'];
+//             if (contentType === 'application/x-www-form-urlencoded') {
+//                 params = qs.parse(data);
+//             } else if (contentType === 'application/json') {
+//                 params = JSON.parse(data);
+//             }
+//             console.log(params);
+//         });
+//     }
+//     res.writeHead(200, { 'Content-Type': 'application/json'});
+//     res.write('hello world');
+//     res.end();
+// });
+// const hostname = '127.0.0.1';
+// const port = 8000;
+// server.listen(port, hostname, () => {
+//     console.log(`server is listening at ${hostname}:${port}`);
+// });
+
+// const postData = JSON.stringify({
+//     msg: 'request data'
+// });
+// const options = {
+//     hostname: '127.0.0.1',
+//     port: 8000,
+//     path: '/',
+//     method: 'POST',
+//     headers: {
+//         'Content-Type': 'application/json',
+//         'Content-Length': Buffer.byteLength(postData),
+//     }
+// }
+// const request = http.request(options, res => {
+//     const statusCode = res.statusCode;
+//     const contentType = res.headers['content-type'];
+//     let error;
+//     if (statusCode !== 200) {
+//         error = new Error(`request failed. status code: ${statusCode}`);
+//     } else if (!/^application\/json/.test(contentType)) {
+//         error = new Error(`invailed content-type. expected application/json but received ${contentType}`);
+//     }
+//     if (error) {
+//         console.error(error.message);
+//         req.resume();
+//         return;
+//     }
+//     let data = '';
+//     res.on('data', chunk => {
+//         data += chunk;
+//     });
+//     res.on('end', () => {
+//         console.log(data);
+//     });
+// });
+// request.on('error', err => {
+//     console.error(err);
+// });
+// request.write(postData);
+// request.end();

@@ -1,0 +1,33 @@
+<!--
+ * @Author: your name
+ * @Date: 2021-10-13 14:35:18
+ * @LastEditTime: 2021-10-13 15:37:07
+ * @LastEditors: Please set LastEditors
+ * @Description: In User Settings Edit
+ * @FilePath: /架构/lianxi/client/index.html
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script type="module">
+        import axios from 'axios';
+
+        const params = {
+            username: 'zhaoyang',
+            password: 123456
+        }
+        axios.post('/api/user/login', params)
+            .then(res => {
+                console.log(res);
+            }).catch(err => {
+
+            });
+    </script>
+</body>
+</html>

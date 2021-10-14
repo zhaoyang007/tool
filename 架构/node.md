@@ -286,7 +286,7 @@ try {
 }
 ```
 
-##### http（3次）
+##### http（4次）
 
 `http.OutgoingMessage`
 
@@ -367,7 +367,7 @@ const server = http.createServer((req, res) => {
     console.log(params);
   } else if (method === 'POST') {
     // 获取 post 请求数据
-    req.setEncoding('utf8')
+    req.setEncoding('utf8');
     let data = '';
     req.on('data', chunk => {
       data += chunk;
@@ -383,7 +383,7 @@ const server = http.createServer((req, res) => {
     });
   }
   res.writeHead(200, { 'Content-Type': 'application/json' });
-  res.write('resData');
+  res.write('hello world');
   res.end();
 });
 
@@ -420,7 +420,7 @@ callback 参数将被添加为 'response' 事件的单次监听器。
 const http = require('http');
 
 const postData = JSON.stringify({
-  msg: 'hello world'
+  msg: 'request data'
 });
 const options = {
   hostname: '127.0.0.1',
@@ -447,7 +447,7 @@ const request = http.request(options, res => {
     res.resume();
     return;
   }
-  res.setEncoding('utf8')
+  res.setEncoding('utf8');
   let data = '';
   res.on('data', chunk => {
     data += chunk;
