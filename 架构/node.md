@@ -179,7 +179,7 @@ path.isAbsolute('./test/something') // false
 // process.cwd() path.resolve('./') 返回执行node命令所在的文件夹的绝对路径
 ```
 
-##### fs（7次）2021.10.09
+##### fs（7次）2021.10.09（8次）2021.10.17
 
 文件
 
@@ -267,7 +267,8 @@ fs.mkdir('/Users/joe/test', err => {
 })
 try {
   if (!fs.existsSync('/Users/joe/test')) {
-    fs.mkdirSync('/Users/joe/test')
+    fs.mkdirSync('/Users/joe/test');
+    console.log('done');
   }
 } catch (err) {
   console.error(err)
@@ -281,12 +282,13 @@ fs.readdir('src', (err, files) => {
 });
 try {
   const files = fs.readdirSync('src');
+  console.log(files);
 } catch(err) {
 	console.error(err);
 }
 ```
 
-##### http（6次）
+##### http（7次）2021.10.17
 
 `http.OutgoingMessage`
 

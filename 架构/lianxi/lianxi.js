@@ -2434,3 +2434,184 @@
 // });
 // request.write(postData);
 // request.end();
+// fs
+// const fs = require('fs');
+// fs.stat('a.txt', (err, stats) => {
+//     console.log(stats.isFile());
+//     console.log(stats.isDirectory());
+//     console.log(stats.size);
+// });
+// const stats = fs.statSync('a.txt');
+// try {
+//     console.log(stats.isFile());
+//     console.log(stats.isDirectory());
+//     console.log(stats.size);
+// } catch(err) {
+//     console.error(err);
+// }
+// fs.readFile('a.txt', 'utf8', (err, data) => {
+//     if (err) throw err;
+//     console.log(data);
+// });
+// try {
+//     const data = fs.readFileSync('a.txt', 'utf8');
+//     console.log(data);
+// } catch(err) {
+//     console.error(err);
+// }
+// fs.writeFile('a.txt', 'aaa', err => {
+//     if (err) {
+//         console.error(err);
+//         return;
+//     }
+// });
+// try {
+//     fs.writeFileSync('a.txt', 'bbb', 'utf8');
+// } catch (err) {
+//     console.error(err);
+// }
+// fs.appendFile('a.txt', 'ccc', err =>{
+//     if (err) {
+//         console.error(err);
+//         return;
+//     }
+// });
+// try {
+//     fs.appendFileSync('a.txt', 'ddd', 'utf8');
+// } catch (err) {
+//     console.error(err);
+// }
+// const rs = fs.createReadStream('a.txt');
+// rs.pipe(process.stdout);
+// const ws = fs.createWriteStream('a.txt');
+// ws.write('aaa')
+// ws.write('bbb');
+// ws.end('ccc');
+// const fs = require('fs');
+// const path = require('path');
+// fs.mkdir('a', err => {
+//     if (err) throw err;
+// });
+// try {
+//     if (!fs.existsSync('c')) {
+//         fs.mkdirSync('c');
+//         console.log('done');
+//     }
+// } catch (err) {
+//     console.error(err);
+// }
+// fs.readdir('src', (err, files) => {
+//     if (err) throw err;
+//     console.log(files);
+// });
+// try {
+//     const files = fs.readdirSync('src');
+//     console.log(files.filter(file => fs.statSync('src/' + file).isFile()));
+// } catch (err) {
+//     console.error(err);
+// }
+// http 
+// http.OutgoingMessage
+// http.ClientRequest
+// http.ServerResponse
+// http.IncomingMessage
+// http.createServer()
+// http.request()
+// http.ServerResponse
+// response.setHeader('Content-Type', 'application/json')
+// response.setHeader('Set-Cookie', ['type=ninja', 'language=javascript'])
+// response.getHeader('Content-Type')
+// response.getHeaders()
+// response.getHeaderNames()
+// response.hasHeader('Content-Type')
+// response.removeHeader('Content-Type')
+// response.statusCode = 404
+// response.statusMessage = 'Not Found'
+// response.writeHead(200, 'Success', {'Content-Type': 'text/html'})
+// response.write('hello world')
+// response.end();
+// http.IncomingMessage
+// request.url
+// request.method
+// request.headers
+// request.statusCode
+// request.statusMessage
+// request.setEncoding('utf8')
+// request.on('data', chunk => {})
+// request.on('end', () => {})
+// const http = require('http');
+// const url = require('url');
+// const qs = require('querystring');
+// const server = http.createServer((req, res) => {
+//     const method = req.method;
+//     let params;
+//     if (method === 'GET') {
+//         params = url.parse(req.url, true).query;
+//         console.log(params);
+//     } else if (method === 'POST') {
+//         req.setEncoding('utf8');
+//         let data = '';
+//         req.on('data', chunk => {
+//             data += chunk;
+//         });
+//         req.on('end', () => {
+//             console.log(data);
+//             const contentType = req.headers['content-type'];
+//             if (contentType === 'application/x-www-form-urlencoded') {
+//                 params = qs.parse(data);
+//             } else if (contentType === 'application/json') {
+//                 params = JSON.parse(data);
+//             }
+//             console.log(params);
+//         });
+//     }
+//     res.writeHead(200, {'Content-Type': 'application/json'});
+//     res.write('hello world');
+//     res.end();
+// });
+// const hostname = '127.0.0.1';
+// const port = 8000;
+// server.listen(port, hostname, () => {
+//     console.log(`server is listening at ${hostname}:${port}`);
+// });
+// const postData = JSON.stringify({
+//     msg: 'request data'
+// });
+// const options = {
+//     hostname: '127.0.0.1',
+//     port: 8000,
+//     path: '/',
+//     method: 'POST',
+//     headers: {
+//         'Content-Type': 'application/json',
+//         'Content-Length': Buffer.byteLength(postData)
+//     }
+// }
+// const request = http.request(options, res => {
+//     const { statusCode } = res;
+//     const contentType = res.headers['content-type'];
+//     let error;
+//     if (statusCode !== 200) {
+//         error = new Error(`request failed. status code: ${statusCode}`);
+//     } else if (!/^application\/json/.test(contentType)) {
+//         error = new Error(`invalid content-type. expected application/json but recerved ${contentType}`);
+//     }
+//     if (error) {
+//         console.error(error.message);
+//         res.resume();
+//         return;
+//     }
+//     res.setEncoding('utf8');
+//     let data = '';
+//     res.on('data', chunk => {
+//         data += chunk;
+//     });
+//     res.on('end', () => {
+//         console.log(data);
+//     });
+// });
+// request.on('error', err => {
+//     console.error(err);
+// });
+// // request.write(postData);
+// request.end();
