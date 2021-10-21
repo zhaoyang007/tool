@@ -15,7 +15,7 @@ const log = content => console.log(chalk.green(content));
 const { clone } = require('./download');
 
 // 自动打开浏览器
-const open = require('open');
+// const open = require('open');
 
 // nodejs里执行命令行命令: 子进程中的spawn方法
 const spawn = async (...args) => {
@@ -57,5 +57,5 @@ npm run serve
     
     // 自动打开浏览器
     open(`http://localhost:8080`);
-    
+
 }
