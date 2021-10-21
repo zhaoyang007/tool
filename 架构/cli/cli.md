@@ -31,7 +31,10 @@ const clear = require('clear');
 // 粉笔
 const chalk = require('chalk');
 // 自动打开浏览器
-const open = require('open');
+// const open = require('open');
+
+const fs = require('fs');
+const handlebars = require('handlebars');
 
 // 加颜色的log
 const log = content => console.log(chalk.green(content));
@@ -95,21 +98,100 @@ npm run serve
     
 }
 
+const refresh = async () => {
+    // 获取views页面列表
+    const list = fs
+        .readdirSync('./src/views')
+        .filter(v => v !== 'Home.vue')
+        .map(v => ({
+            name: v.replace('.vue', '').toLowerCase(),
+            file: v
+        }));
+    // 使用页面列表数据和模版生成代码
+    function compile(meta, filePath, templatePath) {
+        if (fs.existsSync(filePath)) {
+            const content = fs.readFileSync(templatePath).toString();
+            const result = handlebars.compile(content)(meta);
+            fs.writeFileSync(filePath, result);
+            console.log(chalk.green(`🚀${filePath} 创建成功`));
+        }
+    }
+    // 生成路由
+    compile({ list }, './src/router.js', './template/router.js.hbs');
+    
+    // 生成菜单
+    compile({ list }, './src/App.vue', './template/App.vue.hbs');
+}
+
 // kkb -V
 program.version(require('../package.json').version);
 
-// kkb init abc 创建一个叫abc的工程
+// kkb init abc 
+// 创建一个叫abc的工程
 program.command('init <name>')
     .description('init project')
     // .action(name => {
     //     console.log('init', name);
     // })
     .action(init)
+
+// kkb refresh
+// 自动生成路由配置命令
+program.command('refresh')
+    .description('refresh routers...')
+    .action(refresh);
+
 // 固定要写的，program是通过解析process.argv来获取命令行参数的
 program.parse(process.argv);
 ```
 
+发布
+
+publish.sh
+
+```bash
+#!usr/bin/env bash
+npm config get registry # 检查npm仓库
+npm config set registry=https://registry.npmjs.org
+echo '请进行登录相关操作'
+npm login
+echo '-------publishing-------'
+npm publish
+# npm config set registry=https://registry.npm.taobao.org
+echo '发布完成'
+exit
+```
+
+```bash
+chmod +x publish.sh # 新建的sh文件执行前要加执行权限
+./publish.sh
+```
+
+使用
+
+```bash
+# 全局安装
+npm install -g zy-vue-auto-router-cli
+
+# 本地安装
+npm install zy-vue-auto-router-cli
+
+# 本地安装后，使用 npm link 转到全局
+# 需要在下载 node_modules 包中执行，这样才会找到改包下的 bin 命令。
+npm link
+```
 
 
 
+todo
+
+1. 发布之后，下载下来，看看能不能在不使用 `sudo npm link` 的情况下全局使用注册的命令。
+
+   不能，要在下载下来的文件中执行 sudo npm link 后，命令才会挂载到全局。
+
+2. 看看全局命令中是否有这个注册的命令。
+
+   有
+
+3. 生成代码： 1.模版映射 2.ast 
 
