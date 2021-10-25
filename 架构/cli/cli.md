@@ -1,25 +1,25 @@
 初始化（1次）
 
 ```bash
-mkdir vue-auto-router-cli
-cd vue-auto-router-cli
+mkdir my-cli
+cd my-cli
 npm init -y
 npm i commander chalk figlet clear open download-git-repo ora handlebars -s
 
 mkdir bin
 cd bin
-touch kkb.js
+touch mycli.js
 
 # package.json中注册bin
 "bin": {
-	"kkb": "./bin/kkb.js"
+	"mycli": "./bin/mycli.js"
 },
 
-# 把你注册的bin文件通过软链的形式连接到全局，这样就可以全局使用kkb命令了
+# 把你注册的bin文件通过软链的形式连接到全局，这样就可以全局使用mycli命令了
 sudo npm link
 ```
 
-kkb.js
+mycli.js
 
 ```js
 #!/usr/bin/env node
@@ -43,10 +43,10 @@ const handlebars = require('handlebars');
 // 加颜色的log
 const log = content => console.log(chalk.green(content));
 
-// kkb -V
+// mycli -V
 program.version(require('../package.json').version);
 
-// kkb init abc 
+// mycli init abc 
 // 创建一个叫abc的工程
 program.command('init <name>')
     .description('init project')
@@ -55,7 +55,7 @@ program.command('init <name>')
     // })
     .action(init)
 
-// kkb refresh
+// mycli refresh
 // 自动生成路由配置命令
 program.command('refresh')
     .description('refresh routers...')
@@ -67,7 +67,7 @@ program.parse(process.argv);
 async function init(name) {
     // 打印欢迎界面
     // clear();
-    const data = await figlet('KKB Welcome');
+    const data = await figlet('mycli welcome');
     log(data);
 
     // 脚手架新建一个工程一般是要从某一个种子工程下载下来的
