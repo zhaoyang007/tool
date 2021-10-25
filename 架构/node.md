@@ -288,7 +288,7 @@ try {
 }
 ```
 
-##### http（7次）2021.10.17
+##### http（7次）2021.10.17（8次）2021.10.25
 
 `http.OutgoingMessage`
 
@@ -684,6 +684,12 @@ Unicode的编号从`0000`开始一直到`10FFFF`共分为17个Plane，每个Plan
 * Content-Encoding：WEB服务器表明自己使用了什么压缩方法（gzip，deflate）压缩响应中的对象。例如：Content-Encoding：gzip
 * Content-Language：WEB服务器告诉浏览器自己响应的对象的语言。
 
+##### 鉴权
+
+session-cookie
+
+token
+
 ##### todo
 
 1. npm 命令是否就是 node 可执行文件的名字
@@ -734,3 +740,4 @@ Unicode的编号从`0000`开始一直到`10FFFF`共分为17个Plane，每个Plan
     ```
 
 11. 
+

@@ -1,4 +1,28 @@
+##### 网络编程
+
+* 物理层
+* 网络层
+* 传输层
+  * TCP
+  * UDP
+* 应用层
+  * TELNET
+  * SSH
+  * HTTP
+  * SMTP
+  * POP
+  * SSL/TLS
+  * FTP
+  * MIME
+  * HTML
+
 ##### HTTP 协议格式
+
+```bash
+curl -v http://www.baidu.com
+```
+
+
 
 请求部分：
 
@@ -16,7 +40,7 @@
 
     CONNECT 现在多用于 HTTPS 和 WebSocket。
 
-    OPTIONS 和 TRACE 一般用于调试，多数线上服务都不支持。
+    OPTIONS 和 TRACE 一般用于调试，多数线上服务都不支持。预检请求的 method 也是 OPTIONS。
 
   * 请求的路径
 
@@ -27,12 +51,15 @@
   HTTP 头也是一种数据，可以自由定义 HTTP 头和值。不过在 HTTP 规范中，规定了一些特殊的 HTTP 头。
 
   * Accept：告诉服务端想要的数据类型
+  * Accept-Charset：想要接收数据的字符集
   * Accept-Encoding：数据编码方式，用来限制服务端如何进行数据压缩。
   * Accept-Language：语言。
+  * Authorization：鉴权的 token。
   * Connection：连接方式，如果是 keep-alive，且服务端支持，则会复用连接。
   * Host：Http 访问使用的域名。
+  * Content-Type：请求数据 body 的编码类型。
   * Cookie：客户端存储的 cookie 字符串。
-  * User-Agent：浏览器的一些相关的信息。
+  * User-Agent：浏览器的一些相关的信息。操作系统及版本/cpu/浏览器及版本/浏览器渲染引擎/浏览器语言/浏览器插件
   * Cache-Control：控制缓存时效性。
   * If-Modified-Since：上次访问时的更改时间，如果服务端认为此时间后自己没有更新，则会给出 304 响应。
   * If-None-Match：上次访问时使用的 E-Tag，通常是页面的信息摘要。
@@ -43,7 +70,7 @@
 
   * application/json
   * application/x-www-form-urlencoded
-  * multipart/form-data
+  * multipart/form-data：既有文本数据，又有文件等二进制数据。所有的传输数据类型都会在编码里面去体现。
   * text/xml
   
   form 表单提交产生的请求，默认会产生 application/x-www-form-urlencoded 的数据格式，当有文件上传时，则会使用 multipart/form-data。
@@ -61,7 +88,8 @@
       * 301&302：永久性与临时性跳转。表示当前资源已经被转移。
       * 304：跟客户端缓存没有更新。
     * 4xx：客户端请求错误。
-      * 401：就代表你发送这个请求的时候你没有做认证，没有权限去获取你请求的。
+      * 400：请求参数有语法错误，不能被服务器理解。
+      * 401：没登录，鉴权失败。
       * 403：无权限。禁止访问，服务器收到请求，但是拒绝提供服务。
       * 404：表示请求的页面不存在。
     * 5xx：服务端请求错误。
@@ -79,6 +107,7 @@
   * Connection：连接方式，keep-alive 表示复用连接。
   * Date：当前服务器日期。
   * Keep-Alive：保持连接不断时需要的一些信息，如 timeout=5, max=100。
+  * Location：告诉客户端重定向的地址。
   * Server：服务端软件类型。
   * Set-Cookie：设置 cookie，可以存在多个。
   * Via：服务端请求链路，对一些调试场景至关重要。
@@ -86,6 +115,10 @@
   * Cache-Control：缓存控制，用于通知各级缓存保存的时间，例如 max-age=0，表示不要缓存。
   * Last-Modified：页面上次修改的时间。
   * ETag：页面信息摘要，用于判断是否需要重新到服务端取回页面。
+  * Access-Control-Allow-Origin：允许的跨域的源，如：'http://localhost:3000'
+  * Access-Control-Allow-Headers：允许跨域的请求头，如：'X-Token,Content-Type'
+  * Access-Control-Allow-Method：允许跨域的方法，如：'PUT,OPTIONS'
+  * Access-Control-Allow-Credentials: true。跨域时默认是不记录 cookie 认证信息的。加上这个让它能够记录，从而能够使用 cookie。
 
 * 响应体：头之后，以一个空行为分隔，响应体则是 HTML 代码。
 
@@ -140,3 +173,6 @@ cache-control 优先级高于 expires
 
 ![用户行为对缓存的影响](图片/用户行为对缓存的影响.png)
 
+##### 预检请求
+
+报头使用了一些非正常报头会触发预检请求，使用非 get/post 的请求也会触发预检请求。
