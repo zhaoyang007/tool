@@ -1,17 +1,21 @@
-cli
+初始化（1次）
 
 ```bash
 mkdir vue-auto-router-cli
 cd vue-auto-router-cli
 npm init -y
-npm i commander download-git-repo ora handlebars figlet clear chalk open -s
+npm i commander chalk figlet clear open download-git-repo ora handlebars -s
 
 mkdir bin
+cd bin
 touch kkb.js
 
 # package.json中注册bin
+"bin": {
+	"kkb": "./bin/kkb.js"
+},
 
-# 把你注册的bin文件通过软链的形式连接到全局
+# 把你注册的bin文件通过软链的形式连接到全局，这样就可以全局使用kkb命令了
 sudo npm link
 ```
 
@@ -38,6 +42,56 @@ const handlebars = require('handlebars');
 
 // 加颜色的log
 const log = content => console.log(chalk.green(content));
+
+// kkb -V
+program.version(require('../package.json').version);
+
+// kkb init abc 
+// 创建一个叫abc的工程
+program.command('init <name>')
+    .description('init project')
+    // .action(name => {
+    //     console.log('init', name);
+    // })
+    .action(init)
+
+// kkb refresh
+// 自动生成路由配置命令
+program.command('refresh')
+    .description('refresh routers...')
+    .action(refresh);
+
+// 固定要写的，program是通过解析process.argv来获取命令行参数的
+program.parse(process.argv);
+
+async function init(name) {
+    // 打印欢迎界面
+    // clear();
+    const data = await figlet('KKB Welcome');
+    log(data);
+
+    // 脚手架新建一个工程一般是要从某一个种子工程下载下来的
+    // clone种子库
+    await clone('github:su37josephxia/vue-template', name);
+
+    // 安装依赖 npm install
+    log('安装依赖');
+    await spawn('npm', ['install'], { cwd: `./${name}` });
+    log(chalk.green(`
+👌安装完成:
+To get Start: ===========================
+cd ${name}
+npm run serve
+===========================`
+    ));
+  
+  	// 自动打开浏览器
+    // open(`http://localhost:8080`);
+  
+    // 启动本地服务
+    await spawn('npm', ['run', 'serve'], { cwd: `./${name}`});
+    
+}
 
 // clone
 const clone = async (repo, desc) => {
@@ -69,36 +123,7 @@ const spawn = async (...args) => {
     });
 }
 
-async function init(name) {
-    // 打印欢迎界面
-    // clear();
-    const data = await figlet('KKB Welcome');
-    log(data);
-
-    // 脚手架新建一个工程一般是要从某一个种子工程下载下来的
-    // clone种子库
-    await clone('github:su37josephxia/vue-template', name);
-
-    // 安装依赖 npm install
-    log('安装依赖');
-    await spawn('npm', ['install'], { cwd: `./${name}` });
-    log(chalk.green(`
-👌安装完成:
-To get Start: ===========================
-cd ${name}
-npm run serve
-===========================`
-    ));
-  
-  	// 自动打开浏览器
-    // open(`http://localhost:8080`);
-  
-    // 启动本地服务
-    await spawn('npm', ['run', 'serve'], { cwd: `./${name}`});
-    
-}
-
-const refresh = async () => {
+async function refresh() {
     // 获取views页面列表
     const list = fs
         .readdirSync('./src/views')
@@ -113,7 +138,7 @@ const refresh = async () => {
             const content = fs.readFileSync(templatePath).toString();
             const result = handlebars.compile(content)(meta);
             fs.writeFileSync(filePath, result);
-            console.log(chalk.green(`🚀${filePath} 创建成功`));
+            log(`🚀${filePath} 创建成功`);
         }
     }
     // 生成路由
@@ -122,27 +147,6 @@ const refresh = async () => {
     // 生成菜单
     compile({ list }, './src/App.vue', './template/App.vue.hbs');
 }
-
-// kkb -V
-program.version(require('../package.json').version);
-
-// kkb init abc 
-// 创建一个叫abc的工程
-program.command('init <name>')
-    .description('init project')
-    // .action(name => {
-    //     console.log('init', name);
-    // })
-    .action(init)
-
-// kkb refresh
-// 自动生成路由配置命令
-program.command('refresh')
-    .description('refresh routers...')
-    .action(refresh);
-
-// 固定要写的，program是通过解析process.argv来获取命令行参数的
-program.parse(process.argv);
 ```
 
 发布
@@ -180,18 +184,3 @@ npm install zy-vue-auto-router-cli
 # 需要在下载 node_modules 包中执行，这样才会找到改包下的 bin 命令。
 npm link
 ```
-
-
-
-todo
-
-1. 发布之后，下载下来，看看能不能在不使用 `sudo npm link` 的情况下全局使用注册的命令。
-
-   不能，要在下载下来的文件中执行 sudo npm link 后，命令才会挂载到全局。
-
-2. 看看全局命令中是否有这个注册的命令。
-
-   有
-
-3. 生成代码： 1.模版映射 2.ast 
-

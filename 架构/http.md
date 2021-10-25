@@ -1,28 +1,22 @@
 ##### 网络编程
 
 * 物理层
+
 * 网络层
+
 * 传输层
-  * TCP
-  * UDP
+
+  TCP/UDP
+
 * 应用层
-  * TELNET
-  * SSH
-  * HTTP
-  * SMTP
-  * POP
-  * SSL/TLS
-  * FTP
-  * MIME
-  * HTML
+
+  TELNET/SSH/HTTP/SMTP/POP/SSL/TLS/FTP/MIME/HTML
 
 ##### HTTP 协议格式
 
 ```bash
 curl -v http://www.baidu.com
 ```
-
-
 
 请求部分：
 
@@ -175,4 +169,4 @@ cache-control 优先级高于 expires
 
 ##### 预检请求
 
-报头使用了一些非正常报头会触发预检请求，使用非 get/post 的请求也会触发预检请求。
+使用了非正常的请求报头或使用非 get/post 的请求会触发预检请求。
