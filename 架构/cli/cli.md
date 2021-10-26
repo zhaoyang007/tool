@@ -1,10 +1,10 @@
-初始化（1次）
+初始化（2次）
 
 ```bash
 mkdir my-cli
 cd my-cli
 npm init -y
-npm i commander chalk figlet clear open download-git-repo ora handlebars -s
+npm i commander download-git-repo chalk figlet ora handlebars clear open -s
 
 mkdir bin
 cd bin
@@ -133,7 +133,7 @@ async function refresh() {
             file: v
         }));
     // 使用页面列表数据和模版生成代码
-    function compile(meta, filePath, templatePath) {
+    function compile(meta, templatePath, filePath) {
         if (fs.existsSync(filePath)) {
             const content = fs.readFileSync(templatePath).toString();
             const result = handlebars.compile(content)(meta);
@@ -142,10 +142,10 @@ async function refresh() {
         }
     }
     // 生成路由
-    compile({ list }, './src/router.js', './template/router.js.hbs');
+    compile({ list }, './template/router.js.hbs', './src/router.js');
     
     // 生成菜单
-    compile({ list }, './src/App.vue', './template/App.vue.hbs');
+    compile({ list }, './template/App.vue.hbs', './src/App.vue');
 }
 ```
 
