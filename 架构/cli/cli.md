@@ -1,4 +1,4 @@
-初始化（2次）
+初始化（3次）
 
 ```bash
 mkdir my-cli
@@ -77,13 +77,13 @@ async function init(name) {
     // 安装依赖 npm install
     log('安装依赖');
     await spawn('npm', ['install'], { cwd: `./${name}` });
-    log(chalk.green(`
+    log(`
 👌安装完成:
 To get Start: ===========================
 cd ${name}
 npm run serve
 ===========================`
-    ));
+    );
   
   	// 自动打开浏览器
     // open(`http://localhost:8080`);

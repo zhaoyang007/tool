@@ -4,7 +4,7 @@
 
 每个 async 函数就是一个中间件，可以做一些自己的事情，然后用 `await next()` 来调用下一个 async 函数。
 
-形成一个洋葱圈模式（顺序模式中的责任链模式）。形成切面，中间件之前和之后都可以做一些事情。
+洋葱圈模式（责任链模式）既能满足顺序描述的需要也能满足切面描述的需要，中间件之前和之后都可以做一些事情。
 
 ```js
 app.use(async (ctx, next) => {
@@ -93,3 +93,180 @@ router.post('/signin', async (ctx, next) => {
     }
 });
 ```
+
+##### 实现 koa 框架
+
+```js
+const Koa = require('./koa');
+const app = new Koa();
+
+app.use((req, res) => {
+	res.writeHead(200);
+  res.end('hello world');
+});
+
+app.listen(3000, () => {
+	console.log(`server is listening at 3000`);
+});
+```
+
+Koa.js
+
+```js
+const http = require('http');
+const context = require('./context');
+const request = require('./request');
+const response = require('./response');
+
+class Koa {
+	use(callback) {
+		this.callback = callback;
+  }
+  
+  listen(...args) {
+		const server = http.createServer((req, res) => {
+			// this.callback(req, res);
+      
+      // 创建上下文
+      const ctx = this.createContext(req, res);
+      
+      this.callback(ctx);
+      
+      res.end(ctx.body);
+      
+    });
+    server.listen(...args);
+  }
+  
+  // 构建上下文
+  createContext(req, res) {
+    const ctx = Object.create(context);
+    ctx.request = Object.create(request);
+    ctx.response = Object.create(response);
+    
+    ctx.req = ctx.request.req = req;
+    ctx.res = ctx.response.res = res;
+    
+		return ctx;
+  }
+}
+module.exports = Koa;
+```
+
+request.js
+
+```js
+module.exports = {
+	get url() {
+		return this.req.url;
+  },
+  get method() {
+    return this.req.method.toLowerCase();
+  },
+}
+```
+
+response.js
+
+```js
+module.exports = {
+	get body() {
+		return this._body;
+  },
+  set body(val) {
+    this._body = val;
+  },
+}
+```
+
+context.js
+
+```js
+module.exports = {
+	get url() {
+		return this.request.url;
+  },
+  get method() {
+		return this.request.method;
+  },
+  get body() {
+		return this.response.body;
+  },
+	set body(val) {
+    this.response.body = val;
+  },
+}
+```
+
+函数功能组合
+
+compose.js
+
+```js
+const add = (x, y) => x + y;
+const square = z => z * z;
+const fn = (x, y) => square(add(x, y));
+console.log(fn(1, 2));
+
+// 组合两个函数
+const compose = (fn1, fn2) => (...args) => fn2(fn1(...args));
+const fn = compose(add, square)
+console.log(fn(1, 2));
+
+// 组合多个函数
+const compose = (...[first, ...other]) => (...args) => {
+  let ret = first(...args);
+  other.forEach(fn => {
+    ret = fn(ret);
+  });
+  return ret;
+}
+```
+
+中间件洋葱圈模式 compose
+
+```js
+async function fn1(next) {
+  console.log("fn1");
+  await next();
+  console.log("end fn1");
+}
+async function fn2(next) {
+  console.log("fn2");
+  await delay();
+  await next();
+  console.log("end fn2");
+}
+function fn3(next) {
+  console.log("fn3");
+}
+function delay() {
+  return new Promise((reslove, reject) => {
+		setTimeout(() => {
+  		reslove();
+    }, 2000);
+	}); 
+}
+const middlewares = [fn1, fn2, fn3];
+const finalFn = compose(middlewares);
+finalFn(); // fn1,fn2,fn3,end fn2,end fn1
+
+function compose(middlewares) {
+	return function () {
+		return dispatch(0);
+    function dispatch(i) {
+			let fn = middlewares[i];
+      if (!fn) {
+				return Promise.resolve();
+      }
+      return Promise.resolve(
+      	fn(function next() {
+					// 下一级promise
+          return dispatch(i + 1);
+        });
+      );
+    }
+  }
+}
+```
+
