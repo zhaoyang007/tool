@@ -646,12 +646,6 @@ align-self: stretch;    // 当子元素不设置侧轴方向的宽高属性的�
 align-self: baseline;   // 子元素会以内容区域去互相对齐
 ```
 
-##### 弹性盒演示工具 flexbox-playground
-
-https://codepen.io/peiqun/pen/WYzzYX
-
-https://github.com/randyviandaputra/flexbox-playground
-
 
 
 ### 页面适配

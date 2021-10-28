@@ -1,4 +1,4 @@
-初始化（3次）
+初始化（4次）
 
 ```bash
 mkdir my-cli
@@ -184,3 +184,4 @@ npm install zy-vue-auto-router-cli
 # 需要在下载 node_modules 包中执行，这样才会找到改包下的 bin 命令。
 npm link
 ```
+

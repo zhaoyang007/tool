@@ -1,17 +1,3 @@
-##### 网络编程
-
-* 物理层
-
-* 网络层
-
-* 传输层
-
-  TCP/UDP
-
-* 应用层
-
-  TELNET/SSH/HTTP/SMTP/POP/SSL/TLS/FTP/MIME/HTML
-
 ##### HTTP 协议格式
 
 ```bash
@@ -104,7 +90,8 @@ curl -v http://www.baidu.com
   * Location：告诉客户端重定向的地址。
   * Server：服务端软件类型。
   * Set-Cookie：设置 cookie，可以存在多个。
-  * Via：服务端请求链路，对一些调试场景至关重要。
+  * Via：服务端请求链路，对一些调试场景至关重要，代理服务器相关信息。
+  * Vary：代理服务器缓存信息。
   * Expires：过期时间，用于判断下次请求是否需要到服务端取回页面。
   * Cache-Control：缓存控制，用于通知各级缓存保存的时间，例如 max-age=0，表示不要缓存。
   * Last-Modified：页面上次修改的时间。
