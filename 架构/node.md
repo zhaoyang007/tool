@@ -692,27 +692,6 @@ token
 
 ##### todo
 
-1. npm 命令是否就是 node 可执行文件的名字
-
-2. 事件循环
-
-3. 使用setTimeout封装setInterval
-
-   ```js
-   // 利用setTimeout实现setInterval
-   function mySetInterval(fn, time) {
-   	function myFunction() {
-       fn();
-       setTimeout(myFunction, time);
-     }
-     return setTimeout(myFunction, time);
-   }
-   let timer = mySetInterval(() => console.log(666), 1000);
-   setTimeout(()=>{clearTimeout(timer)}, 3000);
-   ```
-
-4. promise 原理，async/await 原理
-
 5. 错误处理
 
 6. Error
@@ -720,8 +699,6 @@ token
 7. events
 
 8. url
-
-9. 模块化
 
 10. timer
 
