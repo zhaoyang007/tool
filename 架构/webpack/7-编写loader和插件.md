@@ -36,10 +36,6 @@ loader 做的事情就是拿到源代码，作进⼀步的修饰处理，再返�
 
 定义：loader 只是一个导出为函数的 JavaScript 模块。意思是我们如果要写一个 loader，其实只需要写一个 JS 模块，然后把这个模块导出来就可以了。
 
-最简单的一个 loader：
-
-接受一个输入 source 当前的源码，输出是 return 一个 source 出来。这里什么都没有做，正常的情况下 loader 的作用就是，输入一串代码，经过 loader 处理，然后返回一个新代码。
-
 ```js
 module.exports = function(source) {
 	return source
@@ -369,8 +365,6 @@ module.exports = function (source) {
 
 
 ## plugin
-
-webpack 怎么样编写一个插件，它的基本结构是什么样子的。
 
 loader 的作用是用来处理各种各样的静态资源，插件的功能是更加强大的，插件是伴随整个 webpack 从初始化到最终的资源生成的过程，整个过程都可以有插件的。loader 没法做的事情都是可以通过插件来做的。
 
