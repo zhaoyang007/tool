@@ -232,7 +232,200 @@
 //     return eval(`(${jsonStr})`);
 // }
 // console.log(JSON.parse1('{a: 1, b: 2, c: 3, c: 4}'));
-JSON.parse1 = function(jsonStr) {
-    return (new Function(`return ${jsonStr}`))();
-}
-console.log(JSON.parse1('{a: "b"}'));
+// JSON.parse1 = function(jsonStr) {
+//     return (new Function(`return ${jsonStr}`))();
+// }
+// console.log(JSON.parse1('{a: "b"}'));
+// Object.assign1 = function(target, ...sources) {
+//     if (target == null) throw new TypeError('Cannot convert undefined or null to object');
+//     console.log(sources);
+//     let res = Object(target);
+//     sources.forEach(source => {
+//         if (source != null) {
+//             console.log(source);
+//             for (let key in source) {
+//                 if (source.hasOwnProperty(key)) res[key] = source[key];
+//             }
+//         }
+//     })
+//     return res;
+// }
+// Object.assign1 = function (target, ...sources) {
+//     if (target == null) throw new TypeErrot('Cannot convert undefined or null to object');
+//     const res = Object(target);
+//     sources.forEach(source => {
+//         if (source != null) {
+//             for (let key in source) {
+//                 if (source.hasOwnProperty(key)) res[key] = source[key];
+//             }
+//         }
+//     });
+//     return res;
+// }
+// a = {a: 1}
+// b = {b: 2}
+// c = {c: 3}
+// d = [1,2]
+// console.log(Object.assign1(a, b, c, d, {a: 5}));
+// 实现push
+// Array.prototype.push1 = function() {
+//     for (let i = 0; i < arguments.length; i++) {
+//         this[this.length] = arguments[i];
+//     }
+//     return this.length;
+// }
+// Array.prototype.push = function() {
+//     for (let i = 0; i < arguments.length; i++) {
+//         this[this.length] = arguments[i];
+//     }
+//     return this.length;
+// }
+// 实现数组filter
+// Array.prototype.filter1 = function(fn) {
+//     if (typeof fn !== 'function') throw new TypeError('参数必须是一个函数');
+//     let arr = [];
+//     for (var i = 0; i < this.length; i++) {
+//         if (fn(this[i], i)) arr.push(this[i]);
+//     }
+//     return arr;
+// }
+// a = [1,2,3,4,5]
+// b = a.filter1((item, index) => {console.log(index); return item >2})
+// console.log(b);
+// Array.prototype.filter = function(fn) {
+//     if (typeof fn !== 'function') throw new TypeError('参数必须是一个函数');
+//     let arr = [];
+//     for (let i = 0; i < this.length; i++) {
+//         if (fn(this[i], i)) arr.push(this[i]);
+//     }
+//     return arr;
+// }
+// 实现数组map
+// Array.prototype.map = function(fn) {
+//     if (typeof fn !== 'function') throw new TypeError('参数必须是一个函数');
+//     let arr = [];
+//     for (let i = 0; i < this.length; i++) {
+//         arr.push(fn(this[i], i));
+//     }
+//     return arr;
+// }
+// 实现字符串repeat
+// String.prototype.repeat1 = function(n) {
+//     return (new Array(n + 1)).join(this);
+// }
+// a = 'a'
+// console.log(a.repeat1(5));
+// String.prototype.repeat1 = function(n) {
+//     return n > 0 ? this.repeat1(n - 1) + this : '';
+// }
+// a = 'b'
+// console.log(a.repeat1(5));
+// 实现Object.create()
+// Object.create = function(obj) {
+//     function F() {};
+//     F.prototype = obj;
+//     return new F();
+// }
+// 实现Object.is
+// Object.is = function(x, y) {
+//     if (x === y) {
+//         return x !== 0 || 1 / x === 1 / y;
+//     }
+//     return x !== x && y !== y;
+// }
+// 实现instanceof
+// function Instanceof(left, right) {
+//     while(true) {
+//         if (left == null) return false;
+//         if (left.__proto__ === right.prototype) return true;
+//         left = left.__proto__;
+//     }
+// }
+// JSON.parse
+// JSON.parse1 = function(jsonStr) {
+//     return eval(`(${jsonStr})`);
+// }
+// a = JSON.parse1(`{a: 1, b: 2,c}`)
+// console.log(a);
+// JSON.parse1 = function(jsonStr) {
+//     return (new Function(`return ${jsonStr}`))();
+// }
+// a = JSON.parse1('{a: 1, b: 2}')
+// console.log(a);
+// 实现Object.assign
+// Object.assign = function(target, ...sources) {
+//     if (target == null) throw new TypeError('Cannot convert undefined or nul to object');
+//     let res = Object(target);
+//     sources.forEach(source => {
+//         if (source != null) {
+//             for (let key in source) {
+//                 if (source.hasOwnProperty(key)) res[key] = source[key];
+//             }
+//         }
+//     });
+//     return res;
+// }
+// Object.assign1 = function(target, ...sources) {
+//     if (target == null) throw new TypeError('Cannot convert undefined or null to object');
+//     let res = Object(target);    
+//     sources.forEach(source => {
+//         // if (source != null) {
+//             for (let key in source) {
+//                 if (source.hasOwnProperty(key)) res[key] = source[key]; 
+//             }
+//         // }
+//     });
+//     return res;
+// }
+// a = 1
+// console.log(Object.assign1(a, {b: 1}, 3, {c: 2}, null));
+// a = [1,2,3]
+// a.flat()
+// 实现flat
+// function flat(arr, depth) {
+//     if (!Array.isArray(arr) || depth <= 0) return arr;
+//     return arr.reduce((acc, cur) => {
+//         return Array.isArray(cur) ? acc.concat(flat(cur, depth - 1)) : acc.concat(cur);
+//     }, []);
+// }
+// function flat(arr) {
+//     let arrs = [...arr];
+//     let res = [];
+//     while(arrs.length) {
+//         let tmp = arrs.shift();
+//         Array.isArray(tmp) ? arrs.unshift(...tmp) : res.push(tmp);
+//     }
+//     return res;
+// }
+// function flat(arr) {
+//     let res = [];
+//     arr.forEach(item => {
+//         Array.isArray(item) ? res.push(...flat(item)) : res.push(item);
+//     });
+//     return res;
+// }
+// 实现数组flat
+// function flat(arr, depth = 1) {
+//     if (!Array.isArray(arr) || depth <= 0) return arr;
+//     return arr.reduce((acc, cur) => {
+//         return Array.isArray(cur) ? acc.concat(flat(cur, depth - 1)) : acc.concat(cur);
+//     }, []);
+// }
+// a = [1,2,3,4,[5,6,[7,8,9]]]
+// console.log(flat(a, 0));
+// function flat(arr) {
+//     let res = [];
+//     let arrs = [...arr];
+//     while(arrs.length) {
+//         const tmp = arrs.shift();
+//         Array.isArray(tmp) ? arrs.unshift(...tmp) : res.push(tmp);
+//     }
+//     return res;
+// }
+// function flat(arr) {
+//     const res = [];
+//     arr.forEach(item => {
+//         Array.isArray(item) ? res.push(...flat(item)) : res.push(item);
+//     });
+//     return res;
+// }
