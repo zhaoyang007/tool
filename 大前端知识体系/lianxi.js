@@ -429,3 +429,126 @@
 //     });
 //     return res;
 // }
+// 实现数组push
+// Array.prototype.push = function() {
+//     for (let i = 0; i < arguments.length; i++) {
+//         this[this.length] = argunments[i];
+//     }
+//     return this.length;
+// }
+// 实现数组filter
+// Array.prototype.filter = function(fn) {
+//     if (typeof fn !== 'function') throw new TypeError('参数必须是一个函数');
+//     const res = [];
+//     for (let i = 0; i < this.length; i++) {
+//         if (fn(this[i], i)) res.push(this[i]);
+//     }
+//     return res;
+// }
+// 实现数组map
+// Array.prototype.map = function(fn) {
+//     if (typeof fn !== 'function') throw new TypeError('参数必须是一个函数');
+//     const res = [];
+//     for (let i = 0; i < this.length; i++) {
+//         res.push(map(this[i], i));
+//     }
+//     return res;
+// }
+// 实现字符串repeat
+// String.prototype.repeat = function(n) {
+//     return (new Array(n + 1)).join(this);
+// }
+// String.prototype.repeat = function(n) {
+//     return n > 0 ? this.repeat(n - 1) + this : '';
+// }
+// 实现Object.create
+// Object.create = function(obj) {
+//     function F() {};
+//     F.prototype = obj;
+//     return new F();
+// }
+// 实现Object.is
+// Object.is = function(x, y) {
+//     if (x === y) {
+//         return x !== 0 || 1 / x === 1 / y;
+//     }
+//     return x !== x && y !== y;
+// }
+// 实现Object.assign
+// Object.assign = function(target, ...sources) {
+//     if (target == null) throw new TypeError('cannot convert undefined or null to object');
+//     const obj = Object(target);
+//     sources.forEach(source => {
+//         for (let key in source) {
+//             if (source.hasOwnProperty(key)) obj[key] = source[key];
+//         }
+//     });
+//     return obj;
+// }
+// Object.assign = function(target, ...sources) {
+//     if (target == null) throw new TypeError('cannot convert undefined or null to object');
+//     const res = Object(target);
+//     sources.forEach(source => {
+//         for (let key in source) {
+//             if (source.hasOwnProperty(key)) res[key] = source[key];
+//         }
+//     });
+//     return res;
+// }
+// 实现instanceof
+// function Instanceof(left, right) {
+//     while(true) {
+//         if (left == null) return false;
+//         if (left.__proto__ === right.prototype) return true;
+//         left = left.__proto__;
+//     }
+// }
+// 实现JSON.parse
+// JSON.parse = function(jsonStr) {
+//     return eval(`(${jsonStr})`);
+// }
+// JSON.parse = function(jsonStr) {
+//     return (new Function(`return ${jsonStr}`))();
+// }
+// 实现数组flat
+// function flat(arr, depth = 1) {
+//     if (!Array.isArray(arr) || depth <= 0) return arr;
+//     return arr.reduce((acc, cur) => {
+//         return Array.isArray(cur) ? acc.concat(flat(cur, depth - 1)) : acc.concat(cur);
+//     }, []);
+// }
+// a = [1,2,3,[4,5,[6,7,[8]]]]
+// console.log(flat(a));
+// function flat(arr, depth = 1) {
+//     if (!Array.isArray(arr)) return arr;
+//     let arrs = [...arr];
+//     const res = [];
+//     while(arrs.length) {
+//         const tmp = arrs.shift();
+//         Array.isArray(tmp) ? arrs.unshift(...tmp) : res.push(tmp);
+//     }
+//     return res;
+// }
+// a = [1,2,3,[4,5,[6,7,[8]]]]
+// console.log(flat(a));
+// function flat(arr, depth = 1) {
+//     if (!Array.isArray(arr) || depth <= 0) return arr;
+//     const res = []
+//     arr.forEach(item => {
+//         Array.isArray(item) ? res.push(...flat(item, depth - 1)) : res.push(item);
+//     });
+//     return res;
+// }
+// a = [1,2,3,[4,5,[6,7,[8]]]]
+// console.log(flat(a, 2));
+Function.prototype.call_ = function (obj, ...args) {
+    obj = obj == null ? window : Object(obj);
+    obj.fn = this;
+    let result = obj.fn(...args)
+    delete obj.fn
+    return result
+}
+function a() {
+    console.log(this);
+}
+a.call_('')
