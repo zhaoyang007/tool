@@ -660,31 +660,186 @@
 //     }
 //     return obj;
 // }
-Function.prototype.bind1 = function(obj, ...args) {
-    if(typeof this !== 'function') throw new TypeError('参数必须是一个函数');
-    obj = obj == null ? window : Object(obj);
-    const fn  = this;
-    const bound = function(...innerArgs) {
-      if (this instanceof bound) {
-        return new fn(...args, ...innerArgs);
-      } else {
-        // return fn.call(obj, ...args, ...innerArgs);
-        obj.fn = fn;
-        const res = obj.fn(...args, ...innerArgs);
-        delete obj.fn;
-        return res;
-      }
-    }
-    return bound;
-}
-function a(...param) {
-    this.a = 2
-    console.log(this.a);
-    console.log(...param);
-}
-a.prototype.b = 3;
-const obj = {a: 1, b: 2};
-// res = a.bind1(obj, 1,2,3);
-res = a.bind1(obj, 1,2);
-res2 = new res(4,5);
-console.log(res2.b);
+// Function.prototype.bind1 = function(obj, ...args) {
+//     if(typeof this !== 'function') throw new TypeError('参数必须是一个函数');
+//     obj = obj == null ? window : Object(obj);
+//     const fn  = this;
+//     const bound = function(...innerArgs) {
+//       if (this instanceof bound) {
+//         return new fn(...args, ...innerArgs);
+//       } else {
+//         // return fn.call(obj, ...args, ...innerArgs);
+//         obj.fn = fn;
+//         const res = obj.fn(...args, ...innerArgs);
+//         delete obj.fn;
+//         return res;
+//       }
+//     }
+//     return bound;
+// }
+// function a(...param) {
+//     this.a = 2
+//     console.log(this.a);
+//     console.log(...param);
+// }
+// a.prototype.b = 3;
+// const obj = {a: 1, b: 2};
+// // res = a.bind1(obj, 1,2,3);
+// res = a.bind1(obj, 1,2);
+// res2 = new res(4,5);
+// console.log(res2.b);
+// 实现数组push
+// Array.prototype.push = function() {
+//     for (let i = 0; i < arguments.length; i++) {
+//         this[this.length] = arguments[i];
+//     }
+//     return this.length;
+// }
+// Array.prototype.filter = function(fn) {
+//     if (typeof fn !== 'function') throw new TypeError('参数必须是一个函数');
+//     const res = [];
+//     for (let i = 0; i < this.length; i++) {
+//         if (fn(this[i], i)) res.push(this[i]);
+//     }
+//     return res;
+// }
+// Array.prototype.map = function(fn) {
+//     if (typeof fn !== 'function') throw new TypeError('参数必须是一个函数');
+//     const res = [];
+//     for (let i = 0; i < this.length; i++) {
+//         res.push(fn(this[i], i));
+//     }
+//     return res;
+// }
+// 实现数组flat
+// function flat(arr, depth) {
+//     if (!Array.isArray(arr) || depth <= 0) return arr;
+//     return arr.reduce((acc, cur) => {
+//         return Array.isArray(cur) ? acc.concat(flat(cur, depth - 1)) : acc.concat(cur);
+//     }, []);
+// }
+// function flat(arr) {
+//     const res = [];
+//     const arrs = [...arr];
+//     while(arrs.length) {
+//         const tmp = arrs.shift();
+//         Array.isArray(tmp) ? arrs.unshift(...tmp) : res.push(tmp);
+//     }
+//     return res;
+// }
+// function flat(arr, depth) {
+//     if (!Array.isArray(arr) || depth <= 0) throw new TypeError('参数必须是一个函数');
+//     const res = [];
+//     arr.forEach(item => {
+//         Array.isArray(item) ? res.push(...flat(item, depth - 1)) : res.push(item);
+//     });
+//     return res;
+// }
+// 实现字符串 repeat
+// String.prototype.repeat = function(n) {
+//     return (new Array(n + 1)).join(this);
+// }
+// String.prototype.repeat = function(n) {
+//     return n > 0 ? this.repeat(n - 1) + this : '';
+// }
+// Object.create = function(obj) {
+//     function F() {};
+//     F.prototype = obj;
+//     return new F();
+// }
+// Object.is = function(x, y) {
+//     if (x === y) {
+//         return x !== 0 || 1 / x === 1 / y;
+//     }
+//     return x !== x && y !== y;
+// }
+// Object.assign = function(target, sources) {
+//     if (target == null) throw new TypeError('cannot revert undefined or null to object');
+//     const res = Object(target);
+//     sources.forEach(source => {
+//         for (let key in source) {
+//             if (source.hasOwnProperty(key)) res[key] = source[key];
+//         }
+//     });
+//     return res;
+// }
+// function Instanceof(left, right) {
+//     while(true) {
+//         if (left == null) return false;
+//         if (left.__proto__ === right.prototype) return true;
+//         left = left.__proto__;
+//     }
+// }
+// JSON.parse1 = function(jsonStr) {
+//     return eval(`${jsonStr}`);
+// }  
+// // JSON.parse = function(jsonStr) {
+// //     return (new Function(`return ${jsonStr}`))();
+// // }
+// console.log(JSON.parse1('{a: 1}'));
+// function New(fn, ...args) {
+//     const obj = Object.create(fn.prototype);
+//     const res = fn.call(obj, ...args);
+//     if (res && (typeof res === 'object' || typeof res === 'function')) return res;
+//     return obj;
+// }
+// 实现 call, apply, bind
+// Function.prototype.call = function(obj, ...args) {
+//     obj = obj == null ? window : Object(obj);
+//     obj.fn = this;
+//     const res = obj.fn(...args);
+//     delete obj.fn;
+//     return res;
+// }
+// Function.prototype.apply = function(obj, args) {
+//     obj = obj == null ? window : Object(obj);
+//     obj.fn = this;
+//     const res = args ? obj.fn(...args) : obj.fn();
+//     delete obj.fn;
+//     return res;
+// }
+// Function.prototype.bind = function(obj, ...args) {
+//     obj = obj == null ? window : Object(obj);
+//     const fn = this;
+//     const bound = function(...innerArgs) {
+//         if (this instanceof bound) {
+//             return new fn(...args, ...innerArgs);
+//         } else {
+//             obj.fn = fn;
+//             const res = obj.fn(...args, ...innerArgs);
+//             delete obj.fn;
+//             return res;
+//         }
+//     }
+//     return bound;
+// }
+// Function.prototype.call = function(obj, ...args) {
+//     obj = obj == null ? window : Object(obj);
+//     obj.fn = this;
+//     const res = obj.fn(...args);
+//     delete obj.fn;
+//     return res;
+// }
+// Function.prototype.applu = function(obj, args) {
+//     obj = obj == null ? window : Object(obj);
+//     obj.fn = this;
+//     const res = args ? obj.fn(...args) : obj.fn();
+//     delete obj.fn;
+//     return res;
+// }
+// Function.prototype.bind = function(obj, ...args) {
+//     obj = obj == null ? window : Object(obj);
+//     const fn = this;
+//     const bound = function(...innerArgs) {
+//         if (this instanceof bound) {
+//             return new fn(...args, ...innerArgs);
+//         } else {
+//             // return fn.call(obj, ...args, ...innerArgs);
+//             obj.fn = fn;
+//             const res = obj.fn(...args, ...innerArgs);
+//             delete obj.fn;
+//             return res;
+//         }
+//     }
+//     return bound;
+// }
