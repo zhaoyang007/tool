@@ -843,3 +843,24 @@
 //     }
 //     return bound;
 // }
+// Promise.all = promiseArr => {
+//     let result = [];
+//     let count = 0;
+//     return new Promise((resolve, reject) => {
+//         if (promises.length === 0) {
+//             resolve(result);
+//         } else {
+//             for (let i = 0; i < promiseArr.length; i++) {
+//                 Promise.resolve(promiseArr[i]).then(res => {
+//                     result[i] = res;
+//                     count++;
+//                     if (count === promiseArr.length) {
+//                         resolve(result);
+//                     }
+//                 }, err => {
+//                     reject(err);
+//                 });
+//             }
+//         }
+//     });
+// }
