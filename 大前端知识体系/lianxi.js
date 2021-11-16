@@ -864,3 +864,274 @@
 //         }
 //     });
 // }
+// 实现push
+// Array.prototype.push = function() {
+//     for (let i = 0; i < arguments.length; i++) {
+//         this[this.length] = arguments[i];
+//     }
+//     return this.length;
+// }
+// Array.prototype.filter = function(fn) {
+//     if (typeof fn !== 'function') throw new TypeError('参数必须是一个函数');
+//     const res = [];
+//     for (let i = 0; i < this.length; i++) {
+//         if (fn(this[i], i)) res.push(this[i]);
+//     }
+//     return res;
+// }
+// 实现数组map
+// Array.prototype.map = function(fn) {
+//     if (typeof fn !== 'function') throw new TypeError('参数必须是一个函数');
+//     const res = [];
+//     for (let i = 0; i < this.length; i++) {
+//         res.push(this[i], i);
+//     }
+//     return res;
+// }
+// 实现数组flat
+// function flat(arr, depth) {
+//     if (!Array.isArray(arr) || depth <= 0) return arr;
+//     return arr.reduce((acc, cur) => {
+//         return Array.isArray(cur) ? acc.concat(flat(cur, depth - 1)) : acc.concat(cur);
+//     }, []);
+// }
+// function flat(arr) {
+//     const res = [];
+//     const arrs = [...arr];
+//     while(arrs.length) {
+//         const tmp = arrs.shift();
+//         Array.isArray(tmp) ? arrs.unshift(...tmp) : res.push(tmp);
+//     }
+//     return res;
+// }
+// function flat(arr, depth) {
+//     if (!Array.isArray(arr) || depth <= 0) throw new TypeError('参数必须是一个函数');
+//     const res = [];
+//     arr.forEach(item => {
+//         Array.isArray(item) ? res.push(...flat(item, depth - 1)) : res.push(item);
+//     });
+//     return res;
+// }
+// String.prototype.repeat = function(n) {
+//     return (new Array(n + 1)).join('this');
+// }
+// String.prototype.repeat = function(n) {
+//     return n > 0 ? this.repeat(n - 1) + this : '';
+// }
+// Object.create = function(obj) {
+//     function F() {};
+//     F.prototype = obj;
+//     return new F();
+// }
+// Object.is = function(x, y) {
+//     if (x === y) {
+//         return x !== 0 || 1 / x === 1 / y;
+//     }
+//     return x !== x && y !== y;
+// }
+// Object.assign1 = function(target, ...sources) {
+//     if (target == null) throw new TypeError('cannot convert undefined or null to object');
+//     const res = Object(target);
+//     sources.forEach(source => {
+//         for (let key in source) {
+//             if (source.hasOwnProperty(key)) res[key] = source[key]; 
+//         }
+//     });
+//     return res;
+// }
+// a = {a: 1}
+// console.log(Object.assign1(1, {b: 1}));
+// console.log();
+// function Instanceof(left, right) {
+//     while(true) {
+//         if (left == null) return false;
+//         if (left.__proto__ === right.prototype) return true;
+//         left = left.__proto__;
+//     }
+// }
+// JSON.parse = function(jsonStr) {
+//     return eval(`(${jsonStr})`);
+// }
+// JSON.parse = function(jsonStr) {
+//     return (new Function(`return ${jsonStr}`))();
+// }
+// function New(fn, ...args) {
+//     const obj = Object.create(fn.prototype);
+//     const res = fn.call(obj, ...args);
+//     if (res && (typeof res === 'object' || typeof res === 'function')) return res;
+//     return obj;
+// }
+// call,apply,bind
+// Function.prototype.call = function(obj, ...args) {
+//     obj = obj == null ? window : obj;
+//     obj.fn = this;
+//     const res = obj.fn(...args);
+//     delete obj.fn;
+//     return res;
+// }
+// Function.prototype.apply = function(obj, args) {
+//     obj = obj == null ? window : obj;
+//     obj.fn = this;
+//     const res = args ? obj.fn(...args) : obj.fn();
+//     delete obj.fn;
+//     return res;
+// }
+// function a(args) {
+//     console.log(...args);
+// }
+// a(1)
+// Function.prototype.bind = function(obj, ...args) {
+//     obj = obj == null ? window : obj;
+//     const fn = this;
+//     const bound = function(...innerArgs) {
+//         if (this instanceof bound) {
+//             return new fn(...args, ...innerArgs);
+//         } else {
+//             // return fn.call(obj, ...args, ...innerArgs);
+//             obj.fn = fn;
+//             const res = obj.fn(...args, ...innerArgs);
+//             delete obj.fn;
+//             return res;
+//         }
+//     }
+//     return bound;
+// }
+// Promise.all
+// Promise.all = function(promises) {
+//     return new Promise((resolve, reject) => {
+//         const result = [];
+//         let count = 0;
+//         if (promises.length === 0) {
+//             resolve(res);
+//         } else {
+//             for (let i = 0; i < promises.length; i++) {
+//                 Promise.resolve(promises[i]).then(res => {
+//                     count++;
+//                     result[i] = res;
+//                     if (count === promises.length) {
+//                         resolve(result);
+//                     }
+//                 }, err => {
+//                     reject(err);
+//                 });
+//             }
+//         }
+//     });
+// }
+// // Promise.race
+// Promise.race = function(promises) {
+//     return new Promise((resolve, reject) => {
+//         for (let i = 0; i < promises.length; i++) {
+//             Promise.resolve(promises[i]).then(res => {
+//                 resolve(res);
+//             }, err => {
+//                 reject(err);
+//             })
+//         }
+//     });
+// }
+// Promise.all
+// Promise.all = function(promises) {
+//     return new Promise((resolve, reject) => {
+//         const result = [];
+//         let count = 0;
+//         if (promises.length === 0) {
+//             resolve(result);
+//         } else {
+//             for (let i = 0; i < promises.length; i++) {
+//                 Promise.resolve(promises[i]).then(res => {
+//                     count++;
+//                     result[i] = res;
+//                     if (count === promises.length) {
+//                         resolve(result);
+//                     }
+//                 }, err => {
+//                     reject(err);
+//                 });
+//             }
+//         }
+//     });
+// }
+// Promise.race = function(promises) {
+//     return new Promise((resolve, reject) => {
+//         for (let i = 0; i < promises.length; i++) {
+//             Promise.resolve(promises[i]).then(res => {
+//                 resolve(res);
+//             }, err => {
+//                 reject(err);
+//             })
+//         }
+//     })
+// }
+// 实现trim
+// String.prototype.trim1 = function() {
+//     return this.replace(/^\s*|\s*$/g, '');
+// }
+// a = '    aaa   '
+// console.log(a.trim1());
+// String.prototype.trim = function() {
+//     return this.replace(/(^\s*)|(\s*$)/g, '');
+// }
+// 数组去重
+// 1
+// function uniqueArr(arr) {
+//     const res = [];
+//     const map = new Map();
+//     for (let item of arr) {
+//         if (!map.has(item)) {
+//             res.push(item);
+//             map.set(item, 1);
+//         }
+//     }
+//     return res;
+// }
+// function uniqueArr(arr) {
+//     return [...new Set(arr)];
+// }
+// function uniqueArr(arr) {
+//     const res = [];
+//     const map = new Map();
+//     for (let item of arr) {
+//         if (!map.has(item)) {
+//             res.push(item);
+//             map.set(item, 1);
+//         }
+//     }
+//     return res;
+// }
+// 浅拷贝
+// Object.assign();
+// ...
+// a.slice()
+// a.concat();
+// 深拷贝
+// JSON.parse(JSON.stringify());
+// function isObjet(obj) {
+//     return typeof obj === 'object' && obj !== null;
+// }
+// function deepClone(obj, hash = new WeapMap()) {
+//     if (!isObjet(obj)) return obj;
+//     if (hash.has(obj)) return hash.get(obj);
+//     const res = Array.isArray(obj) ? [] : {};
+//     has.set(obj, res);
+//     [
+//         ...Object.getOwnPropertyNames(obj),
+//         ...Object.getOwnPropertySymbols(obj)
+//     ].forEach(k => {
+//         res[k] = deepClone(obj[k], hash);
+//     });
+//     return res;
+// }
+// function isObject(obj) {
+//     return typeof obj === 'object' && obj !== null;
+// }
+// function deepClone(obj, hash = new WeakMap()) {
+//     if (!isObject(obj)) return obj;
+//     if (hash.has(obj)) return hash.get(obj);
+//     const res = Array.isArray(obj) ? [] : {};
+//     hash.set(obj, res);
+//     Reflect.ownKeys.forEach(key => {
+//         res[key] = deepClone(obj[key], hash);
+//     });
+//     return res;
+// }
