@@ -1135,3 +1135,32 @@
 //     });
 //     return res;
 // }
+class EventEmitter {
+    constructor() {
+      this.events = {};
+    }
+    on(name, handler){
+      this.events[name] = this.events[name] || [];
+      this.events[name].push(handler);
+    }
+    emit(name, ...args) {
+      if (!this.events[name]) throw new Error('该事件未注册');
+      if (this.events[name]) {
+        this.events[name].forEach(fn => fn.call(this, ...args));
+      }
+    }
+    off(name, handler) {
+      if (!this.events[name]) throw new Error('该事件未注册');
+      if (!handler) {
+              delete this.events[name];
+      } else {
+        this.events[name] = this.events[name].filter(fn => fn !== handler);
+      }
+    }
+    once(name, handler) {
+      this.on(name, (...args) => {
+        handler.call(this, ...args);
+        this.off(name, handler);
+      });
+    }
+  }
