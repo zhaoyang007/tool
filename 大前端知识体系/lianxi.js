@@ -1135,32 +1135,274 @@
 //     });
 //     return res;
 // }
-class EventEmitter {
-    constructor() {
-      this.events = {};
-    }
-    on(name, handler){
-      this.events[name] = this.events[name] || [];
-      this.events[name].push(handler);
-    }
-    emit(name, ...args) {
-      if (!this.events[name]) throw new Error('该事件未注册');
-      if (this.events[name]) {
-        this.events[name].forEach(fn => fn.call(this, ...args));
-      }
-    }
-    off(name, handler) {
-      if (!this.events[name]) throw new Error('该事件未注册');
-      if (!handler) {
-              delete this.events[name];
-      } else {
-        this.events[name] = this.events[name].filter(fn => fn !== handler);
-      }
-    }
-    once(name, handler) {
-      this.on(name, (...args) => {
-        handler.call(this, ...args);
-        this.off(name, handler);
-      });
-    }
-  }
+// class EventEmitter {
+//     constructor() {
+//       this.events = {};
+//     }
+//     on(name, handler){
+//       this.events[name] = this.events[name] || [];
+//       this.events[name].push(handler);
+//     }
+//     emit(name, ...args) {
+//       if (!this.events[name]) throw new Error('该事件未注册');
+//       if (this.events[name]) {
+//         this.events[name].forEach(fn => fn.call(this, ...args));
+//       }
+//     }
+//     off(name, handler) {
+//       if (!this.events[name]) throw new Error('该事件未注册');
+//       if (!handler) {
+//               delete this.events[name];
+//       } else {
+//         this.events[name] = this.events[name].filter(fn => fn !== handler);
+//       }
+//     }
+//     once(name, handler) {
+//       this.on(name, (...args) => {
+//         handler.call(this, ...args);
+//         this.off(name, handler);
+//       });
+//     }
+//   }
+// 实现push
+// Array.prototype.push = function() {
+//     for (let i = 0; i < arguments.length; i++) {
+//         this[this.length] = arguments[i];
+//     }
+//     return this.length;
+// }
+// 实现filter
+// Array.prototype.filter = function(fn) {
+//     if (typeof fn !== 'function') throw new TypeError('参数必须是一个函数');
+//     let res = [];
+//     for (let i = 0; i < this.length; i++) {
+//         if (fn(this[i], i)) res.push(this[i]);
+//     }
+//     return res;
+// }
+// 实现map
+// Array.prototype.filter = function(fn) {
+//     if (typeof fn !== 'function') throw new TypeError('参数必须是一个函数');
+//     const res = [];
+//     for (let i = 0; i < this.length; i++) {
+//         res.push(fn(this[i], i));
+//     }
+//     return res;
+// }
+// 实现数组flat
+// function flat(arr, depth) {
+//     if (!Array.isArray(arr) || depth <= 0) return arr;
+//     return arr.reduce((acc, cur) => {
+//         return Array.isArray(cur) ? acc.concat(flat(cur, depth - 1)) : acc.concat(cur);
+//     }, []);
+// }
+// function flat(arr) {
+//     const res = [];
+//     const arrs = [...arr];
+//     while(arrs.length) {
+//         const tmp = arrs.shift();
+//         Array.isArray(tmp) ? arrs.unshift(...tmp) : res.push(tmp);
+//     }
+//     return res;
+// } 
+// function flat(arr, depth) {
+//     if (!Array.isArray(arr) || depth <= 0) return arr;
+//     const res = [];
+//     arr.forEach(item => {
+//         Array.isArray(item) ? res.push(...flat(item, depth - 1)) : res.push(item);
+//     });
+//     return res;
+// }
+// String.prototype.repeat = function(n) {
+//     return (new Array(n + 1)).join(this);
+// }  
+// String.prototype.repeat = function(n) {
+//     return n > 0 ? this.repeat(n - 1) + this : '';
+// }
+// Object.create = function(obj) {
+//     function F() {};
+//     F.prototype = obj;
+//     return new F();
+// }
+// Object.is = function(obj) {
+//     if (x === y) {
+//         return x !== 0 || 1 / x === 1 / y;
+//     }
+//     return x !== x && y !== y;
+// }
+// Object.assign = function(target, ...sources) {
+//     if (target == null) throw new TypeError('cannot convert undefined or null to object');
+//     const res = Object(target);
+//     sources.forEach(source => {
+//         for (let key in source) {
+//             if (source.hasOwnProperty(key)) res[key] = source[key];
+//         }
+//     });
+//     return res;
+// }
+// function Instanceof(left, right) {
+//     while(true) {
+//         if (left == null) return false;
+//         if (left.__proto__ === right.prototype) return true;
+//         left = left.__proto__;
+//     }
+// }
+// JSON.parse = function(jsonStr) {
+//     return eval(`(${jsonStr})`);
+// }
+// JSON.parse = function(jsonStr) {
+//     return (new Function(`return ${jsonStr}`))();
+// }
+// function New(fn, ...args) {
+//     const obj = Object.create(fn.prototype);
+//     const res = fn.call(obj, ...args);
+//     if (res && (typeof res === 'object' || typeof res === 'function')) return res;
+//     return obj;
+// }
+// call,apply,bind
+// Function.prototype.call = function(obj, ...args) {
+//     obj = obj == null ? window : Object(obj);
+//     obj.fn = this;
+//     const res = obj.fn(...args);
+//     delete obj.fn;
+//     return res;
+// }
+// Function.prototype.apply = function(obj, args) {
+//     obj = obj == null ? window : Object(obj);
+//     obj.fn = this;
+//     const res = args ? obj.fn(...args) : obj.fn();
+//     delete obj.fn;
+//     return res;
+// }
+// Function.prototype.bind = function(obj, ...args) {
+//     obj = obj == null ? windwo : Object(obj);
+//     const fn = this;
+//     const bound = function(...innerArgs) {
+//         if (this instanceof bound) {
+//             return new fn(...argrs, ...innerArgs);
+//         } else {
+//             // return fn.call(obj, ...args, ...innerArgs);
+//             obj.fn = fn;
+//             const res = obj.fn(...args, ...innerArgs);
+//             delete obj.fn;
+//             return res;
+//         }
+//     }
+//     return bound;
+// }
+// Function.prototype.bind = function(obj, ...args) {
+//     obj = obj == null ? window : Object(obj);
+//     const fn = this;
+//     const bound = function(...innerArgs) {
+//         if (this instanceof bound) {
+//             return new fn(...args, ...innerArgs);
+//         } else {
+//             return fn.call(obj, ...args, ...innerArgs);
+//             // obj.fn = fn;
+//             // const res = obj.fn(...args, ...innerArgs);
+//             // delete obj.fn;
+//             // return res;
+//         }
+//     }
+//     return bound;
+// }
+// Promise.all = function(promises) {
+//     return new Promise((resolve, reject) => {
+//         let count = 0;
+//         const result = [];
+//         if (promises.length === 0) {
+//             resolve(result);
+//         } else {
+//             for (let i = 0; i < promises.length; i++) {
+//                 Promise.resolve(promises[i]).then(res => {
+//                     result[i] = res;
+//                     count++;
+//                     if (count === promises.length) {
+//                         resolve(result);
+//                     }
+//                 }, err => {
+//                     reject(err);
+//                 });
+//             }
+//         }
+//     });
+// }
+// Promise.race = function(promises) {
+//     return new Promise((resolve, reject) => {
+//         for (let i = 0; i < promises.length; i++) {
+//             Promise.resolve(promises[i]).then(res => {
+//                 resolve(res);
+//             }, err => {
+//                 reject(err);
+//             })
+//         }
+//     });
+// }
+// Promise.all = function(promises) {
+//     return new Promise((resolve, reject) => {
+//         const result = [];
+//         let count = 0;
+//         if (promises.length === 0) {
+//             resolve(result);
+//         } else {
+//             for (let i = 0; i < promises.length; i++) {
+//                 Promise.resolve(promises[i]).then(res => {
+//                     result[i] = res;
+//                     count++;
+//                     if (count === promises.length) {
+//                         resolve(result);
+//                     }
+//                 }, err => {
+//                     reject(err);
+//                 })
+//             }
+//         }
+//     });
+// }
+// String.prototype.trim = function() {
+//     return this.replace(/(^\s*)|(\s*$)/g, '');
+// }
+// 数组去重
+// function uniqueArr(arr) {
+//     const res = [];
+//     const map = new Map();
+//     for (let item of arr) {
+//         if (!map.has(item)) {
+//             res.push(item);
+//             map.set(item, 1);
+//         }
+//     }
+//     return res;
+// }
+// function uniqueArr(arr) {
+//     return [...new Set(arr)];
+// }
+// 浅拷贝
+// Object.assign()
+// [...]{...}
+// arr.slice()
+// arr.concat();
+// 深拷贝
+// JSON.parse(JSON.stringify());
+function isObject(obj) {
+    return typeof obj === 'object' && obj !== null;
+}
+// function deepClone(obj, hash = new WeapMap()) {
+//     if (!isObject(obj)) return obj;
+//     if (hash.has(obj)) return hash.get(obj);
+//     const res = Array.isArray(obj) ? [] : {};
+//     // Reflect.ownKeys(obj)
+//     [
+//         ...Object.getOwnPropertyNames(obj),
+//         ...Object.getOwnPropertySymbols(obj)
+//     ].forEach(key => {
+//         res[key] = deepClone(obj[key], hash);
+//     });
+//     return res;
+// }
+// function deepClone(obj) {
+//     if (!isObject(obj)) return obj;
+//     const res = {};
+//     res = deepClone(Object.assign(res, obj));
+//     return res;
+// }
