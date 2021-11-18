@@ -1566,3 +1566,232 @@ function isObject(obj) {
 //     console.log(222);
 // }
 // out();
+// 实现数组flat
+// function flat(arr, depth) {
+//     if (!Array.isArray(arr) || depth <= 0) return arr;
+//     return arr.reduce((acc, cur) => {
+//         return Array.isArray(cur) ? acc.concat(flat(cur, depth - 1)) : acc.concat(cur);
+//     }, []);
+// }
+// function flat(arr) {
+//     const res = [];
+//     let arrs = [...arr];
+//     while(arrs.length) {
+//         const tmp = arrs.shift();
+//         Array.isArray(tmp) ? arrs.unshift(...tmp) : res.push(tmp);
+//     }
+//     return res;
+// }
+// function flat(arr, depth) {
+//     if (!Array.isArray(arr) || depth <= 0) return arr;
+//     const res = [];
+//     arr.forEach(item => {
+//         Array.isArray(item) ? res.push(...flat(item, depth - 1)) : res.push(item);
+//     });
+//     return res;
+// }
+// Object.assign = function(target, ...sources) {
+//     if (target == null) throw new TypeError('connot revert undefined or null to object');
+//     const res = Object(target);
+//     sources.forEach(source => {
+//         for (let key in source) {
+//             if (source.hasOwnProperty(key)) res[key] = source[key];
+//         }
+//     });
+//     return res;
+// }
+// function New(fn, ...args) {
+//     const obj = Object.create(fn.prototype);
+//     const res = fn.call(obj, ...args);
+//     if (res && (typeof res === 'object' || typeof obj === 'function')) return res;
+//     return obj;
+// }
+// Function.prototype.call = function(obh, ...args) {
+//     obj = obj == null ? window : Object(obj);
+//     obj.fn = this;
+//     const res = obj.fn(...args);
+//     delete obj.fn;
+//     return res;
+// }
+// Function.prototype.apply = function(obj, args) {
+//     obj = obj == null ? window : Object(obj);
+//     obj.fn = this;
+//     const res = args ? obj.fn(...args) : obj.fn();
+//     delete obj.fn;
+//     return res;
+// }
+// Function.prototype.bind = function(obj, ...args) {
+//     obj = obj == null ? window : Object(obj);
+//     const fn = this;
+//     const bound = function(...innerArgs) {
+//         if (this instanceof bound) {
+//             return new fn(...args, ...innerArgs);
+//         } else {
+//             // return fn.call(obj, ...args, ...innerArgs);
+//             obj.fn = fn;
+//             const res = obj.fn(...args, ...innerArgs);
+//             delete obj.fn;
+//             return res;
+//         }
+//     }
+//     return bound;
+// }
+// Promise.all = function(promises) {
+//     return new Promise((resolve, reject) => {
+//         let count = 0;
+//         const result = [];
+//         if (promises.length === 0) {
+//             resolve(result);
+//         } else {
+//             for (let i = 0; i < promises.length; i++) {
+//                 Promise.resolve(promises[i]).then(res => {
+//                     result[i] = res;
+//                     count++;
+//                     if (count === promises.length) {
+//                         resolve(result);
+//                     }
+//                 }, err => {
+//                     reject(err);
+//                 });
+//             }
+//         }
+//     });
+// }
+// Promise.race = function(promises) {
+//     return new Promise((resolve, reject) => {
+//         for (let i = 0; i < promises.length; i++) {
+//             Promise.resolve(promises[i]).then(res => {
+//                 resolve(res);
+//             }, err => {
+//                 reject(err);
+//             })
+//         }
+//     });
+// }
+// String.prototype.trim = function() {
+//     return this.replace(/(^\s*)|(\s*$)/g, '');
+// }
+// 数组去重
+// function uniqueArr(arr) {
+//     const res = [];
+//     const map = new Map();
+//     for (let item of arr) {
+//         if (!map.has(item)) {
+//             res.push(item);
+//             map.set(item, 1);
+//         }
+//     }
+//     return res;
+// }
+// function uniqueArr(arr) {
+//     return [...new Set(arr)];
+// }
+// 浅拷贝
+// Object.assign()
+// {...}[...]
+// arr.slice()
+// arr.concat()
+// 深拷贝
+// JSON.parse(JSON.stringify())
+// function isObject(val) {
+//     return typeof val === 'object' && val !== null;
+// }
+// function deepClone(obj, hash = new WeapMap) {
+//     if (!isObject(obj)) return obj;
+//     if (hash.has(obj)) return hash.get(obj);
+//     const res = Array.isArray(obj) ? [] : {};
+//     hash.set(obj, res);
+//     [
+//         ...Object.getOwnPropertyNames(obj),
+//         ...Object.getOwnPropertySymbols(obj)
+//     ].forEach(key => {
+//         res[key] = deepClone(obj[key], hash);
+//     });
+//     return res;
+// }
+// 节流
+// function throttle(fn, delay = 100) {
+//     let flag = true;
+//     return function(...args) {
+//         if (!flag) return;
+//         flag = false;
+//         setTimeout(() => {
+//             fn.call(this, ...args);
+//             flag = true;
+//         }, delay);
+//     }
+// }
+// function throttle(fn, delay = 100) {
+//     let prev = 0;
+//     return function(...args) {
+//         const now = Date().now();
+//         if (now - prev > delay) {
+//             fn.call(this, ...args);
+//             prev = now;
+//         }
+//     }
+// }
+// div.addEventListener('drag', throttle(function(e) {
+//     console.log(e.offsetX, e.offsetY);
+// }, 300));   
+// 防抖
+// function debounce(fn, delay = 100) {
+//     let timer = null;
+//     return function(...args) {
+//         if (timer) clearTimeout(timer);
+//         timer = setTimeout(() => {
+//             fn.call(this, ...args);
+//             timer = null;
+//         }, delay);
+//     }
+// }
+// input.addEventListener('keyup', debounce(function(e) {
+//     console.log(e.target.value);
+// }, 300));
+// 发布订阅
+// class EventEmitter {
+//     constructor() {
+//         this.events = {};
+//     }
+//     on(name, handler) {
+//         this.events[name] = this.events[name] || [];
+//         this.events[name].push(handler);
+//     }
+//     emit(name, ...args) {
+//         if (!this.events[name]) throw new Error('该事件未注册');
+//         this.events[name].forEach(fn => fn.call(this, ...args));
+//     }
+//     off(name, handler) {
+//         if (!this.events[name]) throw new Error('该事件未注册');
+//         if (!handler) {
+//             delete this.events[name];
+//         } else {
+//             this.events[name] = this.events[name].filter(fn => fn !== handler);
+//         }
+//     }
+//     once(name, handler) {
+//         function fn(...args) {
+//             handler.call(this, ...args);
+//             this.off(name, fn);
+//         }
+//         this.on(name, fn);
+//     }
+// }
+// sleep
+// function sleep(time) {
+//     return new Promise(resolve => setTimeout(resolve, time));
+// }
+// async function output() {
+//     await sleep(1000);
+//     console.log(1);
+// }
+// output();
+// function sleep(cb, time) {
+//     setTimeout(cb, time);
+// }
+// sleep(function() {
+//     console.log(111);
+// }, 1000)
+// sleep(1000).then(res => {
+//     console.log(111);
+// })
