@@ -1795,72 +1795,219 @@ function isObject(obj) {
 // sleep(1000).then(res => {
 //     console.log(111);
 // })
-// function add(...args) {
-//     let allArgs = [...args];
-//     function fn(...newArgs) {
-//         allArgs = [...allArgs, ...newArgs];
-//         return fn;
-//     }
-//     fn.toString = function () {
-//         if (!allArgs.length) {
-//         return;
-//         }
-//         return allArgs.reduce((sum, cur) => sum + cur);
-//     };
-//     return fn;
+// function New(fn, ...args) {
+//     const obj = Object.create(fn.prototype);
+//     const res = fn.call(obj, ...args);
+//     if (res && (typeof res === 'object' || typeof res === 'function')) return res;
+//     return obj;
 // }
-// console.log(add(1)(2)(3, 4).toString());
-// var add = function (m) {
-//     var temp = function (n) {
-//       return add(m + n);
-//     }
-//     temp.toString = function () {
-//       return m;
-//     }
-//     return temp;
-// };
-// console.log(add(3)(4)(5));
-// function add (...args) {
-//     //求和
-//     return args.reduce((a, b) => a + b)
+// Function.prototype.call = function(obj, ...args) {
+//     obj = obj == null ? window : Object(obj);
+//     obj.fn = this;
+//     const res = obj.fn(...args);
+//     delete obj.fn;
+//     return res;
 // }
-// function currying(fn) {
-//     let args = []
-//     return function temp(...newArgs) {
-//         if (newArgs.length) {
-//             args = [
-//                 ...args,
-//                 ...newArgs
-//             ]
-//             return temp
+// Function.prototype.apply = function(obj, args) {
+//     obj = obj == null ? window : Object(obj);
+//     obj.fn = this;
+//     const res = args ? obj.fn(...args) : obj.fn();
+//     delete obj.fn;
+//     return res;
+// }
+// Function.prototype.bind = function(obj, ...args) {
+//     const fn = this;
+//     const bound = function(...innerArgs) {
+//         if (this instanceof bound) {
+//             return new fn(...args, ...innerArgs);
 //         } else {
-//             let val = fn.apply(this, args)
-//             args = [] //保证再次调用时清空
-//             return val
+//             // return fn.call(obj, ...args, ...innerArgs);
+//             obj.fn = fn;
+//             const res = obj.fn(...args, ...innerArgs);
+//             delete obj.fn;
+//             return res;
+//         }
+//     }
+//     return bound;
+// }
+// Promise.all = function(promises) {
+//     return new Promise((resolve, reject) => {
+//         const result = [];
+//         let count = 0;
+//         if (promises.length === 0) {
+//             resolve(result);
+//         } else {
+//             for (let i = 0; i < promises.length; i++) {
+//                 Promise.resolve(promises[i]).then(res => {
+//                     count++;
+//                     result[i] = res;
+//                     if (count === promises.length) {
+//                         resolve(result);
+//                     }
+//                 }, err => {
+//                     reject(err);
+//                 });
+//             }
+//         }
+//     });
+// }
+// Promise.race = function(promises) {
+//     return new Promise((resolve, reject) => {
+//         for (let i = 0; i < promises.length; i++) {
+//             Promise.resolve(promises[i]).then(res => {
+//                 resolve(res);
+//             }, err => {
+//                 reject(err);
+//             });
+//         }
+//     });
+// }
+// String.prototype.trim = function() {
+//     return this.replace(/(^\s*)|(\s*$)/g, '');
+// }
+// 数组去重
+// function uniqueArr(arr) {
+//     const map = new Map();
+//     const res = [];
+//     for (let item of arr) {
+//         if (!map.has(item)) {
+//             res.push(item);
+//             map.set(item, 1);
+//         }
+//     }
+//     return res;
+// }
+// function uniqueArr(arr) {
+//     return [...new Set(arr)];
+// }
+// Object.assign()
+// {...}[...]
+// arr.slice()
+// arr.concat()
+// JSON.parse(JSON.stringify())
+// function isObject(val) {
+//     return typeof val === 'object' && val !== null;
+// }
+// function deepClone(obj, hash = new WeakMap()) {
+//     if (val == null || typeof obj !== 'object') return obj;
+//     if (hash.has(obj)) return hash.get(obj);
+//     const res = Array.isArray(obj) ? [] : {};
+//     hash.set(obj, res);
+//     Reflect.ownKeys.forEach(key => {
+//         res[key] = deepClone(obj[key], hash);
+//     });
+//     return res;
+// }
+// 节流
+// function throttle(fn, delay = 100) {
+//     let flag = true;
+//     return function(...args) {
+//         if (!flag) return;
+//         flag = false;
+//         setTimeout(() => {
+//             fn.call(this, ...args);
+//             flag = true;
+//         }, delay);
+//     }
+// }
+// function throttle(fn, delay = 100) {
+//     let prev = 0;
+//     return function(...args) {
+//         const now = Date.now();
+//         if (now - prev > delay) {
+//             fn.call(this, ...args);
+//             prev = now;
 //         }
 //     }
 // }
-// let addCurry = currying(add)
-// console.log(addCurry(1)(2)(3)(4, 5))  //15
-// console.log(addCurry(1)(2)(3, 4, 5)())  //15
-// console.log(addCurry(1)(2, 3, 4, 5)()) 
-function add() { 
-    var tmpSlice = [].slice,
-        params = tmpSlice.call(arguments);
-    function currying() {
-        var arr = tmpSlice.call(arguments);
-        params = params.concat(arr);
-        return currying;
+// div.addEventListener('drag', throttle(function(e) {
+//     console.log(e.offsetX, e.offsetY);
+// }, 300));
+// function debounce(fn, delay = 100) {
+//     let timer = null;
+//     return function(...args) {
+//         if (timer) clearTimeout(timer);
+//         timer = setTimeout(() => {
+//             fn.call(this, ...args);
+//             timer = null;
+//         }, delay);
+//     }
+// }
+// input.addEventListener('keyup', debounce(function(e) {
+//     console.log(e.target.value);
+// }, 300));
+// class EventEmitter {
+//     constructor() {
+//         this.events = {};
+//     }
+//     on(name, handler) {
+//         this.events[name] = this.events[name] || [];
+//         this.events[name].push(handler);
+//     }
+//     emit(name, ...args) {
+//         if (!this.events[name]) throw new Error('该事件未注册');
+//         this.events[name].forEach(fn => {
+//             fn.call(this, ...args);
+//         });
+//     }
+//     off(name, handler) {
+//         if (!this.events[name]) throw new Error('该事件未注册');
+//         if (!handler) {
+//             delete this.events[name];
+//         } else {
+//             this.events[name] = this.events[name].filter(fn => fn !== handler);
+//         }
+//     }
+//     once(name, handler) {
+//         function fn(...args) {
+//             handler.call(this, ...args);
+//             this.off(name, fn);
+//         }
+//         this.on(name, fn);
+//     }
+// }
+// function sleep(time) {
+//     return new Promise(resolve => setTimeout(resolve, time));
+// }
+// async function output() {
+//     await sleep(1000);
+//     console.log(1);
+// }
+// sleep(2000).then(() => console.log(2));
+// output()
+// function curry(fn, ...args) {
+//     const length = fn.length;
+//     let allArgs = [...args];
+//     const res = (...newArgs) => {
+//         allArgs = [...allArgs, ...newArgs];
+//         console.log(allArgs);
+//         if (allArgs.length < length) {
+//             return res;
+//         } else {
+//             return fn(...allArgs);
+//         }
+//     };
+//     return res;
+// }
+function curry(fn, args) {
+    var length = fn.length;
+    var args = args || [];
+    return function(){
+        newArgs = args.concat(Array.prototype.slice.call(arguments));
+        console.log(newArgs);
+        if (newArgs.length === length) {
+            return fn.apply(this,newArgs);
+        }else{
+            return curry.call(this,fn,newArgs);
+        }
     }
-    currying.toString = function () {
-        var result = 0;
-        params.forEach(value => {
-            result += value;
-        });
-        return result;
-    }
-    return currying;
- }
-
- console.log(add(1)(2)(3)) // 6
- console.log(add(1,2,3))
+}
+function multiFn(a, b, c) {
+    return a * b * c;
+}
+var multi = curry(multiFn);
+console.log(multi(2)(3)(4))
+// console.log(multi(2,3,4));
+// console.log(multi(2)(3,4));
+console.log(multi(2,3)(4));
+console.log();
