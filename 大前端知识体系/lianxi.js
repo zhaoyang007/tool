@@ -1989,25 +1989,422 @@ function isObject(obj) {
 //     };
 //     return res;
 // }
-function curry(fn, args) {
-    var length = fn.length;
-    var args = args || [];
-    return function(){
-        newArgs = args.concat(Array.prototype.slice.call(arguments));
-        console.log(newArgs);
-        if (newArgs.length === length) {
-            return fn.apply(this,newArgs);
-        }else{
-            return curry.call(this,fn,newArgs);
-        }
-    }
-}
-function multiFn(a, b, c) {
-    return a * b * c;
-}
-var multi = curry(multiFn);
-console.log(multi(2)(3)(4))
-// console.log(multi(2,3,4));
-// console.log(multi(2)(3,4));
-console.log(multi(2,3)(4));
-console.log();
+// function curry(fn, args) {
+//     var length = fn.length;
+//     var args = args || [];
+//     return function(){
+//         newArgs = args.concat(Array.prototype.slice.call(arguments));
+//         console.log(newArgs);
+//         if (newArgs.length === length) {
+//             return fn.apply(this,newArgs);
+//         }else{
+//             return curry.call(this,fn,newArgs);
+//         }
+//     }
+// }
+// function multiFn(a, b, c) {
+//     return a * b * c;
+// }
+// var multi = curry(multiFn);
+// console.log(multi(2)(3)(4))
+// // console.log(multi(2,3,4));
+// // console.log(multi(2)(3,4));
+// console.log(multi(2,3)(4));
+// console.log();
+// function isObject(val) {
+//     return typeof val === "object" && val !== null;
+//   }
+//   function flatten(obj) {
+//     if (!isObject(obj)) return;
+//     let res = {};
+//     const dfs = (cur, prefix) => {
+//       if (isObject(cur)) {
+//         if (Array.isArray(cur)) {
+//           cur.forEach((item, index) => {
+//             dfs(item, `${prefix}[${index}]`);
+//           });
+//         } else {
+//           for (let k in cur) {
+//             dfs(cur[k], `${prefix}${prefix ? "." : ""}${k}`);
+//           }
+//         }
+//       } else {
+//         res[prefix] = cur;
+//       }
+//     };
+//     dfs(obj, "");
+//     return res;
+//   }
+//   // 测试
+//   const obj = {
+//    a: {
+//      b: 1,
+//      c: 2,
+//      d: {e: 5}
+//    },
+//    b: [1, 3, {a: 2, b: 3}],
+//    c: 3
+//   }
+//   console.log(flatten(obj));
+
+//   console.log(1);
+// function bindEvent(elem, type, selector, fn) {
+//     if (fn == null) {
+//         fn = selector;
+//         selector = null;
+//     }
+//     elem.addEventListener(type, e => {
+//         if (selector) {
+//             if (e.target.matched(selector)) {
+//                 fn.call(e.target, e);
+//             } 
+//         } else {
+//             fn.call(e.target, e);
+//         }
+//     });
+// }
+// 通用事件封装
+// function bindEvent(elem, type, selector, fn) {
+//     if (fn == null) {
+//         fn = selector;
+//         selector = null;
+//     }
+//     elem.addEventListener(type, function(event) {
+//         const target = event.target;
+//         if (selector) {
+//             if (target.matched(selector)) {
+//                 fn.call(target, event);
+//             }
+//         } else {
+//             fn.call(target, event);
+//         }
+//     });
+// }
+// function bindEvent(elem, type, selector, fn) {
+//     if (fn == null) {
+//         fn = selector;
+//         selector = null;
+//     }
+//     elem.addEventListener(type, function(event) {
+//         const target = event.target;
+//         if (selector) {
+//             if (target.matched(selector)) {
+//                 fn.call(target, event);
+//             }
+//         } else {
+//             fn.call(target, event);
+//         }
+//     });
+// }
+// bindEvent('div', 'click', 'p', function(event) {
+//     console.log(event.target);
+// })
+// function ajax(url, method, data) {
+//     return new Promise((resolve, reject) => {
+//         const xhr = XMLHttpRequest();
+//         xhr.open(method, url);
+//         xhr.setRequestHeader('Content-Type', 'application/json');
+//         xhr.onreadystatechange = function() {
+//             if (xhr.readystate === 4) {
+//                 if (xhr.status === 200) {
+//                     resolve(JSON.parse(xhr.responseText));
+//                 } else {
+//                     reject(new Error(xhr.responseText));
+//                 }
+//             }
+//         }
+//         method === 'GET' ? xhr.send() : xhr.send(JSON.stringify(data));
+//     });
+// }
+// function ajax(url, method, postData) {
+//     return new Promise((resolve, reject) => {
+//         const xhr = new XMLHttpRequest();
+//         xhr.open(url, method);
+//         xhr.setRequestHeader('Content-Type', 'application/json');
+//         xhr.onreadystatechange = function() {
+//             if (xhr.readstate === 4) {
+//                 if (xhr.status === 200) {
+//                     resolve(JSON.parse(xhr.responseText));
+//                 } else {
+//                     reject(new Error(xhr.responseText));
+//                 }
+//             }
+//         }
+//         method === 'GET' ? xhr.send() : xhr.send(JSON.stringify(postData));
+//     });
+// }
+// function setInterval(fn, time) {
+//     function interval() {
+//         fn();
+//         setTimeout(interval, time);
+//     }
+//     return setTimeout(interval, time);
+// }
+// function setTimeout(fn, time) {
+//     const timer = setInterval(() => {
+//         fn();
+//         clearInterval(timer);
+//     }, time);
+//     return timer;
+// }
+// function New(fn, ...args) {
+//     const obj = Object.create(fn.prototype);
+//     const res = fn.call(obj, ...args);
+//     if (res && (typeof res === 'object' || typeof res === 'function')) return res;
+//     return obj;
+// }
+// Function.prototype.call = function(obj, ...args) {
+//     obj = obj == null ? window : Object(obj);
+//     obj.fn = this;
+//     const res = obj.fn(...args);
+//     delete obj.fn;
+//     return res;
+// }
+// Function.prototype.apply = function(obj, args) {
+//     obj = obj == null ? window : Object(obj);
+//     obj.fn = this;
+//     const res = args ? obj.fn(...args) : obj.fn();
+//     delete obj.fn;
+//     return res;
+// }
+// Function.prototype.bind = function(obj, ...args) {
+//     const fn = this;
+//     const bound = function(...innerArgs) {
+//         if (this instanceof bound) {
+//             return new fn(...args, ...innerArgs);
+//         } else {
+//             // return fn.call(obj, ...args, ...innerArgs);
+//             obj.fn = fn;
+//             const res = obj.fn(...args, ...innerArgs);
+//             delete obj.fn;
+//             return res;
+//         }
+//     }
+//     return bound;
+// }
+// Promise.all = function(promises) {
+//     return new Promise((resolve, reject) => {
+//         const result = [];
+//         let count = 0;
+//         if (promises.length === 0) {
+//             resolve(result);
+//         } else {
+//             for (let i = 0; i < promises.length; i++) {
+//                 Promise.resolve(promises[i]).then(res => {
+//                     result[i] = res;
+//                     count++;
+//                     if (count === promises.length) {
+//                         resolve(result);
+//                     }
+//                 }, err => {
+//                     reject(err);
+//                 })
+//             }
+//         }
+//     });
+// }
+// Promise.race = function(promises) {
+//     return new Promise((resolve, reject) => {
+//         for (let i = 0; i < promises.length; i++) {
+//             Promise.resolve(promises[i]).then(res => {
+//                 resolve(res);
+//             }, err => {
+//                 reject(err);
+//             });
+//         }
+//     });
+// }
+// String.prototype.trim = function() {
+//     return this.replace(/(^\s*)|(\s*$)/g, '');
+// }
+// function uniqueArr(arr) {
+//     const res = [];
+//     const map = new Map();
+//     for (let item of arr) {
+//         if (!map.has(item)) {
+//             res.push(item);
+//             map.set(item, 1);
+//         }
+//     }
+//     return res;
+// }
+// function uniqueArr(arr) {
+//     return [...new Set(arr)];
+// }
+// Object.assign()
+// {...}[...]
+// arr.slice()
+// arr.concat()
+// JSON.parse(JSON.stringify());
+// function isObject(val) {
+//     return typeof val === 'object' && val !== null;
+// }
+// function deepClone(obj, hash = new WeapMap) {
+//     if (obj == null || typeof obj !== 'object') return obj; 
+//     if (hash.has(obj)) return hash.get(obj);
+//     const res = Array.isArray(obj) ? [] : {};
+//     hash.set(obj, res);
+//     Reflect.ownKeys.forEach(key => {
+//         res[key] = deepClone(obj[key], hash);
+//     });
+//     return res;
+// }
+// function throttle(fn, delay = 100) {
+//     let flag = true;
+//     return function(...args) {
+//         if (!flag) return;
+//         flag = false;
+//         setTimeout(() => {
+//             fn.call(this, ...args);
+//             flag = true;
+//         }, delay);
+//     }
+// }
+// function throttle(fn, delay = 100) {
+//     let prev = 0;
+//     return function(...argsx    ) {
+//         const now = Date.now();
+//         if (now - prev > delay) {
+//             fn.call(this, ...args);
+//             prev = now;
+//         } 
+//     }
+// }
+// div.addEventListener('drag', throtthle(function(e) {
+//     console.log(e.offsetX, e.offsetY);
+// }, 200));
+// function debounce(fn, delay = 100) {
+//     let timer = null;
+//     return function(...args) {
+//         if (timer) clearTimeout(timer);
+//         timer = setTimeout(() => {
+//             fn.call(this, ...args);
+//             timer = null;
+//         }, delay);
+//     }
+// }
+// input.addEventListener('keyup', debounce(function(e) {
+//     console.log(e.target.value);
+// }, 200));
+// class EventEmitter {
+//     constructor() {
+//         this.events = {};
+//     }
+//     on(name, handler) {
+//         this.events[name] = this.events[name] || [];
+//         this.events[name].push(handler);
+//     }
+//     emit(name, ...args) {
+//         if (!this.events[name]) throw new Error('该事件未注册');
+//         this.events[name].forEach(fn => {
+//             fn.call(this, ...args);
+//         });
+//     }
+//     off(name, handler) {
+//         if (!this.events[name]) throw new Error('该事件未注册');
+//         if (!handler) {
+//             delete this.events[name];
+//         } else {
+//             this.events[name] = this.events[name].filter(fn => fn !== handler);
+//         }
+//     }
+//     once(name, handler) {
+//         function fn(...args) {
+//             handler.call(this, ...args);
+//             this.off(name, fn);
+//         }
+//         this.on(name, fn);
+//     }
+// }
+// function sleep(time) {
+//     return new Promise(resolve => setTimeout(resolve, time));
+// }
+// sleep(1000).then(() => {
+//     console.log(1);
+// });
+// async function a() {
+//     await sleep(2000);
+//     console.log(2);
+// }
+// a();
+// function bindEvent(elem, type, selector, fn) {
+//     if (fn == null) {
+//         fn = selector;
+//         selector = null;
+//     }
+//     elem.addEventListener(type, function(event) {
+//         const target = event.target;
+//         if (selector) {
+//             if (target.matched(selector)) {
+//                 fn.call(target, event);
+//             }
+//         } else {
+//             fn.call(target, event);
+//         }
+//     });
+// }
+// function ajax(url, method, postData) {
+//     return new Promise((resolve, reject) => {
+//         const xhr = new XMLHttpRequest();
+//         xhr.open(method, url);
+//         xhr.setRequestHeader('Content-Type', 'application/json');
+//         xhr.onreadystatechange = function() {
+//             if (xhr.readystate === 4) {
+//                 if (xhr.status === 200) {
+//                     resolve(JSON.parse(xhr.responseText));
+//                 } else {
+//                     reject(new Error(xhr.responseText));
+//                 }
+//             }
+//         }
+//         method === 'GET' ? xhr.send() : xhr.send(JSON.stringify(postData));
+//     });
+// }
+// function setInterval(fn, time) {
+//     function interval() {
+//         fn();
+//         setTimeout(interval, time);
+//     }
+//     return setTimeout(interval, time);
+// }
+// function setTimeout(fn, time) {
+//     const timer = setInterval(() => {
+//         fn();
+//         clearInterval(timer);
+//     }, time);
+//     return timer;
+// }
+// function createScript(src) {
+//     const script = document.createElement('script');
+//     script.src = src;
+//     script.type = 'text/javascript';
+//     document.body.appendChild(script);
+// }
+// createScript('http://xxx.xxx.com/xxx.js?callbach=handleResponse');
+// function handleResponse(res) {
+//     console.log(res);
+// }
+// handleResponse({a: 1, b: 2});
+// function createScript(src) {
+//     const script = document.createElement('script');
+//     script.src = src;
+//     script.type = 'text/javascript';
+//     document.body.appendChild(script);
+// }
+// createScript('http://xxx.xxx.com/xxx.js?callback=handleResponse');
+// function handleResponse(res) {
+//     console.log(res);
+// }
+// handleResponse({a: 1, b: 2})
+// function query(name) {
+//     const search = window.location.search.substring(1);
+//     const reg = new RegExp(`(^|&)${name}=([^&]*)(&|$)`, 'i')
+//     const res = search.match(reg);
+//     if (res == null) return null;
+//     return res[2];
+// }
+// function query(name) {
+//     const search = location.search;
+//     const p = new URLSearchParams(search);
+//     return p.get(name);
+// }
