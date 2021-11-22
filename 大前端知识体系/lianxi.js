@@ -2672,19 +2672,237 @@ function isObject(obj) {
 //   c: 4
 // };
 // console.log(flatten2(obj));
-function unflatten(obj) {
-  if (!isObject(obj) || Array.isArray(obj)) return obj;
-  const regex = /\.?([^.\[\]]+)|\[(\d+)\]/g;
-  const resultholder = {};
-  for (let p in obj) {
-    let cur = resultholder;
-    let prop = "";
-    let m;
-    while(m = regex.exec(p)) {
-      cur = cur[prop] || (cur[prop] = (m[2] ? [] : {}));
-      prop = m[2] || m[1];
-    }
-    cur[prop] = obj[p];
-  }
-  return resultholder[""] || resultholder;
-}
+// String.prototype.trim = function() {
+//     return this.replace(/(^\s*)|(\s*$)/g, '');
+// }
+// Promise.all = function(promises) {
+//   return new Promise((resolve, reject) => {
+//     const result = [];
+//     let count = 0;
+//     if (promises.length === 0) {
+//       resolve(result);
+//     } else {
+//       for (let i = 0; i < promises.length; i++) {
+//         Promise.resolve(promises[i]).then(res => {
+//           result[i] = res;
+//           count++;
+//           if (count === promises.length) {
+//             resolve(result);
+//           }
+//         }, err => {
+//           reject(err);
+//         });
+//       }
+//     }
+//   });
+// }
+// Promise.race = function(promises) {
+//   return new Promise((resolve, reject) => {
+//     for (let i = 0; i < promises.length; i++) {
+//       Promise.resolve(promises[i]).then(res => {
+//         resolve(res);
+//       }, err => {
+//         reject(err);
+//       })
+//     }
+//   });
+// }
+// function uniqueArr(arr) {
+//   const res = [];
+//   const map = new Map();
+//   for (let item of arr) {
+//     if (!map.has(item)) {
+//       res.push(item);
+//       map.set(item, 1);
+//     }
+//   }
+//   return res;
+// }
+// function uniqueArr(arr) {
+//   return [...new Set(arr)];
+// }
+// Object.assign()
+// ...
+// arr.slice()
+// arr.concat()
+// JSON.parse(JSON.stringify())
+// function deepClone(obj, hash = new WeapMap()) {
+//   if (typeof obj !== 'object' || obj === null) return obj;
+//   if (hash.has(obj)) return hash.get(obj);
+//   const res = Array.isArray(obj) ? [] : {};
+//   hash.set(obj, res);
+//   [...Object.getOwnPropertyNames, ...Object.getOwnPropertySymbols].forEach(key => {
+//     res[key] = deepClone(obj[key], hash);
+//   })
+//   return res;
+// }
+// function throttle(fn, delay = 100) {
+//   let flag = true;
+//   return function(...args) {
+//     if (!flag) return;
+//     flag = false;
+//     setTimeout(() => {
+//       fn.call(this, ...args);
+//       flag = true;
+//     }, delay);
+//   }
+// }
+// function throttle(fn, delay = 100) {
+//   let prev = 0;
+//   return function(...args) {
+//     const now = Date.now();
+//     if (now - prev > delay) {
+//       fn.call(this, ...args);
+//       prev = now;
+//     }
+//   }
+// }
+// div.addEventListener('drag', throttle(function(e) {
+//   console.log(e.offsetX, e.offsetY);
+// }, 200))
+// function debounce(fn, delay = 100) {
+//   let timer = null;
+//   return function(...args) {
+//     if (timer) clearTimeout(timer);
+//     timer = setTimeout(() => {
+//       fn.call(this, ...args);
+//       timer = null;
+//     }, delay);
+//   }
+// }
+// input.addEventListen(debounce(function(e) {
+//   console.log(e.target.value);
+// }, 150));
+// class EventEmitter {
+//   constructor() {
+//     this.events = {};
+//   }
+//   on(name, handler) {
+//     this.events[name] = this.events[name] || [];
+//     this.events[name].push(handler);
+//   }
+//   emit(name, ...args) {
+//     if (!this.events[name]) throw new Error('该事件未注册');
+//     this.events[name].forEach(fn => fn.call(this, ...args));
+//   }
+//   off(name, handler) {
+//     if (!this.events[name]) throw new Error('该事件未注册');
+//     if (!handler) {
+//       delete this.events[name];
+//     } else {
+//       this.events[name] = this.events[name].filter(fn => fn !== handler);
+//     } 
+//   }
+//   once(name, handler) {
+//     function fn(...args) {
+//       handler.call(this, ...args);
+//       this.off(name, fn);
+//     }
+//     this.on(name, fn);
+//   }
+// }
+// function sleep(time) {
+//   return new Promise(resolve => setTimeout(resolve, time));
+// }
+// function bindEvent(elem, type, selector, fn) {
+//   if (fn == null) {
+//     fn = selector;
+//     selector = null;
+//   }
+//   elem.addEventListener(type, function(event) {
+//     const target = event.target;
+//     if (selector) {
+//       if (target.match(selector)) {
+//         fn.call(target, event);
+//       }
+//     } else {
+//       fn.call(target, event);
+//     }
+//   });
+// }
+// function ajax(url, method, postData) {
+//   return new Promise((resolve, reject) => {
+//     const xhr = new XMLHttpRequest();
+//     xhr.open(method, url);
+//     xhr.setRequestHeader('Content-Type', 'application/json');
+//     xhr.onreadystatechange = function() {
+//       if (xhr.readyState === 4) {
+//         if (xhr.status === 200) {
+//           resolve(JSON.parse(xhr.responseText));
+//         } else {
+//           reject(new Error(xhr.responseText));
+//         }
+//       }
+//     }
+//     method === 'GET' ? xhr.send() : xhr.send(JSON.stringify(postData));
+//   });
+// }
+// function setInteval(fn, time) {
+//   function interval() {
+//     fn();
+//     setTimeout(interval, time);
+//   }
+//   return setTimeout(interval, time);
+// }
+// function setTimeout(fn, time) {
+//   const timer = setInterval(function() {
+//     fn();
+//     clearInterval(timer);
+//   }, time);
+//   return timer;
+// }
+// function createScript(src) {
+//   const script = document.createElement();
+//   script.src = src;
+//   script.type = 'text/javascript';
+//   document.body.appendChild(script);
+// }
+// createScript('http://xxx.xxx.com?callback=handleResponse');
+// function handleResponse(res) {
+//   console.log(res);
+// }
+// handleResponse({a: 1, b: 2});
+// function query(name) {
+//   const search = location.search.substring(1);
+//   const reg = new RegExp(`(^|&)${name}=([^&]*)(&|$)`, i);
+//   const res = search.match(reg);
+//   return res ? res[2] : null;
+// }
+// function query(name) {
+//   const p = new URLSearchParams(location.search);
+//   return p.get(name);
+// }
+// function isObject(val) {
+//   return typeof val === 'object' && val !== null;
+// }
+// function flatten(obj) {
+//   if (!isObject(obj)) return obj;
+//   const res = {};
+//   function dfs(cur, prefix) {
+//     if (isObject(cur)) {
+//       if (Array.isArray(cur)) {
+//         cur.forEach((item, index) => {
+//           dfs(item, `${prefix}[${index}]`);
+//         });
+//       } else {
+//         for (let key in cur) {
+//           dfs(cur[key], `${prefix}${prefix ? '.' : ''}${key}`);
+//         }
+//       }
+//     } else {
+//       res[prefix] = cur; 
+//     }
+//   }
+//   dfs(obj, '');
+//   return res;
+// }
+// const obj = {
+//   a: {
+//     b: 1,
+//     c: 2,
+//     d: {e: 5}
+//   },
+//   b: [1, 3, {a: 2, b: 3}],
+//   c: 3
+// };
+// console.log(flatten(obj));
