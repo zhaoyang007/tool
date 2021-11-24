@@ -2,8 +2,6 @@
 
 ## 资源解析
 
-
-
 #### 安装 babel
 
 要解析 es6 需要安装 @babel/core，es6 的预设插件 @babel/preset-env，通过 babel-loader 去解析它们。

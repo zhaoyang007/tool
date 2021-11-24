@@ -3095,11 +3095,280 @@ function isObject(obj) {
 // cancelPromise.promise.then(res => {
 //     console.log(res);
 // });
-Promise.prototype.finally = function(cb) {
-    const P = this.constructor;
-    return this.then(res => {
-        return P.resolve(cb()).then(() => res);
-    }, err => {
-        return P.resolve(cb()).then(() => { throw err });
-    });
-}
+// Promise.prototype.finally = function(cb) {
+//     const P = this.constructor;
+//     return this.then(res => {
+//         return P.resolve(cb()).then(() => res);
+//     }, err => {
+//         return P.resolve(cb()).then(() => { throw err });
+//     });
+// }
+// 实现let
+// {
+//     let a = 1;
+//     console.log(a);
+// }
+// console.log(a);
+// (function() {
+//     var a = 2;
+//     console.log(a);
+// })();
+// console.log(a);
+// var fns = [];
+// for (let i = 0; i < 10; i++) {
+//     fns[i] = function() {
+//         console.log(i);
+//     }
+// }
+// fns[8]();
+// var fns = [];
+// for (var i = 0; i < 10; i++) {
+//     (function(i) {
+//         fns[i] = function() {
+//             console.log(i);
+//         }
+//     })(i);
+// }
+// fns[7]()
+// 实现const
+// function _const(key, value) {
+//     window.key = value;
+//     Object.defineProperties(window, key, {
+//         enumerable: false,
+//         configurable: false,
+//         get: function() {
+//             return value;
+//         },
+//         set: function(newVal) {
+//             if (newVal !== value) {
+//                 throw new TypeError('不能重复定义');
+//             } else {
+//                 return value;
+//             }
+//         }
+//     });
+// }
+// function _const(key, value) {
+//     window.key = value;
+//     Object.defineProperty(window, key, {
+//         enumerable: false,
+//         configurable: false,
+//         get: function() {
+//             return value;
+//         },
+//         set: function(newVal) {
+//             if (newVal !== value) {
+//                 throw new TypeError('不能重复定义');
+//             } else {
+//                 return value;
+//             }
+//         }
+//     })
+// }
+// function sleep(time) {
+//     return new Promise(resolve => setTimeout(resolve, time));
+// }
+// function bindEvent(elem, type, selector, fn) {
+//     if (fn == null) {
+//         fn = selector;
+//         selector = null;
+//     }
+//     elem.addEventListener(type, function(e) {
+//         const target = e.target;
+//         if (selector) {
+//             if (selector.contains(target)) {
+//                 fn.call(e.target, e);
+//             }
+//         } else {
+//             fn.call(e.target, e);
+//         }
+//     });
+// }
+// ajax
+// function ajax(url, method, postData) {
+//     return new Promise((resolve, reject) => {
+//         const xhr = new XMLHttpRequest();
+//         xhr.open(method, url);
+//         xhr.setRequestHeader('Content-Type', 'application/json');
+//         xhr.onreadystatechange = function() {
+//             if (xhr.readyState === 4) {
+//                 if (xhr.status === 200) {
+//                     resolve(JSON.parse(xhr.responseText));
+//                 } else {
+//                     reject(new Error(xhr.responseText));
+//                 }
+//             }
+//         }
+//         method === 'GET' ? xhr.send() : xhr.send(JSON.stringify(postData));
+//     });
+// }
+// function setInterval(fn, time) {
+//     function interval() {
+//         fn();
+//         setTimeout(interval, time);
+//     }
+//     return setTimeout(interval, time);
+// }
+// function setTimeout(fn, time) {
+//     const timer = setInterval(function() {
+//         fn();
+//         clearInterval(timer);
+//     }, time);
+//     return timer;
+// }
+// function createScript(src) {
+//     const script = document.createElement('script');
+//     script.src = src;
+//     script.type = 'text/javascript';
+//     document.body.appendChild(script);
+// }
+// createScript('http://xxx.xxx.com/xxx.js?callbach=handleResponse');
+// function handleResponse(res) {
+//     console.log(res);
+// }
+// handleResponse({a: 1, b: 2});
+// function query(name) {
+//     const search = location.search.substring(1);
+//     const reg = new RegExp(`(^|&)${name}=([^&]*)(&|$)`, 'i');
+//     const res = search.match(reg);
+//     return res ? res[2] : null;
+// }
+// function query(name) {
+//     const p = new URLSearchParams(location.search);
+//     return p.get(name);
+// }
+// function isObject(val) {
+//     return typeof val === 'object' && val !== null;
+// }
+// function flatten(obj) {
+//     if (!isObject(obj)) return obj;
+//     const res = {};
+//     function dfs(cur, prefix) {
+//         if (isObject(cur)) {
+//             if (Array.isArray(cur)) {
+//                 cur.forEach((item, index) => {
+//                     dfs(item, `${prefix}[${index}]`);
+//                 });
+//             } else {
+//                 for (let key in cur) {
+//                     dfs(cur[key], `${prefix}${prefix ? '.' : ''}${key}`);
+//                 }
+//             }
+//         } else {
+//             res[prefix] = cur; 
+//         }
+//     }
+//     dfs(obj, '');
+//     return res;
+// }
+// const obj = {
+//     a: {
+//       b: 1,
+//       c: 2,
+//       d: {e: 6}
+//     },
+//     b: [1, 3, {a: 2, b: 3}],
+//     c: 3
+//   };
+// console.log(flatten(obj));
+// Promise.prototype.finally
+// Promise.prototype.finally3 = function(cb) {
+//     const P = this.constructor;
+//     return this.then(res => {
+//         cb()
+//       return res;
+//     }, err => {
+//       return P.resolve(cb()).then(() => { throw err });
+//     });
+//   }
+// Promise.prototype.finally4 = function(cb) {
+//     const P = this.constructor;
+//     return this.then(res => {
+//       return P.resolve(cb()).then(() => res);
+//     }, err => {
+//       return P.resolve(cb()).then(() => { throw err });
+//     });
+//   }
+// const p = new Promise((resolve, reject) => {
+//     setTimeout(() => {
+//             resolve(123);
+//     }, 1000);
+// });
+// p.then(res => {
+//         console.log(res);
+//         return res;
+//     })
+//     .then(res => {
+//         return Promise.resolve(cb()).then(() => res);
+//       }, err => {
+//         return Promise.resolve(cb()).then(() => { throw err });
+//       })
+//     .then(res => {
+//         console.log(res);
+//     })
+//     .catch(err => {})
+// 取消promise
+// function cancel(promise) {
+//     const obj = {};
+//     const p = new Promise((resolve, reject) => {
+//       obj.resolve = resolve;
+//       obj.reject = reject;
+//     });
+//     obj.promise = Promise.race([p, promise]);
+//     return obj;
+//   }
+//   // 使用
+//   const testPromise = new Promise((resolve, reject) => {
+//     setTimeout(() => {
+//         console.log('成功');
+//       resolve(1);
+//     }, 1000);
+//   });
+//   const cancelPromise = cancel(testPromise);
+//   cancelPromise.promise.then(res => {
+//     console.log(res);
+//   }); 
+//   // 取消
+//   cancelPromise.resolve("取消");
+// {
+//     let a = 1
+// }
+// (function() {
+//     var a = 1;
+// // })()
+// fns = [];
+// // for (let i = 0; i < 10; i++) {
+// // }
+// for (var i = 0; i < 10; i++) {
+//     (function(i) {
+//         fns[i] = function() {
+//             console.log(i);
+//         }
+//     })(i);
+// }
+// fns[5]()
+// function _const(key, value) {
+//     window.key = value;
+//     Object.defineProperty(window, key, {
+//         enumerable: false,
+//         configurable: false,
+//         get: function() {
+//             return value;
+//         },
+//         set: function(newVal) {
+//             if (newVal !== value) {
+//                 throw new TypeError('不能重复定义');
+//             } else {
+//                 return value;
+//             }
+//         }
+//     })
+// }
+// Promise.prototype.finally = function(cb) {
+//     const P = this.constructor;
+//     return this.then(res => {
+//         return P.resolve(cb()).then(() => res);
+//     }, err => {
+//         return P.resolve(cb()).then(() => {throw err});
+//     })
+// }
