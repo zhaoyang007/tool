@@ -3372,3 +3372,257 @@ function isObject(obj) {
 //         return P.resolve(cb()).then(() => {throw err});
 //     })
 // }
+// function bindEvent(elem, type, selector, fn) {
+//     if (fn == null) {
+//         fn = selector;
+//         selector = null;
+//     }
+//     elem.addEventListener(type, function(e) {
+//         const target = e.target;
+//         if (selector) {
+//             if (selector.contains(target)) {
+//                 fn.call(target, e);
+//             }
+//         } else {
+//             fn.call(target, e);
+//         }
+//     })
+// }
+// function ajax(url, method, postData) {
+//     return new Promise((resolve, reject) => {
+//         const xhr = new XMLHttpRequest();
+//         xhr.open(method, url);
+//         xhr.setRequestHeader('Content-Type', 'application/json');
+//         xhr.onreadystatechange = function() {
+//             if (xhr.readyState === 4) {
+//                 if (xhr.status === 200) {
+//                     resolve(JSON.parse(xhr.responseText));
+//                 } else {
+//                     reject(new Error(xhr.responseText));
+//                 }
+//             }
+//         }
+//         method === 'GET' ? xhr.send() : xhr.send(JSON.stringify(postData));
+//     });
+// }
+// function setInterval(fn, time) {
+//     function interval() {
+//         fn();
+//         setTimeout(interval, time);
+//     }
+//     return setTimeout(interval, time);
+// }
+// function setTimeout(fn, time) {
+//     const timer = setInterval(() => {
+//         fn();
+//         clearInterval(timer);
+//     }, time);
+//     return timer;
+// }
+// function createScript(src) {
+//     const script = document.createElement('script');
+//     script.src = src;
+//     script.type = 'text/javascript';
+//     document.body.appendChild(script);
+// }
+// createScript('http://xxx.xxx.com/xxx.js?callback=handleResponse');
+// function handleResponse(res) {
+//     console.log(res);
+// }
+// handleResponse({a: 1, b: 2});
+// function query(name) {
+//     const search = location.search;
+//     const reg = new RegExp(`(^|&)${name}=([^&]*)(&|$)`, 'i');
+//     const res = search.match(reg);
+//     return res ? res[2] : null;
+// }
+// function query(name) {
+//     const p = new URLSearchParams(location.search);
+//     return p.get(name);
+// }
+// function isObject(val) {
+//     return typeof val === 'object' && obj !== null;
+// }
+// function flatten(obj) {
+//     if (!isObject(obj)) return obj;
+//     const res = {};
+//     function dfs(cur, prefix) {
+//         if (isObject(cur)) {
+//             if (Array.isArray(cur)) {
+//                 cur.forEach((item, index) => {
+//                     dfs(item, `${prefix}[${index}]`);
+//                 });
+//             } else {
+//                 for (let key in cur) {
+//                     dfs(cur[key], `${prefix}${prefix ? '.' : ''}${key}`);
+//                 }
+//             }
+//         } else {
+//             res[prefix] = cur;
+//         }
+//     }
+//     dfs(obj, '');
+//     return res;
+// }
+// const obj = {
+//     a: {
+//       b: 1,
+//       c: 2,
+//       d: {e: 5}
+//     },
+//     b: [1, 3, {a: 2, b: 3}],
+//     c: 7
+// };
+// console.log(flatten(obj));
+// Promise.prototype.finally = function(cb) {
+//     const P = this.constructor;
+//     return this.then(res => {
+//         return P.resolve(cb()).then(() => res);
+//     }, err => {
+//         return P.resolve(cb()).then(() => {throw err});
+//     });
+// }
+// function cancel(promise) {
+//     const obj = {};
+//     const p = new Promise((resolve, reject) => {
+//         obj.resolve = resolve;
+//         obj.reject = reject;
+//     });
+//     obj.promise = Promise.race([p, promise]);
+//     return obj;
+// }
+// const testPromise =  new Promise(resolve => {
+//     setTimeout(function() {
+//         console.log('testPromise');
+//         resolve(123);
+//     }, 1000); 
+// })
+// const cancelPromsie = cancel(testPromise);
+// cancelPromsie.promise.then(res => {
+//     console.log(res);
+// });
+// cancelPromsie.resolve('取消');
+// {
+//     let a = 1;
+// }
+// (function() {
+//     var a = 1;
+//     console.log(a);
+// })();
+// const fns = [];
+// // for (let i = 0; i < 10; i++) {
+// //     fns[i] = function() {
+// //         console.log(i);
+// //     }
+// // }
+// for (var i = 0; i < 10; i++) {
+//     (function(i) {
+//         fns[i] = function() {
+//             console.log(i);
+//         }
+//     })(i);
+// }
+// fns[8](0)
+// function _const(key, value) {
+//     window.key = value;
+//     Object.defineProperty(window, key, {
+//         enumerable: false,
+//         configurable: false,
+//         get: function() {
+//             return value;
+//         },
+//         set: function(newVal) {
+//             if (newVal !== value) {
+//                 throw new TypeError('不能重复定义');
+//             } else {
+//                 return value;
+//             }
+//         }
+//     });
+// }
+// Array.prototype.push = function() {
+//     for (let i = 0; i < arguments.length; i++) {
+//         this[this.length] = arguments[i];
+//     }
+//     return this.length;
+// }
+// Array.prototype.filter = function(fn) {
+//     if (typeof fn !== 'function') throw new TypeError('参数必须是一个函数');
+//     const res = [];
+//     for (let i = 0; i < this.length; i++) {
+//         if (fn(this[i], i)) res.push(this[i]);
+//     }
+//     return res;
+// }
+// Array.prototype.map = function(fn) {
+//     if (typeof fn !== 'function') throw new TypeError('参数必须是一个函数');
+//     const res = [];
+//     for (let i = 0; i < this.length; i++) {
+//         res.push(fn(this[i], i));
+//     }
+//     return res;
+// }
+// function flat(arr, depth) {
+//     if (!Array.isArray(arr) || depth <= 0) return arr;   
+//     return arr.reduce((acc, cur) => {
+//         return Array.isArray(cur) ? acc.concat(flat(cur, depth - 1)) : acc.concat(cur);
+//     }, []);
+// }
+// function flat(arr) {
+//     const res = [];
+//     const arrs = [...arr];
+//     while(arrs.length) {
+//         const tmp = arrs.shift();
+//         Array.isArray(tmp) ? arrs.unshift(...tmp) : res.push(tmp);
+//     }
+//     return res;
+// }
+// function flat(arr, depth = 3) {
+//     if (!Array.isArray(arr) || depth <= 0) return arr;
+//     let res = [];
+//     arr.forEach(item => {
+//         res = Array.isArray(item) ? res.concat(flat(item, depth - 1)) : res.concat(item);
+//     });
+//     return res; 
+// }
+// console.log((flat([1,2,[3,4,[5, 6], 7]])));
+// String.prototype.repeat = function(n) {
+//     return (new Array(n + 1)).join(this);
+// }
+// String.prototype.string = function(n) {
+//     return n > 0 ? this.repeat(n - 1) + this : '';
+// }
+// Object.create = function(obj) {
+//     function fn() {}
+//     fn.prototype = obj;
+//     return new fn();
+// }
+// Object.is = function(x, y) {
+//     if (x === y) {
+//         return x !== 0 || 1 / x === 1 / y;
+//     }
+//     return x !== x && y !== y;
+// }
+// Object.assign = function(target, sources) {
+//     if (target == null) throw new TypeError('cannot convert undefined or null to object');
+//     const res = {};
+//     sources.forEach(source => {
+//         for (let key in source) {
+//             if (source.hasOwnProperty(key)) res[key] = source[key];
+//         }
+//     });
+//     return res;
+// }
+// function Instanceof(left, right) {
+//     while(true) {
+//         if (left == null) return false;
+//         if (left.__proto__ === right.prototype) return true;
+//         left = left.__proto__;
+//     }
+// }
+JSON.parse = function(jsonStr) {
+    return eval(`(${jsonStr})`);
+}
+JSON.parse = function(jsonStr) {
+    return (new Function(`return ${jsonStr}`))();
+}
