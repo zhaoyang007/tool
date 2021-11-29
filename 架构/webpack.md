@@ -94,7 +94,7 @@ output：
 ```js
 module.exports = {
   output: {
-    path: __dirname + '/dist',
+    path: path.join(__dirname, 'dist'),
     filename: 'bundle.js'
   }
 }
@@ -105,7 +105,7 @@ module.exports = {
 ```js
 module.exports = {
   output: {
-    path: __dirname + '/dist',
+    path: path.join(__dirname, 'dist'),
     filename: '[name].js' // 多出口不可以指定名称
   }
 }
@@ -148,7 +148,7 @@ babel 两个比较重要的概念，presets 和 plugins。plugins 可以理解�
 }
 ```
 
-##### 解析 react jsx
+解析 react jsx：
 
 安装 react 相关
 
@@ -287,18 +287,6 @@ module.exports = {
 }
 ```
 
-##### html-webpack-plugin
-
-html-webpack-plugin 默认支持 ejs 模版语法。
-
-开发环境中的作用：
-
-启动了 webpack-dev-server 后，它会在项目根目录中生成一个隐形的 index.html，如果 output 中配置了 publicPath，会生成在项目跟目录的 publicPath 中。webpack-dev-server 会自动在根目录下寻找这个 index.html，但是根目录里根本没有 index.html。所以访问页面出现的是项目目录结构，在 webpack-dev-server 中配置 historyApiFallback 就可以直接访问到 index.html。
-
-生产环境打包中的作用：
-
-生产环境打包，会生成一个 index.html 来包含我们打包好的 js 和 css 文件。
-
 ##### webpack 中的⽂件监听
 
 ⽂件监听是在发现源码发⽣变化时，⾃动重新构建出新的输出⽂件。
@@ -321,7 +309,7 @@ module.exports = {
   watch: true,
   // 只有开启监听模式时，watchOptions才有意义
   watchOptions: {
-    // 默认为空，不监听的文件或文件夹，支持正则匹配
+    // 不监听的文件或文件夹，支持正则匹配，默认为空
     ignored: /node_modules/,
     // 监听到变化后会等300ms再去执行，默认300ms
     aggregateTimeout: 300,
@@ -331,7 +319,7 @@ module.exports = {
 }
 ```
 
-缺陷：webpack 中的⽂件监听是可以自动构建，但是每次需要⼿动刷新浏览器。
+缺陷：每次需要⼿动刷新浏览器。
 
 文件监听的原理分析：
 
@@ -339,129 +327,11 @@ module.exports = {
 
 某个⽂件发⽣了变化，并不会⽴刻告诉监听者，⽽是先缓存起来，等 aggregateTimeout，这个时间内如果有其他文件也发生了变化，它会把这些变化的文件列表一起去构建。
 
-##### PostCSS 插件 autoprefixer
-
-autoprefixer 插件通常是和 postcss-loader 一起使用。postcss-loader 的功能是比较强大的，除了做 css 样式补全之外，它还可以做支持 css module，style lint 等。
-
-```js
-module.exports = {
-  module: {
-    rules: [
-      {
-        test: /\.less$/,
-        use: [
-          'style-loader',
-          'css-loader',
-          'less-loader',
-          {
-            loader: 'postcss-loader',
-            options: {
-              plugins: () => [
-                require('autoprefixer')({
-                  overrideBrowserslist: ["last 2 version", ">1%", "IOS 7"] // 指定autoprefixer所需要兼容的浏览器的版本
-                })
-              ]
-            }
-          }
-        ]
-      }
-    ]
-  }
-}
-```
-
-##### 自动清理构建目录
-
-每次构建的时候不会清理⽬录，造成构建的输出⽬录 output ⽂件越来越多
-
-通过 npm scripts 清理构建⽬录：
-
-rm -rf ./dist && webpack
-
-rimraf ./dist && webpack
-
-⾃动清理构建⽬录：
-
-使⽤ clean-webpack-plugin。它会默认删除 output 指定的输出⽬录。
-
-```js
-const { CleanWebpackPlugin } = require('clean-webpack-plugin')
-
-module.exports = {
-  plugins: [
-    new CleanWebpackPlugin()
-  ]
-}
-```
-
-##### source map
-
-源代码与打包后的代码的映射关系，通过 source map 定位到源代码，方便我们调试代码，内部借助了 sourcemap-loader 来实现的。
-
-在 webpack.dev.js devtool 中设置。
-
-开发环境默认开启，线上环境关闭
-
-* 如果线上不关闭，会把我们的业务逻辑暴露出来，线上排查问题的时候可以将 sourcemap 上传到错误监控系统。
-
-配置推荐：
-
-```js
-devtool: "cheap-module-eval-source-map", // 开发环境配置
-devtool: "cheap-module-source-map", // 线上⽣成配置
-```
-
-source map 关键字：
-
-eval: 使⽤ eval 包裹模块代码
-
-source map: 产⽣ .map ⽂件
-
-cheap: 不包含列信息，只包含行信息
-
-inline: 将 .map 作为 DataURI 嵌⼊，不单独⽣成 .map ⽂件
-
-module:包含 loader 的 sourcemap
-
-source map类型：
-
-可以根据前面的关键字排列组合得到。
-
-##### 移动端 CSS px ⾃动转换成 rem
-
-使用手淘比较成熟的方案 [lib-flexible ](https://github.com/amfe/lib-flexible) 库计算实际的设备分辨率根元素的 font-size 大小。
-
-页面打开的时候就需要马上的计算这个值，所以它的位置需要前置放在前面的位置。
-
-```js
-module.exports = {
-  module: {
-    rules: [
-      {
-        test: /\.less$/,
-        use: [
-          'style-loader',
-          'css-loader',
-          'less-loader',
-          {
-            loader: 'px2rem-loader',
-            options: {
-              remUnit: 75, // rem相对于px的转换的单位，75代表1rem=75px，这个比较适合750的设计稿，750个像素对应着10个rem。
-              remPrecision: 8 // px转成rem，后面小数点的位数。
-            }
-          }
-        ]
-      }
-    ]
-  }
-}
-```
-
 ##### webpack-dev-server
 
 基于 express 启动了一个小型服务。
 
-WDS 会刷新浏览器。
+WDS 会自动刷新浏览器。
 
 WDS 输出的文件不放入磁盘里面，没有磁盘的 IO 操作，它输出的文件是放在内存里面，而不像watch这种方式是放在本地的磁盘文件里面。所以它的构建速度会有更大的优势。
 
@@ -504,13 +374,9 @@ module.exports = {
 }
 ```
 
-运行构建
-
-```bash
-npm run dev
-```
-
 ##### webpack-dev-middleware
+
+自己写本地服务的情况。
 
 WDM 将 webpack 输出的⽂件传输给服务器。
 
@@ -536,11 +402,9 @@ app.listen(3000, function() {
 
 ##### 热更新
 
-借助 webpack-dev-server，每次代码修改，自动构建，构建完成后，通过热更新的方式让浏览器的内容自动的变化。
+借助 webpack-dev-server，每次代码修改，自动构建，通过热更新的方式让浏览器的内容自动的变化。
 
 启动 HMR 后，css 抽离会不⽣效，还有不⽀持 contenthash，chunkhash。
-
-使用 HMR：
 
 ```js
 const webpack = require('webpack')
@@ -550,103 +414,410 @@ module.exports = {
   plugins: [
     new webpack.HotModuleReplacementPlugin()
   ],
-  // 配置devServer
   devServer: {
-    // 开启热更新
-    hot: true,
-    // 即便HMR不⽣效，浏览器也不⾃动刷新，就开启hotOnly
- 		hotOnly: true
+    hot: true
   }
 }
 ```
 
-案例：
+热更新原理：
+
+<img src="热更新原理.png" alt="热更新原理" style="zoom: 50%;" />
+
+##### 文件指纹策略
+
+常见的文件指纹有哪几种：
+
+* hash：每次打包后整个项目的 hash 值，每构建一次就会有一个新的 hash 值。
+* chunkhash：和 webpack 打包的 chunk 有关，不同的 entry 会⽣成不同的 chunkhash 值，根据不同入口 entry 进行依赖解析，构建对应的 chunk，生成相应的 hash，只要组成 entry 的模块没有内容改动，则对应的 hash 不变， 对于 js 文件的指纹，一般采用 chunkhash。
+* contenthash：根据⽂件内容来定义 hash ，⽂件内容不变，则 contenthash 不变。 一个页面既有 js 资源也有 css 资源，如果 css 资源也使用 chunkhash 的话，会有一个问题，就是我们修改了 js，但是 css 并没有变，由于 css 也使用了 chunkhash，就会导致 css 内容没有变，但是发布上去的文件指纹发生了变化。因此对于 css ，通常根据内容进行文件指纹的生成，采用 contenthash。
+
+JS 的⽂件指纹设置：
+
+设置 output 的 filename，使⽤ [chunkhash]。
+
+chunkhash是没办法和热更新的HotModuleReplacementPlugin一起使用的，所以只需设置在生产环境。
 
 ```js
-// index.js
-import "./css/index.css";
-var btn = document.createElement("button");
-btn.innerHTML = "新增";
-document.body.appendChild(btn);
-btn.onclick = function() {
-  var div = document.createElement("div");
-  div.innerHTML = "item";
-  document.body.appendChild(div);
-};
-```
-
-```css
-/* index.css */
-div:nth-of-type(odd) {
-	background: yellow; 
+module.exports = {
+  output: {
+    filename: '[name].[chunkhash:8].js',
+    path: __dirname + '/dist'
+  }
 }
 ```
 
-处理 js 模块 HMR：
+CSS 的⽂件指纹设置和 css 文件抽离：
 
-上面的方式就直接能处理 css 的热更新了，处理 js 的热更新需要使⽤ module.hot.accept 来观察模块更新，从⽽更新。
+使用 style-loader 和 css-loader 的话，那么这个 css 会由这个 style-loader 将这个 css 插入到 style 里面并且放到 head 头部。这时并没有独立的一个 css 文件，因此我们通常会采用插件把 css 提取成一个独立的文件。
 
-案例：
+css/sass/less 等 css 相关文件经过对应的 loader 处理之后，最终处理必须为 style-loader 将 css 样式放到 style 标签中或者使用文件提取的插件将 css 单独提取成独立 css 文件。两者必须存在一个，这样样式才能有效。两者同时存在时，style-loader 在前，生成独立 css 文件，style-loader 失效；提取文件的插件 loader 在前，编译过不了。
 
-```js
-// counter.js
-function counter() {
-  var div = document.createElement("div");
-  div.setAttribute("id", "counter");
-  div.innerHTML = 1;
-  div.onclick = function() {
-  	div.innerHTML = parseInt(div.innerHTML, 10) + 1;
-  };
-  document.body.appendChild(div);
-}
-export default counter;
-```
+css 文件指纹也只需设置在生产环境。
+
+webpack4：
+
+使用 MiniCssExtractPlugin 插件的 loader。
+
+设置 MiniCssExtractPlugin 的 filename，使⽤ [contenthash]。
 
 ```js
-// number.js
-function number() {
-  var div = document.createElement("div");
-  div.setAttribute("id", "number");
-  div.innerHTML = 13000;
-  document.body.appendChild(div);
+const MiniCssExtractPlugin = require('mini-css-extract-plugin')
+
+module.exports = {
+  module: {
+    rules: [
+      {
+        test: /\.css$/,
+        use: [
+          MiniCssExtractPlugin.loader,
+          'css-loader'
+        ]
+      },
+      {
+        test: /\.less$/,
+        use: [
+          MiniCssExtractPlugin.loader,
+          'css-loader',
+          'less-loader'
+        ]
+      }
+    ]
+  },
+	plugins: [
+    new MiniCssExtractPlugin({
+      filename: '[name].[contenthash:8].css'
+    })
+  ]
 }
-export default number;
 ```
+
+webpack3：
+
+使用 extract-text-webpack-plugin 把非 js 的代码，单独打包成一个静态资源文件。比如把css文件拎出来打包成一个单独的文件。
+
+使用 ExtractTextPlugin 的 loader。
+
+设置 ExtractTextPlugin 的 filename，使⽤ [contenthash]。
 
 ```js
-// index.js
-import counter from "./counter";
-import number from "./number";
-counter();
-number();
-if (module.hot) {
-  module.hot.accept("./b", function() {
-    document.body.removeChild(document.getElementById("number"));
-    number();
- 	});
+const ExtractTextPlugin = require('extract-text-webpack-plugin')
+
+module.exports = {
+  module: {
+    rules: [
+      {
+        test: /\.css$/,
+        use: [
+          ExtractTextPlugin.extract({
+            fallback: 'style-loader',
+            use: 'css-loader'
+          })
+        ]
+      },
+      {
+        test: /\.less/,
+        use: [
+          ExtractTextPlugin.extract({
+            fallback: 'style-loader',
+            use: [
+              'css-loader',
+              'less-loader'
+            ]
+          })
+        ]
+      }
+    ]
+  },
+	plugins: [
+    new ExtractTextPlugin('styles.[contentHash:8].css')
+  ]
 }
 ```
 
-热更新的原理分析：
+图片或字体的文件指纹设置：
 
-* Webpack Compile：webpack 编译器，将 JS 源代码编译成 Bundle。
+设置 file-loader 或 url-loader 的 name，使⽤ [hash]。
 
-* HMR Server：将热更新的文件输出给 HMR Runtime。
+这里的 hash 也是指文件内容的 hash，这个 hash 是采用 md5 生成的。
 
-* Bundle Server：提供文件在浏览器的访问，比如编译好的 Bundle 其实在浏览器里正常访问到的是文件目录，bundle server 可以让你通过服务器的方式访问。localhost:8080/bundle.js
+```js
+module.exports = {
+	module: {
+    rules: [
+      {
+        test: /\.(png|svg|jpg|gif)$/,
+        use: {
+          loader: 'file-loader',
+          options: {
+            name: 'img/[name].[hash:8].[ext]'
+          }
+        }
+      }
+    ]
+  }
+}
+```
 
-* HMR Runtime：在开发阶段将 HMR Runtime 注入到浏览器端bundle.js，浏览器端的 bundle.js 就可以和服务器建立一个连接，通常这个连接是一个 websocket。当收到文件的更新数据回包，就会自动的更新这个文件。
+##### html-webpack-plugin
 
-* bundle.js：构建输出的文件。
+html-webpack-plugin 默认支持 ejs 模版语法。
 
-  ![热更新](/Users/zhaoyang/tool/images/前端知识体系/前端工程实践/webpack/热更新.png) 
+开发环境中的作用：
 
-热更新的过程：
+启动了 webpack-dev-server 后，它会在项目根目录中生成一个隐形的 index.html，如果 output 中配置了 publicPath，会生成在项目跟目录的 publicPath 中。webpack-dev-server 会自动在根目录下寻找这个 index.html，但是根目录里根本没有 index.html。所以访问页面出现的是项目目录结构，在 webpack-dev-server 中配置 historyApiFallback 就可以直接访问到 index.html。
 
-启动阶段，在文件系统里进行编译，将初始的代码经过webpack compiler进行打包，将编译好的文件传输给
-bundle server，它是一个服务器，它可以让文件以server的方式让浏览器可以访问的到。                   
+生产环境打包中的作用：
 
-文件更新的阶段，本地开发，有文件的变化，文件系统发生变化，代码经过 webpack compiler 进行编译，编译好之后它会将代码发送给 HMR Server，HMR Server 就可以知道哪些资源哪些模块发生了改变，这里的模块是指源代码部分的这些模块，然后 HMR Server 就会通知 HMR Runtime，就是 server 端通知客户端哪些文件发生了变化，通常是以 json 数据进行传输，传输到了 HMR Runtime 之后，HMR Runtime 就会更新代码。最终代码就会经过改变并且不需要刷新浏览器。这就是热更新的原理。
+生产环境打包，会生成一个 index.html 来包含我们打包好的 js 和 css 文件。
+
+##### 自动清理构建目录
+
+每次构建的时候不会清理⽬录，造成构建的输出⽬录 output ⽂件越来越多
+
+通过 npm scripts 清理构建⽬录：
+
+rm -rf ./dist && webpack
+
+rimraf ./dist && webpack
+
+⾃动清理构建⽬录：
+
+使⽤ clean-webpack-plugin。它会默认删除 output 指定的输出⽬录。
+
+```js
+const { CleanWebpackPlugin } = require('clean-webpack-plugin')
+
+module.exports = {
+  plugins: [
+    new CleanWebpackPlugin()
+  ]
+}
+```
+
+##### PostCSS 插件 autoprefixer
+
+autoprefixer 插件通常是和 postcss-loader 一起使用。postcss-loader 的功能是比较强大的，除了做 css 样式补全之外，它还可以做支持 css module，style lint 等。
+
+```js
+module.exports = {
+  module: {
+    rules: [
+      {
+        test: /\.less$/,
+        use: [
+          'style-loader',
+          'css-loader',
+          'less-loader',
+          {
+            loader: 'postcss-loader',
+            options: {
+              plugins: () => [
+                require('autoprefixer')({
+                  overrideBrowserslist: ["last 2 version", ">1%", "IOS 7"] // 指定autoprefixer所需要兼容的浏览器的版本
+                })
+              ]
+            }
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+##### 移动端 CSS px ⾃动转换成 rem
+
+使用手淘比较成熟的方案 [lib-flexible ](https://github.com/amfe/lib-flexible) 库计算实际的设备分辨率根元素的 font-size 大小。
+
+页面打开的时候就需要马上的计算这个值，所以它的位置需要前置放在前面的位置。
+
+```js
+module.exports = {
+  module: {
+    rules: [
+      {
+        test: /\.less$/,
+        use: [
+          'style-loader',
+          'css-loader',
+          'less-loader',
+          {
+            loader: 'px2rem-loader',
+            options: {
+              remUnit: 75, // rem相对于px的转换的单位，75代表1rem=75px，这个比较适合750的设计稿，750个像素对应着10个rem。
+              remPrecision: 8 // px转成rem，后面小数点的位数。
+            }
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+##### 静态资源内联
+
+资源内联的意义：
+
+代码层面：
+
+* ⻚⾯框架的初始化脚本：如上节中 rem 计算的 js 库，要在打开页面的时候就要去计算。
+
+* 上报相关打点：page start，css 初始化，css 加载完成，js 初始化和 js 加载完成等代码，这些都是需要内联到 html 里面去，而不能直接放到最终打包的 js 脚本中去。
+
+* css 内联避免⻚⾯闪动
+
+请求层⾯：
+
+* 减少 HTTP ⽹络请求数
+
+⼩图⽚或者字体内联使用 url-loader：
+
+html 和 js 的内联：
+
+raw-loader 的功能是读取一个文件，把这个文件的内容返回成一个 string，把这个 string 插入到对应的位置。
+
+raw-loader 内联 html
+
+```html
+ <%= require('raw-loader!./meta.html') %>
+```
+
+raw-loader 内联 js
+
+```html
+<script>
+  <%= require('raw-loader!babel-loader!../../node_modules/lib-flexible/flexible.js') %></script>
+```
+
+css 内联：
+
+方案一：借助 style-loader
+
+```js
+module.exports = {
+  module: {
+    rules: [
+      {
+        test: /\.less$/,
+        use: [
+          {
+            loader: 'style-loader',
+            options: {
+              insertAt: 'top', // 样式插入到 <head>
+              singleton: true, // 将所有的style标签合并成一个
+            }
+          },
+          "css-loader",
+          "less-loader"
+        ]
+      }
+    ]
+  }
+}
+```
+
+方案二：html-inline-css-webpack-plugin
+
+它针对打包好的 css chunk 的代码，把它内联到 html 的 head 中。
+
+```js
+const HTMLInlineCSSWebpackPlugin = require("html-inline-css-webpack-plugin").default;
+
+module.exports = {
+  plugins: [
+    new HTMLInlineCSSWebpackPlugin(),
+  ]
+}
+```
+
+##### 多页面应用打包通用方案
+
+多页面优势
+
+​	1.每个页面之间是解偶的
+
+​	2.对 seo 更友好
+
+多页面打包基本思路：
+
+每个页面对应一个 entry，一个 html-webpack-plugin。
+
+缺点：每次新增或删除页面需要手动修改 webpack 配置构建脚本。
+
+多⻚⾯打包通⽤⽅案：
+
+动态获取 entry 和设置 html-webpack-plugin 数量。
+
+通过程序的思维动态获取某个目录下面指定的入口文件，需要有一个约定，把所有的页面都放在 src 的目录下面，每个页面的入口文件都约定为 index.js，这样我们就可以通过 js 脚本去获取src里面所有的目录，就可以知道入口文件的数量，打包的时候动态的设置 html-webpack-plugin。相比于自己写这个脚本，webpack 里面有一个更通用的做法是通过 glob 这个库，glob 的原理类似 linux 操作系统下面文件通配匹配的概念，根据匹配信息返回匹配到的目录内容，我们根据这个目录内容进行操作就可以了。
+
+```js
+const setMPA = () => {
+  const entry = {}
+  const htmlWebpackPlugins = []
+  const entryFiles = glob.sync(path.join(__dirname, './src/*/index.js'))
+  Object.keys(entryFiles)
+    .map(index => {
+    const entryFile = entryFiles[index];
+    const match = entryFile.match(/src\/(.*)\/index\.js/);
+    const pageName = match && match[1];
+    entry[pageName] = entryFile;
+    htmlWebpackPlugins.push(new HtmlWebpackPlugin({
+      template: path.join(__dirname, `./src/${pageName}/index.html`),
+      filename: `${pageName}.html`,
+      chunks: [pageName],
+      inject: true,
+      minify: {
+        html5: true,
+        collapseWhitespace: true,
+        perserveLineBreaks: false,
+        minifyCSS: true,
+        minifyJS: true,
+        removeComments: false
+      }
+    }));
+  });
+  return {
+    entry,
+    htmlWebpackPlugins
+  }
+}
+const {entry, htmlWebpackPlugins} = setMPA()
+```
+
+##### source map
+
+源代码与打包后的代码的映射关系，通过 source map 定位到源代码，方便我们调试代码，内部借助了 sourcemap-loader 来实现的。
+
+在 webpack.dev.js devtool 中设置。
+
+开发环境默认开启，线上环境关闭
+
+* 如果线上不关闭，会把我们的业务逻辑暴露出来，线上排查问题的时候可以将 sourcemap 上传到错误监控系统。
+
+配置推荐：
+
+```js
+devtool: "cheap-module-eval-source-map", // 开发环境
+devtool: "cheap-module-source-map", // 生产环境
+```
+
+source map 关键字：
+
+eval: 使⽤ eval 包裹模块代码
+
+source map: 产⽣ .map ⽂件
+
+cheap: 不包含列信息，只包含行信息
+
+inline: 将 .map 作为 DataURI 嵌⼊，不单独⽣成 .map ⽂件
+
+module:包含 loader 的 sourcemap
+
+source map类型：
+
+可以根据前面的关键字排列组合得到。
 
 ##### ESLint
 
@@ -756,281 +927,6 @@ module.exports = {
     "lint-fix": "eslint --fix --ext .js --ext .jsx --ext .vue src/" // 修复代码
   }
 }
-```
-
-##### 文件指纹策略
-
-什么是文件指纹：打包后输出的文件名后缀。
-
-文件指纹的好处：用来做版本的管理。
-
-常见的文件指纹有哪几种：
-
-* hash：每次打包后整个项目的 hash 值，每构建一次就会有一个新的 hash 值。
-* chunkhash：和 webpack 打包的 chunk 有关，不同的 entry 会⽣成不同的 chunkhash 值，根据不同入口 entry 进行依赖解析，构建对应的 chunk，生成相应的 hash，只要组成 entry 的模块没有内容改动，则对应的 hash 不变， 对于 js 文件的指纹，一般采用 chunkhash。
-* contenthash：根据⽂件内容来定义 hash ，⽂件内容不变，则 contenthash 不变。 一个页面既有 js 资源也有 css 资源，如果 css 资源也使用 chunkhash 的话，会有一个问题，就是我们修改了 js，但是 css 并没有变，由于 css 也使用了 chunkhash，就会导致 css 内容没有变，但是发布上去的文件指纹发生了变化。因此对于 css ，通常根据内容进行文件指纹的生成，采用 contenthash。
-
-JS 的⽂件指纹设置：
-
-设置 output 的 filename，使⽤ [chunkhash]。
-
-chunkhash是没办法和热更新的HotModuleReplacementPlugin一起使用的，所以只需设置在生产环境。
-
-```js
-module.exports = {
-  output: {
-    filename: '[name].[chunkhash:8].js',
-    path: __dirname + '/dist'
-  }
-}
-```
-
-CSS 的⽂件指纹设置和 css 文件抽离：
-
-使用 style-loader 和 css-loader 的话，那么这个 css 会由这个 style-loader 将这个 css 插入到 style 里面并且放到 head 头部。这时并没有独立的一个 css 文件，因此我们通常会采用插件把 css 提取成一个独立的文件。
-
-css/sass/less 等 css 相关文件经过对应的 loader 处理之后，最终处理必须为 style-loader 将 css 样式放到 style 标签中或者使用文件提取的插件将 css 单独提取成独立 css 文件。两者必须存在一个，这样样式才能有效。两者同时存在时，style-loader 在前，生成独立 css 文件，style-loader 失效；提取文件的插件 loader 在前，编译过不了。
-
-css 文件指纹也只需设置在生产环境。
-
-webpack4：
-
-使用 MiniCssExtractPlugin 插件的 loader。
-
-设置 MiniCssExtractPlugin 的 filename，使⽤ [contenthash]。
-
-```js
-const MiniCssExtractPlugin = require('mini-css-extract-plugin')
-
-module.exports = {
-  module: {
-    rules: [
-      {
-        test: /\.css$/,
-        use: [
-          MiniCssExtractPlugin.loader,
-          'css-loader'
-        ]
-      },
-      {
-        test: /\.less$/,
-        use: [
-          MiniCssExtractPlugin.loader,
-          'css-loader',
-          'less-loader'
-        ]
-      }
-    ]
-  },
-	plugins: [
-    new MiniCssExtractPlugin({
-      filename: '[name].[contenthash:8].css'
-    })
-  ]
-}
-```
-
-webpack3：
-
-使用 extract-text-webpack-plugin 把非 js 的代码，单独打包成一个静态资源文件。比如把css文件拎出来打包成一个单独的文件，因为这些文件可能是要做浏览器缓存。
-
-使用 ExtractTextPlugin 的 loader。
-
-设置 ExtractTextPlugin 的 filename，使⽤ [contenthash]。
-
-```js
-const ExtractTextPlugin = require('extract-text-webpack-plugin')
-
-module.exports = {
-  module: {
-    rules: [
-      {
-        test: /\.css$/,
-        use: [
-          ExtractTextPlugin.extract({
-            fallback: 'style-loader',
-            use: 'css-loader'
-          })
-        ]
-      },
-      {
-        test: /\.less/,
-        use: [
-          ExtractTextPlugin.extract({
-            fallback: 'style-loader',
-            use: [
-              'css-loader',
-              'less-loader'
-            ]
-          })
-        ]
-      }
-    ]
-  },
-	plugins: [
-    new ExtractTextPlugin('styles.[contentHash:8].css')
-  ]
-}
-```
-
-##### 图片或字体的文件指纹设置
-
-设置 file-loader 或 url-loader 的 name，使⽤ [hash]。
-
-这里的 hash 也是指文件内容的 hash，这个 hash 是采用 md5 生成的。
-
-```js
-module.exports = {
-	module: {
-    rules: [
-      {
-        test: /\.(png|svg|jpg|gif)$/,
-        use: {
-          loader: 'file-loader',
-          options: {
-            name: 'img/[name].[hash:8].[ext]'
-          }
-        }
-      }
-    ]
-  }
-}
-```
-
-##### 静态资源内联
-
-资源内联的意义：
-
-代码层面：
-
-* ⻚⾯框架的初始化脚本：如上节中 rem 计算的 js 库，要在打开页面的时候就要去计算。
-
-* 上报相关打点：page start，css 初始化，css 加载完成，js 初始化和 js 加载完成等代码，这些都是需要内联到 html 里面去，而不能直接放到最终打包的 js 脚本中去。
-
-* css 内联避免⻚⾯闪动
-
-请求层⾯：
-
-* 减少 HTTP ⽹络请求数
-
-⼩图⽚或者字体内联使用 url-loader：
-
-html 和 js 的内联：
-
-raw-loader 的功能是读取一个文件，把这个文件的内容返回成一个 string，把这个 string 插入到对应的位置。
-
-raw-loader 内联 html
-
-```html
- <%= require('raw-loader!./meta.html') %>
-```
-
-raw-loader 内联 js
-
-```html
-<script>
-  <%= require('raw-loader!babel-loader!../../node_modules/lib-flexible/flexible.js') %></script>
-```
-
-css 内联：
-
-方案一：借助 style-loader
-
-```js
-module.exports = {
-  module: {
-    rules: [
-      {
-        test: /\.less$/,
-        use: [
-          {
-            loader: 'style-loader',
-            options: {
-              insertAt: 'top', // 样式插入到 <head>
-              singleton: true, // 将所有的style标签合并成一个
-            }
-          },
-          "css-loader",
-          "less-loader"
-        ]
-      }
-    ]
-  }
-}
-```
-
-方案二：html-inline-css-webpack-plugin
-
-它针对打包好的 css chunk 的代码，把它内联到 html 的 head 中。
-
-```js
-const HTMLInlineCSSWebpackPlugin = require("html-inline-css-webpack-plugin").default;
-
-module.exports = {
-  plugins: [
-    new HTMLInlineCSSWebpackPlugin(),
-  ]
-}
-```
-
-##### 多页面应用打包通用方案
-
-多页面应用（MPA）概念：
-
-多页面发布上线之后，它有很多个入口。
-
-每一次页面跳转的时候，后台服务器都会返回一个新的 html 文档。
-
-多页面优势
-
-​	1.每个页面之间是解偶的
-
-​	2.对 seo 更友好
-
-多页面打包基本思路：
-
-每个页面对应一个 entry，一个 html-webpack-plugin。
-
-缺点：每次新增或删除页面需要手动修改 webpack 配置构建脚本。
-
-多⻚⾯打包通⽤⽅案：
-
-动态获取 entry 和设置 html-webpack-plugin 数量。
-
-通过程序的思维动态获取某个目录下面指定的入口文件，需要有一个约定，把所有的页面都放在 src 的目录下面，每个页面的入口文件都约定为 index.js，这样我们就可以通过 js 脚本去获取src里面所有的目录，就可以知道入口文件的数量，打包的时候动态的设置 html-webpack-plugin。相比于自己写这个脚本，webpack 里面有一个更通用的做法是通过 glob 这个库，glob 的原理类似 linux 操作系统下面文件通配匹配的概念，根据匹配信息返回匹配到的目录内容，我们根据这个目录内容进行操作就可以了。
-
-```js
-const setMPA = () => {
-  const entry = {}
-  const htmlWebpackPlugins = []
-  const entryFiles = glob.sync(path.join(__dirname, './src/*/index.js'))
-  Object.keys(entryFiles)
-    .map(index => {
-    const entryFile = entryFiles[index]
-    const match = entryFile.match(/src\/(.*)\/index\.js/)
-    const pageName = match && match[1]
-    entry[pageName] = entryFile
-    htmlWebpackPlugins.push(new HtmlWebpackPlugin({
-      template: path.join(__dirname, `./src/${pageName}/index.html`),
-      filename: `${pageName}.html`,
-      chunks: [pageName],
-      inject: true,
-      minify: {
-        html5: true,
-        collapseWhitespace: true,
-        perserveLineBreaks: false,
-        minifyCSS: true,
-        minifyJS: true,
-        removeComments: false
-      }
-    }))
-  })
-  return {
-    entry,
-    htmlWebpackPlugins
-  }
-}
-const {entry, htmlWebpackPlugins} = setMPA()
 ```
 
 ##### webpack 打包组件和基础库
@@ -1551,7 +1447,7 @@ module.exports = {
 
 html ⽂件的压缩：
 
-修改 html-webpack-plugin，设置压缩参数
+修改 html-webpack-plugin，设置压缩参数 minify。
 
 ```js
 const path = require('path')
@@ -1576,7 +1472,7 @@ module.exports = {
 }
 ```
 
-##### 使用 webpack 进行图片压缩
+##### 图片压缩
 
 图片资源相对是较大的，我们可以通过在线工具手动进行图片的批量压缩。构建工具一部分的职责就是将平时我们手动完成的事做成自动化。
 
@@ -2432,6 +2328,10 @@ https://polyfill.io/v3/polyfill.min.js
 
 ##### 打包原理
 
+webpack 打包阶段是有 compile 和 compilation。compile 是 webpack 启动的那一次创建一个 compile 对象，compilation 是只要有文件发生了变化，compilation 对象是会变化的。
+
+
+
 第六章：通过源代码掌握webpack打包原理
 源码分析，插件机制，启动流程，编译构建流程，资源输出流程
 
@@ -2605,6 +2505,8 @@ loader 就是一个函数，而且是声明式函数，不能用箭头函数，�
 loader 做的事情就是拿到源代码，作进⼀步的修饰处理，再返回处理后的源码就可以了。
 
 ### loader 的链式调用与执行顺讯
+
+Loader 是一个函数，接收源文件作为参数，返回转换的结果给下一个 loader 使用。
 
 多个 loader 串行执行，顺序是从后到前。
 
