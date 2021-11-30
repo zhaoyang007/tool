@@ -4050,18 +4050,112 @@ function isObject(obj) {
 // ...
 // arr.slice()
 // arr.concat()
-JSON.parse(JSON.stringify())
-function isObject(val) {
-    return typeof val === 'object' && val !== null;
+// JSON.parse(JSON.stringify())
+// function isObject(val) {
+//     return typeof val === 'object' && val !== null;
+// }
+// function deepClone(obj, hash = new WeakMap()) {
+//     if (!isObject(obj)) return obj;
+//     if (hash.has(obj)) return hash.get(obj);
+//     const res = Array.isArray(obj) ? [] : {};
+//     hash.set(obj, res);
+//     // [...Object.getOwnPropertyNames(obj), ...Object.getOwnPropertySymbols(obj)]
+//     Reflect.ownKeys(obj).forEach(key => {
+//         res[key] = deepClone(res[key], hash);
+//     });
+//     return res;
+// }
+// 节流
+// function throttle(fn, delay = 100) {
+//     let flag = true;
+//     return function(...args) {
+//         if (!flag) return;
+//         flag = false;
+//         setTimeout(() => {
+//             fn.call(this, ...args);
+//             flag = true;
+//         }, delay);
+//     }
+// }
+// function throttle(fn, delay = 100) {
+//     let prev = 0;
+//     return function(...args) {
+//         const now = Date.now();
+//         if (now - prev > delay) {
+//             fn.call(this, ...args);
+//             prev = now;
+//         }
+//     }
+// }
+// div.addEventListener('drag', throttle(function(e) {
+//     console.log(e.offsetX, e.offsetY);
+// }, 50));
+// 防抖
+// function debounce(fn, delay = 100) {
+//     let timer = null;
+//     return function(...args) {
+//         if (timer) clearTimeout(timer);
+//         timer = setTimeout(() => {
+//             fn.call(this, ...args);
+//             timer = null;
+//         }, delay);
+//     }
+// }
+// input.addEventListener('keyup', debounce(function(e) {
+//     console.log(e.target.value);
+// }, 50));
+// class EventEmitter {
+//     constructor() {
+//         this.events = {};
+//     }
+//     on(name, handler) {
+//         this.events[name] = this.events[name] || [];
+//         this.events[name].push(handler);
+//     }
+//     emit(name, ...args) {
+//         if (!this.events[name]) throw new Error('该事件未注册');
+//         this.events[name].forEach(fn => {
+//             fn.call(this, ...args);
+//         });
+//     }
+//     off(name, handler) {
+//         if (!this.events[name]) throw new Error('该事件未注册');
+//         if (!handler) {
+//             delete this.events[name];
+//         } else {
+//             this.events[name] = this.events[name].filter(fn => fn !== handler);
+//         }
+//     }
+//     once(name, handler) {
+//         function fn(...args) {
+//             handler.call(this, ...args);
+//             this.off(name, fn);
+//         }
+//         this.on(name, fn);
+//     }
+// }
+// function sleep(time) {
+//     return new Promise(resolve => setTimeout(resolve, time));
+// }
+function add (...args) {
+    //求和
+    return args.reduce((a, b) => a + b)
 }
-function deepClone(obj, hash = new WeakMap()) {
-    if (!isObject(obj)) return obj;
-    if (hash.has(obj)) return hash.get(obj);
-    const res = Array.isArray(obj) ? [] : {};
-    hash.set(obj, res);
-    // [...Object.getOwnPropertyNames(obj), ...Object.getOwnPropertySymbols(obj)]
-    Reflect.ownKeys(obj).forEach(key => {
-        res[key] = deepClone(res[key], hash);
-    });
-    return res;
+function currying(...args) {
+    let allArgs = [...args];
+  function fn(...newArgs) {
+    allArgs = [...allArgs, ...newArgs];
+    return fn;
+  }
+  fn.toString = function () {
+    if (!allArgs.length) {
+      return;
+    }
+    return allArgs.reduce((sum, cur) => sum + cur);
+  };
+  return fn;
 }
+let addCurry = currying(add)
+console.log(addCurry(1)(2)(3)(4, 5))  //15
+console.log(addCurry(1)(2)(3, 4, 5)())  //15
+console.log(addCurry(1)(2, 3, 4, 5)())  //15

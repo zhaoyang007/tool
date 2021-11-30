@@ -786,6 +786,130 @@ const setMPA = () => {
 const {entry, htmlWebpackPlugins} = setMPA()
 ```
 
+##### webpack 打包组件和基础库
+
+实现⼀个⼤整数加法库的打包：
+
+需要打包压缩版和⾮压缩版本。
+
+⽀持 AMD/CJS/ESM 模块引⼊，也支持script标签方式引入。
+
+库的目录结构：
+
+dist
+    large-number.js
+    large-number.min.js
+webpack.config.js
+package.json
+index.js
+src
+    index.js
+
+支持ES module：
+
+```js
+import * as largeNumber from 'large-number'
+largeNumber.add('999', '1')
+```
+
+支持CJS：
+
+```js
+const largeNumber = require('large-number')
+largeNumber.add('999', '1')
+```
+
+支持AMD：
+
+```js
+require(['large-number'], function(large-number) {
+  largeNumber.add('999', '1')
+})
+```
+
+直接通过script引入，脚本发布到cdn上去：
+
+```html
+<script src="https://unpkg.com/large-numer"></script>
+<script>
+  largeNumber.add('999', '1')
+</script>
+```
+
+如何将库暴露出去：
+
+```js
+module.exports = {
+  mode: 'production',
+  entry: {
+    'large-number': './src/index.js',
+    'large-number.min': './src/index.js'
+  },
+  output: {
+    filename: '[name].js',   
+    library: 'largeNumber',   // 指定库它暴露出去的库的名称，同时也可以通过全局变量的方式去引入到它。
+    libraryTarget: 'umd',     // 支持库引入的方式，设置成umd就可以支持上述四种方式的引用。
+    libraryExport: 'default'  // 如果不设置成default，要通过largeNumber.default使用，不是很方便。
+  }
+}
+```
+
+如何只对 .min 压缩：
+
+通过 include 设置只压缩 min.js 结尾的⽂件
+
+```js
+const TerserWebpackPlugin = require('terser-webpack-plugin')
+
+module.exports = {
+	optimization: {
+    minimize: true,
+    minimizer: [
+      // 压缩js，遇到se6不会报错
+      new TerserWebpackPlugin({
+        include: /\.min\.js$/
+      })
+    ]
+  }
+}
+```
+
+设置⼊⼝⽂件：
+
+package.json 的 main 字段为 index.js
+
+index.js
+
+```js
+if (process.env.NODE_ENV === "production") {
+	module.exports = require("./dist/large-number.min.js");
+} else {
+	module.exports = require("./dist/large-number.js");
+}
+```
+
+发布到npm上面去：
+
+增加npm script钩子，每次npm publish的时候会执行一下打包
+
+```json
+"scripts": {
+	"prepublish": "webpack"
+}
+```
+
+登陆npm账号
+
+```bash
+npm login
+```
+
+发布
+
+```bash
+npm publish
+```
+
 ##### source map
 
 源代码与打包后的代码的映射关系，通过 source map 定位到源代码，方便我们调试代码，内部借助了 sourcemap-loader 来实现的。
@@ -927,134 +1051,6 @@ module.exports = {
     "lint-fix": "eslint --fix --ext .js --ext .jsx --ext .vue src/" // 修复代码
   }
 }
-```
-
-##### webpack 打包组件和基础库
-
-webpack 除了可以⽤来打包应⽤，也可以⽤来打包 js 库。
-
-对于打包组件或基础库，除了 webpack，rollup 更加适合，因为它打包相对 webpack 更加纯粹，使用更加简单。但是由于 webpack 功能比较强大，使用 webpack 打包组件和库的场景还是很多的。
-
-实现⼀个⼤整数加法库的打包：
-
-需要打包压缩版和⾮压缩版本。
-
-⽀持 AMD/CJS/ESM 模块引⼊，也支持script标签方式引入。
-
-库的目录结构：
-
-dist
-    large-number.js
-    large-number.min.js
-webpack.config.js
-package.json
-index.js
-src
-    index.js
-
-支持ES module：
-
-```js
-import * as largeNumber from 'large-number'
-largeNumber.add('999', '1')
-```
-
-支持CJS：
-
-```js
-const largeNumber = require('large-number')
-largeNumber.add('999', '1')
-```
-
-支持AMD：
-
-```js
-require(['large-number'], function(large-number) {
-  largeNumber.add('999', '1')
-})
-```
-
-直接通过script引入，脚本发布到cdn上去：
-
-```html
-<script src="https://unpkg.com/large-numer"></script>
-<script>
-  largeNumber.add('999', '1')
-</script>
-```
-
-如何将库暴露出去：
-
-```js
-module.exports = {
-  mode: 'production',
-  entry: {
-    'large-number': './src/index.js',
-    'large-number.min': './src/index.js'
-  },
-  output: {
-    filename: '[name].js',   
-    library: 'largeNumber',   // 指定库它暴露出去的库的名称，同时也可以通过全局变量的方式去引入到它。
-    libraryTarget: 'umd',     // 支持库引入的方式，设置成umd就可以支持上述四种方式的引用。
-    libraryExport: 'default'  // 如果不设置成default，要通过largeNumber.default使用，不是很方便。
-  }
-}
-```
-
-如何只对 .min 压缩：
-
-通过 include 设置只压缩 min.js 结尾的⽂件
-
-```js
-const TerserWebpackPlugin = require('terser-webpack-plugin')
-
-module.exports = {
-	optimization: {
-    minimize: true,
-    minimizer: [
-      // 压缩js，遇到se6不会报错
-      new TerserWebpackPlugin({
-        include: /\.min\.js$/
-      })
-    ]
-  }
-}
-```
-
-设置⼊⼝⽂件：
-
-package.json 的 main 字段为 index.js
-
-index.js
-
-```js
-if (process.env.NODE_ENV === "production") {
-	module.exports = require("./dist/large-number.min.js");
-} else {
-	module.exports = require("./dist/large-number.js");
-}
-```
-
-发布到npm上面去：
-
-增加npm script钩子，每次npm publish的时候会执行一下打包
-
-```json
-"scripts": {
-	"prepublish": "webpack"
-}
-```
-
-登陆npm账号
-
-```bash
-npm login
-```
-
-发布
-
-```bash
-npm publish
 ```
 
 ##### 优化构建时命令行的显示日志
@@ -1609,9 +1605,7 @@ module.exports = {
 
 提取页面公共资源。
 
-SplitChunksPlugin：
-
-webpack4 内置的，替代 CommonsChunkPlugin 插件。
+SplitChunksPlugin：webpack4 内置的，替代 CommonsChunkPlugin 插件。
 
 ```js
 module.exports = {
@@ -2298,180 +2292,193 @@ polyfill.io 官方提供的服务
 
 https://polyfill.io/v3/polyfill.min.js
 
-##### 总结
-
-分析工具
-
-* 初级分析：使用 webpack 内置的 stats
-* 速度分析：使用 speed-measure-webpack-plugin
-* 体积分析：使用 webpack-bundle-analyzer
-
-构建速度优化策略
-
-* 使用高版本的 webpack 和 Node.js
-* 缩小构建目标
-* 多进程/多实例构建
-* 多进程/多实例并行压缩代码
-* 充分利用缓存提升二次构建速度
-
-体积优化策略
-
-* 代码、图片压缩
-* 使用 cdn 静态资源
-* Code Splitting
-* 代码分割和动态 import
-* Tree Shaking
-* Scope Hoisting
-* 动态 polyfill
-
 ## 打包原理
 
 ##### 打包原理
 
 webpack 打包阶段是有 compile 和 compilation。compile 是 webpack 启动的那一次创建一个 compile 对象，compilation 是只要有文件发生了变化，compilation 对象是会变化的。
 
+源码分析，插件机制，启动流程，编译构建流程，资源输出流程。
 
+1.webpack 启动过程：
 
-第六章：通过源代码掌握webpack打包原理
-源码分析，插件机制，启动流程，编译构建流程，资源输出流程
+```js
+process.exitCode = 0 // 默认exitCode是0，代表webpack运行的时候是正常的执行返回。中间报错会修改exitCode，并抛出错误。
+const runCommand = (command, args) => {} // 运行某个命令行命令
+const isInstalled = packageName => {}; // 判断某个包是否安装
+const CLIs = []; // webpack可用的CLI：webpack-cli和webpack-command
+const installedClis = CLIs.filter(cli => cli.installed); // 判断两个cli是否安装了
+if (installedClis.length === 0) { // 根据cli安装的数量进行处理
+} else if (installedClis.length === 1) {
+} else {
+}
+```
 
-1.webpack 启动过程分析
-开始：从 webpack 命令行说起，这个过程 webpack 到底做了什么事情
-  通过 npm scripts 运行 webpack
-    开发环境：npm run dev
-    生产环境：npm run build
-  通过 webpack 命令直接运行
-    webpack entry.js bundle.js
-查找 webpack 入口文件
-  运行 npm run dev 和 npm run build 本质上还是找 webpack，它是怎么找的呢，
-  在命令行输入命令后，npm 会让命令行工具进入 node_modules/.bin 目录，运行一个命令，如果是全局安装这个包，linux 会从
-  usr/local/bin 这个目录去找，局部安装会在当前项目目录的 node_modules/.bin 目录去找，查找是否存在 webpack.sh 或
-  webpack.cmd 文件。如果存在，就执行，不存在，就抛出错误。
-  经过寻找之后，我们会发现它的路径，实际的入口文件是：node_modules/webpack/bin/webpack.js
-  局部安装，想再node_modules/.bin下面有命令，必须通过package.json中的bin字段进行指定。
-  因此启动的过程最终会进入到webpack.js，执行里面的代码。
-分析webpack的入口文件：webpack.js
-  process.exitCode = 0 // 默认exitCode是0，代表webpack运行的时候是正常的执行返回。中间报错会修改exitCode，并抛出错误。
-  const runCommand = (command, args) => {} // 运行某个命令
-  const isInstalled = packageName => {}; // 判断某个包是否安装
-  const CLIs = []; // webpack可用的CLI：webpack-cli和webpack-command
-  const installedClis = CLIs.filter(cli => cli.installed); // 判断两个cli是否安装了
-  if (installedClis.length === 0) { // 根据cli安装的数量进行处理
-  } else if (installedClis.length === 1) {
-  } else {
-  }
-启动后的结果
-  webpack最终找到webpack-cli(或webpack-command)这个npm包，并且执行cli
+启动后的结果：
 
-2.webpack-cli源码阅读
-webpack-cli做的事情
-  引入yargs，对命令行进行定制。
-  分析命令行参数，对各个参数进行转换，组成编译配置项。
-  引用webpack，根据配置项进行编译和构建。
-从NON_COMPILATION_CMD分析出不需要编译的命令
-  webpack-cli处理不需要经过编译的命令，就是不需要实例化webpack的
-NON_COMPILATION_ARGS
-  webpack-cli提供的不需要编译的命令
-  const NON_COMPILATION_ARGS = [
-    "init",              // 创建一份webpack配置文件
-    "migrate",           // 运行webpack版本迁移
-    "add",               // 往webpack配置文件中增加属性
-    "remove",            // 往webpack配置文件中删除属性
-    "serve",             // 运行webpack-serve
-    "generate-loader",   // 生成webpack loader代码
-    "generate-plugin",   // 生成webpack plugin代码
-    "info"               // 返回与本地环境相关的一些信息
-  ];
-命令行工具包yargs介绍
-  提供命令和分组参数
-  动态生成help帮助信息
-webpack-cli使用args分析
-  参数分组（config/config-args.js），将命令划分为9类：
-    Config options: 配置相关参数（文件名称，运行环境等）
-    Basic options: 基础参数（entry设置、debug模式设置、watch监听设置、devtool设置）
-    Module options: 模块参数，给loader设置扩展
-    Output options: 输出设置（输出路径，输出文件名称）
-    Advanced options: 高级用法（记录设置、缓存设置、监听频率、bail等）
-    Resolving options: 解析参数（alias和解析的文件后缀设置）
-    Optimizing options: 优化参数
-    Stats options: 统计参数
-    options: 通用参数（帮助命令、版本信息等）
-options变量
-  将命令行或webpack.config.js配置文件的配置解析出来组装成为webpack可识别的配置到options里面。
-processOptions(options)函数
-  outputOptions根options类似
-实例化一个webpack
-  webpack = require('webpack')
-  compiler = webpack(options)
+webpack 最终找到 webpack-cli (或webpack-command) 这个 npm 包，并且执行。
+
+2.webpack-cli：
+
+引入 yargs，对命令行进行定制。
+
+分析命令行参数，对各个参数进行转换，组成编译配置项。
+
+引用 webpack，根据配置项进行编译和构建。
+
+```js
+// 从 NON_COMPILATION_CMD 分析出不需要编译的命令
+// webpack-cli 处理不需要经过编译的命令，就是不需要实例化webpack的NON_COMPILATION_ARGS
+// webpack-cli提供的不需要编译(实例化webpack)的命令
+const NON_COMPILATION_ARGS = [
+  "init",              // 创建一份webpack配置文件
+  "migrate",           // 运行webpack版本迁移
+  "add",               // 往webpack配置文件中增加属性
+  "remove",            // 往webpack配置文件中删除属性
+  "serve",             // 运行webpack-serve
+  "generate-loader",   // 生成webpack loader代码
+  "generate-plugin",   // 生成webpack plugin代码
+  "info"               // 返回与本地环境相关的一些信息
+];
+```
+
+命令行工具包 yargs 介绍：
+
+提供命令和分组参数
+
+动态生成help帮助信息
+
+webpack-cli 使用 args 分析
+
+参数分组（config/config-args.js），将命令划分为9类：
+
+* Config options: 配置相关参数（文件名称，运行环境等）
+* Basic options: 基础参数（entry设置、debug模式设置、watch监听设置、devtool设置）
+* Module options: 模块参数，给loader设置扩展
+* Output options: 输出设置（输出路径，输出文件名称）
+* Advanced options: 高级用法（记录设置、缓存设置、监听频率、bail等）
+* Resolving options: 解析参数（alias和解析的文件后缀设置）
+* Optimizing options: 优化参数
+* Stats options: 统计参数
+* options: 通用参数（帮助命令、版本信息等）
+
+options（输入的options）
+
+将命令行或 webpack.config.js 配置文件的配置解析出来组装成为 webpack 可识别的配置到 options 里面。
+
+processOptions(options)
+
+*  outputOptions（输出的options）
+
+* 实例化一个 webpack，然后执行构建流程。
+
+  ```js
+  const webpack = require('webpack');
+  let compiler = webpack(options);
   new Plugin({
     option: true
-  }).apply(compiler)
-webpack-cli执行结果
-  webpack-cli对配置文件和命令行参数进行转换，最终生成配置选项参数options和outputOptions。
-  最终会根据配置参数实例化webpack对象，然后根据一些参数，如有没有--watch，有的话通过监听的方式去运行webpack，
-  compiler.watch()没有的话直接运行webpack，compiler.run()。最后执行整个构建流程。
+  }).apply(compiler);
+  compiler.run();
+  ```
 
-3.Tapable插件架构与Hooks设计
-webpack的本质
-  webpack可以将其理解成一种基于事件流的编程范例，一系列的插件运行。内部是由各种各样的插件，插件会监听compiler和compilation
-  上面定义的关键的事件节点。
-webpack里最核心的对象compiler和compilation都是继承自Tapable
-  class Compiler extends Tapable {
-    //...
-  }
-  class Compilation extends Tapable {
-    //...
-  }
-Tapable是什么
-  Tapable是一个类似于node.js的EventEmitter的库，主要是控制钩子函数的发布与订阅，控制着webpack的插件系统。
-  Tapable库暴露了很多Hook(钩子)类，为插件提供挂载的钩子。每个钩子代表一个关键的事件节点，在插件中监听钩子，在不同的阶段做不
-  同的事情。
-  钩子：两类，同步钩子和异步钩子
-  const {
-    SyncHook,                   // 同步钩子
-    SyncBailHook,               // 同步熔断钩子，遇到return直接返回
-    SyncWaterfallHook,          // 同步流水钩子，执行结果可以传递给下一个插件
-    SyncLoopHook,               // 同步循环钩子
-    AsyncParallelHook,          // 异步并发钩子
-    AsyncParallelBailHook,      // 异步并发熔断钩子
-    AsyncSeriesHook,            // 异步串行钩子 
-    AsyncSeriesBailHook,        // 异步串行熔断钩子
-    AsyncSeriesWaterfallHook,   // 异步串行流水钩子
-  } = require("tapable")
-  Tapable hooks类型
-    Hook           所有钩子的后缀
-    Waterfall      同步方法，它会传值给下一个函数
-    Bail           熔断：当函数有任何返回值，就会在当前执行函数停止
-    Loop           监听函数返回true表示继续循环，返回undefined表示结束循环
-    Sync           同步方法
-    AsyncSeries    异步串行钩子
-    AsyncParallel  异步并行执行钩子
-  Tapable的使用 - new Hook新建钩子
-    Tapable暴露出来的都是类方法，new一个类方法获得我们需要的钩子
-    class接受数组参数options，非必传。类方法会根据传参，接受同样数量的参数。
-    const hook1 = new SyncHook(['arg1', 'arg2', 'arg3'])
-  Tapable的使用 - 钩子的绑定与执行
-    Tapable提供了同步&异步绑定钩子的方法，并且它们都有绑定事件和执行事件对应的方法。
-    Async*                           Sync*                  
-    绑定：tapAsync/tapPromise/tap     绑定：tap
-    执行：callAsync/promise           执行：call
-  Tapable的使用 - hook基本用法示例
-    const hook1 = new SyncHook(['arg1', 'arg2', 'arg3'])
-    // 绑定事件到webpack事件流
-    hook1.tap('hook1', (arg1, arg2, arg3) => {console.log(arg1, arg2, arg3)})
-    // 执行绑定的事件
-    hook1.call(1, 2, 3)
-  Tapable的使用 - 实际例子演示
-    定义一个Car方法，在内部hooks上新建钩子。分别是同步钩子accelerate、break（accelerate接收一个参数）、异步钩子
-    calculateRoutes。
-    使用钩子对应的绑定和执行方法。
-    calculateRoutes使用tapPromise可以返回一个promise对象。
+3.Tapable 插件架构与 Hooks 设计
 
-4.Tapable是如何和webpack进行关联起来的？
-compiler和compilation上面做hooks的调用。
-Tapable是事件的机制，webpack插件机制都是基于Tapable的钩子。
-插件有个apply方法，接收一个compiler参数。
-插件上面做事件的监听。
+webpack 可以理解成一种基于事件流的编程范例，一系列的插件运行。内部有各种各样的插件，监听 compiler 和 compilation 上面定义的关键的事件节点。
+
+compiler 和 compilation 都是继承自Tapable。
+
+Tapable 是一个类似于 node.js 的 EventEmitter 的库，主要是提供钩子函数的发布与订阅，控制着 webpack插件系统的实现。
+
+Tapable 库暴露了很多 Hook(钩子) 类，为插件提供挂载的钩子。每个钩子代表一个关键的事件节点，在插件中监听钩子，在不同的阶段做不同的事情。
+
+钩子：两类，同步钩子和异步钩子
+
+```js
+const {
+  SyncHook,                   // 同步钩子
+  SyncBailHook,               // 同步熔断钩子，遇到return直接返回
+  SyncWaterfallHook,          // 同步流水钩子，执行结果可以传递给下一个插件
+  SyncLoopHook,               // 同步循环钩子
+  AsyncParallelHook,          // 异步并发钩子
+  AsyncParallelBailHook,      // 异步并发熔断钩子
+  AsyncSeriesHook,            // 异步串行钩子 
+  AsyncSeriesBailHook,        // 异步串行熔断钩子
+  AsyncSeriesWaterfallHook,   // 异步串行流水钩子
+} = require("tapable")
+```
+
+Tapable hooks 类型：
+
+* Hook                 所有钩子的后缀
+* Waterfall          同步方法，它会传值给下一个函数
+* Bail                    熔断：当函数有任何返回值，就会在当前执行函数停止
+* Loop                  监听函数返回true表示继续循环，返回undefined表示结束循环
+* Sync                   同步方法
+* AsyncSeries      异步串行钩子
+* AsyncParallel    异步并行执行钩子
+
+Tapable 的使用 - new Hook 新建钩子
+
+Tapable 暴露出来的都是类方法，new 一个类方法获得我们需要的钩子。
+
+class 接受数组参数 options，非必传。类方法会根据传参，接受同样数量的参数。
+
+```js
+// 创建一个同步的钩子
+const hook1 = new SyncHook(['arg1', 'arg2', 'arg3']);
+```
+
+Tapable 的使用 - 钩子的绑定与执行
+
+基于 hook 做发布和订阅。
+
+Tapable 提供了同步&异步绑定钩子的方法，并且它们都有绑定事件和执行事件对应的方法。
+
+​                         Async*                           Sync*          
+
+绑定：tapAsync/tapPromise/tap         tap
+
+执行：     callAsync/promise                 call
+
+Tapable的使用 - hook 基本用法示例
+
+```js
+const hook1 = new SyncHook(['arg1', 'arg2', 'arg3']);
+// 绑定事件到webpack事件流
+hook1.tap('hook1', (arg1, arg2, arg3) => {console.log(arg1, arg2, arg3)});
+// 执行绑定的事件
+hook1.call(1, 2, 3);
+```
+
+4.Tapable 是如何和 webpack 进行关联起来的？
+
+compiler 和 compilation 上面做 hooks 的调用。
+
+插件有个 apply 方法，接收一个 compiler 参数。
+
+插件里面做 compiler 和 compilation 的 hooks 的监听。
+
+```js
+options = new WebpackOptionsDefaulter().process(options);
+compiler = new Compiler(options.context);
+compiler.options = options;
+new NodeEnvironmentPlugin({
+  infrastructureLogging: options.infrastructureLogging
+}).apply(compiler);
+if (options.plugins && Array.isArray(options.plugins)) {
+  for (const plugin of options.plugins) {
+    if (typeof plugin === "function") {
+      plugin.call(compiler, compiler);
+    } else {
+      plugin.apply(compiler);
+    }
+  }
+}
+compiler.hooks.environment.call();
+compiler.hooks.afterEnvironment.call();
+compiler.options = new WebpackOptionsApply().process(options, compiler);
+```
+
 5.webpack流程篇：准备阶段
 6.webpack流程篇：模块构建和chunk生成阶段
 7.webpack流程篇：文件生成
