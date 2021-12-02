@@ -2521,26 +2521,6 @@ loader 是一个导出为函数的 javascript 模块，且是声明式函数，�
 
 接收 source，return source。
 
-##### loader 执行顺序
-
-函数组合的两种情况：
-
-* 类似 unix 中的 pipeline，这个顺序是从左往右。
-
-* Compose（webpack 采取的），这个顺序是从右往左。
-
-  ```js
-  compose = (f, g) => (...args) => f(g(...args))
-  // 
-  compose = (f, g) => {
-    return (...args) => {
-      return f(g(...args));
-    }
-  }
-  compose(f, g)(source)·
-  
-  ```
-
 ##### 一个最简单的 loader 代码结构
 
 定义：loader 只是一个导出为函数的 JavaScript 模块。意思是我们如果要写一个 loader，其实只需要写一个 JS 模块，然后把这个模块导出来就可以了。
@@ -2597,12 +2577,15 @@ const { runLoaders } = require("loader-runner");
 
 runLoaders( 
   { 
-    resource: "./demo.txt", 
-    loaders: [path.resolve(__dirname, "./loaders/raw-loader")], 
+    resource: path.join(__dirname, "./src/demo.txt"), 
+    loaders: [path.join(__dirname, "./loaders/raw-loader.js")], 
+    context: {
+      minimize: true
+    },
     readResource: fs.readFile.bind(fs), 
-	}, 
-  (err, result) => (err ? console.error(err) : console.log(result)) 
-);
+	}, (err, result) => {
+    err ? console.error(err) : console.log(result);
+  });
 ```
 
 运行查看结果：
@@ -2611,11 +2594,9 @@ runLoaders(
 node run-loader.js
 ```
 
-### 更复杂的 loader 开发场景
+##### 更复杂的 loader 开发场景
 
-#### loader 的参数获取
-
-传参是设置 loader 的时候，把要传的参数放到 options 对象里面。
+loader 的参数获取：
 
 loader 里通过 loader-utils 的 getOptions 方法获取传过来的参数。
 
@@ -2626,8 +2607,6 @@ const loaderUtils = require("loader-utils");
 
 module.exports = function(source) { 
   const { name } = loaderUtils.getOptions(this);
-  // console.log(name)
-  
   const json = JSON.stringify(source)
   	.replace(/\u2028/g, '\\u2028') // 为了安全起见, ES6模板字符串的问题 
     .replace(/\u2029/g, '\\u2029'); 
@@ -2645,22 +2624,25 @@ const { runLoaders } = require("loader-runner");
 
 runLoaders( 
   { 
-    resource: "./demo.txt", 
+    resource: path.join(__dirname, "./src/demo.txt"), 
     loaders: [
       {
-      	loader: path.resolve(__dirname, "./loaders/raw-loader"),
+      	loader: path.join(__dirname, "./loaders/raw-loader"),
         options: {
 					name: 'test'
         }
       }
     ], 
+    context: {
+      minimize: true
+    },
     readResource: fs.readFile.bind(fs), 
-	}, 
-  (err, result) => (err ? console.error(err) : console.log(result)) 
-);
+	}, (err, result) => {
+    err ? console.error(err) : console.log(result);
+  });
 ```
 
-#### loader 异常处理
+loader 异常处理：
 
 同步的 loader 的异常处理有两种方式。
 
@@ -2679,13 +2661,14 @@ module.exports = function(source) {
     .replace(/\u2029/g, '\\u2029'); 
   
   // throw new Error('Error')
-  
   // return `export default ${json}`; 
+  
+  // 无异常就传null，有异常就传 new Error('err')
   this.callback(null, json, 2, 3, 4)
 };
 ```
 
-#### loader 的异步处理（开发一个异步的 loader）
+##### loader 的异步处理（开发一个异步的 loader）
 
 同步 loader 对内容的处理是同步的，异步 loader 处理的任务是一个耗时的任务，它可能需要执行一段时间，比如文件的读写，我们要处理内容的时候要先去读取一个文件，获取到文件的值之后，再去对传递进来的 source 进行处理，这就是一个异步的任务。异步任务完成之后再返回结果。
 
@@ -2720,13 +2703,11 @@ module.exports = function(source) {
 };
 ```
 
-#### 在 loader 中使用缓存 
+##### 在 loader 中使用缓存 
 
 webpack 中默认开启 loader 缓存，可以使用 this.cacheable(false) 关掉缓存。
 
-缓存生效条件： loader 的结果在相同的输入下有确定的输出。
-
-有依赖的 loader 无法使用缓存。
+缓存生效条件： loader 的结果在相同的输入下有确定的输出。有依赖的 loader 无法使用缓存。
 
 ```js
 module.exports = function(source) { 
@@ -2740,7 +2721,7 @@ module.exports = function(source) {
 };
 ```
 
-#### loader 如何进行文件输出？
+##### loader 如何进行文件输出？
 
 通过 this.emitFile 把内容输出到指定的位置，进行文件写入。
 
@@ -2750,9 +2731,7 @@ a-loader.js:
 const loaderUtils = require("loader-utils");
 
 module.exports = function(source) { 
-  const url = loaderUtils.interpolateName(this, "[name].[ext]", { 
-    source, 
-  });
+  const url = loaderUtils.interpolateName(this, "[name].[ext]", source);
   console.log(url)
   
   this.emitFile(url, source);
@@ -2761,11 +2740,9 @@ module.exports = function(source) {
 };
 ```
 
-### 实战开发一个自动合成雪碧图的 loader
+##### 实战开发一个自动合成雪碧图的 loader
 
-雪碧图在日常开发中使用的非常广泛，它是我们小图片的请求尽量的减少，平时使用雪碧图可能是从网上找一个在线的工具，将多张图片合成一个雪碧图，我们可以通过构建工具让这个事情更加的自动化，我们可以开发一个雪碧图的 loader。
-
-#### 支持的语法：
+支持的语法：
 
 background: url('a.png?__sprite')
 
@@ -2773,7 +2750,7 @@ background: url('a.png?__sprite')
 
 background: url('b.png?__sprite')
 
-#### 准备知识：如何将两张图片合成一张图片？
+准备知识：如何将两张图片合成一张图片？
 
 使用 spritesmith (https://www.npmjs.com/package/spritesmith) 
 
@@ -2796,7 +2773,7 @@ Spritesmith.run({src: sprites}, (err, result) => {
 })
 ```
 
-#### 开发 sprite-loader
+开发 sprite-loader
 
 run-loader.js:
 
