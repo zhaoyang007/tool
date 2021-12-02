@@ -2521,13 +2521,9 @@ loader 是一个导出为函数的 javascript 模块，且是声明式函数，�
 
 接收 source，return source。
 
-##### 一个最简单的 loader 代码结构
-
-定义：loader 只是一个导出为函数的 JavaScript 模块。意思是我们如果要写一个 loader，其实只需要写一个 JS 模块，然后把这个模块导出来就可以了。
-
 ```js
 module.exports = function(source) {
-	return source
+	return source;
 }
 ```
 
@@ -2834,15 +2830,11 @@ module.exports = function (source) {
 }
 ```
 
-
-
 ## 编写 plugin
 
 loader 的作用是用来处理各种各样的静态资源，插件的功能是更加强大的，插件是伴随整个 webpack 从初始化到最终的资源生成的过程，整个过程都可以有插件的。loader 没法做的事情都是可以通过插件来做的。
 
 插件没有像 loader 那样的独立运行环境，只能在 webpack 里面运行。
-
-### 插件的基本结构 
 
 插件是一个类，有一个 apply 方法。
 
@@ -2858,7 +2850,6 @@ class MyPlugin { 															// 插件名称
     }); 
   } 
 }
-
 module.exports = MyPlugin;
 ```
 
@@ -2874,11 +2865,7 @@ module.exports = {
 }
 ```
 
-### 搭建插件的运行环境
-
-使用 webpack 配置文件。
-
-### 开发一个最简单的插件
+##### 开发一个最简单的插件
 
 plugins/demo-plugin.js:
 
@@ -2907,11 +2894,9 @@ module.exports = {
 }
 ```
 
-### 更复杂的插件开发场景
+##### 更复杂的插件开发场景
 
-#### 插件中如何获取传递的参数？
-
-通过插件的构造函数进行获取。
+通过插件的构造函数进行获取：
 
 ```js
 module.exports = class MyPlugin { 
@@ -2924,22 +2909,22 @@ module.exports = class MyPlugin {
 };
 ```
 
-#### 插件的错误处理
+插件的错误处理：
 
 参数校验阶段，比如在接收参数的时候，我们需要对参数的数据类型，参数的名称和参数的其他内容进行校验，参数不符合要求，可以直接通过 throw 的方式把错误抛出出来。
 
 ```js
-throw new Error(“ Error Message”)
+throw new Error('Error Message');
 ```
 
-如果已经进入到 hook 里面去，通过 compilation 对象的 warnings 和 errors 接收。
+如果已经进入到 hook 里面去，通过 compilation 对象的 warnings 和 errors 接收。 
 
 ```js
 compilation.warnings.push("warning"); 
 compilation.errors.push("error");
 ```
 
-#### 通过 Compilation 进行文件写入 
+通过 Compilation 进行文件写入：
 
 Compilation 上的 assets 可以用于文件写入。
 
@@ -2963,11 +2948,11 @@ module.exports = class DemoPlugin {
 };
 ```
 
-#### 插件扩展：编写插件的插件
+编写插件的插件：
 
  webpack 的插件是特别的强大的，除了通过插件来扩展 webpack 的能力，插件自身也可以通过暴露 hooks 的方式进行自身扩展。
 
-以 html-webpack-plugin 为例： 
+以 html-webpack-plugin 为例，它暴露出来的 hooks： 
 
 * html-webpack-plugin-alter-chunks (Sync) 
 * html-webpack-plugin-before-html-generation (Async) 
@@ -2975,14 +2960,9 @@ module.exports = class DemoPlugin {
 * html-webpack-plugin-after-html-processing (Async) 
 * html-webpack-plugin-after-emit (Async)
 
-### 编写一个压缩构建资源为 zip 包的插件
+##### 编写一个压缩构建资源为 zip 包的插件
 
-要求：
-
-* 生成的 zip 包文件名称可以通过插件传入。
-* 需要使用 compiler 对象上的特定 hooks 进行资源的生成。
-
-#### 准备知识：Node.js 里面将文件压缩为 zip 包
+Node.js 里面将文件压缩为 zip 包：
 
 使用 jszip (https://www.npmjs.com/package/jszip)
 
@@ -3002,13 +2982,11 @@ zip.generateAsync({type:"blob"}).then(function(content) {
 });
 ```
 
-#### 复习：Compiler 上负责文件生成的 hooks
+Compiler 上负责文件生成的 hooks：
 
 Hooks 是 emit，是一个异步的 hook (AsyncSeriesHook) 。
 
-emit 生成文件阶段，读取的是 compilation.assets 对象的值，将 zip 资源包设置到 compilation.assets 对象上。
-
-#### 开发 zip-plugin
+emit 生成文件阶段，读取的是 compilation.assets 对象的值，因此我们要将 zip 资源包设置到 compilation.assets 对象上。
 
 zip-plugin.js:
 
@@ -3020,36 +2998,35 @@ const RawSource = require('webpack-sources').RawSource;
 const zip = new JSZip();
 
 module.exports = class ZipPlugin {
-    constructor(options) {
-        this.options = options;
-    }
+  constructor(options) {
+    this.options = options;
+  }
+  apply(compiler) {
+    compiler.hooks.emit.tapAsync('ZipPlugin', (compilation, callback) => {
+      const folder = zip.folder(this.options.filename);
 
-    apply(compiler) {
-        compiler.hooks.emit.tapAsync('ZipPlugin', (compilation, callback) => {
-            const folder = zip.folder(this.options.filename);
+      for (let filename in compilation.assets) {
+        const source = compilation.assets[filename].source();
+        folder.file(filename, source);
+      }
 
-            for (let filename in compilation.assets) {
-                const source = compilation.assets[filename].source();
-                folder.file(filename, source);
-            }
+      zip.generateAsync({
+        type: 'nodebuffer'
+      }).then((content) => {
+        const outputPath = path.join(
+          compilation.options.output.path, 
+          this.options.filename + '.zip'
+        );
 
-            zip.generateAsync({
-                type: 'nodebuffer'
-            }).then((content) => {
-                const outputPath = path.join(
-                    compilation.options.output.path, 
-                    this.options.filename + '.zip'
-                );
+        const outputRelativePath = path.relative(
+          compilation.options.output.path,
+          outputPath
+        );
+        compilation.assets[outputRelativePath] = new RawSource(content);
 
-                const outputRelativePath = path.relative(
-                    compilation.options.output.path,
-                    outputPath
-                );
-                compilation.assets[outputRelativePath] = new RawSource(content);
-
-                callback();
-            });
-        });
-    }
+        callback();
+      });
+    });
+  }
 }
 ```
