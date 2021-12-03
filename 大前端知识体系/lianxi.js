@@ -4556,3 +4556,82 @@ function isObject(obj) {
 //     if (fns.length === 1) return fns[0];
 //     return fns.reduce((pre, cur) => (...args) => pre(cur(...args)));
 // }
+// function currying(fn, ...args) {
+//     const length = fn.length;
+//     return function(...newArgs) {
+//         const allArgs = [...args, ...newArgs];
+//         if (allArgs.length < length) {
+//             return currying.call(this, fn, ...allArgs);
+//         } else {
+//             return fn.call(this, ...allArgs);
+//         }
+//     }
+// }
+// function currying(fn, ...args) {
+//     const allArgs = [...args];
+//     return function temp(...newArgs) {
+//         if (newArgs.length) {
+//             allArgs = [...allArgs, ...newArgs];
+//             return temp;
+//         } else {
+//             const res = fn.apply(this, allArgs);
+//             allArgs = [...args];
+//             return res;
+//         }
+//     }
+// }
+// function compose(fns) {
+//     if (!fns.length) return v => v;
+//     if (fns.length === 1) return fns[0];
+//     return fns.reduce((pre, cur) => (...args) => pre(cur(...args)));
+// }
+// class LazyManClass {
+//     constructor(name) {
+//         this.tasks = [];
+//         const task = () => {
+//             console.log(`hi, this is ${name}`);
+//             this.next();
+//         }
+//         this.tasks.push(task);
+//         setTimeout(() => {
+//             this.next();
+//         }, 0);
+//     }
+//     next() {
+//         const task = this.tasks.shift();
+//         task && task();
+//     }
+//     sleep(time) {
+//         this.sleepWrapper(time, false);
+//         return this;
+//     }
+//     sleepFirst(time) {
+//         this.sleepWrapper(time, true);
+//         return this;
+//     }
+//     sleepWrapper(time, isFirst) {
+//         const task = () => {
+//             setTimeout(() => {
+//                 console.log(`等待${time}秒`);
+//                 this.next();
+//             }, time * 1000);
+//         }
+//         if (isFirst) {
+//             this.tasks.unshift(task);
+//         } else {
+//             this.tasks.push(task);
+//         }
+//     }
+//     eat(name) {
+//         const task = () => {
+//             console.log(`eat ${name}`);
+//             this.next();
+//         }
+//         this.tasks.push(task);
+//         return this;
+//     }
+// }
+// function LazyMan(name) {
+//     return new LazyManClass(name);
+// }
+// LazyMan('tom').eat('aaa').sleepFirst(2).eat('bbb').sleep(2).eat('ccc')
