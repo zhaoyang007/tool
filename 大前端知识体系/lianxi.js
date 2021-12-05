@@ -4735,3 +4735,106 @@ function isObject(obj) {
 //     return new LazyManClass(name);
 // }
 // LazyMan('tom').eat('aaa').sleepFirst(2).eat('bbb').sleep(2).eat('ccc').sleepFirst(3);
+// function currying(fn, ...args) {
+//     const length = fn.length;
+//     return function(...newArgs) {
+//         const allArgs = [...args, ...newArgs];
+//         if (allArgs.length < length) {
+//             return currying.call(this, fn, ...allArgs);
+//         } else {
+//             return fn.apply(this, allArgs);
+//         }
+//     }
+// }
+// function add(x, y, z){
+//     return x + y + z;
+// }
+// const addCurrying = currying(add);
+// console.log(addCurrying(1)(2)(3));
+// console.log(addCurrying(1,2)(3));
+// function currying(fn, ...args) {
+//     let allArgs = [...args];
+//     return function (...newArgs) {
+//         if (newArgs.length) {
+//             allArgs = [...args, ...newArgs];
+//             return currying.call(this, fn, ...allArgs);
+//         } else {
+//             const res = fn.apply(this, allArgs);
+//             allArgs = [...args];
+//             return res;
+//         }
+//     }
+// }
+// function add(...args) {
+//     return args.reduce((a, b) => a + b);
+// }
+// const addCurrying = currying(add, 1);
+// console.log(addCurrying(1, 2)(5)());
+// console.log(addCurrying(1, 2)(3)());
+// console.log(addCurrying(1, 2)(3)());
+// function compose(fns) {
+//     if (!fns.length) return v => v;
+//     if (fns.length === 1) return fns[0];
+//     return fns.reduce((pre, cur) => (...args) => pre(cur(...args)));
+// }
+// function fn1(x) {
+//     return x + 1;
+// }
+// function fn2(x) {
+//     return x + 2;
+// }
+// function fn3(x) {
+//     return x + 3;
+// }
+// console(compose(fn1, fn2, fn3)(1))
+// (..args) => fn1(fn2(fn3(...args)))
+// class LazyManClass {
+//     constructor(name) {
+//         this.tasks = [];
+//         const task = () => {
+//             console.log(`hi, this is ${name}`);
+//             this.next();
+//         }
+//         this.tasks.push(task);
+//         setTimeout(() => {
+//             this.next();
+//         }, 0);
+//     }
+//     next() {
+//         const task = this.tasks.shift();
+//         task && task();
+//     }
+//     sleep(time) {
+//         this.sleepWrapper(time, false);
+//         return this;
+//     }
+//     sleepFirst(time) {
+//         this.sleepWrapper(time, true);
+//         return this;
+//     }
+//     sleepWrapper(time, isFirst) {
+//         const task = () => {
+//             setTimeout(() => {
+//                 console.log(`等待${time}秒`);
+//                 this.next();
+//             }, time * 1000);
+//         }
+//         if (isFirst) {
+//             this.tasks.unshift(task);
+//         } else {
+//             this.tasks.push(task);
+//         }
+//     }
+//     eat(name) {
+//         const task = () => {
+//             console.log(`eat ${name}`);
+//             this.next();
+//         }
+//         this.tasks.push(task);
+//         return this;
+//     }
+// }
+// function LazyMan(name) {
+//     return new LazyManClass(name);
+//   }
+//   LazyMan('Tony').eat('lunch').eat('dinner').sleepFirst(5).sleep(4).eat('junk food');
