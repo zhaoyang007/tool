@@ -1,1 +1,2 @@
-document.write('index page');
+import { a } from './a.js';
+console.log(a);

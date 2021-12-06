@@ -2479,41 +2479,26 @@ compiler.hooks.afterEnvironment.call();
 compiler.options = new WebpackOptionsApply().process(options, compiler);
 ```
 
-5.webpack流程篇
+5.webpack 流程，所有步骤都是调用 compiler 和 compilation 上的 hooks 完成的。
 
-webpack 编译按照下面的钩子调用顺序执行。
+* WebpackOptionsApply：初始化 option，将所有配置的参数转换成 webpack 内部的插件。
 
-* entry-option 初始化 option
-* run 开始编译
-* make 从 entry 开始递归分析依赖，对每个依赖模块进行 build
-* before-resolve 对模块位置进行解析
-* build-module 开始构建某个模块
-  * 通过 loader-runner 解析模块
-  * 通过 parser 里的 acron 解析 loader 里的依赖，添加到依赖列表里去，不断的进行构建。
-* normal-module-loader 将 loader 加载完成的 module 进行编译，生成 AST。
-* program 遍历 AST，当遇到 require 等调用表达式时，收集依赖
-* seal 所有依赖 build 完成，开始优化。
-* emit 输出到 dist 目录
+* run：开始构建。
 
-webpack流程篇：准备阶段
+* complie：构建
 
-将配置的参数转换成内部的插件。
+  * 使用 loader-runner 运行 loaders，loader 解析构建模块，得到一个 js 代码，再将这个代码进行编译，生成 AST。
+  * 然后通过 parser 解析依赖(acorn)，通过 ParserPlugins 添加依赖，将所有编译好的 js 代码放到 compilation 对象上的 modules 里面。
 
-webpack流程篇：模块打包构建阶段
+* 代码优化
 
-webpack流程篇：模块优化，代码生成
+  将 modules 里的代码放到 compilation 对象的 assets 里面去
+
+* 资源生成
 
 6.动手编写一个简易的 webpack
 
-bundle 文件：
-
-一个自执行函数
-
-函数体是 webpack 的启动器函数
-
-参数是一个对象，对象的键是模块的路径，值是一个函数，函数的内容是对应模块的转换后的代码，并放到 eval() 中，这些代码是可以直接放到浏览器执行的，但是是有一些缺失的，有一些模块化的语法，所以这个函数传进来了两个参数 module 和 exports 来处理代码中的 import 或 require 这些模块化的代码，module 和 exports 是在上面的自启动函数里定义了。这样就能保证构建出来的代码是可以在浏览器中顺利执行的。
-
-⼤概的意思就是，我们实现了⼀个 **\__webpack_require__** 来实现⾃⼰的模块化，把代码都缓存在 installedModules ⾥，代码⽂件以对象传递进来，key 是路径，value 是包裹的代码字符串，并且代码内部的 require，都被替换成了**\__webpack_require__**。
+输出的 bundle 文件
 
 ## 编写 loader
 
