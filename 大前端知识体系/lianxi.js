@@ -4838,3 +4838,393 @@ function isObject(obj) {
 //     return new LazyManClass(name);
 //   }
 //   LazyMan('Tony').eat('lunch').eat('dinner').sleepFirst(5).sleep(4).eat('junk food');
+// function currying(fn, ...args) {
+//     const length = fn.length;
+//     return function(...newArgs) {
+//         const allArgs = [...args, ...newArgs];
+//         if (allArgs.length < length) {
+//             return currying.call(this, fn, ...allArgs);
+//         } else {
+//             return fn.apply(this, allArgs);
+//         }
+//     }
+// }
+// function currying(fn, ...args) {
+//     let allArgs = [...args];
+//     return function temp(...newArgs) {
+//         if (newArgs.length) {
+//             allArgs = [...allArgs, newArgs];
+//             return temp;
+//         } else {
+//             const res = fn.apply(this, allArgs);
+//             allArgs = [...args];
+//             return res;
+//         }
+//     }
+// }
+// function compose(...fns) {
+//     if (!fns.length) return v => v;
+//     if (fns.length === 1) return fns[0];
+//     return fns.reduce((pre, cur) => (...args) => pre(cur(...args)));
+// }
+// class LazyManClass {
+//     constructor(name) {
+//         this.tasks = [];
+//         const task = () => {
+//             console.log(`hi, this is ${name}`);
+//             this.next();
+//         }
+//         this.tasks.push(task);
+//         setTimeout(() => {
+//             this.next();
+//         }, 0);
+//     }
+//     next() {
+//         const task = this.tasks.shift();
+//         task && task();
+//     }
+//     sleep(time) {
+//         this.sleepWrapper(time, false);
+//         return this;
+//     }
+//     sleepFirst(time) {
+//         this.sleepWrapper(time, true);
+//         return this;
+//     }
+//     sleepWrapper(time, isFirst) {
+//         const task = () => {
+//             setTimeout(() => {
+//                 console.log(`等待${time}秒`);
+//                 this.next();
+//             }, time * 1000);
+//         }
+//         if (isFirst) {
+//             this.tasks.unshift(task);
+//         } else {
+//             this.tasks.push(task);
+//         }
+//     }
+//     eat(name) {
+//         const task = () => {
+//             console.log(`eat ${name}`);
+//             this.next();
+//         }
+//         this.tasks.push(task);
+//         return this;
+//     } 
+// }
+// function LazyMan(name) {
+//     return new LazyManClass(name);
+// }   
+// LazyMan('Tony').eat('lunch').eat('dinner').sleepFirst(5).sleep(4).eat('junk food');
+// Promise.prototype.finally = function(cb) {
+//     const P = this.constructor;
+//     return this.then(res => {
+//         return P.resolve(cb()).then(() => res);
+//     }, err => {
+//         return P.resolve(cb()).then(() => { throw err });
+//     })
+// }
+// function cancel(promise) {
+//     const obj = {};
+//     const p = new Promise((resolve, reject) => {
+//         obj.resolve = resolve;
+//         obj.reject = reject;
+//     });
+//     obj.promise = Promise.race([p, promise]);
+//     return obj;
+// }
+// const testPromise = new Promise((resolve, reject) => {
+//     // setTimeout(() => {
+//         resolve(123);
+//     // }, 1000);
+// });
+// const cancelPromise = cancel(testPromise);
+// cancelPromise.resolve('取消')
+// cancelPromise.promise.then(res => {
+//     console.log(res);
+// });
+// {
+//     let a = 1;
+// }
+// (function() {
+//     var a = 1;
+// })()
+// fns = [];
+// // for (let i = 0; i < 10; i++) {
+// //     fns[i] = function() {
+// //         console.log(i);
+// //     }
+// // }
+// for (var i = 0; i < 10; i++) {
+//     (function(i) {
+//         fns[i] = function() {
+//             console.log(i);
+//         }
+//     })(i);
+// }
+// fns[7]()
+// function _const(key, value) {
+//     window.key = value;
+//     Object.defineProperty(window, key, {
+//         enumerable: false,
+//         configurable: false,
+//         get() {
+//             return value;
+//         },
+//         set(newVal) {
+//             if (newVal !== value) {
+//                 throw new Error('不能重复定义');
+//             } else {
+//                 return value;
+//             }
+//         }
+//     });
+// }
+// Promise.prototype.finally = function(cb) {
+//     const P = this.contructor;
+//     return this.then(res => {
+//         return P.resolve(cb()).then(() => res);
+//     }, err => {
+//         return P.resolve(cb()).then(() => { throw err });
+//     })
+// }
+// function defineReactive(obj, key, val) {
+//     observe(val);
+//     Object.defineProperty(obj, key, {
+//         get() {
+//             // 收集依赖
+//             return val;
+//         },
+//         set(newVal) {
+//             if (newVal !== val) {
+//                 observe(newVal);
+//                 val = newVal;
+//                 // 通知更新
+//             }
+//         }
+//     });
+// }
+// const originalProto = Array.prototype;
+// const arrayProto = Object.create(originalProto);
+// ['push', 'pop', 'shift', 'unshift'].forEach(method => {
+//     arrayProto[method] = function(...args) {
+//         arrayProto[method].call(this, ...args);
+//         // 通知更新
+//     }
+// });
+// function observe(obj) {
+//     if (typeof obj !== 'object' || obj == null) return;
+//     if (Array.isArray(obj)) {
+//         obj.__proto__ = arrayProto;
+//         for (let i = 0; i < obj.length; i++) {
+//             observe(obj[i]);
+//         }
+//     } else {
+//         Object.keys(obj).forEach(key => {
+//             defineReactive(obj, key, obj[key]);
+//         });
+//     }
+// }
+// function defineReactive(obj, key, val) {
+//     observe(val);
+//     Object.defineProperty(obj, key, {
+//         get() {
+//             // 依赖收集
+//             return val;
+//         },
+//         set(newVal) {
+//             if (newVal !== val) {
+//                 observe(newVal);
+//                 val = newVal;
+//                 // 通知更新
+//             }
+//         }
+//     });
+// }
+// const arrayProto = Object.create(Array.prototype);
+// ['push', 'pop', 'shift', 'unshift', 'sort', 'splice', 'reverse'].forEach(method => {
+//     arrayProto[method] = function(...args) {
+//         arrayProto[method].apply(this, args);
+//         // 通知更新
+//     }
+// });
+// function observe(obj) {
+//     if (typeof obj !== 'object' || obj == null) return;
+//     if (Array.isArray) {
+//         obj.__proto__ = arrayProto;
+//         for (let i = 0; i < obj.length; i++) {
+//             observe(obj[i]);
+//         }
+//     } else {
+//         Object.keys(obj).forEach(key => {
+//             defineReactive(obj, key, obj[key]);
+//         });
+//     }
+// }
+// 移动零
+// function moveZero(nums) {
+//     let j = 0;
+//     for (let i = 0; i < nums.length; i++) {
+//         if (nums[i] !== 0) {
+//             nums[j] = nums[i];
+//             if (i !== j) {
+//                 nums[i] = 0;
+//             }
+//             j++;
+//         }
+//     }
+//     return nums;
+// }
+// function moveZeroes(nums) {
+//     let j = 0;
+//     for (let i = 0; i < nums.length; i++) {
+//         if (nums[i] !== 0) {
+//             nums[j] = nums[i];
+//             if (i !== j) {
+//                 nums[i] = 0;
+//             }
+//             j++;
+//         }
+//     }
+//     return nums;
+// }
+// function climbStairs(n) {
+//     if (n <= 2) return n;
+//     return climbStairs(n - 1) + climbStairs(n - 2);
+// }
+// function climbStairs(n) {
+//     const map = new Map();
+//     function recursion(n) {
+//         if (n <= 2) return n;
+//         if (map.has(n)) return map.get(n);
+//         const value = recursion(n - 1) + recursion(n - 2);
+//         map.set(n, value);
+//         return value; 
+//     }
+//     return recursion(n);
+// }
+// function climbStairs(n) {
+//     if (n <= 2) return n;
+//     let a = 1, b = 2, r = 0;
+//     for (let i = 0; i < n - 2; i++) {
+//         r = a + b;
+//         a = b;
+//         b = r;
+//     }
+//     return r;
+// }
+// function climbStairs(n) {
+//     const map = new Map();
+//     function recursion(n) {
+//         if (n <= 2) return n;
+//         if (map.has(n)) return map.get(n);
+//         const value = recursion(n - 1) + recursion(n - 2);
+//         map.set(n, value);
+//         return value;
+//     }
+//     return recursion(n);
+// }
+// function climbStairs(n) {
+//     if (n <= 2) return n;
+//     let a = 1, b = 2, r = 0;
+//     for (let i = 0; i < n - 2; i++) {
+//         r = a + b;
+//         a = b;
+//         b = r;
+//     }
+//     return r;
+// }
+// function twoSum(nums, target) {
+//     for (let i = 0; i < nums.length - 1; i++) {
+//         for (let j = 0; j < nums.length; j++) {
+//             if (nums[i] + nums[j] === target) {
+//                 return [i, j];
+//             }
+//         }
+//     }
+//     return [];
+// }
+// function twoSum(nums, target) {
+//     const map = new Map();
+//     for (let i = 0; i < nums.length; i++) {
+//         if (map.has(target - nums[i])) {
+//             return [i, map.get(target - nums[i])];
+//         }
+//         map.set(nums[i], i);
+//     }
+//     return [];
+// }
+// function twoSum(nums, target) {
+//     const map = new Map();
+//     for (let i = 0; i < nums.length; i++) {
+//         if (map.has(target - nums[i])) {
+//             return [i, map.get(target - nums[i])];
+//         }
+//         map.set(nums[i], i);
+//     }
+//     return [];
+// }
+// 环形链表
+// function hasCycle(head) {
+//     if (head == null || head.next == null) return false;
+//     let slow = head;
+//     let fast = head.next;
+//     while(fast != null && fast.next != null) {
+//         if (fast === slow || fast.next === slow) {
+//             return true;
+//         }
+//         slow = slow.next;
+//         fast = fast.next.next;
+//     }
+//     return false;
+// }
+// function hasCycle(head) {
+//     if (head == null || head.next == null) return false;
+//     let slow = head;
+//     let fast = head.next;
+//     while(fast != null && fast.next != null) {
+//         if (fast === slow || fast.next === slow) return true;
+//         slow = slow.next;
+//         fast = fast.next.next;
+//     }
+//     return false;
+// }
+// function isValid(s) {
+//     if (s.length % 2 === 1) return false;
+//     let map = new Map([
+//         [')', '('],
+//         [']', '['],
+//         ['}', '{']
+//     ]);
+//     const stack = [];
+//     for (let i of s) {
+//         if (map.has(i)) {
+//             if (!stack.length || stack.pop() !== map.get(i)) {
+//                 return false;
+//             }
+//         } else {
+//             stack.push(i);
+//         }
+//     }
+//     return !stack.length;
+// }
+// function isValid(s) {
+//     if (s.length % 2 === 1) return false;
+//     const map = new Map([
+//         [')', '('],
+//         [']', '['],
+//         ['}', '{']
+//     ]);
+//     const stack = [];
+//     for (let i of s) {
+//         if (map.has(i)) {
+//             if (!stack.length || stack.pop() !== map.get(i)) {
+//                 return false;
+//             }
+//         } else {
+//             stack.push(i);
+//         }
+//     }
+//     return !stack.length;
+// }
