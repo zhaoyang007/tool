@@ -5228,3 +5228,199 @@ function isObject(obj) {
 //     }
 //     return !stack.length;
 // }
+// function currying(fn, ...args) {
+//     const length = fn.length;
+//     return function(...newArgs) {
+//         const allArgs = [...args, ...newArgs];
+//         if (allArgs.length < length) {
+//             return currying.call(this, fn, ...allArgs);
+//         } else {
+//             return fn.apply(this, allArgs);
+//         }
+//     }
+// }
+// function currying(fn, ...args) {
+//     let allArgs = [...args];
+//     return function temp(...newArgs) {
+//         if (newArgs.length) {
+//             allArgs = [...allArgs, ...newArgs];
+//             return temp;
+//         } else {
+//             const res = fn.apply(this, allArgs);
+//             allArgs = [...args];
+//             return res;
+//         }
+//     }
+// }
+// function compose(fns) {
+//     if (fns.length === 0) return v => v;
+//     if (fns.length === 1) return fns[0];
+//     return fns.reduce((pre, cur) => (...args) => pre(cur(...args)));
+// }
+// class LazyManClass {
+//     constructor(name) {
+//         this.tasks = [];
+//         const task = () => {
+//             console.log(`hi, this is ${name}`);
+//             this.next();
+//         }
+//         this.tasks.push(task);
+//         setTimeout(() => {
+//             this.next();
+//         }, 0);
+//     }
+//     next() {
+//         const task = this.tasks.shift();
+//         task && task();
+//     }
+//     sleep(time) {
+//         this.sleepWrapper(time, false);
+//         return this;
+//     }
+//     sleepFirst(time) {
+//         this.sleepWrapper(time, true);
+//         return this;
+//     }
+//     sleepWrapper(time, isFirst) {
+//         const task = () => {
+//             setTimeout(() => {
+//                 console.log(`等待${time}秒`);
+//                 this.next();
+//             }, time * 1000);
+//         }
+//         if (isFirst) {
+//             this.tasks.unshift(task);
+//         } else {
+//             this.tasks.push(task);
+//         }
+//     }
+//     eat(name) {
+//         const task = () => {
+//             console.log(`eat ${name}`);
+//             this.next();
+//         }
+//         this.tasks.push(task);
+//         return this;
+//     }
+// }
+// function LazyMan(name) {
+//     return new LazyManClass(name);
+// }
+// LazyMan('Tony').eat('lunch').eat('dinner').sleepFirst(5).sleep(4).eat('junk food');
+// 移动零
+// function moveZeroes(nums) {
+//     let j = 0;
+//     for (let i = 0; i < nums.length; i++) {
+//         if (nums[i] !== 0) {
+//             nums[j] = nums[i];
+//             if (i !== j) {
+//                 nums[i] = 0;
+//             }
+//             j++;
+//         }
+//     }
+//     return nums;
+// }
+// function climbStaits(n) {
+//     if (n <= 2) return n;
+//     return climbStairs(n - 1) + climbStairs(n - 2);
+// }
+// function climbStairs(n) {
+//     const map = new Map();
+//     function recursion(n) {
+//         if (n <= 2) return n;
+//         if (map.has(n)) return map.get(n);
+//         const value = recursion(n - 1) + recursion(n - 2);
+//         map.set(n, value);
+//         return value;
+//     }
+//     return recursion(n);
+// }
+// function climbStairs(n) {
+//     if (n <= 2) return 2;
+//     let a = 1, b = 2, r = 0;
+//     for (let i = 0; i < n - 2; i++) {
+//         r = a + b;
+//         a = b;
+//         b = r;
+//     }
+//     return r;
+// }
+// function twoSum(nums, target) {
+//     const map = new Map();
+//     for (let i = 0; i < nums.length; i++) {
+//         if (map.has(target - nums[i])) {
+//             return [map.get(target - nums[i]), i];
+//         }
+//         map.set(nums[i], i);
+//     }
+//     return [];
+// }
+// function hasCycle(head) {
+//     if (head == null || head.next == null) return false;
+//     let slow = head;
+//     let fast = head.next;
+//     while (fast != null && fast.next != null) {
+//         if (fast === slow || fast.next === slow) {
+//             return true;
+//         }
+//         slow = slow.next;
+//         fast = fast.next.next;
+//     }
+//     return false;
+// }
+// function isValid(s) {
+//     if (s.length % 2 === 1) return false;
+//     const map = new Map([
+//         [')', '('],
+//         [']', '['],
+//         ['}', '{'],
+//     ]);
+//     const stack = [];
+//     for (let i of s) {
+//         if (map.has(i)) {
+//             if (!stack.length || stack.pop() !== map.get(i)) {
+//                 return false;
+//             }
+//         } else {
+//             stack.push(i);
+//         }
+//     }
+//     return !stack.length;
+// }
+// function defineReactive(obj, key, val) {
+//     observe(val);
+//     Object.defineProperty(obj, key, {
+//         get() {
+//             // 依赖收集
+//             return val;
+//         },
+//         set(newVal) {
+//             if (newVal !== val) {
+//                 observe(newVal);
+//                 val = newVal;
+//                 // 通知更新
+//             }
+//         }
+//     })
+// }
+// const arrayProto = Object.create(Array.prototype);
+// ['push', 'pop', 'shift', 'unshift', 'reverse','sort', 'splice'].forEach(method => {
+//     arrayProto[method] = function(...args) {
+//         arrayProto[method].call(this, ...args);
+//         // 通知更新
+//     }
+// });
+// function observe(obj) {
+//     if (typeof obj !== 'object' || obj == null) return;
+//     if (Array.isArray(obj)) {
+//         obj.__proto__ = arrayProto;
+//         for (let i = 0; i < obj.length; i++) {
+//             observe(obj[i]);
+//         }
+//     } else {
+//         Object.keys(obj).forEach(key => {
+//             defineReactive(obj, key, obj[key]);
+//         });
+//     }
+// }

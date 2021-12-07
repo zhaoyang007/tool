@@ -2298,8 +2298,6 @@ https://polyfill.io/v3/polyfill.min.js
 
 webpack 打包阶段是有 compile 和 compilation。compile 是 webpack 启动的那一次创建一个 compile 对象，compilation 是只要有文件发生了变化，compilation 对象是会变化的。
 
-源码分析，插件机制，启动流程，编译构建流程，资源输出流程。
-
 1.webpack 启动过程：
 
 ```js
@@ -2385,7 +2383,7 @@ processOptions(options)
 
 webpack 可以理解成一种基于事件流的编程范例，一系列的插件运行。内部有各种各样的插件，监听 compiler 和 compilation 上面定义的关键的事件节点。
 
-compiler 和 compilation 都是继承自Tapable。
+compiler 和 compilation 都是继承自 Tapable。
 
 Tapable 是一个类似于 node.js 的 EventEmitter 的库，主要是提供钩子函数的发布与订阅，控制着 webpack插件系统的实现。
 
@@ -2502,23 +2500,53 @@ compiler.options = new WebpackOptionsApply().process(options, compiler);
 
 ## 编写 loader
 
-loader 是一个导出为函数的 javascript 模块，且是声明式函数，不能用箭头函数，因为它要用 this 使用 loader 的 API。
+##### loader
 
-接收 source，return source。
+loader 的作用是用来处理各种各样的静态资源。
+
+loader 是一个导出为声明式函数的 javascript 模块，接收资源返回资源：
 
 ```js
-module.exports = function(source) {
-	return source;
-}
+const loaderUtils = require("loader-utils");
+module.exports = function(source) { 
+  // 参数获取
+  const { name } = loaderUtils.getOptions(this);
+  
+  // 异常处理
+  // 1.throw new Error('error');
+  // 2.this.callback(new Error('error'), source);
+  
+  // 返回结果
+  // 1.return source;
+  // 2.this.callback(null, source, 1, 2); 可以返回多个值
+  
+  // 异步处理
+  const callback = this.async();
+  fs.readFile(path.join(__dirname, './demo.txt'), 'utf-8', (err, data) => {
+    if (err) {
+      callback(err, '');
+    }
+    callback(null, data);
+  });
+  
+  // 缓存
+  // webpack 中默认开启缓存，可以使用以下方法关闭缓存
+  // 缓存生效条件：loader 的结果有确定的输出。有依赖的 loader 无法使用缓存。
+  this.cacheable(false);
+  
+  // 文件写入
+  const url = loaderUtils.interpolateName(this, "[name].[ext]", source);
+  this.emitFile(url, source);
+};
 ```
 
-##### 使用 loader-runner 进行 loader 的调试
+##### loader-runner
 
 ```js
 import { runLoaders } from "loader-runner"; 
 runLoaders({ 
   resource: “/abs/path/to/file.txt?query”, // String: 资源的绝对路径(可以增加查询字符串) 
-  loaders: [“/abs/path/to/loader.js?query”], // String[]: loader 的绝对路径(可以增加查询字符串) 		
+  loaders: [“/abs/path/to/loader.js?query”], // String[]: loader 的绝对路径(可以增加查询字符串) 
   context: { minimize: true }, // 基础上下文之外的额外 loader 上下文 
   readResource: fs.readFile.bind(fs) // 读取资源的函数 
 }, function(err, result) { 
@@ -2527,201 +2555,20 @@ runLoaders({
 })
 ```
 
-##### 开发一个 raw-loader
+##### raw-loader
 
 raw-loader 的功能是将一个文件的内容转换成一个 string。
 
-loaders/raw-loader.js:
-
 ```js
 module.exports = function(source) { 
   const json = JSON.stringify(source)
   	.replace(/\u2028/g, '\\u2028') // 为了安全起见, ES6模板字符串的问题 
-    .replace(/\u2029/g, '\\u2029'); 
-  
+    .replace(/\u2029/g, '\\u2029');
   return `export default ${json}`; 
 };
 ```
 
-src/demo.txt:
-
-```txt
-foobar
-```
-
-run-loader.js:
-
-```js
-const fs = require("fs"); 
-const path = require("path"); 
-const { runLoaders } = require("loader-runner"); 
-
-runLoaders( 
-  { 
-    resource: path.join(__dirname, "./src/demo.txt"), 
-    loaders: [path.join(__dirname, "./loaders/raw-loader.js")], 
-    context: {
-      minimize: true
-    },
-    readResource: fs.readFile.bind(fs), 
-	}, (err, result) => {
-    err ? console.error(err) : console.log(result);
-  });
-```
-
-运行查看结果：
-
-```bash
-node run-loader.js
-```
-
-##### 更复杂的 loader 开发场景
-
-loader 的参数获取：
-
-loader 里通过 loader-utils 的 getOptions 方法获取传过来的参数。
-
-raw-loader.js:
-
-```js
-const loaderUtils = require("loader-utils");
-
-module.exports = function(source) { 
-  const { name } = loaderUtils.getOptions(this);
-  const json = JSON.stringify(source)
-  	.replace(/\u2028/g, '\\u2028') // 为了安全起见, ES6模板字符串的问题 
-    .replace(/\u2029/g, '\\u2029'); 
-  
-  return `export default ${json}`; 
-};
-```
-
-run-loader.js:
-
-```js
-const fs = require("fs"); 
-const path = require("path"); 
-const { runLoaders } = require("loader-runner"); 
-
-runLoaders( 
-  { 
-    resource: path.join(__dirname, "./src/demo.txt"), 
-    loaders: [
-      {
-      	loader: path.join(__dirname, "./loaders/raw-loader"),
-        options: {
-					name: 'test'
-        }
-      }
-    ], 
-    context: {
-      minimize: true
-    },
-    readResource: fs.readFile.bind(fs), 
-	}, (err, result) => {
-    err ? console.error(err) : console.log(result);
-  });
-```
-
-loader 异常处理：
-
-同步的 loader 的异常处理有两种方式。
-
-1.loader 内直接 throw 一个 Error 对象出来。
-
-2.通过 this.callback 把错误传递出来
-
-返回结果除了上面的直接 return 的方式，也可以使用 this.callback 来做结果的返回，它可以返回多个值。
-
-raw-loader.js:
-
-```js
-module.exports = function(source) { 
-  const json = JSON.stringify(source)
-  	.replace(/\u2028/g, '\\u2028') // 为了安全起见, ES6模板字符串的问题 
-    .replace(/\u2029/g, '\\u2029'); 
-  
-  // throw new Error('Error')
-  // return `export default ${json}`; 
-  
-  // 无异常就传null，有异常就传 new Error('err')
-  this.callback(null, json, 2, 3, 4)
-};
-```
-
-##### loader 的异步处理（开发一个异步的 loader）
-
-同步 loader 对内容的处理是同步的，异步 loader 处理的任务是一个耗时的任务，它可能需要执行一段时间，比如文件的读写，我们要处理内容的时候要先去读取一个文件，获取到文件的值之后，再去对传递进来的 source 进行处理，这就是一个异步的任务。异步任务完成之后再返回结果。
-
-针对异步处理的场景的做法也比较简单，通过 this,async 来返回一个异步函数 ，第一个参数是 Error，第二个参数是处理的结果，它的用法跟 this.callback 是差不多的。
-
-async.txt
-
-```txt
-async
-```
-
-raw-loader.js:
-
-```js
-const path = require('path');
-const fs = require('fs')
-
-module.exports = function(source) { 
-  const callback = this.async();
-  
-  const json = JSON.stringify(source)
-  	.replace(/\u2028/g, '\\u2028') // 为了安全起见, ES6模板字符串的问题 
-    .replace(/\u2029/g, '\\u2029'); 
-  	
-  fs.readFile(path.join(__dirname, './async.txt'), 'utf-8', (err, data) => {
-    if (err) {
-      callback(err, '');
-    }
-    callback(null, data);
-  });
-  
-};
-```
-
-##### 在 loader 中使用缓存 
-
-webpack 中默认开启 loader 缓存，可以使用 this.cacheable(false) 关掉缓存。
-
-缓存生效条件： loader 的结果在相同的输入下有确定的输出。有依赖的 loader 无法使用缓存。
-
-```js
-module.exports = function(source) { 
-  this.cacheable(false)
-  
-  const json = JSON.stringify(source)
-  	.replace(/\u2028/g, '\\u2028') // 为了安全起见, ES6模板字符串的问题 
-    .replace(/\u2029/g, '\\u2029'); 
-  
-  return `export default ${json}`; 
-};
-```
-
-##### loader 如何进行文件输出？
-
-通过 this.emitFile 把内容输出到指定的位置，进行文件写入。
-
-a-loader.js:
-
-```js
-const loaderUtils = require("loader-utils");
-
-module.exports = function(source) { 
-  const url = loaderUtils.interpolateName(this, "[name].[ext]", source);
-  console.log(url)
-  
-  this.emitFile(url, source);
-  
-  return source; 
-};
-```
-
-##### 实战开发一个自动合成雪碧图的 loader
+##### 自动合成雪碧图的 loader
 
 支持的语法：
 
@@ -2817,125 +2664,48 @@ module.exports = function (source) {
 
 ## 编写 plugin
 
-loader 的作用是用来处理各种各样的静态资源，插件的功能是更加强大的，插件是伴随整个 webpack 从初始化到最终的资源生成的过程，整个过程都可以有插件的。loader 没法做的事情都是可以通过插件来做的。
+##### plugin
 
-插件没有像 loader 那样的独立运行环境，只能在 webpack 里面运行。
+插件是伴随着 webpack 从初始化到最终的资源生成的过程的。
 
 插件是一个类，有一个 apply 方法。
 
-webpack 执行插件的时候会运行每一个插件上面的 apply 方法，同时把 webpack 的 compiler 对象传递给插件，这样插件就具备监听 compiler hooks 的能力，通过 compiler.hooks 在不同的阶段可以做相应的事情。hooks 包括 compiler 和 compilation 的。
+webpack 执行插件的时候会运行每一个插件上的 apply 方法，同时把 webpack 的 compiler 对象传进去，这样插件就具备监听 compiler hooks 的能力，通过 compiler.hooks 在不同的阶段可以做相应的事情。
 
 ```js
-class MyPlugin { 															// 插件名称
-  apply(compiler) { 													// 插件上的apply方法
-    compiler.hooks.done.tap(' My Plugin', ( 	// 插件的hooks
-      stats /* stats is passed as argument when done hook is tapped. */ 
-    ) => { 
-      console.log('Hello World!'); 						// 插件处理逻辑
+// 将一段代码输出到文件里面就可以用 RawSource
+const { RawSource } = require("webpack-sources");
+class MyPlugin {
+  constructor(options) { 
+    this.options = options; 
+  }
+  apply(compiler) {
+    // 插件处理逻辑
+    
+    // 插件的错误处理
+    // 1.throw new Error('error');
+    // 2.通过 compilation 对象的 warnings 和 errors 接收
+    //   compilation.warnings.push("warning");
+    //   compilation.errors.push("error");
+
+    // 文件写入
+    // webpack 的构建流程的文件生成是在 emit 阶段，所以在插件里监听 compiler emit 这个 hooks。
+    // 监听这个 hook 之后我们可以获取到 compilation 对象
+    // 然后只需要将最终要输出的内容设置到 compilation.assets 对象上面去就可以了
+    // 最终webpack生成文件的时候会触发emit，然后读取compilation.assets上的资源内容并输出到磁盘目录
+    const { path } = this.options;
+    compiler.hooks.emit.tapAsync("MyPlugin", (compilation, callback) => { 
+      compilation.assets[path] = new RawSource("demo"); 
+      callback();
     }); 
   } 
 }
 module.exports = MyPlugin;
 ```
 
-插件使用，添加到 webpack 配置文件中：
+##### 插件的插件
 
-```js
-const MyPlugin = require('my-plugin')
-
-module.exports = {
-	plugins: [
-		new MyPlugin()
-	]
-}
-```
-
-##### 开发一个最简单的插件
-
-plugins/demo-plugin.js:
-
-```js
-module.exports = class DemoPlugin { 
-  constructor(options) { 
-    this.options = options; 
-  }
-  apply(compiler) { 
-    console.log("options", this.options); 
-  } 
-};
-```
-
-加入到 webpack 配置中:
-
-```js
-const DemoPlugin = require('./plugins/demo-plugin')
-
-module.exports = {
-	plugins: [
-		new DemoPlugin({
-			name: 'demo'
-		})
-	]
-}
-```
-
-##### 更复杂的插件开发场景
-
-通过插件的构造函数进行获取：
-
-```js
-module.exports = class MyPlugin { 
-  constructor(options) { 
-    this.options = options; 
-  }
-  apply(compiler) { 
-    console.log("apply", this.options); 
-  } 
-};
-```
-
-插件的错误处理：
-
-参数校验阶段，比如在接收参数的时候，我们需要对参数的数据类型，参数的名称和参数的其他内容进行校验，参数不符合要求，可以直接通过 throw 的方式把错误抛出出来。
-
-```js
-throw new Error('Error Message');
-```
-
-如果已经进入到 hook 里面去，通过 compilation 对象的 warnings 和 errors 接收。 
-
-```js
-compilation.warnings.push("warning"); 
-compilation.errors.push("error");
-```
-
-通过 Compilation 进行文件写入：
-
-Compilation 上的 assets 可以用于文件写入。
-
-webpack 的构建流程的文件生成是在 emit 阶段，所以在插件里监听 compiler emit 这个 hooks，监听到这个 hook 之后我们可以获取到 compilation 这个对象，然后只需要将最终要输出的内容设置到 compilation.assets 对象上面去就可以了，之后在最终 webpack 生成文件的时候触发了 emit 之后，它就会去读取 compilation.assets 这个对象，然后把它输出到磁盘目录。
-
-文件写入需要使用 webpack-sources (https://www.npmjs.com/package/webpack-sources)。
-
-```js
-const { RawSource } = require("webpack-sources"); // 将一段代码输出到文件里面就可以用 RawSource
-module.exports = class DemoPlugin { 
-  constructor(options) { 
-    this.options = options; 
-  }
-  apply(compiler) { 
-    const { name } = this.options; 
-    compiler.hooks.emit.tapAsync("emit", (compilation, cb) => { 
-      compilation.assets[name] = new RawSource("demo"); 
-      cb(); 
-    }); 
-  } 
-};
-```
-
-编写插件的插件：
-
- webpack 的插件是特别的强大的，除了通过插件来扩展 webpack 的能力，插件自身也可以通过暴露 hooks 的方式进行自身扩展。
+webpack 的插件是特别的强大的，除了通过插件来扩展 webpack 的能力，插件自身也可以通过暴露 hooks 的方式进行自身扩展。
 
 以 html-webpack-plugin 为例，它暴露出来的 hooks： 
 
@@ -2945,11 +2715,9 @@ module.exports = class DemoPlugin {
 * html-webpack-plugin-after-html-processing (Async) 
 * html-webpack-plugin-after-emit (Async)
 
-##### 编写一个压缩构建资源为 zip 包的插件
+##### 压缩构建资源为 zip 包的插件
 
-Node.js 里面将文件压缩为 zip 包：
-
-使用 jszip (https://www.npmjs.com/package/jszip)
+Node.js 里面将文件压缩为 zip 包：使用 jszip (https://www.npmjs.com/package/jszip)
 
 jszip 使用示例
 
@@ -2967,12 +2735,6 @@ zip.generateAsync({type:"blob"}).then(function(content) {
 });
 ```
 
-Compiler 上负责文件生成的 hooks：
-
-Hooks 是 emit，是一个异步的 hook (AsyncSeriesHook) 。
-
-emit 生成文件阶段，读取的是 compilation.assets 对象的值，因此我们要将 zip 资源包设置到 compilation.assets 对象上。
-
 zip-plugin.js:
 
 ```js
@@ -2989,7 +2751,6 @@ module.exports = class ZipPlugin {
   apply(compiler) {
     compiler.hooks.emit.tapAsync('ZipPlugin', (compilation, callback) => {
       const folder = zip.folder(this.options.filename);
-
       for (let filename in compilation.assets) {
         const source = compilation.assets[filename].source();
         folder.file(filename, source);
@@ -3008,7 +2769,6 @@ module.exports = class ZipPlugin {
           outputPath
         );
         compilation.assets[outputRelativePath] = new RawSource(content);
-
         callback();
       });
     });
