@@ -1208,9 +1208,7 @@ module.exports = {
       // 减少模块搜索层级
       modules: [path.resolve(__dirname, 'node_modules')],
       // 缩小文件后缀的查找的范围，只设置查找.js，其他文件使用时写全文件后缀
-      extensions: ['.js'],
-      // 优化默认入口的查找过程链路
-      mainFields: ['main']
+      extensions: ['.js']
     }
   }
 ```
@@ -2253,7 +2251,7 @@ webpack 最终找到 webpack-cli (或webpack-command) 这个 npm 包，并且执
 
 引入 yargs，对命令行进行定制。
 
-分析命令行参数，对各个参数进行转换，组成编译配置项。
+分析命令行参数，对参数进行转换，组成编译配置项。
 
 引用 webpack，根据配置项进行编译和构建。
 
@@ -2277,7 +2275,7 @@ const NON_COMPILATION_ARGS = [
 
 提供命令和分组参数
 
-动态生成help帮助信息
+动态生成 help 帮助信息
 
 webpack-cli 使用 args 分析
 
