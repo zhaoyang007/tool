@@ -1272,11 +1272,11 @@ module.exports = {
 
 方法一：uglifyjs-webpack-plugin 开启 parallel 参数
 
-webpack3 推荐采用的插件，不支持 es6 代码的压缩。
+不支持 es6 代码的压缩。
 
 方法二：terser-webpack-plugin 开启 parallel 参数
 
-webpack4 默认使用的，支持 es6 代码的压缩。
+支持 es6 代码的压缩。
 
 ```js
 const TerserPlugin = require('terser-webpack-plugin')
@@ -1292,7 +1292,7 @@ module.exports = {
 }
 ```
 
-##### 充分利用缓存提升二次构建速度
+##### 利用缓存提升二次构建速度
 
 有缓存的话 node_modules 下面会有一个 .cache 目录。
 
@@ -2227,100 +2227,65 @@ https://polyfill.io/v3/polyfill.min.js
 
 ##### 打包原理
 
-webpack 打包阶段是有 compile 和 compilation。compile 是 webpack 启动的那一次创建一个 compile 对象，compilation 是只要有文件发生了变化，compilation 对象是会变化的。
-
 1.webpack 启动过程：
 
-```js
-process.exitCode = 0 // 默认exitCode是0，代表webpack运行的时候是正常的执行返回。中间报错会修改exitCode，并抛出错误。
-const runCommand = (command, args) => {} // 运行某个命令行命令
-const isInstalled = packageName => {}; // 判断某个包是否安装
-const CLIs = []; // webpack可用的CLI：webpack-cli和webpack-command
-const installedClis = CLIs.filter(cli => cli.installed); // 判断两个cli是否安装了
-if (installedClis.length === 0) { // 根据cli安装的数量进行处理
-} else if (installedClis.length === 1) {
-} else {
-}
-```
-
-启动后的结果：
-
-webpack 最终找到 webpack-cli (或webpack-command) 这个 npm 包，并且执行。
+webpack 命令找到并执行 webpack-cli 这个 npm 包。
 
 2.webpack-cli：
 
-引入 yargs，对命令行进行定制。
+将命令行和 webpack.config.js 的配置解析出来组装成 webpack 可识别的配置。
 
-分析命令行参数，对参数进行转换，组成编译配置项。
-
-引用 webpack，根据配置项进行编译和构建。
+引入并实例化一个 webpack，将配置传进去，开始编译和构建。
 
 ```js
-// 从 NON_COMPILATION_CMD 分析出不需要编译的命令
-// webpack-cli 处理不需要经过编译的命令，就是不需要实例化webpack的NON_COMPILATION_ARGS
-// webpack-cli提供的不需要编译(实例化webpack)的命令
-const NON_COMPILATION_ARGS = [
-  "init",              // 创建一份webpack配置文件
-  "migrate",           // 运行webpack版本迁移
-  "add",               // 往webpack配置文件中增加属性
-  "remove",            // 往webpack配置文件中删除属性
-  "serve",             // 运行webpack-serve
-  "generate-loader",   // 生成webpack loader代码
-  "generate-plugin",   // 生成webpack plugin代码
-  "info"               // 返回与本地环境相关的一些信息
-];
+const webpack = require('webpack');
+let compiler = webpack(options);
+new Plugin({
+  option: true
+}).apply(compiler);
+compiler.run();
 ```
 
-命令行工具包 yargs 介绍：
+3.webpack 编译和构建流程：
 
-提供命令和分组参数
+* 初始化 option。
 
-动态生成 help 帮助信息
+* 执行用户配置中所有的插件的。
 
-webpack-cli 使用 args 分析
+* 根据配置执行 webpack 内部的插件。
 
-参数分组（config/config-args.js），将命令划分为9类：
+* run：开始构建。
 
-* Config options: 配置相关参数（文件名称，运行环境等）
-* Basic options: 基础参数（entry设置、debug模式设置、watch监听设置、devtool设置）
-* Module options: 模块参数，给loader设置扩展
-* Output options: 输出设置（输出路径，输出文件名称）
-* Advanced options: 高级用法（记录设置、缓存设置、监听频率、bail等）
-* Resolving options: 解析参数（alias和解析的文件后缀设置）
-* Optimizing options: 优化参数
-* Stats options: 统计参数
-* options: 通用参数（帮助命令、版本信息等）
+* complie：构建
 
-options（输入的options）
+  * 使用 loader-runner 运行 loaders，loader 解析构建模块，得到一个 js 代码，再将这个代码进行编译，生成 AST。
+  * 然后通过 parser 解析依赖(acorn)，通过 ParserPlugins 添加依赖，将所有编译好的 js 代码放到 compilation 对象上的 modules 里面。
 
-将命令行或 webpack.config.js 配置文件的配置解析出来组装成为 webpack 可识别的配置到 options 里面。
+* 代码优化
 
-processOptions(options)
+  将 modules 里的代码放到 compilation 对象的 assets 里面去
 
-*  outputOptions（输出的options）
+* 资源生成
 
-* 实例化一个 webpack，然后执行构建流程。
+##### 动手编写一个简易的 webpack
 
-  ```js
-  const webpack = require('webpack');
-  let compiler = webpack(options);
-  new Plugin({
-    option: true
-  }).apply(compiler);
-  compiler.run();
-  ```
+输出的 bundle 文件
 
-3.Tapable 插件架构与 Hooks 设计
+##### Tapable 插件架构与 Hooks 设计
 
-webpack 可以理解成一种基于事件流的编程范例，一系列的插件运行。内部有各种各样的插件，监听 compiler 和 compilation 上面定义的关键的事件节点。
+Tapable 为 webpack 插件提供了发布订阅的钩子。每个钩子代表一个关键的事件节点。
+
+webpack 就是一系列的插件运行的事件流。
 
 compiler 和 compilation 都是继承自 Tapable。
 
-Tapable 是一个类似于 node.js 的 EventEmitter 的库，主要是提供钩子函数的发布与订阅，控制着 webpack插件系统的实现。
+compiler 和 compilation 上面做 hooks 的调用。
 
-Tapable 库暴露了很多 Hook(钩子) 类，为插件提供挂载的钩子。每个钩子代表一个关键的事件节点，在插件中监听钩子，在不同的阶段做不同的事情。
+插件有个 apply 方法，接收一个 compiler 参数。
 
-钩子：两类，同步钩子和异步钩子
+插件里面做 compiler 和 compilation 的 hooks 的监听。
+
+Tapable hooks 类型：
 
 ```js
 const {
@@ -2336,32 +2301,7 @@ const {
 } = require("tapable")
 ```
 
-Tapable hooks 类型：
-
-* Hook                 所有钩子的后缀
-* Waterfall          同步方法，它会传值给下一个函数
-* Bail                    熔断：当函数有任何返回值，就会在当前执行函数停止
-* Loop                  监听函数返回true表示继续循环，返回undefined表示结束循环
-* Sync                   同步方法
-* AsyncSeries      异步串行钩子
-* AsyncParallel    异步并行执行钩子
-
-Tapable 的使用 - new Hook 新建钩子
-
-Tapable 暴露出来的都是类方法，new 一个类方法获得我们需要的钩子。
-
-class 接受数组参数 options，非必传。类方法会根据传参，接受同样数量的参数。
-
-```js
-// 创建一个同步的钩子
-const hook1 = new SyncHook(['arg1', 'arg2', 'arg3']);
-```
-
-Tapable 的使用 - 钩子的绑定与执行
-
-基于 hook 做发布和订阅。
-
-Tapable 提供了同步&异步绑定钩子的方法，并且它们都有绑定事件和执行事件对应的方法。
+Tapable 钩子绑定事件和执行事件对应的方法：
 
 ​                         Async*                           Sync*          
 
@@ -2369,65 +2309,17 @@ Tapable 提供了同步&异步绑定钩子的方法，并且它们都有绑定�
 
 执行：     callAsync/promise                 call
 
-Tapable的使用 - hook 基本用法示例
+Tapable hook 基本用法：
 
 ```js
+// 创建一个同步的钩子
+// class 接受数组参数 options，非必传。类方法会根据传参，接收同样数量的参数。
 const hook1 = new SyncHook(['arg1', 'arg2', 'arg3']);
-// 绑定事件到webpack事件流
+// 绑定事件
 hook1.tap('hook1', (arg1, arg2, arg3) => {console.log(arg1, arg2, arg3)});
 // 执行绑定的事件
 hook1.call(1, 2, 3);
 ```
-
-4.Tapable 是如何和 webpack 进行关联起来的？
-
-compiler 和 compilation 上面做 hooks 的调用。
-
-插件有个 apply 方法，接收一个 compiler 参数。
-
-插件里面做 compiler 和 compilation 的 hooks 的监听。
-
-```js
-options = new WebpackOptionsDefaulter().process(options);
-compiler = new Compiler(options.context);
-compiler.options = options;
-new NodeEnvironmentPlugin({
-  infrastructureLogging: options.infrastructureLogging
-}).apply(compiler);
-if (options.plugins && Array.isArray(options.plugins)) {
-  for (const plugin of options.plugins) {
-    if (typeof plugin === "function") {
-      plugin.call(compiler, compiler);
-    } else {
-      plugin.apply(compiler);
-    }
-  }
-}
-compiler.hooks.environment.call();
-compiler.hooks.afterEnvironment.call();
-compiler.options = new WebpackOptionsApply().process(options, compiler);
-```
-
-5.webpack 流程，所有步骤都是调用 compiler 和 compilation 上的 hooks 完成的。
-
-* WebpackOptionsApply：初始化 option，将所有配置的参数转换成 webpack 内部的插件。
-
-* run：开始构建。
-
-* complie：构建
-
-  * 使用 loader-runner 运行 loaders，loader 解析构建模块，得到一个 js 代码，再将这个代码进行编译，生成 AST。
-  * 然后通过 parser 解析依赖(acorn)，通过 ParserPlugins 添加依赖，将所有编译好的 js 代码放到 compilation 对象上的 modules 里面。
-
-* 代码优化
-
-  将 modules 里的代码放到 compilation 对象的 assets 里面去
-
-* 资源生成
-
-6.动手编写一个简易的 webpack
-
-输出的 bundle 文件
 
 ## 编写 loader
 
