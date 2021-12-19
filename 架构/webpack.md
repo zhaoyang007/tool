@@ -1194,7 +1194,7 @@ module.exports = {
 }
 ```
 
-##### 减少文件搜索范围
+##### 减少文件查找范围
 
 ```js
 module.exports = {
@@ -1202,11 +1202,11 @@ module.exports = {
     resolve: {
       // 别名
       alias: {
-        'react': path.resolve(__dirname, './node_modules/react/umd/react.production.min.js'),
-        'react-dom': path.resolve(__dirname, './node_modules/react-dom/umd/react-dom.production.min.js')
+        'react': path.join(__dirname, './node_modules/react/umd/react.production.min.js'),
+        'react-dom': path.join(__dirname, './node_modules/react-dom/umd/react-dom.production.min.js')
       },
       // 减少模块搜索层级
-      modules: [path.resolve(__dirname, 'node_modules')],
+      modules: [path.join(__dirname, 'node_modules')],
       // 缩小文件后缀的查找的范围，只设置查找.js，其他文件使用时写全文件后缀
       extensions: ['.js']
     }
@@ -1215,35 +1215,7 @@ module.exports = {
 
 ##### 多进程构建
 
-方法一：使用 HappyPack
-
-```js
-module.exports = {
-	module: {
-		rules: [
-			{
-        test: /\.js$/,
-        include: path.resolve('src'),
-        use: [
-          // 'babel-loader', 
-          'happypack/loader?id=babel' 
-        ]
-      }
-		]
-	},
-	plugins: [
-    new HappyPack({
-      id: babel,
-      threads: 4,
-      loaders: ['babel-loader']
-    })
-  ]
-}
-```
-
-方法二：使用 thread-loader 解析资源
-
-webpack4 原生提供 thread-loader 这个模块，来做多进程/多实例的工作。
+thread-loader
 
 ```js
 module.exports = {
@@ -1268,19 +1240,10 @@ module.exports = {
 
 ##### 多进程压缩代码
 
-代码输出之前有一个压缩阶段。
-
-方法一：uglifyjs-webpack-plugin 开启 parallel 参数
-
-不支持 es6 代码的压缩。
-
-方法二：terser-webpack-plugin 开启 parallel 参数
-
-支持 es6 代码的压缩。
+terser-webpack-plugin 开启 parallel 参数，支持 es6 代码的压缩。
 
 ```js
 const TerserPlugin = require('terser-webpack-plugin')
-
 module.exports = {
   optimization: {
     minimizer: [
@@ -1296,7 +1259,7 @@ module.exports = {
 
 有缓存的话 node_modules 下面会有一个 .cache 目录。
 
-babel-loader 开启缓存。
+babel-loader 开启缓存：
 
 ```js
 module.exports = {
@@ -1316,7 +1279,7 @@ module.exports = {
 }
 ```
 
-terser-webpack-plugin 开启代码压缩缓存。
+terser-webpack-plugin 开启代码压缩缓存：
 
 ```js
 const TerserPlugin = require('terser-webpack-plugin')
@@ -1333,17 +1296,27 @@ module.exports = {
 }
 ```
 
-使用 cache-loader 或者 hard-source-webpack-plugin。
-
-针对某个模块开启缓存。
+使用 cache-loader 针对某个模块开启缓存：
 
 ```js
-const HardSourceWebpackPlugin = require('hard-source-webpack-plugin')
-
 module.exports = {
-  plugins: [
-    new HardSourceWebpackPlugin()
-  ]
+	module: {
+    rules: [
+      {
+        test: /\.js$/,
+        use: [
+          {
+            loader: 'cache-loader',
+            options: {
+              cacheDirectory: '/Users/dxm/project/ris-processmanager-fe/node_modules/.cache/babel-loader',
+              cacheIdentifier: '2a366bb7'
+            }
+          },
+          'babel-loader'
+        ]
+      }
+    ]
+  }
 }
 ```
 
@@ -2229,28 +2202,49 @@ https://polyfill.io/v3/polyfill.min.js
 
 1.webpack 启动过程：
 
-webpack 命令找到并执行 webpack-cli 这个 npm 包。
+安装了 webpack 这个包之后，package.json bin 字段里面注册了一个 webpack  命令，npm 会据此在 node_modules/.bin 下会生成一个 webpack 命令。webpack 命令的作用就是判断用户是否安装了 webpack-cli 这个包，没安装的话会提示安装，然后引入 webpack-cli 这个包并执行。
 
 2.webpack-cli：
 
-将命令行和 webpack.config.js 的配置解析出来组装成 webpack 可识别的配置。
+将命令行和 webpack.config.js 的配置解析组装成 webpack 可识别的配置。
 
-引入并实例化一个 webpack，将配置传进去，开始编译和构建。
-
-```js
-const webpack = require('webpack');
-let compiler = webpack(options);
-new Plugin({
-  option: true
-}).apply(compiler);
-compiler.run();
-```
+runWebpack() =》createCompiler()，引入并实例化一个 webpack，将配置传进去，开始编译和构建。
 
 3.webpack 编译和构建流程：
 
+```bash
+grep "keywords" -rn ./node_modules/webpack
+```
+
+实例化一个 Compiler，继承 Tapable，注册一些 hooks。
+
+compiler.run() => compiler.hooks.beforeRun => compiler.hooks.run => 
+
+compiler.compile(onCompiled) 
+
+* params = compiler.newCompilationParams()
+  * compiler.createNormalModuleFactory()
+  * compiler.createContextModuleFactory()
+
+* onCompiled: 编译完成的回调，里面会调用文件生产的方法 compiler.emitAssets() 
+  * compiler.hooks.done
+
+=> compiler.hooks.beforeCompile => 
+
+compiler.hooks.compile 
+
+* 获取 compilation = this.newCompilation(params)
+
+=> compiler.hooks.make 传入 compilation
+
+* compilation.finish()
+  * compilation.seal()
+    * compiler.hooks.afterCompile
+      * 执行 onCompiled(compilation)
+
 * 初始化 option。
 
-* 执行用户配置中所有的插件的。
+* 执行用户配置中所有的插件。
 
 * 根据配置执行 webpack 内部的插件。
 
@@ -2275,7 +2269,7 @@ compiler.run();
 
 Tapable 为 webpack 插件提供了发布订阅的钩子。每个钩子代表一个关键的事件节点。
 
-webpack 就是一系列的插件运行的事件流。
+webpack 就是基于这种发布订阅的一系列的插件运行的事件流。
 
 compiler 和 compilation 都是继承自 Tapable。
 

@@ -5424,3 +5424,647 @@ function isObject(obj) {
 //         });
 //     }
 // }
+// 函数柯里化
+// function currying(fn, ...args) {
+//     const length = fn.length;
+//     return function(...newArgs) {
+//         const allArgs = [...args, ...newArgs];
+//         if (allArgs.length < length) {
+//             return currying.call(this, fn, ...allArgs);
+//         } else {
+//             return fn.apply(this, ...allArgs);
+//         }
+//     }
+// }
+// function compose(...fns) {
+//     if (!fns.length) return v => v;
+//     if (fns.length === 1) return fns[0];
+//     return fns.reduce((pre, cur) => (...args) => pre(cur(...args))); 
+// }
+// class LazyManClass {
+//     constructor(name) {
+//         this.tasks = [];
+//         const task = () => {
+//             console.log(`hi, this is ${name}`);
+//             this.next();
+//         }
+//         this.tasks.push(task);
+//         setTimeout(() => {
+//             this.next();
+//         }, 0);
+//     }
+//     next() {
+//         const task = this.tasks.shift();
+//         task && task();
+//     }
+//     sleepWrapper(time, isFirst) {
+//         const task = () => {
+//             setTimeout(() => {
+//                 console.log(`等待${time}秒`);
+//                 this.next();
+//             }, time * 1000);
+//         }
+//         if (isFirst) {
+//             this.tasks.unshift(task); 
+//         } else {
+//             this.tasks.push(task);
+//         }
+//     }
+//     sleep(time) {
+//         this.sleepWrapper(time, false);
+//         return this;
+//     }
+//     sleepFirst(time) {
+//         this.sleepWrapper(time, true);
+//         return this;
+//     }
+//     eat(name) {
+//         const task = () => {
+//             console.log(`eat ${name}`);
+//             this.next();
+//         }
+//         this.tasks.push(task);
+//         return this;
+//     }
+// }
+// function LazyMan(name) {
+//     return new LazyManClass(name);
+// }
+// LazyMan('Tony').eat('lunch').eat('dinner').sleepFirst(5).sleep(4).eat('junk food');
+// function flat(arr, depth = 1) {
+//     if (!Array.isArray(arr) || depth <= 0) return arr;
+//     return arr.reduce((acc, cur) => {
+//         return Array.isArray(cur) ? acc.concat(flat(cur, depth - 1)) : acc.concat(cur);
+//     }, []);
+// }
+// String.prototype.trim = function(s) {
+//     return s.replace(/(^\s*)|(\s*$)/g, '');
+// }
+// function New(fn, ...args) {
+//     const o = Object.create(fn.prototype);
+//     const res = fn.call(o, ...args);
+//     if (res && (typeof res === 'object' || res === 'function')) return res;
+//     return o;
+// }
+// Function.prototype.call = function(obj, ...args) {
+//     obj = obj == null ? window : Object(obj);
+//     obj.fn = this;
+//     const res = obj.fn(...args);
+//     delete obj.fn;
+//     return res;
+// }
+// Function.prototype.apply = function(obj, args) {
+//     obj = obj == null ? window : Object(obj);
+//     obj.fn = this;
+//     const res = args ? obj.fn(...args) : obj.fn();
+//     delete obj.fn;
+//     return res;
+// }
+// Function.prototype.bind = function(obj, ...args) {
+//     obj = obj == null ? window : Object(obj);
+//     const fn = this;
+//     const bound = function(...newArgs) {
+//         if (this instanceof bound) {
+//             return new fn(...args, ...newArgs);
+//         } else {
+//             return fn.call(obj, ...args, ...newArgs);
+//         }
+//     }
+//     return bound;
+// }
+// Promise.all = function(promises) {
+//     return new Promise((resolve, reject) => {
+//         let count = 0;
+//         const result = [];
+//         if (promises.length === 0) {
+//             resolve(result);
+//         } else {
+//             for (let i = 0; i < promises.length; i++) {
+//                 Promise.resolve(promises[i]).then(res => {
+//                     count++;
+//                         result[i] = res;
+//                     if (count === promises.length) {
+//                         resolve(result);
+//                     } else {
+                        
+//                     }
+//                 }, err => {
+//                     reject(err);
+//                 });
+//             }
+//         }
+//     });
+// }
+// function uniqueArr(arr) {
+//     const map = new Map();
+//     const res = [];
+//     for (let i of arr) {
+//         if (map.has(i)) {
+//             res.push(i);
+//             map.set(i, 1);
+//         }
+//     }
+//     return res;
+// }
+// function uniqueArr(arr) {
+//     return [...new Set(arr)];
+// }
+// function deepClone(obj, hash = new WeakMap()) {
+//     if (typeof obj !== 'object' || obj == null) return obj;
+//     if (hash.has(obj)) return hash.get(obj);
+//     const res = Array.isArray(obj) ? [] : {};
+//     hash.set(obj, res);
+//     Reflect.ownKeys(obj).forEach(key => {
+//         res[key] = deepClone(obj[key], hash);
+//     });
+//     return res;
+// }
+// function throttle(fn, delay = 100) {
+//     let flag = true;
+//     return function(...args) {
+//         if (!flag) return;
+//         flag = false;
+//         setTimeout(() => {
+//             fn.call(this, ...args);
+//             flag = true;
+//         }, delay);
+//     }
+// }
+// function debounce(fn, delay = 100) {
+//     let timer = null;
+//     return function(...args) {
+//         if (timer) clearTimeout(timer);
+//         timer = setTimeout(() => {
+//             fn.call(this, ...args);
+//             timer = null;
+//         }, delay);
+//     }
+// }
+// class EventEmitter {
+//     constructor() {
+//         this.events = {};
+//     }
+//     on(name, handler) {
+//         this.events[name] = this.events[name] || [];
+//         this.events[name].push(handler);
+//     }
+//     emit(name, ...args) {
+//         if (!this.events[name]) throw new Error('改时间未注册');
+//         this.events[name].forEach(fn => fn.call(this, ...args));
+//     }
+//     off(name, handler) {
+//         if (!this.events[name]) throw new Error('改时间未注册')
+//         if (!handler) {
+//             delete this.events[name];
+//         } else {
+//             this.events[name] = this.events[name].filter(fn => fn !== handler);
+//         }
+//     }
+//     once(name, handler) {
+//         function fn(...args) {
+//             handler.call(this, ...args);
+//             this.off(name, fn);
+//         }
+//         this.on(name, fn);
+//     }
+// }
+// function sleep(time) {
+//     return new Promise(resolve => {
+//         setTimeout(() => {
+//             resolve();
+//         }, time);
+//     })
+// }
+// function sleep(time) {
+//     return new Promise(resolve => setTimeout(resolve, time));
+// }
+// function setInterval(fn, time) {
+//     function interval() {
+//         fn();
+//         setTimeout(interval, time);
+//     }
+//     return setTimeout(interval, time);
+// }
+// function setTimeout(fn, time) {
+//     const timer = setInterval(() => {
+//         fn();
+//         clearInterval(timer);
+//     }, time);
+//     return timer;
+// }
+// function query(name) {
+//     const search = window.location.search.substring(1);
+//     const reg = new RegExp(`(^|&)${name}=([^&]*)(&|$)`, 'i');
+//     const res = search.match(reg);
+//     return res ? res[2] : null;
+// }
+// function query(name) {
+//     const p = new URLSearchParams(location.search);
+//     return p.get(name);
+// }
+// function isObject(obj) {
+//     return typeof obj === 'object' && obj != null;
+// }
+// function flatten(obj) {
+//     if (!isObject(obj)) return obj;
+//     const res = {};
+//     function dfs(cur, prefix) {
+//         if (isObject(cur)) {
+//             if (Array.isArray(cur)) {
+//                 cur.forEach((item, index) => {
+//                     dfs(item, `${prefix}[${index}]`);
+//                 });
+//             } else {
+//                 for (let key in cur) {
+//                     dfs(cur[key], `${prefix}${prefix ? '.' : ''}${key}`);
+//                 }
+//             }
+//         } else {
+//             res[prefix] = cur;
+//         }
+//     }
+//     dfs(obj, '');
+//     return res;
+// }
+// function currying(fn, ...args) {
+//     const length = fn.length;
+//     return function(...newArags) {
+//         const allArgs = [...args, ...newArags];
+//         if (allArgs.length < length) {
+//             return currying.call(this, fn, ...allArgs);
+//         } else {
+//             return fn.apply(this, allArgs);
+//         }
+//     }
+// }
+// function compose(fns) {
+//     if (!fns.length) return v => v;
+//     if (fns.length === 1) return fns[0];
+//     return fns.reduce((pre, cur) => (...args) => pre(cur(...args)));
+// }
+// class LazyManClass {
+//     constructor(name) {
+//         this.tasks = [];
+//         const task = () => {
+//             console.log(`hi, this is ${name}`);
+//             this.next();
+//         }
+//         this.tasks.push(task);
+//         setTimeout(() => {
+//             this.next();
+//         }, 0);
+//     }
+//     next() {
+//         const task = this.tasks.shift();
+//         task && task();
+//     }
+//     sleepWrapper(time, isFirst) {
+//         const task = () => {
+//             setTimeout(() => {
+//                 console.log(`等待${time}秒`);
+//                 this.next();
+//             }, time * 1000);
+//         }
+//         if (isFirst) {
+//             this.tasks.unshift(task);
+//         } else {
+//             this.tasks.push(task);
+//         }
+//     }
+//     sleep(time) {
+//         this.sleepWrapper(time, false);
+//         return this;
+//     }
+//     sleepFirst(time) {
+//         this.sleepWrapper(time, true);
+//         return this;
+//     }
+//     eat(name) {
+//         const task = () => {
+//             console.log(`eat ${name}`);
+//             this.next();
+//         }
+//         this.tasks.push(task);
+//         return this;
+//     }
+// }
+// function LazyMan(name) {
+//     return new LazyManClass(name);
+// }
+// LazyMan('Tony').eat('lunch').eat('dinner').sleepFirst(5).sleep(4).eat('junk food');
+// (function() {
+//     var a = 1;
+// })()
+// fns = [];
+// for (var i = 0; i < 10; i++) {
+//     (function(i) {
+//         fns[i] = function() {
+//             console.log(i);
+//         }
+//     })(i);
+// }
+// fns[8]()
+// function _const(key, value) {
+//     window.key = value;
+//     Object.defineProperty(window, key, {
+//         enumerable: false,
+//         configurable: false,
+//         get() {
+//             return value;
+//         },
+//         set(val) {
+//             if (val !== value) {
+//                 throw Error('不能重复定义');
+//             } else {
+//                 return value;
+//             }
+//         }
+//     });
+// }
+// Array.prototype.push = function(...args) {
+//     for (let i = 0; i < args.length; i++) {
+//         this[this.length] = args[i];
+//     }
+//     return this.length;
+// }
+// Array.prototype.filter = function(fn) {
+//     const res = [];
+//     for (let i = 0; i < this.length; i++) {
+//         if (fn(this[i], i)) res.push(this[i]);
+//     }
+//     return res;
+// }
+// Array.prototype.map = function(fn) {
+//     const res = [];
+//     for (let i = 0; i < this.length; i++) {
+//         res.push(fn(this[i], i));
+//     }
+//     return res;
+// }
+// function flat(arr, depth) {
+//     if (!Array.isArray(arr) || depth <= 0) return arr;
+//     return arr.reduce((acc, cur) => {
+//         return Array.isArray(cur) ? acc.concat(flat(cur, depth - 1)) : acc.concat(cur);
+//     }, []);
+// }
+// Object.create = function(obj) {
+//     function F() {}
+//     F.prototype = obj;
+//     return new F();
+// }
+// Object.assign = function(target, sources) {
+//     if (target == null) throw new TypeError('connot reverse null or undefined to object');
+//     const res = Object(target);
+//     sources.forEach(source => {
+//         for (let key in source) {
+//             if (source.hasOwnProperty(key)) res[key] = source[key];
+//         }
+//     }); 
+//     return res;
+// }
+// function Instanceof(left, right) {
+//     while(true) {
+//         if (left == null) return false;
+//         if (left.__proto__ === right.prototype) return true;
+//         left = left.__proto__;
+//     }
+// }
+// JSON.parse = function(jsonStr) {
+//     return eval(`(${jsonStr})`);
+// }
+// JSON.parse = function(jsonStr) {
+//     return (new Function(`return ${jsonStr}`))();
+// }
+// function New(fn, ...args) {
+//     const obj = Object.create(fn.prototype);
+//     const res = fn.call(obj, ...args);
+//     if (res && (typeof res === 'object' || typeof res === 'function')) return res;
+//     return obj;
+// }
+// Function.prototype.call = function(obj, ...args) {
+//     obj = obj == null ? window : Object(obj);
+//     obj.fn = this;
+//     const res = obj.fn(...args);
+//     delete obj.fn;
+//     return res;
+// }
+// Function.prototype.apply = function(obj, args) {
+//     obj = obj == null ? window : Object(obj);
+//     obj.fn = this;
+//     const res = args ? obj.fn(...args) : obj.fn();
+//     delete obj.fn;
+//     return res;
+// }
+// Function.prototype.bind = function(obj, args) {
+//     obj = obj == null ? window : Object(obj);
+//     const fn = this;
+//     const bound = function(...newArgs) {
+//         if (this instanceof bound) {
+//             return new fn(...args, ...newArgs);
+//         } else {
+//             // return fn.call(obj, ...args, ...newArgs);
+//             obj.fn = fn;
+//             const res = obj.fn(...args, ...newArgs);
+//             delete obj.fn;
+//             return res;
+//         }
+//     }
+// }
+// Promise.all = function(promises) {
+//     return new Promise((resolve, reject) => {
+//         let count = 0;
+//         const result = [];
+//         if (promises.length === 0) {
+//             resolve(result);
+//         } else {
+//             for (let i = 0; i < promises.length; i++) {
+//                 Promise.resolve(promises[i]).then(res => {
+//                     count++;
+//                     result[i] = res;
+//                     if (count === promises.length) {
+//                         resolve(result);
+//                     }
+//                 }, err => {
+//                     reject(err);
+//                 })
+//             }
+//         }
+//     });
+// }
+// Promise.race = function(promises) {
+//     return new Promise((resolve, reject) => {
+//         for (let i = 0; i < promises.length; i++) {
+//             Promise.resolve(promises[i]).then(res => {
+//                 resolve(res);
+//             }, err => {
+//                 reject(err);
+//             })
+//         }
+//     });
+// }
+// function bindEvent(elem, type, selector, fn) {
+//     if (fn == null) {
+//         fn = selector;
+//         selector = null;
+//     }
+//     elem.addEventListener(type, e => {
+//         const target = e.target;
+//         if (selector) {
+//             if (selector.contains(target)) {
+//                 fn.call(target, e);
+//             }
+//         } else {
+//             fn.call(target, e);
+//         }
+//     })
+// }
+// function ajax(url, method, postData) {
+//     return new Promise((resolve, reject) => {
+//         const xhr = new XMLHttpRequest();
+//         xhr.open(method, url);
+//         xhr.setRequestHeader('Content-Type', 'application/json')
+//         xhr.onreadystatechange = function() {
+//             if (xhr.readyState === 4) {
+//                 if (xhr.status === 200) {
+//                     resolve(JOSN.parse(xhr.responseText));
+//                 } else {
+//                     reject(new Error(xhr.responseText));
+//                 }
+//             }
+//         }
+//         method === 'GET' ? xhr.send() : xhr.send(JSON.stringify(postData));
+//     });
+// }
+// function createScript(src) {
+//     const script = document.createElement('script');
+//     script.src = src;
+//     script.type = 'text/javascript';
+//     document.body.appendChild(script);
+// }
+// createScript('http://www.xxx.com/xxx.js?callback=handleResponse');
+// function handleResponse(data) {
+//     console.log(data);
+// }
+// handleResponse({a: 1});
+// function isValid(s) {
+//     if (s.length % 2 === 1) return false;
+//     const stack = [];
+//     const map = new Map([
+//         [')', '('],
+//         [']', '['],
+//         ['}', '{']
+//     ]);
+//     for (let i of s) {
+//         if (map.has(i)) {
+//             if (!stack.length || stack.pop() !== map.get(i)) return false;
+//         } else {
+//             stack.push(i);
+//         }
+//     }
+//     return !stack.length;
+// }
+// function moveZeroes(nums) {
+//     let j = 0;
+//     for (let i = 0; i < nums.length - 1; i++) {
+//         if (nums[i] !== 0) {
+//             nums[j] = nums[i];
+//             if (i !== j) {
+//                 nums[i] = 0;
+//             }
+//             j++;
+//         }
+//     }
+//     return nums;
+// }
+// function twoSum(nums, target) {
+//     const map = new Map();
+//     for (let i = 0; i < nums.length; i++) {
+//         if (map.has(target - nums[i])) {
+//             return [map.get(target - nums[i]), i];
+//         }
+//         map.set(nums[i], i);
+//     }
+//     return false;
+// }
+// function climbStairs(n) {
+//     if (n <= 2) return n;
+//     let a = 1, b = 2, r = 0;
+//     for (let i = 0; i < n - 2; i++) {
+//         r = a + b;
+//         a = b;
+//         b = r;
+//     }
+//     return r;
+// }
+// function quickSort(nums) {
+//     function recursion(nums, left, right) {
+//         if (right <= left) return;
+//         let center = findCenter(nums, left, right);
+//         recursion(nums, left, center - 1);
+//         recursion(nums, center + 1, right);
+//     }
+//     recursion(nums, 0, nums.length - 1);
+//     function findCenter(nums, left, right) {
+//         let flag = left, counter = left + 1;
+//         for (let i = left; i <= right; i++) {
+//             if (nums[i] < nums[flag]) {
+//                 [nums[i], nums[counter]] = [nums[counter], nums[i]];
+//                 counter++;
+//             }
+//         }
+//         [nums[flag], nums[counter - 1]] = [nums[counter - 1], nums[flag]];
+//         return counter - 1;
+//     }
+//     return nums;
+// }
+// function quickSort(nums) {
+//     function recursion(nums, left, right) {
+//         if (right <= left) return;
+//         const center = findCenter(nums, left, right);
+//         recursion(nums, left, center - 1);
+//         recursion(nums, center + 1, right);
+//     }
+//     recursion(nums, 0, nums.length - 1)
+//     function findCenter(nums, left, right) {
+//         let flag = left, counter = left + 1;
+//         for (let i = 0; i < nums.length; i++) {
+//             if (nums[i] < nums[flag]) {
+//                 [nums[i], nums[counter]] = [nums[counter], nums[i]];
+//                 counter++;
+//             }
+//         }
+//         [nums[flag], nums[counter - 1]] = [nums[counter - 1], nums[i]];
+//         return counter - 1;
+//     }
+//     return nums;
+// }
+// function binarySearch(arr, target) {
+//     let left = 0;
+//     let right = arr.length - 1;
+//     while(left <= right) {
+//         const mid = (left + right) >> 1;
+//         if (arr[mid] === target) {
+//             return mid;
+//         } else if (arr[mid] < target) {
+//             left = mid + 1;
+//         } else {
+//             right = mid - 1;
+//         }
+//     }
+//     return -1;
+// }
+function mySqrt(x) {
+    let left = 0;
+    let right = x;
+    while (left <= right) {
+        let mid = (left + right) >> 1;
+        if (mid * mid === x) {
+            return mid;
+        } else if (mid * mid < x) {
+            left = mid + 1;
+        } else {
+            right = mid - 1;
+        }
+    }
+    return right;
+}
