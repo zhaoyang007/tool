@@ -6052,19 +6052,39 @@ function isObject(obj) {
 //         }
 //     }
 //     return -1;
+// // }
+// function mySqrt(x) {
+//     let left = 0;
+//     let right = x;
+//     while (left <= right) {
+//         let mid = (left + right) >> 1;
+//         if (mid * mid === x) {
+//             return mid;
+//         } else if (mid * mid < x) {
+//             left = mid + 1;
+//         } else {
+//             right = mid - 1;
+//         }
+//     }
+//     return right;
 // }
-function mySqrt(x) {
-    let left = 0;
-    let right = x;
-    while (left <= right) {
-        let mid = (left + right) >> 1;
-        if (mid * mid === x) {
-            return mid;
-        } else if (mid * mid < x) {
-            left = mid + 1;
-        } else {
-            right = mid - 1;
-        }
-    }
-    return right;
-}
+// function maxArea(height) {
+//     let max = 0;
+//     for (let i = 0, j = height.length - 1; i < j; ) {
+//         const minHeight = height[i] < height[j] ? height[i++] : height[j--];
+//         const area = minHeight * (j - i + 1);
+//         console.log(i, j);
+//         max = Math.max(max, area);
+//     }
+//     return max;
+// }
+// console.log(maxArea([5,3,7,2,5,5,2,5]))
+// function maxArea(height) {
+//     let max = 0;
+//     for (let i = 0, j = height.length - 1; i < j; ) {
+//         const minHeight = height[i] < height[j] ? height[i++] : height[j--];
+//         const area = minHeight * (j - i + 1);
+//         max = Math.max(max, area);
+//     }
+//     return max;
+// }
