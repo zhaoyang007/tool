@@ -6088,3 +6088,1123 @@ function isObject(obj) {
 //     }
 //     return max;
 // }
+// function flat(arr, depth) {
+//     if (!Array.isArray(arr) || depth <= 0) return arr;
+//     return arr.reduce((acc, cur) => {
+//         return Array.isArray(cur) ? acc.concat(flat(cur, depth - 1)) : acc.concat(cur);
+//     }, []);
+// }
+// String.prototype.trim = function(s) {
+//     return s.replace(/(^\s*)|(\s*$)/g, '');
+// }
+// String.prototype.repeat = function(n) {
+//     return n > 0 ? this.repeat(n - 1) + this : '';
+// }
+// Object.create = function(obj) {
+//     function F() {};
+//     F.prototype = obj;
+//     return new F();
+// }
+// function Instanceof(left, right) {
+//     while(true) {
+//         if (left.__proto === right.prototype) return true;
+//         if (left.__proto__ == null) return false;
+//         left = left.__proto__;
+//     }   
+// }
+// JSON.parse = function(jsonStr) {
+//     return (new Function(`return ${jsonStr}`))();
+// }
+// Object.assign = function(target, ...sources) {
+//     if (target == null) throw new TypeError('cannot revert null or undefined to object');
+//     const res = Object(target);
+//     sources.forEach(source => {
+//         for (let key in source) {
+//             if (source.hasOwnProperty(key)) res[key] = source[key];
+//         }
+//     });
+//     return res;
+// }
+// function New(fn, ...args) {
+//     const obj = Object.create(fn.prototype);
+//     const res = fn.call(obj, ...args);
+//     if (res && (typeof res === 'object' || typeof res === 'function')) return res;
+//     return obj;
+// }
+// Function.prototype.call = function(obj, ...args) {
+//     obj = obj == null ? window : Object(obj);
+//     obj.fn = this;
+//     const res = obj.fn(...args);
+//     delete obj.fn;
+//     return res;
+// }
+// Function.prototype.apply = function(obj, args) {
+//     obj = obj == null ? window : Object(obj);
+//     obj.fn = this;
+//     const res = args ? obj.fn(...args) : obj.fn();
+//     delete obj.fn;
+//     return res;
+// }
+// Function.prototype.bind = function(obj, ...args) {
+//     const fn = this;
+//     const bound = function(...newArgs) {
+//         if (this instanceof bound) {
+//             return new fn(...args, ...newArgs);
+//         } else {
+//             // return fn.call(obj, ...args, ...newArgs);
+//             obj.fn = fn;
+//             const res = obj.fn(...args, ...newArgs);
+//             delete obj.fn;
+//             return res;
+//         }
+//     }
+//     return bound;
+// }
+// Promise.all = function(promises) {
+//     return new Promise((resolve, reject) => {
+//         const result = [];
+//         let counter = 0;
+//         if (!promises.length) {
+//             resolve(result);
+//         } else {
+//             for (let i = 0; i < promises.length; i++) {
+//                 Promise.resolve(promises[i]).then(res => {
+//                     counter++;
+//                     result[i] = res;
+//                     if (counter === promises.length) {
+//                         resolve(result);
+//                     }
+//                 }, err => {
+//                     reject(err);
+//                 });
+//             }
+//         }
+//     });
+// }
+// Promise.race = function(promises) {
+//     return new Promise((resolve, reject) => {
+//         for (let i = 0; i < promises.length; i++) {
+//             Promise.resolve(promises[i]).then(res => {
+//                 resolve(res);
+//             }, err => {
+//                 reject(err);
+//             });
+//         }
+//     });
+// }
+// function uniqueArr(arr) {
+//     const map = new Map();
+//     const res = [];
+//     for (let item of arr) {
+//         if (!map.has(item)) {
+//             res.push(item);
+//             map.set(item, 1);
+//         }
+//     }
+//     return res;
+// }
+// function uniqueArr(arr) {
+//     return [...new Set(arr)];
+// }
+// function deepClone(obj, hash = new WeapMap()) {
+//     if (typeof obj !== 'object' || obj == null) return obj;
+//     if (hash.has(obj)) return hash.get(obj);
+//     const res = Array.isArray(obj) ? [] : {};
+//     hash.set(obj, res);
+//     Reflect.ownKeys(obj).forEach(key => {
+//         res[key] = deepClone(obj[key], hash);
+//     });
+//     return res;
+// }
+// function throttle(fn, delay) {
+//     let flag = true;
+//     return function(...args) {
+//         if (!flag) return;
+//         flag = false;
+//         setTimeout(() => {
+//             fn.call(this, ...args);
+//             flag = true;
+//         }, delay);
+//     }
+// }
+// function debounce(fn, delay) {
+//     let timer = null;
+//     return function(...args) {
+//         if (timer) clearTimeout(timer);
+//         timer = setTimeout(() => {
+//             fn.call(this, ...args);
+//             timer = null;
+//         }, delay);
+//     }
+// }
+// class EventEmiter {
+//     constructor() {
+//         this.events = {};
+//     }
+//     on(name, handler) {
+//         this.events[name] = this.events[name] || [];
+//         this.events[name].push(handler);
+//     }
+//     emit(name, ...args) {
+//         if (!this.events[name]) throw new Error('该事件未注册');
+//         this.events[name].forEach(fn => fn.call(this, ...args));
+//     }
+//     off(name, handler) {
+//         if (!this.events[name]) throw new Error('该事件未注册');
+//         if (handler) {
+//             this.events[name] = this.events[name].filter(fn => fn !== handler);
+//         } else {
+//             delete this.events[name];
+//         }
+//     }
+//     once(name, handler) {
+//         function fn(...args) {
+//             handler.call(this, ...args);
+//             this.off(name, fn);
+//         }
+//         this.on(name, fn);
+//     }
+// }
+// function sleep(time) {
+//     return new Promise(resolve => setTimeout(resolve, time));
+// }
+// function bindEvent(elem, type, selector, fn) {
+//     if (fn == null) {
+//         fn = selector;
+//         selector = null;
+//     }
+//     elem.addEventListener(type, function(e) {
+//         const target = e.target;
+//         if (selector) {
+//             if (selector.contains(target)) {
+//                 fn.call(target. e);
+//             }
+//         } else {
+//             fn.call(target, e);
+//         }
+//     });
+// }
+// function ajax(url, method, postData) {
+//     return new Promise((resolve, reject) => {
+//         const xhr = new XMLHttpRequest();
+//         xhr.open(method, url);
+//         xhr.setRequestHeader('Content-Type', 'application/json');
+//         xhr.onreadystatechange = function() {
+//             if (xhr.readyState === 4) {
+//                 if (xhr.status === 200) {
+//                     resolve(JSON.parse(xhr.responseText));
+//                 } else {
+//                     reject(new Error(xhr.responseText));
+//                 }
+//             }
+//         }
+//         method === 'GET' ? xhr.send() : xhr.send(JSON.stringify(postData));
+//     });
+// }
+// function setInterval(fn, time) {
+//     function interval() {
+//         fn();
+//         setTimeout(interval, time);
+//     }
+//     return setTimeout(interval, time);
+// }
+// function setTimeout(fn, time) {
+//     const timer = setInterval(() => {
+//         fn();
+//         clearInterval(timer);
+//     }, time);
+//     return timer;
+// }
+// function createScript(src) {
+//     const script = document.createElement('script');
+//     script.src = src;
+//     script.type = 'text/javascript';
+//     document.body.appendChild(script);
+// }
+// createScript('http://www.xxx.com/xxx.js?callback=handleResponse');
+// function handleResponse(res) {
+//     console.log(res);
+// }
+// handleResponse({a: 1,b:2})
+// function query(name) {
+//     const search = window.location.search.substring(1);
+//     const reg = new RegExp(`(^|&)${name}=([^&]*)(&|$)`, 'i');
+//     const res = search.match(reg);
+//     return res ? res[2] : null;
+// }
+// function query(name) {
+//     const p = new URLSearchParams(location.search);
+//     return p.get(name);
+// }
+// function isObject(val) {
+//     return typeof val === 'object' && val !== null;
+// }
+// function flatten(obj) {
+//     if (!isObject(obj)) return obj;
+//     const res = {};
+//     function dfs(cur, prefix) {
+//         if (isObject(cur)) {
+//             if (Array.isArray(cur)) {
+//                 cur.forEach((item, index) => {
+//                     dfs(item, `${prefix}[${index}]`);
+//                 });
+//             } else {
+//                 for (let key in cur) {
+//                     dfs(cur[key], `${prefix}${prefix ? '.' : ''}${key}`)
+//                 }
+//             }
+//         } else {
+//             res[prefix] = cur;
+//         }
+//     }
+//     dfs(obj, '');
+//     return res;
+// }
+// function currying(fn, ...args) {
+//     const length = fn.length;
+//     return function(...newArgs) {
+//         const allArgs = [...args, ...newArgs];
+//         if (allArgs.length < length) {
+//             return currying.call(this, fn, ...allArgs);
+//         } else {
+//             return fn.call(this, ...allArgs);
+//         }
+//     }
+// }
+// function compose(...fns) {
+//     if (!fns.length) return v => v;
+//     if (fns.length === 1) return fns[0];
+//     return fns.reduce((pre, cur) => (...args) => pre(cur(...args)));
+// }
+// class LazyManClass {
+//     constructor(name) {
+//         this.tasks = [];
+//         const task = () => {
+//             console.log(`hi, this is ${name}`);
+//             this.next();
+//         }
+//         this.tasks.push(task);
+//         setTimeout(() => {
+//             this.next();
+//         }, 0);
+//     }
+//     next() {
+//         const task = this.tasks.shift();
+//         task && task();
+//     }
+//     sleepWrapper(time, isFirst) {
+//         const task = () => {
+//             setTimeout(() => {
+//                 console.log(`等待${time}秒`);
+//                 this.next();
+//             }, time * 1000);
+//         }
+//         if (isFirst) {
+//             this.tasks.unshift(task);
+//         } else {
+//             this.tasks.push(task);
+//         }
+//     }
+//     sleepFirst(time) {
+//         this.sleepWrapper(time, true);
+//         return this;
+//     }
+//     sleep(time) {
+//         this.sleepWrapper(time, false);
+//         return this;
+//     }
+//     eat(name) {
+//         const task = () => {
+//             console.log(`eat ${name}`);
+//             this.next();
+//         }
+//         this.tasks.push(task);
+//         return this;
+//     }
+// }
+// function LazyMan(name) {
+//     return new LazyManClass(name);
+// }
+// LazyMan('tom').eat('lunch').eat('dinner').sleepFirst(5).sleep(4).eat('junk food');
+// function inorder(root) {
+//     const res = [];
+//     function dfs(root) {
+//         if (root) {
+//             dfs(root.left);
+//             res.push(root.val);
+//             dfs(root.right);
+//         }
+//     }
+//     dfs(root);
+//     return res;
+// }
+// function topK(nums, k) {
+//     const a = [];
+//     const map = new Map();
+//     for (let i of nums) {
+//         const value = map.has(i) ? map.get(i) + 1 : 1;
+//         map.set(i, value);
+//     }
+//     const arr = [...map.values()].sort((a, b) => b - a);
+//     for (let i = 0; i < k; i++) {
+//         const value = arr.shift();
+//         for (let [k, v] of map) {
+//             if (v === value) {
+//                 a.push(k);
+//                 map.delete(k);
+//                 break;
+//             }
+//         }
+//     }
+//     return a;
+// }
+// function recursion(level, params) {
+//     if (level > MAX_LEVEL) {
+//         process_result;
+//         return;
+//     }
+//     process(level, params);
+//     recursion(level + 1, params)
+// }
+// function factorial(n) {
+//     function recursion(n) {
+//         if (n === 0) return 1;
+//         return n * recursion(n - 1);
+//     }
+//     return recursion(n);
+// }
+// function generate(n) {
+//     let a = [];
+//     function recursion(left, right, n, s) {
+//         if (left === n && right === n) {
+//             a.push(s);
+//             return;
+//         }
+//         if (left < n) recursion(left + 1, right, n, s + '(');
+//         if (left > right) recursion(left, right + 1, n, s + ')'); 
+//     }
+//     recursion(0, 0, n, '');
+//     return a;
+// }
+// function generate(n) {
+//     const a = [];
+//     function recursion(left, right, n, s) {
+//         if (left === n && right === n) {
+//             a.push(s);
+//             return;
+//         }
+//         if (left < n) recursion(left + 1, right, n, s + '(');
+//         if (left > right) recursion(left, right + 1, n, s + ')');
+//     }
+//     recursion(0, 0, n, '');
+//     return a;
+// }
+// function quickSort(nums) {
+//     function recursion(nums, left, right) {
+//         if (right <= left) return;
+//         const center = findCenter(nums, left, right);
+//         recursion(nums, left, center - 1);
+//         recursion(nums, center + 1, right);
+//     }
+//     function findCenter(nums, left, right) {
+//         let flag = left, counter = left + 1;
+//         for (let i = left; i <= right; i++) {
+//             if (nums[i] < nums[flag]) {
+//                 [nums[i], nums[counter]] = [nums[counter], nums[i]];
+//                 counter++;
+//             }
+//         }
+//         [nums[flag], nums[counter - 1]] = [nums[counter - 1], nums[flag]];
+//         return counter - 1;
+//     }
+//     return nums;
+// }
+// function isValidBST(root) {
+//     function recursion(root, lower, upper) {
+//         if (root == null) return true;
+//         if (root.val <= lower || root.val >= upper) return false;
+//         return recursion(root.left, lower, root.val) && recursion(root.right, root.val, upper);
+//     }
+//     return recursion(root, -Infinity, Infinity);
+// }
+// function isValidBST(root) {
+//     function recursion(root, lower, upper) {
+//         if (root == null) return true;
+//         if (root.val <= lower || root.val >= upper) return false;
+//         return recursion(root.left, lower, root.val) && recursion(root.right, root.val, upper);
+//     }
+//     return recursion(root, -Infinity, Infinity);
+// }
+// function maxDepth(root) {
+//     function recursion(root) {
+//         if (root == null) return 0;
+//         const leftDepth = recursion(root.left);
+//         const rightDepth = recursion(root.right);
+//         return Math.max(leftDepth, rightDepth) + 1;
+//     }
+//     return recursion(root);
+// }    
+// function maxDepth(root) {
+//     function recursion(root) {
+//         if (root == null) return 0;
+//         const leftDepth = recursion(root.left);
+//         const rightDepth = recursion(root.right);
+//         return Math.max(leftDepth, rightDepth) + 1;
+//     }
+//     return recursion(root);
+// }
+// function maxSlidingWindow(nums, k) {
+//     const a = [];
+//     const q = [];
+//     for (let i = 0; i < nums.length; i++) {
+//         while(q.length && nums[i] >= nums[q[q.length - 1]]) {
+//             q.pop();
+//         }
+//         q.push(i);
+//         while(q[0] < i - k + 1) {
+//             q.shift();
+//         }
+//         if (i >= k - 1) a.push(nums[q[0]]);
+//     }
+//     return a;
+// }
+// function maxSlidingWindow(nums, k) {
+//     const a = [];
+//     const q = [];
+//     for (let i = 0; i < nums.length; i++) {
+//         while(q.length && nums[i] >= nums[q[q.length - 1]]) {
+//             q.pop();
+//         }
+//         q.push(i);
+//         while(q[0] < i - k + 1) {
+//             q.shift();
+//         }
+//         if (i >= k - 1) a.push(nums[q[0]]);
+//     }
+//     return a;
+// }
+// function isAnagram(s, t) {
+//     if (s.length !== t.length) return false;
+//     const map = new Map();
+//     for (let i of s) {
+//         const value = map.has(i) ? map.get(i) + 1 : 1;
+//         map.set(i, value);
+//     }
+//     for (let i of t) {
+//         if (map.has(i)) {
+//             map.set(i, map.get(i) - 1);
+//             if (map.get(i) < 0) return false;
+//         } else {
+//             return false;
+//         }
+//     }
+//     return true;
+// }
+// function maxS(s) {
+//     const map = new Map();
+//     for (let i of s) {
+//         const value = map.has(i) ? map.get(i) + 1 : 1;
+//         map.set(i, value);
+//     }
+//     const arr = [...map.values()].sort((a, b) => b - a);
+//     const value = arr.shift();
+//     for (let [k, v] of map) {
+//         if (v === value) {
+//             return [k, v];
+//         }
+//     }
+// }
+// function findRepeat(s) {
+//     let pre = '';
+//     let count = 0;
+//     const map = new Map();
+//     for (let i = 0; i < s.length; i++) {
+//         let value = 0;
+//         const tmp = s[i] + '_' + count;
+//         if (s[i] === pre) {
+//             value = map.get(tmp);
+//         } else {
+//             count = i;
+//             value = 1;
+//             pre = s[i];
+//         }
+//         map.set(tmp, value);
+//     }
+//     console.log(map);
+//     const arr = [...map.values()].sort((a, b) => b - a);
+//     for (let [k, v] of map) {
+//         if (v === arr[0]) return [k.split('_')[0], v]
+//     }
+// }
+// console.log(findRepeat('aaabbccccdd'));
+// function getMaxRepeat(s) {
+//     const res = {};
+//     const arr = s.match(/(\w)\1*/g);
+//     let maxLen = 0;
+//     for (let item of arr) {
+//         maxLen = Math.max(maxLen, item.length);
+//     }
+//     for (let item of arr) {
+//         if (item.length === maxLen) {
+//             res[item[0]] = maxLen;
+//         }
+//     }
+//     return res;
+// }
+// function getMaxRepeat(s) {
+//     const res = {};
+//     const arr = s.match(/(\w)\1*/g);
+//     const maxLen = Math.max(...arr.map(s => s.length));
+//     for (let item of arr) {
+//         if (item.length === maxLen) {
+//             res[item[0]] = maxLen;
+//         }
+//     }
+//     return res;
+// }
+// console.log(getMaxRepeat('abkejsbcwqaa'));
+// function inorder(root) {
+//     const a = [];
+//     function recursion(root) {
+//         if (root == null) return;
+//         recursion(root.left);
+//         a.push(root.val);
+//         recursion(root.right);
+//     }
+//     recursion(root);
+//     return a;
+// }
+// function levelOrder(root) {
+//     const a = [];
+//     function dfs(root, index) {
+//         if (root == null) return;
+//         a[index] ? a[index].push(root.val) : a[index] = [root.val]; 
+//         dfs(root.left, index + 1);
+//         dfs(root.right, index + 1);
+//     }
+//     dfs(root, 0);
+//     return a;
+// }
+// function levelOrder(root) {
+//     const a = [];
+//     function dfs(root, index) {
+//         if (root == null) return;
+//         a[index] ? a[index].push(root.val) : a[index] = [root.val];
+//         dfs(root.left, index + 1);
+//         dfs(root.right, index + 1);
+//     }
+//     dfs(root, 0);
+//     return a;
+// }
+// function levelOrder(root) {
+//     if (root == null) return [];
+//     const a = [];
+//     const q = [root];
+//     while(q.length) {
+//         let res = [];
+//         let length = q.length;
+//         for (let i = 0; i < length; i++) {
+//             const node = q.shift();
+//             res.push(node.val);
+//             if (node.left != null) q.push(node.left);
+//             if (node.right != null) q.push(node.right);
+//             length--;
+//         } 
+//         a.push(res);
+//     }
+//     return a;
+// }
+// function quickSort(nums) {
+//     function recursion(nums, left, right) {
+//         if (right <= left) return;
+//         const mid = findMid(nums, left, right);
+//         recursion(nums, left, mid - 1);
+//         recursion(nums, mid + 1, right);
+//     }
+//     recursion(nums, 0, nums.length - 1);
+//     function findMid(nums, left, right) {
+//         let flag = left, counter = left + 1;
+//         for (let i = left; i <= right; i++) {
+//             if (nums[i] < nums[flag]) {
+//                 [nums[i], nums[counter]] = [nums[counter], nums[i]];
+//                 counter++;
+//             }
+//         }
+//         [nums[counter - 1], nums[flag]] = [nums[flag], nums[counter - 1]];
+//         return counter - 1;
+//     }
+//     return nums;
+// }
+// function search(nums, target) {
+//     let left = 0;
+//     let right = nums.length - 1;
+//     while (left <= right) {
+//         const mid = (left + right) >> 1;
+//         if (nums[mid] === target) return mid;
+//         if (nums[left] <= nums[mid]) {
+//             if (target >= nums[left] && target <= nums[mid]) {
+//                 right = mid - 1;
+//             } else {
+//                 left = mid + 1;
+//             }
+//         } else {
+//             if (target >= nums[mid] && target <= nums[right]) {
+//                 left = mid + 1;
+//             } else {
+//                 right = mid - 1;
+//             }
+//         }
+//     }
+//     return -1;
+// }
+// function levelOrder(root) {
+//     const a = [];
+//     function dfs(root, index) {
+//         if (root == null) return;
+//         a[index] ? a[index].push(root.val) : a[index] = [root.val];
+//         dfs(root.left, index + 1);
+//         dfs(root.right, index + 1);
+//     }
+//     dfs(root, 0);
+//     return a;
+// }
+// function maxDepth(root) {
+//     function dfs(root) {
+//         if (root == null) return 0;
+//         const leftDepth = dfs(root.left);
+//         const rightDepth = dfs(root.right);
+//         return Math.max(leftDepth, rightDepth) + 1;
+//     }
+//     return dfs(root);
+// }
+// function maxDepth(root) {
+//     if (root == null) return 0;
+//     const leftDepth = maxDepth(root.left);
+//     const rightDepth = maxDepth(root.right);
+//     return Math.max(leftDepth, rightDepth) + 1;
+// }
+// function isValidBST(root) {
+//     function dfs(root, lower, upper) {
+//         if (root == null) return true;
+//         if (root.val <= lower || root.val >= upper) return false;
+//         return dfs(root.left, lower, root.val) && dfs(root.right, root.val, upper);
+//     }
+//     return dfs(root, -Infinity, Infinity);
+// }
+// function generate(n) {
+//     const a = [];
+//     function dfs(left, right, n, s) {
+//         if (left === n && right === n) {
+//             a.push(s);
+//             return;
+//         }
+//         if (left < n) dfs(left + 1, right, n, s + '(');
+//         if (right < left) dfs(left, right + 1, n, s + ')');
+//     }
+//     dfs(0, 0, '');
+//     return a;
+// }
+// function isValid(s, t) {
+//     if (s.length !== t.length) return false;
+//     const map = new Map();
+//     for (let i of s) {
+//         const value = map.has(i) ? map.get(i) + 1 : 1;
+//         map.set(i, value);
+//     }
+//     for (let i of t) {
+//         if (map.has(i)) {
+//             map.set(i, map.get(i) - 1);
+//             if (map.get(i) < 0) return false;
+//         } else {
+//             return false;
+//         }
+//     }
+//     return true;
+// }
+// function maxSlidingWindow(nums, k) {
+//     const a = [];
+//     const q = [];
+//     for (let i = 0; i < nums.length; i++) {
+//         while(q.length && nums[i] >= nums[q[q.length - 1]]) {
+//             q.pop();
+//         }
+//         q.push(i);
+//         while(q[0] < i - k + 1) {
+//             q.shift();
+//         }
+//         if (i >= k - 1) a.push(nums[q[0]]);
+//     }
+//     return a;
+// }
+// function isValid(s) {
+//     if (s.length % 2 === 1) return false;
+//     const stack = [];
+//     const map = new Map([
+//         [')', '('],
+//         [']', '['],
+//         ['}', '{']
+//     ]);
+//     for (let i of s) {
+//         if (map.has(i)) {
+//             if (!stack.length || stack.pop() !== map.get(i)) {
+//                 return false;
+//             }
+//         } else {
+//             stack.push(i);
+//         }
+//     }
+//     return !stack.length;
+// }
+// function isValid(s) {
+//     if (s.length % 2 === 1) return false;
+//     const stack = [];
+//     const map = new Map([
+//         [')', '('],
+//         [']', '['],
+//         ['}', '{']
+//     ]);
+//     for (let i of s) {
+//         if (map.has(i)) {
+//             if (!stack.length || stack.pop() !== map.get(i)) {
+//                 return false;
+//             }
+//         } else {
+//             stack.push(i);
+//         }
+//     }
+//     return !stack.length;
+// }
+// function hasCycle(head) {
+//     if (head == null || head.next == null) return false;
+//     let slow = head;
+//     let fast = head.next;
+//     while(fast != null && fast.next != null) {
+//         if (fast === slow) return true;
+//         slow = slow.next;
+//         fast = fast.next.next;
+//     }
+//     return false;
+// }
+// function twoSum(nums, target) {
+//     const map = new Map();
+//     for (let i = 0; i < nums.length; i++) {
+//         if (map.get(target - nums[i])) {
+//             return [i. map.get(target - nums[i])];
+//         }
+//         map.set(nums[i], i);
+//     }
+//     return [];
+// }
+// function climbStairs(n) {
+//     const map = new Map();
+//     function recursion(n) {
+//         if (n <= 2) return n;
+//         if (map.has(n)) return map.get(n);
+//         const value = recursion(n - 1) + recursion(n - 2);
+//         map.set(n, value);
+//         return value;
+//     }
+//     return recursion(n);
+// }
+// function climbStairs(n) {
+//     if (n <= 2) return n;
+//     let a = 1, b = 2, r = 0;
+//     for (let i = 0; i < n - 2; i++) {
+//         r = a + b;
+//         a = b;
+//         b = r;
+//     }
+//     return r;
+// }
+// function moveZeroes(nums) {
+//     let j = 0;
+//     for (let i = 0; i < nums.length; i++) {
+//         if (nums[i] !== 0) {
+//             nums[j] = nums[i];
+//             if (i !== j) {
+//                 nums[i] = 0;
+//             }
+//             j++;
+//         }
+//     }
+//     return nums;
+// }
+// function maxRepeat(s) {
+//     const res = {};
+//     const arr = s.match(/(\w)\1*/g);
+//     const max = Math.max(...arr.map(s => s.length));
+//     for (let item of arr) {
+//         if (item.length === max) {
+//             res[item[0]] = max;
+//         }
+//     }
+//     return res;
+// }
+// function maxArea(height) {
+//     let max = 0;
+//     for (let i = 0, j = height.length - 1; i < j; ) {
+//         const maxHeight = height[i] < height[j] ? height[i++] : height[j--];
+//         const area = maxHeight * (j - i + 1);
+//         max = Math.max(max, area);
+//     }
+//     return max;
+// }
+// function flat(arr, depth) {
+//     if (!Array.isArray(arr) || depth <= 0) return arr;
+//     return arr.reduce((acc, cur) => {
+//         return Array.isArray(cur) ? acc.concat(flat(cur, depth - 1)) : acc.concat(cur);
+//     }, []);
+// }
+// function New(fn, ...args) {
+//     const obj = Object.create(fn.prototype);
+//     const res = fn.call(obj, ...args);
+//     if (res && (typeof res === 'object' || typeof res === 'function')) return res;
+//     return obj;
+// }
+// Function.prototype.bind = function(obj, ...args) {
+//     const fn = this;
+//     const bound = function(...newArgs) {
+//         if (this instanceof bound) {
+//             return new fn(...args, ...newArgs);
+//         } else {
+//             return fn.call(obj, ...args, ...newArgs);
+//         }
+//     }
+//     return bound;
+// }
+// Promise.all = function(promises) {
+//     return new Promise((resolve, reject) => {
+//         const result = [];
+//         let count = 0;
+//         if (promises.length === 0) {
+//             resolve(result);
+//         } else {
+//             for (let i = 0; i < promises.length; i++) {
+//                 Promise.resolve(promises[i]).then(res => {
+//                     count++;
+//                     result[i] = res;
+//                     if (count === promises.length) {
+//                         resolve(result);
+//                     }
+//                 }, err => {
+//                     reject(err);
+//                 });
+//             }
+//         }
+//     });
+// }
+// Promise.race = function(promises) {
+//     return new Promise((resolve, reject) => {
+//         Promise.resolve(promises[i]).then(res => {
+//             resolve(res);
+//         }, err => {
+//             reject(err);
+//         })
+//     });
+// }
+// function deepClone(obj, hash = new WeakMap()) {
+//     if (typeof obj !== 'object' || obj == null) return obj;
+//     if (hash.has(obj)) return hash.get(obj);
+//     const res = Array.isArray(obj) ? [] : {};
+//     hash.set(obj, res);
+//     Reflect.ownKeys(obj).forEach(key => {
+//         res[key] = deepClone(obj[key], hash);
+//     });
+//     return res;
+// }
+// function throttle(fn, time) {
+//     let flag = true;
+//     return function(...args) {
+//         if (!flag) return;
+//         flag = false;
+//         setTimeout(() => {
+//             fn.call(this, ...args);
+//             flag = true;
+//         }, time);
+//     }
+// }
+// function debounce(fn, time) {
+//     let timer = null;
+//     return function(...args) {
+//         if (timer) clearTimeout(timer);
+//         timer = setTimeout(() => {
+//             fn.call(this, ...args);
+//             timer = null;
+//         }, time);
+//     }
+// }
+// function setInterval(fn, time) {
+//     function interval() {
+//         fn();
+//         setTimeout(interval, time);
+//     }
+//     return setTimeout(interval, time);
+// }
+// function setTimeout(fn, time) {
+//     const timer = setInterval(() => {
+//         fn();
+//         clearInterval(timer);
+//     });
+//     return timer;
+// }
+// function query(name) {
+//     const search = location.search.substring(1);
+//     const reg = new RegExp(`(^|&)${name}=([^&]*)(&|$)`, 'i');
+//     const res = search.match(reg);
+//     return res ? res[2] : null;
+// }
+// function query(name) {
+//     const p = new URLSearchParams(location.search);
+//     return p.get(name);
+// }
+// function isObject(val) {
+//     return typeof val === 'object' && val !== null;
+// }
+// function flatten(obj) {
+//     const res = {};
+//     function dfs(cur, prefix) {
+//         if (isObject) {
+//             if (Array.isArray(cur)) {
+//                 cur.forEach((item, index) => {
+//                     dfs(item, `${prefix}[${index}]`);
+//                 });
+//             } else {
+//                 for (let key in cur) {
+//                     dfs(cur[key], `${prefix}${prefix ? '.' : ''}${key}`)
+//                 }
+//             }
+//         } else {
+//             res[prefix] = cur;
+//         }
+//     }
+//     dfs(obj, '');
+//     return res;
+// }
+// function maxRepeat(s) {
+//     const res = {};
+//     const arr = s.match(/(\w)\1*/g);
+//     const maxLen = Math.max(...arr.map(item => item.length));
+//     for (let i of arr) {
+//         if (i.length === maxLen) {
+//             res[i[0]] = maxLen;
+//         }
+//     }
+//     return res;
+// }
+// function isValid(s) {
+//     const map = new Map([
+//         [')', '('],
+//         [']', '['],
+//         ['}', '{']
+//     ]);
+//     const stack = [];
+//     for (let i of s) {
+//         if (map.has(i)) {
+//             if (!stack.length || stack.pop() !== map.get(i)) {
+//                 return false;
+//             }
+//         } else {
+//             return stack.push(i);
+//         }
+//     }
+//     return !stack.length;
+// }
+// function maxSlidingWindow(nums, k) {
+//     const a = [];
+//     const q = [];
+//     for (let i = 0; i < nums.length; i++) {
+//         while(q.length && nums[i] >= nums[q[q.length - 1]]) {
+//             q.pop();
+//         }
+//         q.push(i);
+//         while(q[0] < i - k + 1) {
+//             q.shift();
+//         }
+//         if (i >= k - 1) a.push(nums[q[0]]);
+//     }
+//     return a;
+// }
+// function generate(n) {
+//     const res = [];
+//     function dfs(left, right, n, s) {
+//         if (left === n && right === n) {
+//             res.push(s);
+//             return;
+//         }
+//         if (left < n) dfs(left + 1, right, n, s + '(');
+//         if (left > right) dfs(left, right + 1, n, s + ')');
+//     }
+//     dfs(0, 0, n, '');
+//     return res;
+// }
+// function isValidBST(root) {
+//     function dfs(root, lower, upper) {
+//         if (root == null) return true;
+//         if (root.val <= lower || root.val >= upper) return false;
+//         return dfs(root.left, lower, root.val) && dfs(root.right, root.val, upper);
+//     }
+//     return dfs(root, -Infinity, Infinity);
+// }
+// function maxDepth(root) {
+//     function dfs(root) {
+//         if (root == null) return 0;
+//         const leftDepth = dfs(root.left);
+//         const rightDepth = dfs(root.right);
+//         return Math.max(leftDepth, rightDepth) + 1;
+//     }
+//     return dfs(root);
+// }
+// function levelOrder(root) {
+//     const a = [];
+//     function dfs(root, index) {
+//         if (root == null) return;
+//         a[index] ? a[index].push(root.val) : a[inde] = [root.val];
+//         dfs(root.left, index + 1);
+//         dfs(root.right, index + 1);
+//     }
+//     dfs(root, 0);
+//     return a;
+// }
+// function search(arr, target) {
+//     let left = 0;
+//     let right = arr.length - 1;
+//     while (left <= right) {
+//         const mid = (left + right) >> 1;
+//         if (arr[mid] === target) return mid;
+//         if (arr[left] <= arr[mid]) {
+//             if (target >= arr[left] && target <= arr[mid]) {
+//                 right = mid - 1;
+//             } else {
+//                 left = mid + 1;
+//             }
+//         } else {
+//             if (target >= arr[mid] && target <= arr[right]) {
+//                 left = mid + 1;
+//             } else {
+//                 right = mid - 1;
+//             }
+//         }
+//     }
+//     return -1;
+// }
+// function quickSort(nums) {
+//     function recursion(nums, left, right) {
+//         if (left >= right) return;
+//         const center = getCenter(nums, left, right);
+//         recursion(nums, left, center - 1);
+//         recursion(nums, center + 1, right);
+//     }
+//     recursion(nums, 0, nums.length - 1);
+//     function getCenter(nums, left, right) {
+//         let flag = left, counter = left + 1;
+//         for (let i = left; i <= right; i++) {
+//             if (nums[i] < nums[flag]) {
+//                 [nums[counter], nums[i]] = [nums[i], nums[counter]];
+//                 counter++;
+//             }
+//         }
+//         [nums[flag], nums[counter - 1]] = [nums[counter - 1], nums[flag]];
+//         return counter - 1;
+//     }
+//     return nums;
+// }
