@@ -2252,7 +2252,7 @@ compiler.hooks.compile
 
 * complie：构建
 
-  * 使用 loader-runner 运行 loaders，loader 解析构建模块，得到一个 js 代码，再将这个代码进行编译，生成 AST。
+  * 使用 loader-runner 运行 loaders，解析构建得到一个 js 代码，再将这个代码进行编译，生成 AST。
   * 然后通过 parser 解析依赖(acorn)，通过 ParserPlugins 添加依赖，将所有编译好的 js 代码放到 compilation 对象上的 modules 里面。
 
 * 代码优化

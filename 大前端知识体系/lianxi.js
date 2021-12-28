@@ -7208,3 +7208,146 @@ function isObject(obj) {
 //     }
 //     return nums;
 // }
+// function throttle(fn, delay = 100) {
+//     let flag = true;
+//     return function(...args) {
+//         if (!flag) return;
+//         flag = false;
+//         setTimeout(() => {
+//             fn.call(this, ...args);
+//             flag = true;
+//         }, delay);
+//     }
+// }
+// function debounce(fn, delay = 100) {
+//     let timer = null;
+//     return function(...args) {
+//         if (timer) clearTimeout(timer);
+//         timer = setTimeout(() => {
+//             fn.call(this, ...args);
+//             timer = null;
+//         }, delay);
+//     }
+// }
+// class EventEmitter {
+//     constructor() {
+//        this.events = {}; 
+//     }
+//     on(name, handler) {
+//         this.events[name] = this.events[name] || [];
+//         this.events[name].push(handler);
+//     }
+//     emit(name, ...args) {
+//         if (!this.events[name]) throw new Error('该事件未注册');
+//         this.events[name].forEach(fn => fn.call(this, ...args));
+//     }
+//     off(name, handler) {
+//         if (!this.events[name]) throw new Error('该事件未注册');
+//         if (!handler) {
+//             delete this.events[name];
+//         } else {
+//             this.events[name] = this.events[name].filter(fn => fn !== handler);
+//         }
+//     }
+//     once(name, handler) {
+//         function fn(...args) {
+//             handler.call(this, ...args);
+//             this.off(name, fn);
+//         }
+//         this.on(name, fn);
+//     }
+// }
+// function sleep(time) {
+//     return new Promise(resolve => setTimeout(resolve, time));
+// }
+// function bindEvent(elem, type, selector, fn) {
+//     if (fn == null) {
+//         fn = selector;
+//         selector = null;
+//     }
+//     elem.addEventListener(type, function(e) {
+//         const target = e.target;
+//         if (selector) {
+//             if (selector.contains(target)) {
+//                 fn.call(target, e);
+//             }
+//         } else {
+//             fn.call(target, e);
+//         }
+//     });
+// }
+// function setInterval(fn, time) {
+//     function interval() {
+//         fn();
+//         setTimeout(interval, time);
+//     }
+//     return setTimeout(interval, time);
+// }
+// function setTimeout(fn, time) {
+//     const timer = setInterval(() => {
+//         fn();
+//         clearInterval(timer);
+//     }, time);
+//     return timer;
+// }
+// function query(name) {
+//     const search = location.search.substring(1);
+//     const reg = new RegExp(`(^|&)${name}=([^&]*)(&|$)`, 'i');
+//     const res = search.match(reg);
+//     return res == null ? null : res[2];
+// }
+// function query(name) {
+//     const p = new URLSearchParams(location.search);
+//     return p.get(name);
+// }
+// function isObject(val) {
+//     return typeof val === 'object' && val !== null; 
+// }
+// function flatten(obj) {
+//     if (!isObject(obj)) return obj;
+//     const res = {};
+//     function dfs(cur, prefix) {
+//         if (isObject(cur)) {
+//             if (Array.isArray(cur)) {
+//                 cur.forEach((item, index) => {
+//                     dfs(item, `${prefix}[${index}]`);
+//                 });
+//             } else {
+//                 for (let key in cur) {
+//                     dfs(cur[key], `${prefix}${prefix ? '.' : ''}${key}`);
+//                 }
+//             }
+//         } else {
+//             res[prefix] = cur;
+//         }
+//     }
+//     dfs(obj, '');
+//     return res;
+// }
+// function currying(fn, ...args) {
+//     const length = fn.length;
+//     return function(...newArags) {
+//         const allArgs = [...args, ...newArags];
+//         if (allArgs.length < length) {
+//             return currying.call(this, fn, ...allArgs);
+//         } else {
+//             return fn.apply(this, allArgs);
+//         }
+//     }
+// }
+// function currying(fn, ...args) {
+//     const length = fn.length;
+//     return function(...newArgs) {
+//         const allArgs = [...args, ...newArgs];
+//         if (allArgs.length < length) {
+//             return currying.call(this, fn, ...allArgs);
+//         } else {
+//             return fn.apply(this, ...allArgs);
+//         }
+//     }
+// }
+// function compose(...fns) {
+//     if (fns.length === 0) return v => v;
+//     if (fns.length === 1) return fns[0];
+//     return fns.reduce((pre, cur) => (...args) => pre(cur(...args)));
+// }
