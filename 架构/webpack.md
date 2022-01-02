@@ -1194,7 +1194,7 @@ module.exports = {
 }
 ```
 
-##### 减少文件查找范围
+##### 优化文件查找路径
 
 ```js
 module.exports = {
