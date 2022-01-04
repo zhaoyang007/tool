@@ -7989,3 +7989,107 @@ function isObject(obj) {
 //         });
 //     }
 // }
+// class Promise {
+//     constructor(fn) {
+//         this.status = 'padding';
+//         this.onFulfilledCallbacks = [];
+//         this.onRejectedCallbacks = [];
+//         const resolve = value => {
+//             if (this.status === 'padding') {
+//                 this.status = 'fulfilled';
+//                 this.onFulfilledCallbacks.forEach(fn => fn(value));
+//             }
+//         }
+//         const reject = err => {
+//             if (this.status === 'padding') {
+//                 this.status = 'rejected';
+//                 this.onRejectedCallbacks.forEach(fn => fn(err));
+//             }
+//         }
+//         try {
+//             fn(resolve, reject);
+//         } catch(err) {
+//             reject(err);
+//         }
+//     }
+//     then(onFulfilled, onRejected) {
+//         onFulfilled = typeof onFulfilled === 'function' ? onFulfilled : v => v;
+//         onRejected = typeof onRejected === 'function' ? onRejected : err => { throw err };
+//         return new Promise((resolve, reject) => {
+//             const fulfilledMicrotask = value => {
+//                 queueMicrotask(() => {
+//                     try {
+//                         const res = onFulfilled(value);
+//                         res instanceof Promise ? res.then(resolve, reject) : resolve(value);
+//                     } catch(err) {
+//                         reject(err);
+//                     }
+//                 });
+//             }
+//             const rejectedMicrotask = value => {
+//                 queueMicrotask(() => {
+//                     try {
+//                         const res = onRejected(value);
+//                         res instanceof Promise ? res.then(resolve, reject) : resolve(value);
+//                     } catch(err) {
+//                         reject(err);
+//                     }
+//                 });
+//             }
+//             this.onFulfilledCallbacks.push(fulfilledMicrotask);
+//             this.onRejectedCallbacks.push(rejectedMicrotask);
+//         });
+//     }
+// }
+// class Promise {
+//     constructor(fn) {
+//         this.status = 'padding';
+//         this.onFulfilledCallbacks = [];
+//         this.onRejectedCallbacks = [];
+//         const resolve = value => {
+//             if (this.status === 'padding') {
+//                 this.status = 'fulfilled';
+//                 this.onFulfilledCallbacks.forEach(fn => fn(value));
+//             }
+//         }
+//         const reject = err => {
+//             if (this.status === 'padding') {
+//                 this.status = 'rejected';
+//                 this.onRejectedCallbacks.forEach(fn => fn(err));
+//             }
+//         }
+//         try {
+//             fn(resolve, reject);
+//         } catch(err) {
+//             reject(err);
+//         }
+//     }
+//     then(onFulfilled, onRejected) {
+//         onFulfilled = typeof onFulfilled === 'function' ? onFulfilled : v => v;
+//         onRejected = typeof onRejected === 'function' ? onRejected : err => { throw err; };
+//         return new Promise((resolve, reject) => {
+//             const fulfilledMicrotask = value => {
+//                 queueMicrotask(() => {
+//                     try {
+//                         const res = onFulfilled(value);
+//                         res instanceof Promise ? res.then(resolve, reject) : resolve(res);
+//                     } catch(err) {
+//                         reject(err);
+//                     }
+//                 });
+//             }
+//             const rejectedMicrotask = value => {
+//                 queueMicrotask(() => {
+//                     try {
+//                         const res = onRejected(value);
+//                         res instanceof Promise ? res.then(resolve, reject) : reject(res);
+//                     } catch(err) {
+//                         reject(err);
+//                     }
+//                 })
+//             }
+//             this.onFulfilledCallbacks.push(fulfilledMicrotask);
+//             this.onRejectedCallbacks.push(rejectedMicrotask);
+//         });
+//     }
+// }
