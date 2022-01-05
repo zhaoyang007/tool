@@ -8093,3 +8093,94 @@ function isObject(obj) {
 //         });
 //     }
 // }
+// function currying(fn, ...args) {
+//     let allArgs = [...args];
+//     return function temp(...newArgs) {
+//         if (newArgs.length) {
+//             allArgs = [...allArgs, ...newArgs];
+//             return temp;
+//         } else {
+//             const res = fn.call(this, ...allArgs);
+//             allArgs = [...args];
+//             return res;
+//         }
+//     }
+// }
+// class Promise {
+//     constructor(fn) {
+//         this.status = 'padding';
+//         this.onFulfilledCallback = [];
+//         this.onRejectedCallback = [];
+//         const resolve = value => {
+//             if (this.status === 'padding') {
+//                 this.status = 'fulfilled';
+//                 this.onFulfilledCallback.forEach(fn => fn(value));
+//             }
+//         }
+//         const reject = err => {
+//             if (this.status === 'padding') {
+//                 this.status = 'rejected';
+//                 this.onRejectedCallback.forEach(fn => fn(err));
+//             }
+//         }
+//         try {
+//             fn(resolve, reject);
+//         } catch (err) {
+//             reject(err);
+//         }
+//     }
+//     then(onFulfilled, onRejected) {
+//         onFulfilled = typeof onFulfilled === 'function' ? onFulfilled : v = v;
+//         onRejected = typeof onRejected === 'function' ? onRejected : err => { throw err };
+//         return new Promise((resolve, reject) => {
+//             const onFulfilledMicrotask = value => {
+//                 queueMicrotask(() => {
+//                     try {
+//                         const res = onFulfilled(value);
+//                         res instanceof Promise ? res.then(resolve, reject) : resolve(value); 
+//                     } catch (error) {
+//                         reject(error);
+//                     }
+//                 });
+//             }
+//             const onRejectedMicrotask = value => {
+//                 queueMicrotask(() => {
+//                     try {
+//                         const res = onRejected(value);
+//                         res instanceof Promise ? res.then(resolve, reject) : resolve(res);
+//                     } catch (error) {
+//                         reject(error); 
+//                     } 
+//                 });
+//             }
+//             this.onFulfilledCallback.push(onFulfilledMicrotask);
+//             this.onRejectedCallback.push(onRejectedMicrotask);
+//         });
+//     }
+// }
+// function currying(fn, ...args) {
+//     let allArgs = [...args];
+//     return function temp(...newArgs) {
+//         if (newArgs.length) {
+//             allArgs = [...allArgs, ...newArgs];
+//             return temp(...allArgs);
+//         } else {
+//             const res = fn.call(this, ...allArgs);
+//             allArgs = [...args];
+//             return res;
+//         }
+//     }
+// }
+// function moveZeroes(nums) {
+//     let j = 0;
+//     for (let i = 0; i < nums.length; i++) {
+//         if (nums[i] !== 0) {
+//             nums[j] = nums[i];
+//             if (i !== j) {
+//                 nums[i] = 0
+//             }
+//             j++;
+//         }
+//     }
+//     return nums;
+// }
