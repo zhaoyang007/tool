@@ -65,12 +65,6 @@ https://cli.vuejs.org/zh/
 <a @click="doSomething">...</a>
 ```
 
-修饰符 (modifier) 是以半角句号 `.` 指明的特殊后缀，用于指出一个指令应该以特殊方式绑定。例如，`.prevent` 修饰符告诉 `v-on` 指令对于触发的事件调用 `event.preventDefault()`：
-
-```html
-<form v-on:submit.prevent="onSubmit">...</form>
-```
-
 ##### 使用 JavaScript 表达式
 
 在模版语法中，可以直接使用 javascript 表达式进行绑定。下面这些都是合法的模版语法。
@@ -236,6 +230,361 @@ data: {
 <div v-bind:style="[baseStyles, overridingStyles]"></div>
 ```
 
+##### 条件渲染
+
+`v-if` 指令用于条件性地渲染一块内容。这块内容只会在指令的表达式返回 truthy 值的时候被渲染。
+
+```html
+<h1 v-if="awesome">Vue is awesome!</h1>
+<h1 v-else>Oh no 😢</h1>
+```
+
+```js
+data: {
+  awesome: true
+}
+```
+
+`v-else` 元素必须紧跟在带 `v-if` 或者 `v-else-if` 的元素的后面，否则它将不会被识别。
+
+`v-else-if`，顾名思义，充当 `v-if` 的“else-if 块”，可以连续使用：
+
+```html
+<div v-if="type === 'A'">
+  A
+</div>
+<div v-else-if="type === 'B'">
+  B
+</div>
+<div v-else-if="type === 'C'">
+  C
+</div>
+<div v-else>
+  Not A/B/C
+</div>
+```
+
+`v-show` 指令是另一个用于根据条件展示元素的选项。用法大致一样：
+
+```html
+<h1 v-show="ok">Hello!</h1>
+```
+
+`v-show` 只是简单地切换元素的 CSS property `display`。
+
+##### 列表渲染
+
+我们可以用 `v-for` 指令基于一个数组来渲染一个列表。`v-for` 指令需要使用 `item in items` 形式的特殊语法，其中 `items` 是源数据数组，而 `item` 则是被迭代的每一条数组元素。
+
+```html
+<ul id="example-1">
+  <li v-for="(item, index) in items" :key="item.message">
+    {{ item.message }}
+  </li>
+</ul>
+```
+
+```js
+data: {
+  items: [
+    { message: 'Foo' },
+    { message: 'Bar' }
+  ]
+}
+```
+
+结果：
+
+![列表渲染](images/列表渲染.jpg)
+
+你也可以用 `v-for` 来遍历一个对象的 property。
+
+```html
+<div v-for="(value, key, index) in object" :key="key">
+  {{ index }}. {{ key }}: {{ value }}
+</div>
+```
+
+```js
+data: {
+  object: {
+    title: 'How to do lists in Vue',
+    author: 'Jane Doe',
+    publishedAt: '2016-04-10'
+  }
+}
+```
+
+结果：
+
+![列表渲染-对象](images/列表渲染-对象.jpg)
+
+##### 事件处理
+
+在模版上使用 javascript 作为事件处理逻辑：
+
+```html
+<div id="example-1">
+  <button v-on:click="counter += 1">Add 1</button>
+  <p>The button above has been clicked {{ counter }} times.</p>
+</div>
+```
+
+```js
+var example1 = new Vue({
+  el: '#example-1',
+  data: {
+    counter: 0
+  }
+})
+```
+
+使用事件处理方法：
+
+许多事件处理逻辑会更为复杂，所以直接把 JavaScript 代码写在 `v-on` 指令中是不可行的。因此 `v-on` 还可以接收一个需要调用的方法名称。
+
+```html
+<div id="example-2">
+  <!-- greet 是在下面定义的方法名 -->
+  <button v-on:click="greet">Greet</button>
+</div>
+```
+
+```js
+var example2 = new Vue({
+  el: '#example-2',
+  data: {
+    name: 'Vue.js'
+  },
+  // 在 methods 对象中定义方法
+  methods: {
+    greet: function (event) {
+      // this 在方法里指向当前 Vue 实例
+      alert('Hello ' + this.name + '!')
+      // event 是原生 DOM 事件
+      if (event) {
+        alert(event.target.tagName)
+      }
+    }
+  }
+})
+```
+
+给事件处理方法传递参数：
+
+```html
+<div id="example-3">
+  <button v-on:click="say('hi')">Say hi</button>
+  <button v-on:click="say('what')">Say what</button>
+</div>
+```
+
+```js
+new Vue({
+  el: '#example-3',
+  methods: {
+    say: function (message) {
+      alert(message)
+    }
+  }
+})
+```
+
+有时也需要在事件处理器中访问原始的 DOM 事件。可以用特殊变量 `$event` 把它传入方法：
+
+```html
+<button v-on:click="warn('Form cannot be submitted yet.', $event)">
+  Submit
+</button>
+```
+
+```js
+// ...
+methods: {
+  warn: function (message, event) {
+    // 现在我们可以访问原生事件对象
+    if (event) {
+      event.preventDefault()
+    }
+    alert(message)
+  }
+}
+```
+
+事件修饰符：
+
+在事件处理程序中调用 `event.preventDefault()` 或 `event.stopPropagation()` 是非常常见的需求。尽管我们可以在方法中轻松实现这点，但更好的方式是：方法只有纯粹的数据逻辑，而不是去处理 DOM 事件细节。
+
+为了解决这个问题，Vue.js 为 `v-on` 提供了**事件修饰符**。
+
+修饰符的写法是以 `.` 指明的特殊后缀，用于指出一个指令应该以特殊方式绑定。
+
+- `.stop`
+- `.prevent`
+- `.capture`
+- `.self`
+- `.once`
+
+```html
+<!-- 阻止单击事件继续传播 -->
+<a v-on:click.stop="doThis"></a>
+
+<!-- 提交事件不再重载页面 -->
+<form v-on:submit.prevent="onSubmit"></form>
+
+<!-- 修饰符可以串联 -->
+<a v-on:click.stop.prevent="doThat"></a>
+
+<!-- 只有修饰符 -->
+<form v-on:submit.prevent></form>
+
+<!-- 添加事件监听器时使用事件捕获模式 -->
+<div v-on:click.capture="doThis">...</div>
+
+<!-- 只当在 event.target 是当前元素自身时触发处理函数 -->
+<div v-on:click.self="doThat">...</div>
+
+<!-- 点击事件将只会触发一次 -->
+<a v-on:click.once="doThis"></a>
+```
+
+按键修饰符
+
+为了在必要的情况下支持旧浏览器，Vue 提供了绝大多数常用的按键码的别名：
+
+- `.enter`
+- `.tab`
+- `.delete` 
+- `.esc`
+- `.space`
+- `.up`
+- `.down`
+- `.left`
+- `.right`
+- `.ctrl`
+- `.alt`
+- `.shift`
+
+```html
+<!-- 只有在 `key` 是 `Enter` 时调用 `vm.submit()` -->
+<input v-on:keyup.enter="submit">
+```
+
+```html
+<!-- Ctrl + Click -->
+<div v-on:click.ctrl="doSomething">Do something</div>
+```
+
+##### 表单输入绑定
+
+你可以用 `v-model` 指令在表单 `<input>`、`<textarea>` 及 `<select>` 元素上创建双向数据绑定。
+
+文本：
+
+```html
+<input v-model="message" placeholder="edit me">
+<p>Message is: {{ message }}</p>
+```
+
+![v-model-input](images/v-model-input.jpg)
+
+多行文本：
+
+```html
+<span>Multiline message is:</span>
+<p style="white-space: pre-line;">{{ message }}</p>
+<textarea v-model="message" placeholder="add multiple lines"></textarea>
+```
+
+![v-model-textarea](images/v-model-textarea.jpg)
+
+复选框
+
+单个复选框，绑定到布尔值：
+
+```html
+<input type="checkbox" id="checkbox" v-model="checked">
+<label for="checkbox">{{ checked }}</label>
+```
+
+![v-model-复选框-单个值](images/v-model-复选框-单个值.jpg)
+
+多个复选框，绑定到同一个数组：
+
+```html
+<input type="checkbox" id="jack" value="Jack" v-model="checkedNames">
+<label for="jack">Jack</label>
+
+<input type="checkbox" id="john" value="John" v-model="checkedNames">
+<label for="john">John</label>
+
+<input type="checkbox" id="mike" value="Mike" v-model="checkedNames">
+<label for="mike">Mike</label>
+
+<span>Checked names: {{ checkedNames }}</span>
+```
+
+```js
+new Vue({
+  el: '...',
+  data: {
+    checkedNames: []
+  }
+})
+```
+
+![v-model-复选框-多个值](images/v-model-复选框-多个值.jpg)
+
+单选按钮
+
+```html
+<div id="example-4">
+  <input type="radio" id="one" value="One" v-model="picked">
+  <label for="one">One</label>
+
+  <input type="radio" id="two" value="Two" v-model="picked">
+  <label for="two">Two</label>
+
+  <span>Picked: {{ picked }}</span>
+</div>
+```
+
+```js
+new Vue({
+  el: '#example-4',
+  data: {
+    picked: ''
+  }
+})
+```
+
+![v-model-单选框](images/v-model-单选框.jpg)
+
+选择框
+
+```html
+<div id="example-5">
+  <select v-model="selected">
+    <option disabled value="">请选择</option>
+    <option>A</option>
+    <option>B</option>
+    <option>C</option>
+  </select>
+  <span>Selected: {{ selected }}</span>
+</div>
+```
+
+```js
+new Vue({
+  el: '...',
+  data: {
+    selected: ''
+  }
+})
+```
+
+![v-model-选择框](images/v-model-选择框.jpg)
+
 ##### v-html
 
 双大括号会将数据解释为普通文本，而非 HTML 代码。为了输出真正的 HTML，你需要使用 [`v-html` 指令](https://cn.vuejs.org/v2/api/#v-html)：
@@ -266,10 +615,6 @@ export default {
 ```html
 <span v-once>这个将不会改变: {{ msg }}</span>
 ```
-
-##### v-if
-
-##### v-for
 
 ### 计算属性
 
@@ -380,3 +725,6 @@ var watchExampleVM = new Vue({
 ```
 
 在这个示例中，使用 `watch` 选项允许我们执行异步操作 (访问一个 API)，限制我们执行该操作的频率，并在我们得到最终结果前，设置中间状态。这些都是计算属性无法做到的。
+
+### 组件基础
+
