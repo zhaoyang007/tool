@@ -79,13 +79,13 @@ https://cli.vuejs.org/zh/
 <div v-bind:id="'list-' + id"></div>
 ```
 
-#### 特殊指令
+#### 常用指令
 
 ##### Class 与 Style 绑定
 
 操作元素的 class 列表和内联样式是数据绑定的一个常见需求。因为它们都是 attribute，所以我们可以用 `v-bind` 处理它们：只需要通过表达式计算出字符串结果即可。不过，字符串拼接麻烦且易错。因此，在将 `v-bind` 用于 `class` 和 `style` 时，Vue.js 做了专门的增强。表达式结果的类型除了字符串之外，还可以是对象或数组。
 
-##### Class 绑定
+Class 绑定：
 
 1.对象语法：
 
@@ -188,7 +188,7 @@ data: {
 <div v-bind:class="[{ active: isActive }, errorClass]"></div>
 ```
 
-##### Style 绑定
+Style 绑定：
 
 1.对象语法：
 
@@ -726,5 +726,286 @@ var watchExampleVM = new Vue({
 
 在这个示例中，使用 `watch` 选项允许我们执行异步操作 (访问一个 API)，限制我们执行该操作的频率，并在我们得到最终结果前，设置中间状态。这些都是计算属性无法做到的。
 
-### 组件基础
+### 组件化
+
+##### 组件的组织形式
+
+通常一个应用会以一棵嵌套的组件树的形式来组织。
+
+例如，你可能会有页头、侧边栏、内容区等组件，每个组件又包含了其它的像导航链接、博文之类的组件。
+
+![组件的组织](images/组件的组织.png)
+
+##### 组件的复用
+
+```html
+<div id="components-demo">
+  <button-counter></button-counter>
+  <button-counter></button-counter>
+  <button-counter></button-counter>
+</div>
+```
+
+![组件的复用](images/组件的复用.jpg)
+
+`data` 必须是一个函数：
+
+当我们定义这个 `<button-counter>` 组件时，你可能会发现它的 `data` 并不是像这样直接提供一个对象：
+
+```js
+data: {
+  count: 0
+}
+```
+
+**一个组件的 `data` 选项必须是一个函数**，因此每个实例可以维护一份被返回对象的独立的拷贝：
+
+```js
+data: function () {
+  return {
+    count: 0
+  }
+}
+```
+
+##### 组件注册
+
+1.全局注册
+
+在任何地方都可以直接使用。
+
+```js
+// kebab-case (短横线分隔命名) 
+Vue.component('my-component-name', {
+  // ... 选项 ...
+})
+<my-component-name>
+// PascalCase (首字母大写命名) 
+Vue.component('MyComponentName', {
+  // ... 选项 ...
+})
+<my-component-name> 和 <MyComponentName>
+```
+
+2.局部注册
+
+通过一个普通的 JavaScript 对象来定义组件：
+
+```js
+var ComponentA = { /* ... */ }
+var ComponentB = { /* ... */ }
+var ComponentC = { /* ... */ }
+```
+
+然后在 `components` 选项中声明你想要使用的组件：
+
+```js
+new Vue({
+  el: '#app',
+  components: {
+    'component-a': ComponentA,
+    'component-b': ComponentB
+  }
+})
+```
+
+对于 `components` 对象中的每个 property 来说，其 property 名就是自定义元素的名字，其 property 值就是这个组件的选项对象。
+
+在模块系统中局部注册：
+
+ComponentB.js/ComponentA.vue
+
+```js
+import ComponentA from './ComponentA'
+import ComponentC from './ComponentC'
+
+export default {
+  components: {
+    ComponentA,
+    ComponentC
+  },
+  // ...
+}
+```
+
+现在 `ComponentA` 和 `ComponentC` 都可以在 `ComponentB` 的模板中使用了。
+
+##### Prop
+
+1.prop 类型
+
+以字符串数组形式列出的 prop：
+
+```js
+props: ['title', 'likes', 'isPublished', 'commentIds', 'author']
+```
+
+通常你希望每个 prop 都有指定的值类型。这时，你可以以对象形式列出 prop，这些 property 的名称和值分别是 prop 各自的名称和类型：
+
+```js
+	props: {
+    // 基础的类型检查 (`null` 和 `undefined` 会通过任何类型验证)
+    propA: Number,
+    // 多个可能的类型
+    propB: [String, Number],
+    // 必填的字符串
+    propC: {
+      type: String,
+      required: true
+    },
+    // 带有默认值的数字
+    propD: {
+      type: Number,
+      default: 100
+    },
+    // 带有默认值的对象
+    propE: {
+      type: Object,
+      // 对象或数组默认值必须从一个工厂函数获取
+      default: function () {
+        return { message: 'hello' }
+      }
+    }
+	}
+```
+
+优点：
+
+* 为你的组件提供了文档，使代码可读性更强。
+* 在它们遇到错误的类型时从浏览器的 JavaScript 控制台提示用户，便于定位问题。
+
+2.传递静态或动态的 prop
+
+可以像这样给 prop 传入一个静态的值：
+
+```html
+<my-component title="My journey with Vue"></my-component>
+```
+
+prop 可以通过 `v-bind` 动态赋值：
+
+这种情况可以传递任何数据类型的 prop。
+
+```html
+<my-component :title="title"></my-component>
+```
+
+```js
+data() {
+  return {
+    title: 'My journey with Vue'
+  }
+}
+```
+
+3.单向数据流
+
+父级 prop 的更新会向下流动到子组件中，但是反过来则不行。这样会防止从子组件意外变更父级组件的状态，从而导致你的应用的数据流向难以理解。这相当于 Vue 的一个约定的规范。我们需要遵守这样的一个规范。
+
+如果你在一个子组件内部改变 prop 的值，Vue 会在浏览器的控制台中发出警告。
+
+这里有两种常见的试图变更一个 prop 的情形：
+
+**这个 prop 用来传递一个初始值；这个子组件接下来希望将其作为一个本地的 prop 数据来使用。**在这种情况下，最好定义一个本地的 data property 并将这个 prop 用作其初始值：
+
+```js
+props: ['initialCounter'],
+data: function () {
+  return {
+    counter: this.initialCounter
+  }
+}
+```
+
+**这个 prop 以一种原始的值传入且需要进行转换。**在这种情况下，最好使用这个 prop 的值来定义一个计算属性：
+
+```js
+props: ['size'],
+computed: {
+  normalizedSize: function () {
+    return this.size.trim().toLowerCase()
+  }
+}
+```
+
+注意：在 JavaScript 中对象和数组是通过引用传入的，所以对于一个数组或对象类型的 prop 来说，在子组件中改变变更这个对象或数组本身将会影响到父组件的状态。
+
+##### 自定义事件
+
+```html
+<my-component @changeTitle="changeTitle"></my-component>
+
+methods: {
+	changeTitle(title) {
+		console.log(title);
+	}
+}
+```
+
+my-component
+
+```html
+<template>
+	<button @click="changeTitle"></button>
+</template>
+
+methods: {
+	changeTitle() {
+		this.$emit('changeTitle', 'My journey with Vue');
+	}
+}
+```
+
+##### 插槽
+
+匿名插槽
+
+```vue
+<!-- parent -->
+<comp>hello</comp>
+
+<!-- comp -->
+<div>
+  <slot></slot>
+</div>
+```
+
+具名插槽
+
+```vue
+<!-- parent -->
+<Comp2>
+  <!-- 默认插槽用default做参数 -->
+  <template v-slot:default>具名插槽</template> 
+  <!-- 具名插槽用插槽名做参数 -->
+  <template v-slot:content>内容...</template>
+</Comp2> 
+
+<!-- comp -->
+<div>
+  <slot></slot>
+	<slot name="content"></slot>
+</div>
+```
+
+作用域插槽
+
+在你声明的 \<template>\</template> 里面的数据到底是用来自当前的父组件的还是来自于子组件的，如果分发内容要用到子组件中的数据就用作用域插槽，否则就用普通插槽。
+
+```vue
+<!-- parent -->
+<Comp3>
+  <!-- 把v-slot的值指定为一个作用域上下文对象 slotProps: {foo: 'xxxxx'}--> 
+  <template v-slot:default="slotProps">
+		来自子组件数据:{{slotProps.foo}} 
+  </template>
+</Comp3>
+
+<!-- comp3 -->
+<div>
+  <slot :foo="data"></slot>
+</div>
+```
+
+##### 
 
