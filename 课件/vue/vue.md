@@ -962,7 +962,9 @@ methods: {
 
 ```vue
 <!-- parent -->
-<comp>hello</comp>
+<comp>
+  hello
+</comp>
 
 <!-- comp -->
 <div>
@@ -972,20 +974,67 @@ methods: {
 
 具名插槽
 
-```vue
-<!-- parent -->
-<Comp2>
-  <!-- 默认插槽用default做参数 -->
-  <template v-slot:default>具名插槽</template> 
-  <!-- 具名插槽用插槽名做参数 -->
-  <template v-slot:content>内容...</template>
-</Comp2> 
+有时我们需要多个插槽。
 
-<!-- comp -->
+对于这样的情况，`<slot>` 元素有一个特殊的 attribute：`name`。这个 attribute 可以用来定义额外的插槽：
+
+一个不带 `name` 的 `<slot>` 出口会带有隐含的名字“default”。
+
+```html
 <div>
-  <slot></slot>
-	<slot name="content"></slot>
+  <header>
+    <slot name="header"></slot>
+  </header>
+  <main>
+    <slot></slot>
+  </main>
+  <footer>
+    <slot name="footer"></slot>
+  </footer>
 </div>
+```
+
+在向具名插槽提供内容的时候，我们可以在一个 `<template>` 元素上使用 `v-slot` 指令，并以 `v-slot` 的参数的形式提供其名称：
+
+现在 `<template>` 元素中的所有内容都将会被传入相应的插槽。任何没有被包裹在带有 `v-slot` 的 `<template>` 中的内容都会被视为默认插槽的内容。
+
+```html
+<comp>
+  <template v-slot:header>
+    <h1>Here might be a page title</h1>
+  </template>
+
+  <p>A paragraph for the main content.</p>
+  <p>And another one.</p>
+  <!-- 如果你希望更明确一些，仍然可以在一个 <template> 中包裹默认插槽的内容： -->
+  <template v-slot:default>
+    <p>A paragraph for the main content.</p>
+    <p>And another one.</p>
+  </template>
+
+  <template v-slot:footer>
+    <p>Here's some contact info</p>
+  </template>
+</comp>
+```
+
+注意 **`v-slot` 只能添加在 `<template>` 上**
+
+跟 `v-on` 和 `v-bind` 一样，`v-slot` 也有缩写，即把参数之前的所有内容 (`v-slot:`) 替换为字符 `#`。例如 `v-slot:header` 可以被重写为 `#header`：
+
+```html
+<comp>
+  <template #header>
+    <h1>Here might be a page title</h1>
+  </template>
+
+  <p>A paragraph for the main content.</p>
+  <p>And another one.</p>
+
+  <template #footer>
+    <p>Here's some contact info</p>
+  </template>
+</comp>
 ```
 
 作用域插槽
@@ -994,18 +1043,24 @@ methods: {
 
 ```vue
 <!-- parent -->
-<Comp3>
+<comp>
   <!-- 把v-slot的值指定为一个作用域上下文对象 slotProps: {foo: 'xxxxx'}--> 
   <template v-slot:default="slotProps">
-		来自子组件数据:{{slotProps.foo}} 
+		来自子组件数据:{{slotProps.foo.bar}} 
   </template>
-</Comp3>
+</comp>
 
-<!-- comp3 -->
+<!-- comp -->
 <div>
-  <slot :foo="data"></slot>
+  <slot :foo="foo"></slot>
 </div>
+
+data() {
+	return {
+		foo: {bar: 1}
+	}
+}
 ```
 
-##### 
+### 过渡 & 动画
 
