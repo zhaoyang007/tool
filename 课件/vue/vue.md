@@ -1064,3 +1064,172 @@ data() {
 
 ### 过渡 & 动画
 
+在插入、更新或者移除 DOM 时，使用 transition 组件做过渡或动画。
+
+css 方式是通过过渡类名，js 方式是通过钩子函数。
+
+在下列情形中，可以给任何元素和组件添加进入/离开过渡
+
+- 条件渲染 (使用 `v-if`)
+- 条件展示 (使用 `v-show`)
+- 动态组件
+- 组件根节点
+
+transition 组件基础使用：
+
+transition 组件会为嵌套元素自动添加跟动画相关的类名称，使用这些类名称来做 css 过度动画就可以了。
+
+过渡和动画的过程都是设置在 active 上的。v-enter/v-leave/v-enter-to/v-leave-to 都是设置初始或结束状态的，可以没有。
+
+对于这些在过渡中切换的类名来说，如果你使用一个没有名字的 `<transition>`，则 `v-` 是这些类名的默认前缀。如果你使用了 `<transition name="my-transition">`，那么 `v-enter` 会替换为 `my-transition-enter`。
+
+1. 过渡被触发时，马上加 v-enter/v-leave 和 v-enter-active/v-leave-active。
+2. 下一帧马上移除 v-enter/v-leave，然后添加 v-enter-to/v-leave-to。
+3. 动画结束后移除 v-enter-active/v-leave-active 和 v-enter-to/v-leave-to。
+
+![transition](images/transition.png)
+
+```vue
+<template>
+	<transition name="fade"> 
+    <div v-if="show"></div>
+  </transition> 
+</template>
+
+<script>
+export default {
+  data() {
+		return {
+      show: true
+    }
+ 	}
+}
+</script>
+
+<style> 
+  .fade-enter-active, .fade-leave-active { 
+    transition: opacity .5s;
+  }
+  .fade-enter, .fade-leave-to { 
+    opacity: 0;
+  } 
+  .fade-enter-to, .fade-leave { 
+    opacity: 1;
+  }
+</style>
+```
+
+结合 CSS 动画库：
+
+通过自定义过度类名，使用第三方定义好的动画。
+
+自定义过度类名：
+
+- enter-class
+- enter-active-class
+- enter-to-class (2.1.8+)
+- leave-class
+- leave-active-class
+- leave-to-class (2.1.8+)
+
+```html
+<link href="https://cdn.jsdelivr.net/npm/animate.css@3.5.1" rel="stylesheet" type="text/css">
+```
+
+```vue
+<transition enter-active-class="animated bounceIn" leave-active-class="animated bounceOut">
+	<div></div>
+</transition>
+```
+
+JavaScript 钩子：
+
+```vue
+<transition
+  v-on:before-enter="beforeEnter" // 动画开始前，设置初始状态
+  v-on:enter="enter" // 执行动画
+  v-on:after-enter="afterEnter" // 动画结束，清理工作
+  v-on:enter-cancelled="enterCancelled" // 取消动画
+  v-on:before-leave="beforeLeave"
+  v-on:leave="leave"
+  v-on:after-leave="afterLeave"
+  v-on:leave-cancelled="leaveCancelled"
+></transition>
+```
+
+保留 CSS 中过度动画的部分，加上 JS 钩子做动画起始状态：
+
+```html
+<style>
+  .fade-enter-active, .fade-leave-active { 
+    transition: opacity .5s; 
+  }
+</style>
+
+<template>
+	<transition 
+		@before-enter="beforeEnter" 
+		@enter="enter"
+		@before-leave="beforeLeave" 
+		@leave="leave">
+  	<div></div>
+  </transition>
+</template>
+
+<script>
+export default {
+	methods: {
+    beforeEnter(el) {
+    	el.style.opacity = 0; // 设置初始状态
+    },
+    enter(el, done) {
+      document.body.offsetHeight; // 触发回流激活动画
+      el.style.opacity = 1; // 设置结束状态
+      el.addEventListener('transitionend', done); // 监听动画结束事件，并执行done函数
+    },
+    beforeLeave(el) {
+    	el.style.opacity = 1; // 设置初始状态
+    },
+    leave(el, done) {
+      document.body.offsetHeight; // 触发回流激活动画
+      el.style.opacity = 0; // 设置结束状态
+      el.addEventListener('transitionend', done); // 监听动画结束事件，并执行done函数
+    }
+  },
+}
+</script>
+```
+
+纯js方案：
+
+```html
+<template>
+	<transition name="fade"
+		:css="false" // 禁用css
+    @before-enter="beforeEnter"
+    @enter="enter"
+    @before-leave="beforeLeave"
+    @leave="leave"></transition>
+</template>
+
+<script>
+import "https://cdnjs.cloudflare.com/ajax/libs/velocity/1.2.3/velocity.min.js";
+export default {
+	methods: {
+    beforeEnter(el) {
+      el.style.opacity = 0;
+    },
+    enter(el, done) {
+      Velocity(el, { opacity: 1 }, { duration: 500, complete: done });
+    },
+    beforeLeave(el) {
+      el.style.opacity = 1;
+    },
+    leave(el, done) {
+      Velocity(el, { opacity: 0 }, { duration: 500, complete: done });
+    }
+  },
+}
+</script>
+```
+
