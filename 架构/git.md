@@ -67,8 +67,11 @@ git push origin --delete remote_branchname 删除远程分支
 git branch -vv 查看设置的所有跟踪分支
 
 # 建立本地分支与远程分支的映射关系
-git branch -u origin/dev
-git branch --set-upstream-to origin/dev
+git branch -u origin/远程分支名
+git branch --set-upstream-to origin/远程分支名
+git branch --set-upstream-to=origin/远程分支名 本地分支名
+git push --set-upstream origin 远程分支名
+git push -u origin 远程分支名
 
 # 储藏工作区内容
 git stash 储藏工作现场
@@ -101,7 +104,7 @@ git push origin master  # 推送到远程库
 
 查看命令历史：`git reflog`
 
-工作区 暂存取(add后的) 分支(commit后的)
+工作区      暂存区(add后的)      本地仓库(commit后的)
 
 版本回退：
 

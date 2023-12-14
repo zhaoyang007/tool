@@ -2196,74 +2196,99 @@ polyfill.io 官方提供的服务
 
 https://polyfill.io/v3/polyfill.min.js
 
-## 打包原理
+##### 最佳项目配置
 
-##### 打包原理
+1.项目本身的基础配置：指定应用上下文、开发服务器等。
 
-1.webpack 启动过程：
+```js
+const port = 7070;
 
-安装了 webpack 这个包之后，package.json bin 字段里面注册了一个 webpack  命令，npm 会据此在 node_modules/.bin 下会生成一个 webpack 命令。webpack 命令的作用就是判断用户是否安装了 webpack-cli 这个包，没安装的话会提示安装，然后引入 webpack-cli 这个包并执行。
-
-2.webpack-cli：
-
-将命令行和 webpack.config.js 的配置解析组装成 webpack 可识别的配置。
-
-runWebpack() =》createCompiler()，引入并实例化一个 webpack，将配置传进去，开始编译和构建。
-
-3.webpack 编译和构建流程：
-
-```bash
-grep "keywords" -rn ./node_modules/webpack
+module.exports = { 
+  publicPath: '/best-practice', // 部署时的上下文路径，基本URL
+  devServer: { 
+    port,
+  } 
+};
 ```
 
-实例化一个 Compiler，继承 Tapable，注册一些 hooks。
+2.基础的 webpack 配置： configureWebpack
 
-compiler.run() => compiler.hooks.beforeRun => compiler.hooks.run => 
+底层是用了 webpack-merge 把我们在 configureWebpack 里的配置解析成 webpack 的配置项并且跟 vue-cli 原有的配置合并起来。所有的 webpack 的配置项在这里都是可以配置的。
 
-compiler.compile(onCompiled) 
+```js
+const title = "vue项目最佳实践"; 
 
-* params = compiler.newCompilationParams()
-  * compiler.createNormalModuleFactory()
-  * compiler.createContextModuleFactory()
+module.exports = { 
+  configureWebpack: { 
+    name: title, // 向index.html注入标题
+  } 
+};
+```
 
-* onCompiled: 编译完成的回调，里面会调用文件生产的方法 compiler.emitAssets() 
-  * compiler.hooks.done
+最终使用的是 lodash template 的插值语法，./public/index.html，webpack 打包的时候，会把我们设置的这些值动态的添加到这里。我们想要一些配置的环境变量就可以用这种方式做。
 
-=> compiler.hooks.beforeCompile => 
+```html
+<title><%= webpackConfig.name %></title>
+```
 
-compiler.hooks.compile 
+3.高级的链式 webpack 配置：chainWebpack
 
-* 获取 compilation = this.newCompilation(params)
+4.何时使用 public 文件夹：
 
-=> compiler.hooks.make 传入 compilation
+关于 public 里面存放素材的选择。
 
-* compilation.finish()
-  * compilation.seal()
-    * compiler.hooks.afterCompile
-      * 执行 onCompiled(compilation)
+将来静态的资源会放到 public 里头，因为 public 会作为开发服务器的静态路径。这里的资源 webpack 是不会处理的，原封不动，位置和名字都不会变。
 
-* 初始化 option。
+通过 webpack 的处理（相对路径）并获得如下好处：
 
-* 执行用户配置中所有的插件。
+* 脚本和样式表会被压缩且打包在一起，从而避免额外的网络请求。
+* 文件丢失会直接在编译时报错，而不是到了用户端才产生 404 错误。
+* 最终生成的文件名包含了内容哈希，因此你不必担心浏览器会缓存它们的老版本。
 
-* 根据配置执行 webpack 内部的插件。
+如下情况考虑使用 public 文件夹：
 
-* run：开始构建。
+* 你需要在构建输出中指定一个固定的文件名字。
+* 你有上千个图片，需要动态引用它们的路径。
+* 有些库可能和 webpack 不兼容，除了将其用一个独立的 <script> 标签引入没有别的选择。
 
-* complie：构建
+使用 public 文件夹的注意事项：
 
-  * 使用 loader-runner 运行 loaders，解析构建得到一个 js 代码，再将这个代码进行编译，生成 AST。
-  * 然后通过 parser 解析依赖(acorn)，通过 ParserPlugins 添加依赖，将所有编译好的 js 代码放到 compilation 对象上的 modules 里面。
+一般情况下，没有特别需要的话，别用这个 public，它会增添很多繁琐的使用。
 
-* 代码优化
+* 如果你的应用没有部署在域名的根部，那么你需要为你的 URL 配置 publicPath 前缀
 
-  将 modules 里的代码放到 compilation 对象的 assets 里面去
+  ```js
+  // vue.config.js 
+  module.exports = { 
+    publicPath: process.env.NODE_ENV === 'production' 
+    	? '/cart/' 
+    	: '/' 
+  }
+  ```
 
-* 资源生成
+* 在 public/index.html 等通过 html-webpack-plugin 用作模板的 HTML 文件中，你需要通过 <%= BASE_URL %> 设置链接前缀：
 
-##### 动手编写一个简易的 webpack
+  ```html
+  <link rel="icon" href="<%= BASE_URL %>favicon.ico">
+  ```
 
-输出的 bundle 文件
+* 在模板中，先向组件传入 BASE_URL：
+
+  ```js
+  data () { 
+  	return { 
+  		publicPath: process.env.BASE_URL 
+  	} 
+  }
+  ```
+
+  然后：
+
+  ```vue
+  <img :src="`${publicPath}my-image.png`">
+  ```
+
+## 打包原理
 
 ##### Tapable 插件架构与 Hooks 设计
 
@@ -2271,7 +2296,7 @@ Tapable 为 webpack 插件提供了发布订阅的钩子。每个钩子代表一
 
 webpack 就是基于这种发布订阅的一系列的插件运行的事件流。
 
-compiler 和 compilation 都是继承自 Tapable。
+compiler 和 compilation 都是继承自 Tapable。compiler负责整个构建过程的生命周期和构建流程，compilation负责单次构建的具体构建工作。
 
 compiler 和 compilation 上面做 hooks 的调用。
 
@@ -2313,6 +2338,120 @@ const hook1 = new SyncHook(['arg1', 'arg2', 'arg3']);
 hook1.tap('hook1', (arg1, arg2, arg3) => {console.log(arg1, arg2, arg3)});
 // 执行绑定的事件
 hook1.call(1, 2, 3);
+```
+
+## 编写 plugin
+
+##### plugin
+
+插件是伴随着 webpack 从初始化到最终的资源生成的过程的。
+
+插件是一个类，有一个 apply 方法。
+
+webpack 执行插件的时候会运行每一个插件上的 apply 方法，同时把 webpack 的 compiler 对象传进去，这样插件就具备监听 compiler hooks 的能力，通过 compiler.hooks 在不同的阶段可以做相应的事情。
+
+```js
+// 将一段代码输出到文件里面就可以用 RawSource
+const { RawSource } = require("webpack-sources");
+class MyPlugin {
+  constructor(options) { 
+    this.options = options; 
+  }
+  apply(compiler) {
+    // 插件处理逻辑
+    
+    // 插件的错误处理
+    // 1.throw new Error('error');
+    // 2.通过 compilation 对象的 warnings 和 errors 接收
+    //   compilation.warnings.push("warning");
+    //   compilation.errors.push("error");
+
+    // 文件写入
+    // webpack 的构建流程的文件生成是在 emit 阶段，所以在插件里监听 compiler emit 这个 hooks。
+    // 监听这个 hook 之后我们可以获取到 compilation 对象
+    // 然后只需要将最终要输出的内容设置到 compilation.assets 对象上面去就可以了
+    // 最终webpack生成文件的时候会触发emit，然后读取compilation.assets上的资源内容并输出到磁盘目录
+    const { path } = this.options;
+    compiler.hooks.emit.tapAsync("MyPlugin", (compilation, callback) => { 
+      compilation.assets[path] = new RawSource("demo"); 
+      callback();
+    }); 
+  } 
+}
+module.exports = MyPlugin;
+```
+
+##### 插件的插件
+
+webpack 的插件是特别的强大的，除了通过插件来扩展 webpack 的能力，插件自身也可以通过暴露 hooks 的方式进行自身扩展。
+
+以 html-webpack-plugin 为例，它暴露出来的 hooks： 
+
+* html-webpack-plugin-alter-chunks (Sync) 
+* html-webpack-plugin-before-html-generation (Async) 
+* html-webpack-plugin-alter-asset-tags (Async) 
+* html-webpack-plugin-after-html-processing (Async) 
+* html-webpack-plugin-after-emit (Async)
+
+##### 压缩构建资源为 zip 包的插件
+
+Node.js 里面将文件压缩为 zip 包：使用 jszip (https://www.npmjs.com/package/jszip)
+
+jszip 使用示例
+
+```js
+var zip = new JSZip(); 
+
+zip.file("Hello.txt", "Hello World\n"); 
+
+var img = zip.folder("images"); 
+img.file("smile.gif", imgData, {base64: true}); 
+
+zip.generateAsync({type:"blob"}).then(function(content) { 
+	// see FileSaver.js 
+	saveAs(content, "example.zip"); 
+});
+```
+
+zip-plugin.js:
+
+```js
+const JSZip = require('jszip');
+const path = require('path');
+const RawSource = require('webpack-sources').RawSource;
+
+const zip = new JSZip();
+
+module.exports = class ZipPlugin {
+  constructor(options) {
+    this.options = options;
+  }
+  apply(compiler) {
+    compiler.hooks.emit.tapAsync('ZipPlugin', (compilation, callback) => {
+      const folder = zip.folder(this.options.filename);
+      for (let filename in compilation.assets) {
+        const source = compilation.assets[filename].source();
+        folder.file(filename, source);
+      }
+
+      zip.generateAsync({
+        type: 'nodebuffer'
+      }).then((content) => {
+        const outputPath = path.join(
+          compilation.options.output.path, 
+          this.options.filename + '.zip'
+        );
+
+        const outputRelativePath = path.relative(
+          compilation.options.output.path,
+          outputPath
+        );
+        compilation.assets[outputRelativePath] = new RawSource(content);
+        callback();
+      });
+    });
+  }
+}
 ```
 
 ## 编写 loader
@@ -2476,119 +2615,5 @@ module.exports = function (source) {
     fs.writeFileSync(path.join(process.cwd(), 'dist/index.css'), source)
     callback(null, source)
   })
-}
-```
-
-## 编写 plugin
-
-##### plugin
-
-插件是伴随着 webpack 从初始化到最终的资源生成的过程的。
-
-插件是一个类，有一个 apply 方法。
-
-webpack 执行插件的时候会运行每一个插件上的 apply 方法，同时把 webpack 的 compiler 对象传进去，这样插件就具备监听 compiler hooks 的能力，通过 compiler.hooks 在不同的阶段可以做相应的事情。
-
-```js
-// 将一段代码输出到文件里面就可以用 RawSource
-const { RawSource } = require("webpack-sources");
-class MyPlugin {
-  constructor(options) { 
-    this.options = options; 
-  }
-  apply(compiler) {
-    // 插件处理逻辑
-    
-    // 插件的错误处理
-    // 1.throw new Error('error');
-    // 2.通过 compilation 对象的 warnings 和 errors 接收
-    //   compilation.warnings.push("warning");
-    //   compilation.errors.push("error");
-
-    // 文件写入
-    // webpack 的构建流程的文件生成是在 emit 阶段，所以在插件里监听 compiler emit 这个 hooks。
-    // 监听这个 hook 之后我们可以获取到 compilation 对象
-    // 然后只需要将最终要输出的内容设置到 compilation.assets 对象上面去就可以了
-    // 最终webpack生成文件的时候会触发emit，然后读取compilation.assets上的资源内容并输出到磁盘目录
-    const { path } = this.options;
-    compiler.hooks.emit.tapAsync("MyPlugin", (compilation, callback) => { 
-      compilation.assets[path] = new RawSource("demo"); 
-      callback();
-    }); 
-  } 
-}
-module.exports = MyPlugin;
-```
-
-##### 插件的插件
-
-webpack 的插件是特别的强大的，除了通过插件来扩展 webpack 的能力，插件自身也可以通过暴露 hooks 的方式进行自身扩展。
-
-以 html-webpack-plugin 为例，它暴露出来的 hooks： 
-
-* html-webpack-plugin-alter-chunks (Sync) 
-* html-webpack-plugin-before-html-generation (Async) 
-* html-webpack-plugin-alter-asset-tags (Async) 
-* html-webpack-plugin-after-html-processing (Async) 
-* html-webpack-plugin-after-emit (Async)
-
-##### 压缩构建资源为 zip 包的插件
-
-Node.js 里面将文件压缩为 zip 包：使用 jszip (https://www.npmjs.com/package/jszip)
-
-jszip 使用示例
-
-```js
-var zip = new JSZip(); 
-
-zip.file("Hello.txt", "Hello World\n"); 
-
-var img = zip.folder("images"); 
-img.file("smile.gif", imgData, {base64: true}); 
-
-zip.generateAsync({type:"blob"}).then(function(content) { 
-	// see FileSaver.js 
-	saveAs(content, "example.zip"); 
-});
-```
-
-zip-plugin.js:
-
-```js
-const JSZip = require('jszip');
-const path = require('path');
-const RawSource = require('webpack-sources').RawSource;
-
-const zip = new JSZip();
-
-module.exports = class ZipPlugin {
-  constructor(options) {
-    this.options = options;
-  }
-  apply(compiler) {
-    compiler.hooks.emit.tapAsync('ZipPlugin', (compilation, callback) => {
-      const folder = zip.folder(this.options.filename);
-      for (let filename in compilation.assets) {
-        const source = compilation.assets[filename].source();
-        folder.file(filename, source);
-      }
-
-      zip.generateAsync({
-        type: 'nodebuffer'
-      }).then((content) => {
-        const outputPath = path.join(
-          compilation.options.output.path, 
-          this.options.filename + '.zip'
-        );
-
-        const outputRelativePath = path.relative(
-          compilation.options.output.path,
-          outputPath
-        );
-        compilation.assets[outputRelativePath] = new RawSource(content);
-        callback();
-      });
-    });
-  }
 }
 ```

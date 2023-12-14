@@ -1,4 +1,24 @@
-##### node 安装（7次）2021.09.30（8次）2021.10.08
+##### 命令行中打印对象深层属性内容
+
+```js
+const util = require('util');
+const object = {
+  a: 1,
+  b: {
+    c: 2,
+    d: {
+      e: 3,
+      f: {
+        g: 4
+      }
+    }
+  }
+};
+const fullObjectString = util.inspect(object, { showHidden: false, depth: null, colors: true });
+console.log(fullObjectString);
+```
+
+##### node 安装
 
 当安装 Node.js 之后，就可以在命令行中访问 `node` 可执行程序。
 
@@ -6,7 +26,16 @@
 2. `nvm install 10.15.3`
 3. 官网下载安装包
 
-##### npm（7次）2021.09.30（8次）2021.10.08
+可以使用 `n` 模块进行node版本切换
+
+- 全局安装 n  `npm install -g n`
+- 查看服务器上可用的版本 `n ls-remote --all`
+- 安装最新版node  `n latest`
+- 安装某个具体版本  `n 16.18.0`
+- 查看已经安装过的node版本  `n ls`
+- 删除14.13.1版本 `n rm 14.13.1`
+
+##### npm
 
 安装
 
@@ -90,7 +119,7 @@ npm 包是可执行文件时
 
 `npx cowsay`
 
-##### process（7次）2021.09.30（8次）2021.10.08
+##### process
 
 ```js
 // 程序退出
@@ -123,7 +152,7 @@ const args = minimist(process.argv.slice(2));
 args['name'] // joe
 ```
 
-##### path（7次）2021.09.30（8次）2021.10.08
+##### path
 
 ```js
 // 从路径中获取信息
@@ -179,7 +208,7 @@ path.isAbsolute('./test/something') // false
 // process.cwd() path.resolve('./') 返回执行node命令所在的文件夹的绝对路径
 ```
 
-##### fs（7次）2021.10.09（8次）2021.10.17
+##### fs
 
 文件
 
@@ -288,7 +317,7 @@ try {
 }
 ```
 
-##### http（7次）2021.10.17（8次）2021.10.25
+##### http
 
 `http.OutgoingMessage`
 
