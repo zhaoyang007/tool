@@ -18,6 +18,8 @@ const fullObjectString = util.inspect(object, { showHidden: false, depth: null, 
 console.log(fullObjectString);
 ```
 
+##### 使用管道命令与分页工具查看控制台中过长的打印内容
+
 ##### node 安装
 
 当安装 Node.js 之后，就可以在命令行中访问 `node` 可执行程序。
