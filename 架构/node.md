@@ -59,7 +59,7 @@ console.log(fullObjectString);
 
 ## 核心API
 
-##### process
+### process
 
 ```js
 // 程序退出
@@ -92,7 +92,7 @@ const args = minimist(process.argv.slice(2));
 args['name'] // joe
 ```
 
-##### child_process
+### child_process
 
 **需要创建子进程的场景**：
 
@@ -122,7 +122,7 @@ args['name'] // joe
 
 `child_process.fork()`衍生新的 Node.js 进程并使用建立的 IPC 通信通道（其允许在父子进程之间发送消息）调用指定的模块。
 
-##### 模块系统
+### 模块系统
 
 **nodejs模块查找策略：**
 
@@ -154,7 +154,7 @@ args['name'] // joe
    - 优点：支持静态分析和树摇（tree-shaking），异步加载。
    - 缺点：语法较为严格，兼容性问题。
 
-##### path
+### path
 
 ```js
 // 从路径中获取信息
@@ -210,7 +210,7 @@ path.isAbsolute('./test/something') // false
 // process.cwd() path.resolve('./') 返回执行node命令所在的文件夹的绝对路径
 ```
 
-##### fs
+### fs
 
 文件系统
 
@@ -319,7 +319,7 @@ try {
 }
 ```
 
-##### http
+### http
 
 `http.OutgoingMessage`
 
@@ -503,7 +503,7 @@ request.end();
 
 由于大多数请求是没有正文的 GET 请求，因此 Node.js 提供了这个便捷的方法。 此方法与 http.request() 的唯一区别在于，它将方法设置为 GET 并自动调用 req.end()。
 
-##### buffer
+### buffer
 
 Buffer 是一块固定大小的内存区域。
 
@@ -543,7 +543,7 @@ Blob
 
 它们共同构成了 JavaScript 处理二进制数据的生态系统，每种结构都有其特定的用途和应用场景。
 
-##### stream
+### stream
 
 在传统的方式中，当告诉程序读取文件时，这会将文件从头到尾读入内存，然后进行处理。使用流，则可以逐个片段地读取并处理（而无需全部保存在内存中）。
 
@@ -551,20 +551,37 @@ Blob
 
 # npm
 
+npm 由三个独立的部分组成：
+
+- 网站
+- 注册表（registry）
+- 命令行工具 (CLI)
+
+## npx
+
+NPX 是一个 Node.js 包运行工具，它随 npm 自 5.2.0 版本起自动安装。NPX 允许您运行 npm 包中的可执行文件，而无需全局安装这些包。它的主要用途包括：
+
+1. **运行项目本地 bin**：`npx webpack ...`
+2. **无需本地安装，一次性执行**：`npx webpack ..`
+3. **从 GitHub 仓库调用命令**：`npx github:username/repo` 例如，使用 `npx github:piuccio/cowsay` 或 `npx git+ssh://my.hosted.git:cowsay.git#semver:^1` 来运行 GitHub 上的代码
+4. **使用指定 Node.js 版本运行命令**：`npx -p node@8 npm run build`
+5. **运行不同版本的包**：`npx eslint@6.1.0 ..`
+6. **执行命令的同时开启 Node.js 的调试模式**：`npx --node-arg=--inspect cowsay`，`--inspect` 标志使 Node.js 在指定端口（默认是 `127.0.0.1:9229`）上监听调试器的连接。这允许开发者使用调试工具（如 Chrome DevTools）连接到正在运行的 Node.js 进程，进行断点设置、代码步进、性能分析等调试操作。这对于开发和调试 Node.js 应用非常有用。
+
+NPX 的这些特性使得在不污染全局命名空间的情况下，更加便捷地使用和测试 npm 包成为可能。
+
 ## npm基础使用
 
-安装
-
-当要安装的程序包提供了可执行命令且可在项目间复用时，则应全局安装。其余情况都应该在项目本地安装。
+**安装**：当要安装的程序包提供了可执行命令且可在项目间复用时，则应全局安装。其余情况都应该在项目本地安装。
 
 ```bash
 # 安装所有依赖
 npm install
 # 只安装生产环境依赖
 npm install --production
-# 安装某个依赖	
+# 安装某个依赖的最新版本
 npm install <package-name>
-# 安装旧依赖
+# 安装某个依赖的指定版本
 npm install <package-name>@<version>
 
 # 删除某个依赖
@@ -595,7 +612,7 @@ ncu -u
 npm update
 ```
 
-查看安装的 npm 软件包版本 
+**查看安装的 npm 软件包版本** 
 
 ```bash
 # 查看某个软件包版本
@@ -615,205 +632,113 @@ npm view <package-name> version
 npm view <package-name> versions
 ```
 
-全局 node_modules 位置
+**全局 node_modules 位置**
 
-`npm root -g` 命令会告知全局安装的 node_modules 在计算机上的确切位置。
+* `npm root -g` 命令会告知全局安装的 node_modules 在计算机上的确切位置。
 
-* 在 macOS 或 Linux 上，此位置可能是 `/usr/local/lib/node_modules`。 
-* 在 Windows 上，可能是 `C:\Users\YOU\AppData\Roaming\npm\node_modules`。
-* 使用 `nvm`，则软件包的位置可能为 `/Users/joe/.nvm/versions/node/v8.9.0/lib/node_modules`。
+  * 在 macOS 或 Linux 上，此位置可能是 `/usr/local/lib/node_modules`。 
 
-npm 包是可执行文件时
+  * 在 Windows 上，可能是 `C:\Users\YOU\AppData\Roaming\npm\node_modules`。
 
-全局安装的可执行命令是放在 `/usr/local/bin` 目录下，使用 `nvm` 的话是在 `/Users/Joe/.nvm/versions/node/v8.17.0/bin/` 目录下，直接使用全局命令运行。
+  * 使用 `nvm`，则软件包的位置可能为 `/Users/joe/.nvm/versions/node/v8.9.0/lib/node_modules`。
 
-本地安装它会把可执行文件放到 `node_modules/.bin/`文件夹下。可以输入文件位置来运行它。
 
-`./node_modules/.bin/cowsay`
+* npm 包是可执行文件时
+  * 全局安装的可执行命令是放在 `/usr/local/bin` 目录下，使用 `nvm` 的话是在 `/Users/Joe/.nvm/versions/node/v8.17.0/bin/` 目录下，直接使用全局命令运行。
+  * 本地安装它会把可执行文件放到 `node_modules/.bin/`文件夹下。可以输入文件位置来运行它：`./node_modules/.bin/cowsay`；或者使用 `npx` 来运行：`npx cowsay`，`npx` 会找到程序包的位置。
 
-或者使用 `npx` 来运行，`npx` 会找到程序包的位置。
+## npm发布及其更新
 
-`npx cowsay`
+**发布npm包**
 
-## npm发布
+1. **创建用户帐户**：要发布，您必须是 npm 注册表的用户。
 
-##### 搭建项目
+   1. 如果您不是用户，请创建帐户 `npm adduser`。
+   2. 如果您在网站上创建了用户帐户，请使用`npm login`从终端访问您的帐户。
 
-使用 vue/cli 初始化项目，并修改项目结构。
+2. **测试是否登录成功**：
 
-```
-├── src                            // 源码目录
-│   ├── lib                        // 源码
-│   │   ├── index.js               // 插件入口
-│   │   ├── MyPlugin.vue           // 组件
-│   ├── App.vue                    // 测试写的插件
-│   ├── main.js                    // 程序入口文件，加载各种公共组件
-├── index.html                     // 入口html文件
-```
+   1. 从终端输入`npm whoami`以查看您是否已经登录（从技术上讲，这也意味着您的凭据已存储在本地）。
+   2. 检查您的用户名是否已添加到注册表中：[https://npmjs.com/~username](https://npmjs.com/~).
 
-##### 编写组件
+3. **查看包目录**
 
-```vue
-<template>
-  <div>
-    
-  </div>
-</template>
+   1. 查看内容
 
-<script>
-export default {
-  
-}
-</script>
+      请注意，除非被本地`.gitignore`或`.npmignore`文件忽略，否则目录中的所有内容都将被包含在内。
 
-<style>
+   2. 查看 package.json 文件
 
-</style>
-```
+      * 为您的包选择一个唯一的包名，install和import的就是这个名字。先到npm搜索有没有被用过。
+      * 版本号：从 1.0.0 开始
 
-##### 插件注册
+      * 选择一个描述性名称。
 
-Vue.js 的插件是一个对象或类，暴露一个 install 方法，里面来包含我们要处理的业务。这个方法的第一个参数是 Vue 构造器 , 第二个参数是一个可选的选项对象。
+   3. 包含文档 (readme.md)
 
-```js
-const MyPlugin = {
-  install (Vue, options) {
-		// 1. 添加全局方法或 property
-    Vue.myGlobalMethod = function () {
-      // 逻辑...
-    }
+      npm 建议您包含一个自述文件来记录您的包。自述文件必须具有文件名`readme.md`。当有人找到你的包时，该文件将出现在 npm 网站上。
 
-    // 2. 添加全局资源
-    Vue.directive('my-directive', {
-      bind (el, binding, vnode, oldVnode) {
-        // 逻辑...
-      }
-    })
+4. **发布**
 
-    // 3. 注入组件选项
-    Vue.mixin({
-      created: function () {
-        // 逻辑...
-      }
-    })
+   `npm publish`
 
-    // 4. 添加实例方法
-    Vue.prototype.$myMethod = function (methodOptions) {
-      // 逻辑...
-    }
-  }
-}
+5. **测试是否发布成功**
 
-// 导出插件
-export default MyPlugin
-```
+   去`https://npmjs.com/package/<package>`。您应该会看到一个关于您的新包的页面。
 
-##### 插件使用
+**更新npm包**
 
-通过全局方法 Vue.use() 使用插件。它需要在你调用 new Vue() 启动应用之前完成。
+1. **先提交 git**
 
-```js
-import MyPlugin from 'MyPlugin'
+2. **然后运行如下 `npm version` 命令**
 
-Vue.use(MyPlugin)
-// 也可以传入一个可选的选项对象
-Vue.use(MyPlugin, { someOption: true })
+   该命令会自动更新`package.json`中的 npm 版本号，并且自动 git 提交一次版本号的更新，且自动的帮你打上一个版本号的 git tag，最后提交到`package.json`中设置的 git 远程仓库。
 
-new Vue({
-  // ...组件选项
-})
-```
+   * 升级补丁版本号：npm version patch
 
-Vue.use 会自动阻止多次注册相同插件，即使多次调用也只会注册一次该插件。
+   * 升级小版本号：npm version minor
 
-使用 script 标签引入插件代码时，无法使用 import 或 require 等形式进行插件模块的导入，也就无法使用 Vue.use()，所以一些插件内部注册的时候在检测到 Vue 是可访问的全局变量时会自动调用 Vue.use() 来使用插件。Vue 只有在 script 的形式时才是可访问的全局变量，所以模块化开发的时候我们都要手动 Vue.use()。
+   * 升级大版本号：npm version major
 
-```js
-if (typeof window !== 'undefined' && window.Vue) {
-  window.Vue.use(MyPlugin);
-}
-```
+3. **发布**
 
-##### 打包
+   `npm publish`
 
-方式一：添加打包命令：package.json
+4. **测试版本是否更新成功**
 
-```json
-"build:lib": "vue-cli-service build --target lib --name falcons-header src/lib/header/index.js",
-```
+   去`https://npmjs.com/package/<package>`。包版本号应更新。
+
+**发布私有npm包**
+
+查看[文档](https://www.npmjs.cn/getting-started/scoped-packages/)
+
+# nvm/n/nrm
+
+nvm和n用于管理 Node.js 的不同版本。nrm用于管理和切换不同的 npm 源（registry）。
+
+**nvm**
 
 ```bash
-npm run build:lib
+#安装nvm(mac/linux)
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
+wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
+#安装最新稳定版本node
+nvm install node
+#安装指定版本node
+nvm install 14.7.0
+#查看所有可用的node版本
+nvm ls-remote
+#查看本地已经安装过的版本
+nvm ls
+#使用指定版本的node
+nvm use v14.8.0
+#卸载指定版本node
+nvm uninstall v14.8.0
 ```
 
-方式二：修改 webpack 配置：vue.config.js
+**n**
 
-```js
-module.exports = {
-	entry: './src/lib/index.js',
-  output: {
-    path: path.resolve(__dirname, './dist'), 
-    publicPath: '/dist/',
-    filename: 'my-plugin.js' // 打包后输出的文件名，起一个与插件功能相对应的
-    library: 'MyPlugin', // library指定的就是你使用require时的模块名，这里便是require("MyPlugin")
-    libraryTarget: 'umd', // libraryTarget会生成不同umd的代码,可以只是commonjs标准的，也可以是指amd标准的，也可以只是通过script标签引入的。
-    umdNamedDefine: true // 会对UMD的构建过程中的AMD模块进行命名。否则就使用匿名的define。
-  }
-}
-```
-
-```bash
-npm run build
-```
-
-##### 发布到 npm
-
-修改 package.json
-
-```json
-{
-  "name": "my-plugin", // 最终包的名字，install和import的就是这个名字。先到npm搜索有没有被用过。
-  "version": "1.0.0",
-  "private": false,
-  "description": "MyPlugin插件",
-  "main": "dist/my-plugin.js", // 当你引入模块的时候，它默认就会去找这个文件
-  "repository": { // 配置这个地址存放你项目在github上的位置
-    "type": "git",
-    "url": "https://github.com/zhaoyang007/my-plugin"
-  }, 
-  "keywords": [],
-  "author": "",
-  "license": "MIT"
-}
-```
-
-发布到 npm：
-
-查看当前 npm 用户：npm whoami
-
-添加用户：npm adduser
-
-登录 npm 账户：npm login
-
-升级版本：
-
-* 升级补丁版本号：npm version patch
-* 升级小版本号：npm version minor
-* 升级大版本号：npm version major
-
-先提交 git，然后运行 npm version 命令会自动更新 npm 版本号，并且自动 git 提交一次版本号的更新，且自动的帮你打上一个版本号的 git tag，最后提交 git 远程。
-
-发布版本：npm publish
-
-##### 测试
-
-在其他项目中安装你的插件，看看使用是否正常。
-
-##### 如何将一个业务组件完整的功能变成一个插件
-
-1. 将所有引用关系正确的匹配，包括组件，css，图片字体等资源。
-2. 将接口调用正确的运行。
-3. 将路由跳转关系进行正确的匹配。
+**nrm**
 
 # cli工具
 
