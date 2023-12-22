@@ -1,4 +1,24 @@
-##### 命令行中打印对象深层属性内容
+# node
+
+## 概念
+
+node采用一个长期运行的进程，是单线程的。
+
+优先错误处理，由于node应用依托在一个拥有大量共享状态的大进程中，如果某个回调函数发生了错误，整个进程都会崩溃。
+
+使用v8，可以让执行js的速度非常快。
+
+非阻塞IO：使用事件轮询事项实现异步，node使用回调和事件机制来实现并发。
+
+模块系统：require exports module.exports
+
+事件机制
+
+中间件：就是函数，用于流程控制，使代码清晰和提高复用性。
+
+## 技巧
+
+1.命令行中打印对象深层属性内容
 
 ```js
 const util = require('util');
@@ -18,9 +38,9 @@ const fullObjectString = util.inspect(object, { showHidden: false, depth: null, 
 console.log(fullObjectString);
 ```
 
-##### 使用管道命令与分页工具查看控制台中过长的打印内容
+2.使用管道命令与分页工具查看控制台中过长的打印内容 |less
 
-##### node 安装
+## node 安装
 
 当安装 Node.js 之后，就可以在命令行中访问 `node` 可执行程序。
 
@@ -37,89 +57,7 @@ console.log(fullObjectString);
 - 查看已经安装过的node版本  `n ls`
 - 删除14.13.1版本 `n rm 14.13.1`
 
-##### npm
-
-安装
-
-当要安装的程序包提供了可执行命令且可在项目间复用时，则应全局安装。其余情况都应该在项目本地安装。
-
-```bash
-# 安装所有依赖
-npm install
-# 只安装生产环境依赖
-npm install --production
-# 安装某个依赖	
-npm install <package-name>
-# 安装旧依赖
-npm install <package-name>@<version>
-
-# 删除某个依赖
-npm uninstall <package-name>
-# 如果使用 -S 或 --save 标志，则此操作还会移除 package.json 文件中的引用。
-npm uninstall -S <package-name>
-npm uninstall -D <package-name>
-npm uninstall -g <package-name>
-# 删除所有依赖
-rm -rf node_modules && npm cache clean --force
-
-# 重装：先删除再安装
-
-# 发觉软件包的新版本
-npm outdated
-
-# 更新某个依赖
-npm update <package-name>
-# 更新所有依赖，update永远不会更新主版本
-npm update
-
-# 将所有软件包更新到新的主版本，则全局安装 npm-check-updates 软件包
-npm install -g npm-check-updates
-# 然后运行
-ncu -u
-# 这会升级 package.json 文件的 dependencies 和 devDependencies 中的所有版本，以便 npm 可以安装新的主版本。
-# 再运行更新
-npm update
-```
-
-查看安装的 npm 软件包版本 
-
-```bash
-# 查看某个软件包版本
-npm list <package-name>
-# 查看所有已安装的 npm 软件包（包括它们的依赖包）的版本
-npm list
-npm list -g
-# 仅获取顶层的软件包（基本上就是告诉 npm 要安装并在 package.json 中列出的软件包）
-npm list --depth=0
-npm list --depth 0
-npm list -g --depth=0
-npm list -g --depth 0
-
-# 查看软件包在 npm 仓库上最新的可用版本
-npm view <package-name> version
-# 列出软件包所有的以前的版本
-npm view <package-name> versions
-```
-
-全局 node_modules 位置
-
-`npm root -g` 命令会告知全局安装的 node_modules 在计算机上的确切位置。
-
-* 在 macOS 或 Linux 上，此位置可能是 `/usr/local/lib/node_modules`。 
-* 在 Windows 上，可能是 `C:\Users\YOU\AppData\Roaming\npm\node_modules`。
-* 使用 `nvm`，则软件包的位置可能为 `/Users/joe/.nvm/versions/node/v8.9.0/lib/node_modules`。
-
-npm 包是可执行文件时
-
-全局安装的可执行命令是放在 `/usr/local/bin` 目录下，使用 `nvm` 的话是在 `/Users/Joe/.nvm/versions/node/v8.17.0/bin/` 目录下，直接使用全局命令运行。
-
-本地安装它会把可执行文件放到 `node_modules/.bin/`文件夹下。可以输入文件位置来运行它。
-
-`./node_modules/.bin/cowsay`
-
-或者使用 `npx` 来运行，`npx` 会找到程序包的位置。
-
-`npx cowsay`
+## 核心API
 
 ##### process
 
@@ -153,6 +91,68 @@ const minimist = require('minimist');
 const args = minimist(process.argv.slice(2));
 args['name'] // joe
 ```
+
+##### child_process
+
+**需要创建子进程的场景**：
+
+1. **执行外部程序**：当需要从 Node.js 应用中运行外部程序或命令时（如 shell 命令）。
+2. **CPU 密集型任务**：对于 CPU 密集型任务，如图像处理或大数据计算，使用子进程可以避免阻塞事件循环。
+3. **并行处理**：当需要同时执行多个任务而不影响主应用程序的性能时。
+4. **资源隔离**：创建子进程可为特定任务提供独立的运行环境和资源，从而提高安全性和稳定性。
+5. **简化复杂任务**：将复杂的任务分解到不同的子进程中，可以简化代码管理和错误处理。
+
+通过合理使用子进程，可以提高应用程序的性能和响应能力。
+
+**创建子进程的方法**：
+
+`child_process.spawn(command[, args][, options])` 创建子进程
+
+* command：要运行的命令
+* args：字符串参数列表
+* options
+
+`child_process.exec()` 衍生 shell 并在该 shell 中运行命令，完成后将 `stdout` 和 `stderr` 传给回调函数。
+
+* command：要运行的命令，参数以空格分隔
+* options
+* callback：参数error, stdout, stderr
+
+`child_process.execFile()`与 `child_process.exec()` 类似，不同之处在于，默认情况下，它直接衍生命令，而不先衍生 shell。
+
+`child_process.fork()`衍生新的 Node.js 进程并使用建立的 IPC 通信通道（其允许在父子进程之间发送消息）调用指定的模块。
+
+##### 模块系统
+
+**nodejs模块查找策略：**
+
+1. 文件作为模块：
+   * 核心模块
+   * 从 `node_modules` 中加载模块（https://www.nodejs.com.cn/api/packages.html）
+     * 首先检查模块的 `package.json` 文件中，`exports`、`module` 或 `main`字段指定的入口点文件。书写顺序即优先级。
+     * 如果 `package.json` 中没有指定或不存在，则默认查找模块根目录下的 `index.js` 文件。
+   * 绝对路径
+   * 相对路径
+2. 目录作为模块：查找目录中的package.json中的main字段，如果没有就加在目录中的index文件。
+
+**cjs和esm的区别：**
+
+1. CommonJS (CJS):
+   - 使用场景：主要用于 Node.js。
+   - 导入导出：使用 `require()` 导入模块，`module.exports` 导出。
+   - 特点：
+     1. 基于运行时的加载方式所以不支持静态分析和树摇。
+     2. CJS设计成同步的，主要是因为它最初是为服务器端环境（如 Node.js）开发的，其中模块通常在程序启动时一次性加载。在这种环境下，同步加载简化了模块管理，因为它保证了代码在执行任何操作之前模块就已经完全加载和可用。这种设计减少了编程复杂性，并确保了代码的执行顺序和模块依赖的清晰性。同步模式在服务器端应用中通常是可接受的，因为所有资源通常都是本地可用的，所以不会引起显著的性能问题。
+   - 优点：简单易用，适用于服务器端。
+   - 缺点：同步加载模块，可能影响性能。
+2. ECMAScript Modules (ESM):
+   - 使用场景：既可用于浏览器也可用于 Node.js。
+   - 导入导出：使用 `import` 和 `export` 语句。
+   - 特点：
+     1. 基于编译时的加载方式。这意味着模块的导入和导出在代码编译阶段就已经确定，而不是在运行时。这种静态结构使得编译器和打包工具可以在代码执行之前分析模块依赖关系，从而实现优化，如树摇（tree-shaking）和代码拆分
+     2. 这也使得 ESM 能够支持异步加载模块，提高了模块管理的灵活性和效率。
+   - 优点：支持静态分析和树摇（tree-shaking），异步加载。
+   - 缺点：语法较为严格，兼容性问题。
 
 ##### path
 
@@ -212,7 +212,7 @@ path.isAbsolute('./test/something') // false
 
 ##### fs
 
-文件
+文件系统
 
 ```js
 // 文件属性
@@ -505,247 +505,776 @@ request.end();
 
 ##### buffer
 
-Buffer 是内存区域。
-
-它表示在 V8 JavaScript 引擎外部分配的固定大小的内存块（无法调整大小）。
+Buffer 是一块固定大小的内存区域。
 
 可以将 buffer 视为整数数组，每个整数代表一个数据字节。
 
-Buffer 被引入用以帮助开发者处理二进制数据，在此生态系统中传统上只处理字符串而不是二进制数据。
+Buffer 被引入用以帮助开发者处理二进制数据，可以对数据进行编码转换，在此生态系统中传统上只处理字符串而不是二进制数据。
 
 Buffer 与流紧密相连。 当流处理器接收数据的速度快于其消化的速度时，则会将数据放入 buffer 中。
+
+**js中处理二进制数据的api**
+
+`ArrayBuffer`、类型化数组（Typed Arrays）和`Blob`是 JavaScript 中用于处理二进制数据的不同结构，它们各有特点和用途：
+
+ArrayBuffer
+
+- **定义**: `ArrayBuffer` 是一种通用的、固定长度的原始二进制数据缓冲区。
+- **特点**: 你不能直接操作 `ArrayBuffer` 的内容。它提供了一个原始的二进制数据缓冲区，可以通过类型化数组或 `DataView` 对其进行读写。
+- **用途**: 通常用作存储二进制数据的底层结构，如文件读取、网络通信等。
+
+类型化数组 (Typed Arrays)
+
+- **定义**: 类型化数组是 `ArrayBuffer` 的视图，它们提供了对 `ArrayBuffer` 的结构化访问。例如，`Uint8Array`、`Int16Array`、`Float32Array` 等。
+- **特点**: 每种类型化数组固定了元素的数据类型和大小，使得对特定格式的二进制数据的读写变得容易。
+- **用途**: 用于需要按特定格式处理二进制数据的场景，如图像处理、音频处理、或者其他需要操作具体二进制数据的应用。
+
+Blob
+
+- **定义**: `Blob`（Binary Large Object）代表了不可变的二进制数据块。
+- **特点**: 通常用来处理大型的文件数据，如图片、声音、视频等。
+- **用途**: 常用于文件操作，如读取用户上传的文件、在客户端生成并下载文件等。`Blob` 也经常在 Web API 中用于数据传输。
+
+总结
+
+- **`ArrayBuffer`** 是原始的二进制数据缓冲区。
+- **类型化数组** 提供了对 `ArrayBuffer` 内容的结构化访问。
+- **`Blob`** 用于表示大型的二进制数据，常用于文件操作。
+
+它们共同构成了 JavaScript 处理二进制数据的生态系统，每种结构都有其特定的用途和应用场景。
 
 ##### stream
 
 在传统的方式中，当告诉程序读取文件时，这会将文件从头到尾读入内存，然后进行处理。使用流，则可以逐个片段地读取并处理（而无需全部保存在内存中）。
 
-##### MIME 类型
+当持续不断地对数据进行读写时，流就出现了。
 
-媒体类型（通常称为 Multipurpose Internet Mail Extensions 或 MIME 类型 ）是一种标准，用来表示文档、文件或字节流的性质和格式。
+# npm
 
-浏览器通常使用MIME类型（而不是文件扩展名）来确定如何处理URL，因此Web服务器在响应头中添加正确的MIME类型非常重要。如果配置不正确，浏览器可能会曲解文件内容，网站将无法正常工作，并且下载的文件也会被错误处理。
+## npm基础使用
 
-通用结构：
+安装
 
-*type* 表示可以被分多个子类的独立类别。*subtype* 表示细分后的每个类型。
+当要安装的程序包提供了可执行命令且可在项目间复用时，则应全局安装。其余情况都应该在项目本地安装。
 
-```
-type/subtype
-```
+```bash
+# 安装所有依赖
+npm install
+# 只安装生产环境依赖
+npm install --production
+# 安装某个依赖	
+npm install <package-name>
+# 安装旧依赖
+npm install <package-name>@<version>
 
-独立类型：
+# 删除某个依赖
+npm uninstall <package-name>
+# 如果使用 -S 或 --save 标志，则此操作还会移除 package.json 文件中的引用。
+npm uninstall -S <package-name>
+npm uninstall -D <package-name>
+npm uninstall -g <package-name>
+# 删除所有依赖
+rm -rf node_modules && npm cache clean --force
 
-独立类型表明了对文件的分类，可以是如下之一：
+# 重装：先删除再安装
 
-| 类型          | 描述                                                         | 典型示例                                                     |
-| :------------ | :----------------------------------------------------------- | :----------------------------------------------------------- |
-| `text`        | 表明文件是普通文本，理论上是人类可读                         | `text/plain`, `text/html`, `text/css, text/javascript`       |
-| `image`       | 表明是某种图像。不包括视频，但是动态图（比如动态gif）也使用image类型 | `image/gif`, `image/png`, `image/jpeg`, `image/bmp`, `image/webp`, `image/x-icon`, `image/vnd.microsoft.icon`, `image/svg+xml` |
-| `audio`       | 表明是某种音频文件                                           | `audio/midi`, `audio/mpeg, audio/webm, audio/ogg, audio/wav`,`audio/*` |
-| `video`       | 表明是某种视频文件                                           | `video/webm`, `video/ogg`,`video/mp4`                        |
-| `application` | 表明是某种二进制数据                                         | `application/octet-stream`, `application/pkcs12`, `application/vnd.mspowerpoint`, `application/xhtml+xml`, `application/xml`, `application/pdf`, `application/*`, `application/json`, `application/javascript `, `application/ecmascript` |
+# 发觉软件包的新版本
+npm outdated
 
-对于text文件类型若没有特定的subtype，就使用 `text/plain`。类似的，二进制文件没有特定或已知的 subtype，即使用 `application/octet-stream`。
+# 更新某个依赖
+npm update <package-name>
+# 更新所有依赖，update永远不会更新主版本
+npm update
 
-历史原因，[MIME 嗅探标准](https://mimesniff.spec.whatwg.org/) 允许使用匹配以下任意的 MIME 类型服务 JavaScript：
-
-- `application/javascript`
-- `application/ecmascript`
-- `application/x-ecmascript` 
-- `application/x-javascript` 
-- `text/javascript`
-- `text/ecmascript`
-- `text/javascript1.0` 
-- `text/javascript1.1` 
-- `text/javascript1.2` 
-- `text/javascript1.3` 
-- `text/javascript1.4` 
-- `text/javascript1.5` 
-- `text/jscript` 
-- `text/livescript` 
-- `text/x-ecmascript` 
-- `text/x-javascript` 
-
-注意：即便任何给定的 [user agent](https://developer.mozilla.org/zh-CN/docs/Glossary/User_agent) 可能支持这些中的任意或所有，你只应该使用 `text/javascript`。它是唯一确保能在目前和以后正常工作的 MIME 类型。
-
-你可能发现某些内容在 `text/javascript` 媒体类型末尾有一个 `charset` 参数，指定用于表示代码内容的字符集。这不是合法的，而且在大多数场景下会导致脚本不被载入。
-
-Multipart 类型：
-
-```
-multipart/form-data
-multipart/byteranges
+# 将所有软件包更新到新的主版本，则全局安装 npm-check-updates 软件包
+npm install -g npm-check-updates
+# 然后运行
+ncu -u
+# 这会升级 package.json 文件的 dependencies 和 devDependencies 中的所有版本，以便 npm 可以安装新的主版本。
+# 再运行更新
+npm update
 ```
 
-*Multipart* 类型表示细分领域的文件类型的种类，经常对应不同的 MIME 类型。这是*复合*文件的一种表现方式。`multipart/form-data` 可用于联系 [HTML Forms](https://developer.mozilla.org/en-US/docs/Learn/Forms) 和 [`POST`](https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Methods/POST) 方法，此外 `multipart/byteranges`使用状态码[`206`](https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Status/206) `Partial Content`来发送整个文件的子集，而HTTP对不能处理的复合文件使用特殊的方式：将信息直接传送给浏览器（这时可能会建立一个“另存为”窗口，但是却不知道如何去显示内联文件。）
+查看安装的 npm 软件包版本 
 
-MIME 嗅探：
+```bash
+# 查看某个软件包版本
+npm list <package-name>
+# 查看所有已安装的 npm 软件包（包括它们的依赖包）的版本
+npm list
+npm list -g
+# 仅获取顶层的软件包（基本上就是告诉 npm 要安装并在 package.json 中列出的软件包）
+npm list --depth=0
+npm list --depth 0
+npm list -g --depth=0
+npm list -g --depth 0
 
-在缺失 MIME 类型或客户端认为文件设置了错误的 MIME 类型时，浏览器可能会通过查看资源来进行MIME嗅探。每一个浏览器在不同的情况下会执行不同的操作。因为这个操作会有一些安全问题，有的 MIME 类型表示可执行内容而有些是不可执行内容。浏览器可以通过请求头来设置 [`X-Content-Type-Options`](https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Headers/X-Content-Type-Options) 以阻止MIME嗅探。
-
-```
-X-Content-Type-Options: nosniff
-```
-
-##### 客户端提交数据
-
-1.form 表单提交
-
-form 表单
-
-* action：url 地址，服务器接收表单数据的地址
-* method：提交服务器的http方法，一般为post和get
-* name：name属性的唯一性
-* enctype: 表单数据提交时使用的编码类型，默认使用"pplication/x-www-form-urlencoded"，如果是使用POST请求，则请求头中的content-type指定值就是该值。如果表单中有上传文件，编码类型需要使用"multipart/form-data"类型，才能完成传递文件数据。
-
-浏览器提交表单时，会默认执行如下步骤
-
-1. 识别出表单中表单元素的有效项，作为提交项
-2. 构建一个表单数据集
-3. 根据form表单中的enctype属性的值作为content-type对数据进行编码
-4. 根据form表单中的action属性和method属性向指定的地址发送数据
-
-提交方式
-
-1. get：表单数据会被encodeURIComponent后以参数的形式:name1=value1&name2=value2 附带在url?后面，再发送给服务器，并在url中显示出来。
-2. post：enctype 默认"application/x-www-form-urlencoded"对表单数据进行编码，数据以键值对在http请求体中发送给服务器；如果enctype 属性为"multipart/form-data"，则以消息的形式发送给服务器。
-
-2.四种常见的 POST 提交数据方式
-
-HTTP 请求分为三个部分：状态行、请求头、消息主体。
-
-```
-<method> <request-URL> <version>
-<headers>
-
-<entity-body>
+# 查看软件包在 npm 仓库上最新的可用版本
+npm view <package-name> version
+# 列出软件包所有的以前的版本
+npm view <package-name> versions
 ```
 
-服务端根据请求头（headers）中的 Content-Type 字段来获知请求中的消息主体是用何种方式编码，再对请求主体数据进行解析。
+全局 node_modules 位置
 
-1.application/x-www-form-urlencoded
+`npm root -g` 命令会告知全局安装的 node_modules 在计算机上的确切位置。
 
-浏览器的原生 <form> 表单，如果不设置 `enctype` 属性，那么最终就会以 application/x-www-form-urlencoded 方式提交数据。Content-Type 被指定为 application/x-www-form-urlencoded，提交的数据按照 key1=val1&key2=val2 的方式进行编码，key 和 val 都进行了 URL 转码。可以使用 qs.stringify(data) 将data转换为url格式。
+* 在 macOS 或 Linux 上，此位置可能是 `/usr/local/lib/node_modules`。 
+* 在 Windows 上，可能是 `C:\Users\YOU\AppData\Roaming\npm\node_modules`。
+* 使用 `nvm`，则软件包的位置可能为 `/Users/joe/.nvm/versions/node/v8.9.0/lib/node_modules`。
 
-```
-POST http://www.example.com HTTP/1.1
-Content-Type: application/x-www-form-urlencoded;charset=utf-8
+npm 包是可执行文件时
 
-title=test&sub%5B%5D=1&sub%5B%5D=2&sub%5B%5D=3
-```
+全局安装的可执行命令是放在 `/usr/local/bin` 目录下，使用 `nvm` 的话是在 `/Users/Joe/.nvm/versions/node/v8.17.0/bin/` 目录下，直接使用全局命令运行。
 
-2.multipart/form-data
+本地安装它会把可执行文件放到 `node_modules/.bin/`文件夹下。可以输入文件位置来运行它。
 
-使用表单上传文件时，必须让 <form> 表单的 `enctype` 等于 multipart/form-data。
+`./node_modules/.bin/cowsay`
 
-```
-POST http://www.example.com HTTP/1.1
-Content-Type:multipart/form-data; boundary=----WebKitFormBoundaryrGKCBY7qhFd3TrwA
+或者使用 `npx` 来运行，`npx` 会找到程序包的位置。
 
-------WebKitFormBoundaryrGKCBY7qhFd3TrwA
-Content-Disposition: form-data; name="text"
+`npx cowsay`
 
-title
-------WebKitFormBoundaryrGKCBY7qhFd3TrwA
-Content-Disposition: form-data; name="file"; filename="chrome.png"
-Content-Type: image/png
+## npm发布
 
-PNG ... content of chrome.png ...
-------WebKitFormBoundaryrGKCBY7qhFd3TrwA--
-```
+##### 搭建项目
 
-3.application/json
-
-这种方案，可以方便的提交复杂的结构化数据。
+使用 vue/cli 初始化项目，并修改项目结构。
 
 ```
-POST http://www.example.com HTTP/1.1 
-Content-Type: application/json;charset=utf-8
-
-{"title":"test","sub":[1,2,3]}
+├── src                            // 源码目录
+│   ├── lib                        // 源码
+│   │   ├── index.js               // 插件入口
+│   │   ├── MyPlugin.vue           // 组件
+│   ├── App.vue                    // 测试写的插件
+│   ├── main.js                    // 程序入口文件，加载各种公共组件
+├── index.html                     // 入口html文件
 ```
 
-4.text/xml
+##### 编写组件
 
-它是一种使用 HTTP 作为传输协议，XML 作为编码方式的远程调用规范。
+```vue
+<template>
+  <div>
+    
+  </div>
+</template>
 
+<script>
+export default {
+  
+}
+</script>
+
+<style>
+
+</style>
 ```
-POST http://www.example.com HTTP/1.1 
-Content-Type: text/xml
 
-<?xml version="1.0"?>
-<methodCall>
-    <methodName>examples.getStateName</methodName>
-    <params>
-        <param>
-            <value><i4>41</i4></value>
-        </param>
-    </params>
-</methodCall>
+##### 插件注册
+
+Vue.js 的插件是一个对象或类，暴露一个 install 方法，里面来包含我们要处理的业务。这个方法的第一个参数是 Vue 构造器 , 第二个参数是一个可选的选项对象。
+
+```js
+const MyPlugin = {
+  install (Vue, options) {
+		// 1. 添加全局方法或 property
+    Vue.myGlobalMethod = function () {
+      // 逻辑...
+    }
+
+    // 2. 添加全局资源
+    Vue.directive('my-directive', {
+      bind (el, binding, vnode, oldVnode) {
+        // 逻辑...
+      }
+    })
+
+    // 3. 注入组件选项
+    Vue.mixin({
+      created: function () {
+        // 逻辑...
+      }
+    })
+
+    // 4. 添加实例方法
+    Vue.prototype.$myMethod = function (methodOptions) {
+      // 逻辑...
+    }
+  }
+}
+
+// 导出插件
+export default MyPlugin
 ```
 
-##### 字符集和字符编码
+##### 插件使用
 
-通俗的说，按照何种规则将字符存储在计算机中，如'a'用什么表示，称为"编码"；反之，将存储在计算机中的二进制数解析显示出来，称为"解码"。
+通过全局方法 Vue.use() 使用插件。它需要在你调用 new Vue() 启动应用之前完成。
 
-字符集就是规定了某个文字对应的二进制数字存放方式（编码）和某串二进制数值代表了哪个文字（解码）的转换关系。
+```js
+import MyPlugin from 'MyPlugin'
 
-字符集只是一个规则集合的名字，对应到真实生活中，字符集就是对某种语言的称呼。例如：英语，汉语，日语。
+Vue.use(MyPlugin)
+// 也可以传入一个可选的选项对象
+Vue.use(MyPlugin, { someOption: true })
 
-对于一个字符集来说要正确编码转码一个字符需要三个关键元素：字库表（character repertoire）、编码字符集（coded character set）、字符编码（character encoding form）。
+new Vue({
+  // ...组件选项
+})
+```
 
-* 字库表是一个相当于所有可读或者可显示字符的数据库，字库表决定了整个字符集能够展现表示的所有字符的范围。
-* 编码字符集，即用一个编码值`code point`来表示一个字符在字库中的位置。
-* 字符编码，编码字符集和实际存储数值之间的转换关系。
+Vue.use 会自动阻止多次注册相同插件，即使多次调用也只会注册一次该插件。
 
-Unicode就是上文中提到的编码字符集，而UTF-8就是字符编码，即Unicode规则字库的一种实现形式。
+使用 script 标签引入插件代码时，无法使用 import 或 require 等形式进行插件模块的导入，也就无法使用 Vue.use()，所以一些插件内部注册的时候在检测到 Vue 是可访问的全局变量时会自动调用 Vue.use() 来使用插件。Vue 只有在 script 的形式时才是可访问的全局变量，所以模块化开发的时候我们都要手动 Vue.use()。
 
-随着互联网的发展，对同一字库集的要求越来越迫切，Unicode标准也就自然而然的出现。它几乎涵盖了各个国家语言可能出现的符号和文字，并将为他们编号。
+```js
+if (typeof window !== 'undefined' && window.Vue) {
+  window.Vue.use(MyPlugin);
+}
+```
 
-Unicode的编号从`0000`开始一直到`10FFFF`共分为17个Plane，每个Plane中有65536个字符。而UTF-8则只实现了第一个Plane，可见UTF-8虽然是一个当今接受度最广的字符集编码，但是它并没有涵盖整个Unicode的字库，这也造成了它在某些场景下对于特殊字符的处理困难。
+##### 打包
 
-**UTF-8**（8-bit Unicode Transformation Format）是一种针对 Unicode 的可变长度字符编码（定长码），也是一种前缀码。它可以用来表示Unicode标准中的任何字符，且其编码中的第一个字节仍与ASCII兼容，这使得原来处理ASCII字符的软件无须或只须做少部份修改，即可继续使用。因此，它逐渐成为电子邮件、网页及其他存储或传送文字的应用中，优先采用的编码。[互联网工程工作小组](http://zh.wikipedia.org/wiki/網際網路工程工作小組)（IETF）要求所有互联网协议都必须支持UTF-8编码。
+方式一：添加打包命令：package.json
 
-在HTTP中，与字符集和字符编码相关的消息头是Accept-Charset/Content-Type，另外主区区分Accept-Charset/Accept-Encoding/Accept-Language/Content-Type/Content-Encoding/Content-Language：
+```json
+"build:lib": "vue-cli-service build --target lib --name falcons-header src/lib/header/index.js",
+```
 
-* Accept-Charset：浏览器申明自己接收的字符集，这就是本文前面介绍的各种字符集和字符编码，如gb2312，utf-8（通常我们说Charset包括了相应的字符编码方案）；
-* Accept-Encoding：浏览器申明自己接收的编码方法，通常指定压缩方法，是否支持压缩，支持什么压缩方法（gzip，deflate），（注意：这不是只字符编码）；
-* Accept-Language：浏览器申明自己接收的语言。语言跟字符集的区别：中文是语言，中文有多种字符集，比如big5，gb2312，gbk等等；
-* Content-Type：WEB服务器告诉浏览器自己响应的对象的类型和字符集。例如：Content-Type: text/html; charset='gb2312'
-* Content-Encoding：WEB服务器表明自己使用了什么压缩方法（gzip，deflate）压缩响应中的对象。例如：Content-Encoding：gzip
-* Content-Language：WEB服务器告诉浏览器自己响应的对象的语言。
+```bash
+npm run build:lib
+```
 
-##### 鉴权
+方式二：修改 webpack 配置：vue.config.js
 
-session-cookie
+```js
+module.exports = {
+	entry: './src/lib/index.js',
+  output: {
+    path: path.resolve(__dirname, './dist'), 
+    publicPath: '/dist/',
+    filename: 'my-plugin.js' // 打包后输出的文件名，起一个与插件功能相对应的
+    library: 'MyPlugin', // library指定的就是你使用require时的模块名，这里便是require("MyPlugin")
+    libraryTarget: 'umd', // libraryTarget会生成不同umd的代码,可以只是commonjs标准的，也可以是指amd标准的，也可以只是通过script标签引入的。
+    umdNamedDefine: true // 会对UMD的构建过程中的AMD模块进行命名。否则就使用匿名的define。
+  }
+}
+```
 
-token
+```bash
+npm run build
+```
 
-##### todo
+##### 发布到 npm
 
-5. 错误处理
+修改 package.json
 
-6. Error
+```json
+{
+  "name": "my-plugin", // 最终包的名字，install和import的就是这个名字。先到npm搜索有没有被用过。
+  "version": "1.0.0",
+  "private": false,
+  "description": "MyPlugin插件",
+  "main": "dist/my-plugin.js", // 当你引入模块的时候，它默认就会去找这个文件
+  "repository": { // 配置这个地址存放你项目在github上的位置
+    "type": "git",
+    "url": "https://github.com/zhaoyang007/my-plugin"
+  }, 
+  "keywords": [],
+  "author": "",
+  "license": "MIT"
+}
+```
 
-7. events
+发布到 npm：
 
-8. url
+查看当前 npm 用户：npm whoami
 
-10. timer
+添加用户：npm adduser
 
-    ```js
-    // nextTick 早于另外两个，是在当前事件循环的最后执行
-    process.nextTick(() => {
-    	console.log('nextTick');
+登录 npm 账户：npm login
+
+升级版本：
+
+* 升级补丁版本号：npm version patch
+* 升级小版本号：npm version minor
+* 升级大版本号：npm version major
+
+先提交 git，然后运行 npm version 命令会自动更新 npm 版本号，并且自动 git 提交一次版本号的更新，且自动的帮你打上一个版本号的 git tag，最后提交 git 远程。
+
+发布版本：npm publish
+
+##### 测试
+
+在其他项目中安装你的插件，看看使用是否正常。
+
+##### 如何将一个业务组件完整的功能变成一个插件
+
+1. 将所有引用关系正确的匹配，包括组件，css，图片字体等资源。
+2. 将接口调用正确的运行。
+3. 将路由跳转关系进行正确的匹配。
+
+# cli工具
+
+初始化
+
+```bash
+mkdir my-cli
+cd my-cli
+npm init -y
+npm i commander download-git-repo chalk figlet ora handlebars clear open -s
+
+mkdir bin
+cd bin
+touch mycli.js
+
+# package.json中注册bin
+"bin": {
+	"mycli": "./bin/mycli.js"
+},
+
+# 把你注册的bin文件通过软链的形式连接到全局，这样就可以全局使用mycli命令了
+sudo npm link
+```
+
+mycli.js
+
+```js
+#!/usr/bin/env node
+const program = require('commander');
+
+const { promisify } = require('util');
+
+// 字母拼图案
+const figlet = promisify(require('figlet'));
+
+// 清屏
+const clear = require('clear');
+// 粉笔
+const chalk = require('chalk');
+// 自动打开浏览器
+// const open = require('open');
+
+const fs = require('fs');
+const handlebars = require('handlebars');
+
+// 加颜色的log
+const log = content => console.log(chalk.green(content));
+
+// mycli -V
+program.version(require('../package.json').version);
+
+// mycli init abc 
+// 创建一个叫abc的工程
+program.command('init <name>')
+    .description('init project')
+    // .action(name => {
+    //     console.log('init', name);
+    // })
+    .action(init)
+
+// mycli refresh
+// 自动生成路由配置命令
+program.command('refresh')
+    .description('refresh routers...')
+    .action(refresh);
+
+// 固定要写的，program是通过解析process.argv来获取命令行参数的
+program.parse(process.argv);
+
+async function init(name) {
+    // 打印欢迎界面
+    // clear();
+    const data = await figlet('mycli welcome');
+    log(data);
+
+    // 脚手架新建一个工程一般是要从某一个种子工程下载下来的
+    // clone种子库
+    await clone('github:su37josephxia/vue-template', name);
+
+    // 安装依赖 npm install
+    log('安装依赖');
+    await spawn('npm', ['install'], { cwd: `./${name}` });
+    log(`
+👌安装完成:
+To get Start: ===========================
+cd ${name}
+npm run serve
+===========================`
+    );
+  
+  	// 自动打开浏览器
+    // open(`http://localhost:8080`);
+  
+    // 启动本地服务
+    await spawn('npm', ['run', 'serve'], { cwd: `./${name}`});
+    
+}
+
+// clone
+const clone = async (repo, desc) => {
+    // repo: 种子仓库地址
+    // desc: 下载到哪
+
+    // 下载git项目方法
+    const download = promisify(require('download-git-repo'));
+
+    // 下载过程中命令行loading
+    const ora = require('ora');
+    const process = ora(`下载....${repo}`);
+    process.start();
+    await download(repo, desc);
+    process.succeed();
+}
+
+// nodejs里执行命令行命令: 子进程中的spawn方法
+const spawn = async (...args) => {
+    // 日志流对接 子进程日志 => 主进程日志
+    const { spawn } = require('child_process');
+    return new Promise(resolve => {
+        const proc = spawn(...args);
+        proc.stdout.pipe(process.stdout);
+        proc.stderr.pipe(process.stderr);
+        proc.on('close', () => {
+            resolve();
+        });
     });
-    // 延迟 0 毫秒的 setTimeout() 回调与 setImmediate() 非常相似。 执行顺序取决于各种因素，但是它们都会在事件循环的下一个迭代中运行。
-    setImmediate(() => {
-      console.log('setImmediate');
-    });
-    setTimeout(() => {
-      console.log('setTimeout');
-    }, 0);
-    ```
+}
 
-11. 
+async function refresh() {
+    // 获取views页面列表
+    const list = fs
+        .readdirSync('./src/views')
+        .filter(v => v !== 'Home.vue')
+        .map(v => ({
+            name: v.replace('.vue', '').toLowerCase(),
+            file: v
+        }));
+    // 使用页面列表数据和模版生成代码
+    function compile(meta, templatePath, filePath) {
+        if (fs.existsSync(filePath)) {
+            const content = fs.readFileSync(templatePath).toString();
+            const result = handlebars.compile(content)(meta);
+            fs.writeFileSync(filePath, result);
+            log(`🚀${filePath} 创建成功`);
+        }
+    }
+    // 生成路由
+    compile({ list }, './template/router.js.hbs', './src/router.js');
+    
+    // 生成菜单
+    compile({ list }, './template/App.vue.hbs', './src/App.vue');
+}
+```
+
+发布
+
+publish.sh
+
+```bash
+#!usr/bin/env bash
+npm config get registry # 检查npm仓库
+npm config set registry=https://registry.npmjs.org
+echo '请进行登录相关操作'
+npm login
+echo '-------publishing-------'
+npm publish
+# npm config set registry=https://registry.npm.taobao.org
+echo '发布完成'
+exit
+```
+
+```bash
+chmod +x publish.sh # 新建的sh文件执行前要加执行权限
+./publish.sh
+```
+
+使用
+
+```bash
+# 全局安装
+npm install -g zy-vue-auto-router-cli
+
+# 本地安装
+npm install zy-vue-auto-router-cli
+
+# 本地安装后，使用 npm link 转到全局
+# 需要在下载 node_modules 包中执行，这样才会找到改包下的 bin 命令。
+npm link
+```
+
+# koa
+
+##### koa-middleware
+
+每收到一个 http 请求，koa 就会调用 `app.use()` 注册的 async 函数，并传入 `ctx` 和 `next` 参数。
+
+每个 async 函数就是一个中间件，可以做一些自己的事情，然后用 `await next()` 来调用下一个 async 函数。
+
+洋葱圈模式（责任链模式）既能满足顺序描述的需要也能满足切面描述的需要，中间件之前和之后都可以做一些事情。
+
+```js
+app.use(async (ctx, next) => {
+    await next();
+    ctx.response.type = 'text/html';
+    ctx.response.body = '<h1>Hello, koa2!</h1>';
+});
+```
+
+如果一个 middleware 没有调用 `await next()`，后续的 middleware 将不再执行。这种情况也很常见，例如，一个检测用户权限的 middleware 可以决定是否继续处理请求，还是直接返回 403 错误：
+
+```js
+app.use(async (ctx, next) => {
+    if (await checkUserPermission(ctx)) {
+        await next();
+    } else {
+        ctx.response.status = 403;
+    }
+});
+```
+
+##### koa-router
+
+`koa-router` 这个 middleware，负责处理 URL 映射。
+
+```js
+const Koa = require('koa');
+const router = require('koa-router')();
+
+const app = new Koa();
+
+router.get('/hello/:name', async (ctx, next) => {
+    var name = ctx.params.name;
+    ctx.response.body = `<h1>Hello, ${name}!</h1>`;
+});
+router.get('/', async (ctx, next) => {
+    ctx.response.body = '<h1>Index</h1>';
+});
+
+app.use(router.routes());
+
+app.listen(3000);
+console.log('app started at port 3000...');
+```
+
+处理 post 请求：
+
+用 post 请求处理 URL 时，我们会遇到一个问题：post 请求通常会发送一个表单，或者 JSON，它作为 request 的 body 发送，但无论是 Node.js 提供的原始 request 对象，还是 koa 提供的 request 对象，都不提供解析 request 的 body 的功能！
+
+所以，我们又需要引入另一个 middleware 来解析原始 request 请求，然后，把解析后的参数，绑定到 `ctx.request.body` 中。
+
+##### koa-bodyparser
+
+`koa-bodyparser ` 用于解析 post 请求的参数。
+
+ `koa-bodyparser` 必须在使用 `router ` 之前注册。
+
+```js
+const bodyParser = require('koa-bodyparser');
+
+app.use(bodyParser());
+```
+
+由于 middleware 的顺序很重要，这个 `koa-bodyparser` 必须在 `router `之前被注册到 `app `对象上。
+
+现在我们就可以处理 post 请求了。写一个简单的登录表单：
+
+```js
+router.get('/', async (ctx, next) => {
+    ctx.response.body = `<h1>Index</h1>
+        <form action="/signin" method="post">
+            <p>Name: <input name="name" value="koa"></p>
+            <p>Password: <input name="password" type="password"></p>
+            <p><input type="submit" value="Submit"></p>
+        </form>`;
+});
+
+router.post('/signin', async (ctx, next) => {
+    let name = ctx.request.body.name || '';
+    let password = ctx.request.body.password || '';
+    console.log(`signin with name: ${name}, password: ${password}`);
+    if (name === 'koa' && password === '12345') {
+        ctx.response.body = `<h1>Welcome, ${name}!</h1>`;
+    } else {
+        ctx.response.body = `<h1>Login failed!</h1><p><a href="/">Try again</a></p>`;
+    }
+});
+```
+
+##### 实现 koa 框架
+
+```js
+const Koa = require('./koa');
+const app = new Koa();
+
+app.use((req, res) => {
+	res.writeHead(200);
+  res.end('hello world');
+});
+
+app.listen(3000, () => {
+	console.log(`server is listening at 3000`);
+});
+```
+
+Koa.js
+
+```js
+const http = require('http');
+const context = require('./context');
+const request = require('./request');
+const response = require('./response');
+
+class Koa {
+	use(callback) {
+		this.callback = callback;
+  }
+  
+  listen(...args) {
+		const server = http.createServer((req, res) => {
+			// this.callback(req, res);
+      
+      // 创建上下文
+      const ctx = this.createContext(req, res);
+      
+      this.callback(ctx);
+      
+      res.end(ctx.body);
+      
+    });
+    server.listen(...args);
+  }
+  
+  // 构建上下文
+  createContext(req, res) {
+    const ctx = Object.create(context);
+    ctx.request = Object.create(request);
+    ctx.response = Object.create(response);
+    
+    ctx.req = ctx.request.req = req;
+    ctx.res = ctx.response.res = res;
+    
+		return ctx;
+  }
+}
+module.exports = Koa;
+```
+
+request.js
+
+```js
+module.exports = {
+	get url() {
+		return this.req.url;
+  },
+  get method() {
+    return this.req.method.toLowerCase();
+  },
+}
+```
+
+response.js
+
+```js
+module.exports = {
+	get body() {
+		return this._body;
+  },
+  set body(val) {
+    this._body = val;
+  },
+}
+```
+
+context.js
+
+```js
+module.exports = {
+	get url() {
+		return this.request.url;
+  },
+  get method() {
+		return this.request.method;
+  },
+  get body() {
+		return this.response.body;
+  },
+	set body(val) {
+    this.response.body = val;
+  },
+}
+```
+
+函数功能组合
+
+compose.js
+
+```js
+const add = (x, y) => x + y;
+const square = z => z * z;
+const fn = (x, y) => square(add(x, y));
+console.log(fn(1, 2));
+
+// 组合两个函数
+const compose = (fn1, fn2) => (...args) => fn2(fn1(...args));
+const fn = compose(add, square)
+console.log(fn(1, 2));
+
+// 组合多个函数
+const compose = (...[first, ...other]) => (...args) => {
+  let ret = first(...args);
+  other.forEach(fn => {
+    ret = fn(ret);
+  });
+  return ret;
+}
+```
+
+中间件洋葱圈模式 compose
+
+```js
+async function fn1(next) {
+  console.log("fn1");
+  await next();
+  console.log("end fn1");
+}
+async function fn2(next) {
+  console.log("fn2");
+  await delay();
+  await next();
+  console.log("end fn2");
+}
+function fn3(next) {
+  console.log("fn3");
+}
+function delay() {
+  return new Promise((reslove, reject) => {
+		setTimeout(() => {
+  		reslove();
+    }, 2000);
+	}); 
+}
+const middlewares = [fn1, fn2, fn3];
+const finalFn = compose(middlewares);
+finalFn(); // fn1,fn2,fn3,end fn2,end fn1
+
+function compose(middlewares) {
+	return function () {
+		return dispatch(0);
+    function dispatch(i) {
+			let fn = middlewares[i];
+      if (!fn) {
+				return Promise.resolve();
+      }
+      return Promise.resolve(
+      	fn(function next() {
+					// 下一级promise
+          return dispatch(i + 1);
+        });
+      );
+    }
+  }
+}
+```
 

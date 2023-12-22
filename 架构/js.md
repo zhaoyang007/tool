@@ -1,136 +1,3 @@
-## css
-
-##### 隐藏页面的方式
-
-`opacity: 0`：占据空间，可以交互。
-
-`visibility: hidden`：占据空间，不可交互。
-
-`display: none`：不占据空间，不可交互。
-
-`transform: scale(0, 0)`：占据空间，不可交互。
-
-##### 水平垂直居中
-
-水平居中：
-
-```html
-<div class="parent">
-	<div class="child"> 啦啦啦 </div>
-</div>
-
-<style>
-/* 方案一：inline-block + text-align */
-.parent { text-align: center; }
-.child { display: inline-block; }
-/* 方案二：block + margin */
-.child { 
-  width: 100px; /* 需要设置宽度 */
-  display: block; /* 设置成table可以不设置宽度 */
-  margin: 0 auto;
-}
-/* 方案三：absolute + transform/margin */
-.parent { position: relative; }
-.child {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-}
-</style>
-```
-
-垂直居中：
-
-```html
-<div class="parent">
-	<div class="child"> 啦啦啦 </div>
-</div>
-
-<style>
-/* 方案一：table-cell + vertical-align */
-.parent {
-	display: table-cell; /* 单元格的内容是可以设置水平垂直对齐的 */
-  vertical-align: middle; /* 用于设置文本内容的垂直方向对齐方式 */
-}
-/* 方案二：absolute + transform/margin */
-.parent { position: relative; }
-.child {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-}
-</style>
-```
-
-##### BFC（块级格式化上下文）
-
-BFC 是指一块独立的区域，与外部的元素不互相产生影响。
-
-BFC 触发条件：
-
-* position: fixed/absolute
-* float 不是 none
-* display: flex/inline-block/table-cell/table-caption
-* overflow 不为 visible
-
-BFC 应用：
-
-1. 清除浮动
-2. 防止同一 BFC 容器中的相邻元素间的外边距重叠问题
-
-##### 清除浮动
-
-1.父级添加 overflow 属性
-
-通过触发 BFC 方式（就是负责接管自己的宽高），实现清除浮动。
-
-```css
-.fahter {
-  overflow: hidden; /* auto 也可以 */
-}
-```
-
-2.额外标签 clear: both;
-
-在最后一个浮动标签后，新加一个标签，给其设置 clear: both; 
-
-3.使用 after 伪元素清除浮动
-
-```css
-.clearfix::after {
-  display: block; /* 伪元素默认是 inline 的，inline 元素无法帮我们做清除浮动的事情。 */
-  content: " ";
-  clear: both;
-  height: 0;
-  visibility: hidden;
-  overflow：hidden;
-}
-```
-
-4.万能清除法
-
-```css
-.clearfix::before, .clearfix::after {
-  display: block;
-  content: " ";
-}
-.clearfix::after {
-  clear: both;
-}
-```
-
-##### css 怎么开启硬件加速(GPU 加速)
-
-- transform: translate3d(0, 0, 0) （当 3D 变换的样式出现时会使用 GPU 加速）
-- opacity
-- filter
-
-再使用 will-change 设置上面属性。
-
-##### 对 requestAnimationFrame 的理解
-
-请求动画的 API
-
 ## Javascript
 
 ##### 数据类型
@@ -515,6 +382,1607 @@ http://www.ruanyifeng.com/blog/2012/11/require_js.htmls
 函数定义中调用引入的模块中的函数，始终是这样的两层结构。这个函数还可以作为模块被其他函数引用并且调用。调用时形成多层结构。一层一层的调用和传参。vuex 中的接口和 actions 的结合就能很好的体现这一点。
 
 函数定义的时候是从外层到里层，调用的时候也是从外层到里层。
+
+##### 跨 js 文件的时序问题解决，用回调函数
+
+```js
+// page1.js
+var ensureGetIdFlag = false
+var ensureGetIdCallbackQueue = []
+function ensureGetId (callback) {
+  if (ensureGetIdFlag === true) {
+    callback()
+    return
+  }
+  ensureGetIdCallbackQueue.push(callback)
+}
+$.ajax({
+  url: "",
+  data: "",
+  type: "",
+  success: function (data) {
+    ensureGetIdFlag = true
+    for(var i = ensureGetIdCallbackQueue.length - 1; i >= 0; i--){
+      ensureGetIdCallbackQueue[i](data)
+    }
+  }
+})
+// page2.js
+ensureGetId(function (data) {})
+```
+
+##### 如何捕获 js 程序中的异常
+
+```js
+// 1.手动捕获异常
+// 这种方式用的比较常见，觉得哪个地方可能会风险比较高，那就用一个try catch给它包起来，然后有异常就输出
+try {
+  // todo
+} catch (ex) {
+  console.error(ex) // 手动捕获catch
+} finally {
+  // todo
+}
+// 2.自动捕获异常
+// 一种兜底方案，比如说我们想要监听一下前端页面，已经上线了，我们做一个统计监听，我们看一下前端页面有没有什么js错误，一般我们第一种方式就是用上面的方式在该try catch的地方打上try catch，如果catch到我们就发一个统计打点，作为一个记录。第二种方式就是我们不可能每一行都用try catch。这样成本太高。我们只在一个高风险的地方用try catch，其他地方我们用一个window.onerror就可以了。它会自动捕获你程序中的一些问题。
+window.onerror = function (message, source, lineNum, colNum, error) {
+  // 报错信息 源码 行号 列号 错误栈
+  // 第一，对跨域的js，如cdn，会告诉你错误了，但不会有详细的报错信息
+  // 第二，对于压缩的js，还要配合sourceMap去反查到为压缩代码的行，列
+}
+//所以通过这两个方式来集合，你就能监听到页面上绝大部分的错误。
+```
+
+##### 强制类型转换
+
+```js
+/* 字符串转数字 */
+// 1.parseInt(string, radix)
+// 把 string 以 radix 进制解析成十进制整数，radix 默认是十进制
+parseInt('11') // 11
+parseInt('11', 2) // 3 
+// 如果字符串前缀是 "0x" 或者 "0X"，则 parseInt 将其解释为十六进制数
+parseInt('0x11') // 17
+// 解析时会跳过空格，只解析字符串中的第一个数字，如果第一个非空格字符是非数字字符，则返回 NaN。
+parseInt(' 11fagg') // 11
+parseInt('a') // NaN
+// 2.parseFloat(string) 
+// 以十进制解析成十进制整数或浮点数。
+parseFloat('11') // 11
+parseFloat('11.3') // 11.3
+// 解析时会跳过空格，只解析字符串中的第一个数字，如果第一个非空格字符是非数字字符，则返回 NaN。
+parseInt(' 11fagg') // 11
+parseInt('a') // NaN
+// 3.Number(object)
+// 将对象整体的值以十进制转换为十进制整数或浮点数的数字，如果对象整体的值无法转换为数字，返回 NaN。
+Number('11') // 11
+Number('11aa') // NaN
+// 参数是 Boolean 值，返回 1 和 0。
+// 参数是 null 值，返回 0。
+// 参数是 undefined，返回 NaN。
+// 参数是 Date 对象，返回从 1970 年 1 月 1 日至今的毫秒数。
+
+/* 数字转字符串 */
+// 1.Number 类定义的 toString(radix) 方法：把数字以十进制转为 radix 进制字符串，不指定此参数，转为十进制。
+let a = 10;
+a.toString() // '10'
+a.toString(2) // '1010'
+// 2.Number 类定义的 toFixed(x) 方法：把数字四舍五入为指定小数位数 x 的字符串。
+let a = 10.156
+a.toFixed(2) // '10.16'
+```
+
+##### sort(sortBy)
+
+用于数组排序。
+
+参数：可选，规定排序顺序，必须是函数。
+
+如果没有使用参数，把数组的元素都转换成字符串（如有必要），按照字符编码的顺序进行排序。
+
+如果想按照其他标准进行排序，需要提供比较函数，该函数接收要比较的两个值 a 和 b，返回一个用于说明这两个值的相对顺序的数字：
+
+* a 小于 b，返回负数，升序
+* a 大于 b，返回正数，升序
+* a 小于 b，返回正数，降序
+* a 大于 b，返回负数，降序
+* a 等于 b，返回 0
+
+```js
+// 对象型数组，按某个对象的key做升降序排列
+function compare(prop, order) {
+  return function (obj1, obj2) {
+    var val1 = obj1[prop];
+    var val2 = obj2[prop];
+    if (!isNaN(Number(val1)) && !isNaN(Number(val2))) {
+      val1 = Number(val1);
+      val2 = Number(val2);
+    }
+    if (val1 < val2) {
+      if (order === 'ascending') {
+        return -1
+      } else {
+        return 1
+      }
+    } else if (val1 > val2) {
+      if (order === 'ascending') {
+        return 1
+      } else {
+        return -1
+      }
+    } else {
+      return 0;
+    }
+  }
+}
+const arr = [
+  {a: 1, b: 2, c: 3},
+  {a: 3, b: 2, c: 3},
+  {a: 2, b: 2, c: 3},
+]
+arr.sort(compare('a', 'ascending'))
+```
+
+##### 点击按钮出现内容
+
+* 点击按钮出现内容，再次点击页面任何地方，内容消失。
+* 再次点击按钮，内容不消失
+* 再次点击内容，内容可能消失，可能不消失。
+
+在 document 上加点击事件，事件回调中用 contains 判断，点击的不是让内容消失的元素时，才让内容隐藏。
+
+```vue
+<template>
+	<div>
+    <button class="button">按钮</button>
+    <div class="content" v-if="show">内容</div>
+  </div>
+</template>
+
+<script>
+export default {
+  data() {
+    return {
+      show: false
+    }
+  },
+	mounted() {
+    const btn = document.getElementsByClassName('button')[0]
+    const content = document.getElementsByClassName('content')[0]
+    document.addEventListener('click', e => {
+      if (!btn.contains(e.target) && !content.contains(e.target)) {
+         this.show = false
+      }
+    })
+  }
+}
+</script>
+```
+
+##### 动态设置某元素高度
+
+```vue
+<template>
+  <div :class="classNames" :ref="classNames">
+    <div :class="classNames+ '_header'">
+      <img src="./img/user.svg" alt="">
+      <div :class="classNames+ '_header_con'">
+        <h5>{{user.name}}</h5>
+        <p>{{user.desc}}</p>
+      </div>
+    </div>
+    <div :class="classNames+ '_content'">
+      <tabs :data="tabsList" v-model="tabsActTit" type="bg" :class="classNames+ '_bg'" @changeTabs="changeTabs"></tabs>
+      <tabs :data="tabsLists" v-model="tabsActTits" type="line" @changeTabs="changeChildTabs" v-if="tabsActTit!=='浏览历史'"></tabs>
+      <div ref="list" :class="classNames + '_list_con'">
+        <do-list v-if="!isBrowse" doc-type="list" @currChange="onCurrChange" :loading="loading" :list="list" :page="page" :content-height="listHeight" :class="classNames+'_list'" send-type="iframe" @sort="onSort" ref="history_list"></do-list>
+        <browse-history :content-height="listHeight" v-else/>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script>
+export default {
+  data() {
+    return {
+      classNames: 'history'
+      listHeight: 0
+    }
+  },
+  mounted() {
+    this.$nextTick(() => {
+      setTimeout(() => {
+        this.listHeight = this.$refs[this.classNames].clientHeight - this.$refs.list.getBoundingClientRect().top - 52
+      }, 200)
+    })
+  }
+}
+</script>
+```
+
+##### 列表标题吸顶效果
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      padding-top: 50px;
+    }
+    .wrapper {
+      height: 600px;
+      outline: 1px solid #333;
+      position: relative;
+    }
+    .head-list {
+      position: absolute;
+      top: 0px;
+      left: 0;
+      padding-left: 20px;
+    }
+    #scroll-wrapper {
+      height: 100%;
+      overflow: scroll;
+    }
+    .head-item {
+      height: 30px;
+      line-height: 30px;
+      background-color: #fff;
+      border: 1px solid #ddd;
+    }
+    .content-item h3,
+    .content-item ul li {
+      height: 30px;
+      line-height: 30px;
+      background-color: #ccc;
+      padding-left: 20px;
+      border-bottom: 1px solid #ddd;
+      box-sizing: border-box;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrapper" id="wrap">
+    <div class="head-list">
+      <!-- <div class="head-item">2020-03-04</div>
+      <div class="head-item">2020-03-04</div>
+      <div class="head-item">2020-03-04</div> -->
+    </div>
+    <div id="scroll-wrapper">
+      <div class="content-list">
+        <div class="content-item">
+          <h3>标题1</h3>
+          <ul>
+            <li>2020-03-04</li>
+            <li>2020-03-04</li>
+            <li>2020-03-04</li>
+            <li>2020-03-04</li>
+          </ul>
+        </div>
+        <div class="content-item">
+          <h3>标题2</h3>
+          <ul>
+            <li>2020-03-04</li>
+            <li>2020-03-04</li>
+            <li>2020-03-04</li>
+            <li>2020-03-04</li>
+          </ul>
+        </div>
+        <div class="content-item">
+          <h3>标题3</h3>
+          <ul>
+            <li>2020-03-04</li>
+            <li>2020-03-04</li>
+            <li>2020-03-04</li>
+            <li>2020-03-04</li>
+          </ul>
+        </div>
+        <div class="content-item">
+          <h3>标题4</h3>
+          <ul>
+            <li>2020-03-04</li>
+            <li>2020-03-04</li>
+            <li>2020-03-04</li>
+            <li>2020-03-04</li>
+          </ul>
+        </div>
+        <div class="content-item">
+          <h3>标题5</h3>
+          <ul>
+            <li>2020-03-04</li>
+            <li>2020-03-04</li>
+            <li>2020-03-04</li>
+            <li>2020-03-04</li>
+          </ul>
+        </div>
+        <div class="content-item">
+          <h3>标题6</h3>
+          <ul>
+            <li>2020-03-04</li>
+            <li>2020-03-04</li>
+            <li>2020-03-04</li>
+            <li>2020-03-04</li>
+          </ul>
+        </div>
+        <div class="content-item">
+          <h3>标题7</h3>
+          <ul>
+            <li>2020-03-04</li>
+            <li>2020-03-04</li>
+            <li>2020-03-04</li>
+            <li>2020-03-04</li>
+          </ul>
+        </div>
+        <div class="content-item">
+          <h3>标题8</h3>
+          <ul>
+            <li>2020-03-04</li>
+            <li>2020-03-04</li>
+            <li>2020-03-04</li>
+            <li>2020-03-04</li>
+          </ul>
+        </div>
+        <div class="content-item">
+          <h3>标题9</h3>
+          <ul>
+            <li>2020-03-04</li>
+            <li>2020-03-04</li>
+            <li>2020-03-04</li>
+            <li>2020-03-04</li>
+          </ul>
+        </div>
+        <div class="content-item">
+          <h3>标题10</h3>
+          <ul>
+            <li>2020-03-04</li>
+            <li>2020-03-04</li>
+            <li>2020-03-04</li>
+            <li>2020-03-04</li>
+          </ul>
+        </div>
+        <div class="content-item">
+          <h3>标题11</h3>
+          <ul>
+            <li>2020-03-04</li>
+            <li>2020-03-04</li>
+            <li>2020-03-04</li>
+            <li>2020-03-04</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const contentItem = document.getElementsByClassName('content-item')
+    let arr = []
+    let scrollTop = 0
+    document.getElementById('scroll-wrapper').addEventListener('scroll', function(e) {
+      // 内容向上滚动
+      if (e.target.scrollTop > scrollTop) {
+        let currentElem = Array.from(contentItem).slice().reverse().find(item => e.target.scrollTop + document.getElementsByClassName('head-list')[0].clientHeight > item.offsetTop)
+        // 拿到当前元素的h3的内容
+        let date = currentElem.getElementsByTagName('h3')[0].innerHTML
+        if (!arr.includes(date)) {
+          // 把内容放入要生成head-item元素的数组
+          arr.push(date)
+        }
+      // 内容向下滚动
+      } else {
+        let currentElem = Array.from(contentItem).slice().find(item => e.target.scrollTop + document.getElementsByClassName('head-list')[0].clientHeight < item.offsetTop + document.getElementsByTagName('h3')[0].clientHeight)
+        // 拿到当前元素的h3的内容
+        let date = currentElem.getElementsByTagName('h3')[0].innerHTML
+        if (arr.includes(date)) {
+          // 把内容从数组中移除
+          arr.splice(arr.findIndex(item => item === date), 1)
+        }
+        if (e.target.scrollTop <= 30) {
+          arr = []
+        }
+      }
+      // 将得到的arr生成元素插入到head-list
+      document.getElementsByClassName('head-list')[0].innerHTML = ''
+      if (arr.length > 0) {
+        arr.forEach(item => {
+          let headItem = document.createElement('div')
+          headItem.setAttribute("class", "head-item")
+          headItem.innerHTML = item
+          document.getElementsByClassName('head-list')[0].appendChild(headItem)
+        })
+      }
+      // 记录每次滚动结束的位置
+      scrollTop = e.target.scrollTop
+    })
+  </script>
+</body>
+</html>
+```
+
+##### Javascript 固有对象 API
+
+在自己的浏览器中计算出来 JavaScript 有多少固有对象。
+
+```js
+var set = new Set()
+var objects = [
+  eval,
+  isFinite,
+  isNaN,
+  parseFloat,
+  parseInt,
+  decodeURI,
+  decodeURIComponent,
+  encodeURI,
+  encodeURIComponent,
+  Array,
+  Date,
+  RegExp,
+  Promise,
+  Proxy,
+  Map,
+  WeakMap,
+  Set,
+  WeakSet,
+  Function,
+  Boolean,
+  String,
+  Number,
+  Symbol,
+  Object,
+  Error,
+  EvalError,
+  RangeError,
+  ReferenceError,
+  SyntaxError,
+  TypeError,
+  URIError,
+  ArrayBuffer,
+  SharedArrayBuffer,
+  DataView,
+  Float32Array,
+  Float64Array,
+  Int8Array,
+  Int16Array,
+  Int32Array,
+  Uint8Array,
+  Uint16Array,
+  Uint32Array,
+  Uint8ClampedArray,
+  Atomics,
+  JSON,
+  Math,
+  Reflect]
+objects.forEach(o => set.add(o))
+
+for(var i = 0; i < objects.length; i++) {
+  var o = objects[i]
+  for(var p of Object.getOwnPropertyNames(o)) {
+    var d = Object.getOwnPropertyDescriptor(o, p)
+    if( (d.value !== null && typeof d.value === "object") || (typeof d.value === "function"))
+      if(!set.has(d.value))
+        set.add(d.value), objects.push(d.value)
+    if( d.get )
+      if(!set.has(d.get))
+        set.add(d.get), objects.push(d.get)
+    if( d.set )
+      if(!set.has(d.set))
+        set.add(d.set), objects.push(d.set)
+  }
+}
+```
+
+JavaScript 所有固有对象：
+
+mac系统：Google Chrome：版本 79.0.3945.130（正式版本） （64 位）：总共 989 个 JavaScript 固有对象。
+
+主要使用 Object.getOwnPropertyNames, Object.getOwnPropertyDescriptor 两种方法。
+
+全部的 JavaScript 固有对象基本包含：
+
+* 函数
+* 函数中的 prototype 属性
+* 构造器
+* 构造器中的 object 和 functions 还有 get set 的属性，一般就是 function 属性和 get set 属性
+* 构造器原型
+* 构造器原型中的 object 和 function 还有 get set 的属性，一般就是 function 属性和 get set 属性
+* Atomics, JSON, Math, Reflect
+* Atomics, JSON, Math, Reflect 中的 object 和 function 还有 get set 的属性，一般就是 function 属性和 get set 属性
+
+1.三个值：（3）
+
+```
+Infinity、NaN、undefined
+```
+
+2.九个函数：（11）
+
+```js
+eval
+isFinite
+isNaN
+parseFloat
+	parseFloat.prototype: {constructor: ƒ parseFloat()}
+parseInt
+	parseInt.prototype: {constructor: ƒ parseInt()}
+decodeURI
+decodeURIComponent
+encodeURI
+encodeURIComponent
+```
+
+3.一些构造器：（共880个）
+
+```js
+		Array: function Array() { [native code] }（共65个）
+      function isArray() { [native code] }
+      function from() { [native code] }
+      function of() { [native code] }
+      function () { [native code] } // pop
+      function () { [native code] } // reverse
+      function () { [native code] } // shift
+      function () { [native code] } // keys
+      function () { [native code] } // values
+      function () { [native code] } // entries
+      function () { [native code] } // indexOf
+      function () { [native code] } // every
+      function () { [native code] } // some
+      function () { [native code] } // forEach
+      function () { [native code] } // map
+      function () { [native code] } // filter
+      function () { [native code] } // find
+      function () { [native code] } // findIndex
+      function () { [native code] } // includes
+      function () { [native code] } // join
+      function () { [native code] } // slice
+      function () { [native code] } // concat
+      function () { [native code] } // push
+      function () { [native code] } // splice
+      function () { [native code] } // unshift
+      function () { [native code] } // sort
+      function () { [native code] } // lastIndexOf
+      function () { [native code] } // reduce
+      function () { [native code] } // reduceRight
+      function () { [native code] } // copyWithin
+      function () { [native code] } // fill
+      Array.prototype: Array(0)，是个数组
+        function concat() { [native code] }
+        function copyWithin() { [native code] }
+        function fill() { [native code] }
+        function find() { [native code] }
+        function findIndex() { [native code] }
+        function lastIndexOf() { [native code] }
+        function pop() { [native code] }
+        function push() { [native code] }
+        function reverse() { [native code] }
+        function shift() { [native code] }
+        function unshift() { [native code] }
+        function slice() { [native code] }
+        function sort() { [native code] }
+        function splice() { [native code] }
+        function includes() { [native code] }
+        function indexOf() { [native code] }
+        function join() { [native code] }
+        function keys() { [native code] }
+        function entries() { [native code] }
+        function values() { [native code] }
+        function forEach() { [native code] }
+        function filter() { [native code] }
+        function flat() { [native code] }
+        function flatMap() { [native code] }
+        function map() { [native code] }
+        function every() { [native code] }
+        function some() { [native code] }
+        function reduce() { [native code] }
+        function reduceRight() { [native code] }
+        function toLocaleString() { [native code] }
+        function toString() { [native code] }
+        function flatten() { [native code] }
+          flatten.prototype: {constructor: ƒ flatten()}
+    Date: function Date() { [native code] }（共50个）
+      function now() { [native code] }
+      function parse() { [native code] }
+      function UTC() { [native code] }
+      Date.prototype: Object
+        function toString() { [native code] }
+        function toDateString() { [native code] }
+        function toTimeString() { [native code] }
+        function toISOString() { [native code] }
+        function toUTCString() { [native code] }
+        function getDate() { [native code] }
+        function setDate() { [native code] }
+        function getDay() { [native code] }
+        function getFullYear() { [native code] }
+        function setFullYear() { [native code] }
+        function getHours() { [native code] }
+        function setHours() { [native code] }
+        function getMilliseconds() { [native code] }
+        function setMilliseconds() { [native code] }
+        function getMinutes() { [native code] }
+        function setMinutes() { [native code] }
+        function getMonth() { [native code] }
+        function setMonth() { [native code] }
+        function getSeconds() { [native code] }
+        function setSeconds() { [native code] }
+        function getTime() { [native code] }
+        function setTime() { [native code] }
+        function getTimezoneOffset() { [native code] }
+        function getUTCDate() { [native code] }
+        function setUTCDate() { [native code] }
+        function getUTCDay() { [native code] }
+        function getUTCFullYear() { [native code] }
+        function setUTCFullYear() { [native code] }
+        function getUTCHours() { [native code] }
+        function setUTCHours() { [native code] }
+        function getUTCMilliseconds() { [native code] }
+        function setUTCMilliseconds() { [native code] }
+        function getUTCMinutes() { [native code] }
+        function setUTCMinutes() { [native code] }
+        function getUTCMonth() { [native code] }
+        function setUTCMonth() { [native code] }
+        function getUTCSeconds() { [native code] }
+        function setUTCSeconds() { [native code] }
+        function valueOf() { [native code] }
+        function getYear() { [native code] }
+        function setYear() { [native code] }
+        function toJSON() { [native code] }
+        function toLocaleString() { [native code] }
+        function toLocaleDateString() { [native code] }
+        function toLocaleTimeString() { [native code] }
+    RegExp: function RegExp() { [native code] }（共54个）
+      function get input() { [native code] }
+      function set input() { [native code] }
+      function get $_() { [native code] }
+      function set $_() { [native code] }
+      function get lastMatch() { [native code] }
+      function set lastMatch() { [native code] }
+      function get $&() { [native code] }
+      function set $&() { [native code] }
+      function get lastParen() { [native code] }
+      function set lastParen() { [native code] }
+      function get $+() { [native code] }
+      function set $+() { [native code] }
+      function get leftContext() { [native code] }
+      function set leftContext() { [native code] }
+      function get $`() { [native code] }
+      function set $`() { [native code] }
+      function get rightContext() { [native code] }
+      function set rightContext() { [native code] }
+      function get $'() { [native code] }
+      function set $'() { [native code] }
+      function get $1() { [native code] }
+      function set $1() { [native code] }
+      function get $2() { [native code] }
+      function set $2() { [native code] }
+      function get $3() { [native code] }
+      function set $3() { [native code] }
+      function get $4() { [native code] }
+      function set $4() { [native code] }
+      function get $5() { [native code] }
+      function set $5() { [native code] }
+      function get $6() { [native code] }
+      function set $6() { [native code] }
+      function get $7() { [native code] }
+      function set $7() { [native code] }
+      function get $8() { [native code] }
+      function set $8() { [native code] }
+      function get $9() { [native code] }
+      function set $9() { [native code] }
+      function escape() { [native code] }
+        escape.prototype: {constructor: ƒ escape()}
+      RegExp.prototype: Object
+        function exec() { [native code] }
+        function get dotAll() { [native code] }
+        function get flags() { [native code] }
+        function get global() { [native code] }
+        function get ignoreCase() { [native code] }
+        function get multiline() { [native code] }
+        function get source() { [native code] }
+        function get sticky() { [native code] }
+        function get unicode() { [native code] }
+        function compile() { [native code] }
+        function toString() { [native code] }
+        function test() { [native code] }
+    Promise: function Promise() { [native code] }（共14个）
+      function all() { [native code] }
+      function race() { [native code] }
+      function resolve() { [native code] }
+      function reject() { [native code] }
+      function allSettled() { [native code] }
+      function(){return e.apply(o,arguments)} // finally
+        {constructor: ƒ ()}
+      function try() { [native code] }
+        try.prototype: {constructor: ƒ try()}
+      Promise.prototype: Promise
+        function then() { [native code] }
+        function catch() { [native code] }
+        function finally() { [native code] }
+    Proxy: function Proxy() { [native code] }（共2个）
+      function Proxy() { [native code] }
+      function revocable() { [native code] }
+    Map: function Map() { [native code] }（共20个）
+      function(){return e.apply(o,arguments)} // toJSON
+        {constructor: ƒ ()}
+      function of() { [native code] }
+        of.prototype: {constructor: ƒ of()}
+      function from() { [native code] }
+        from.prototype: {constructor: ƒ from()}
+      Map.prototype: Map
+        function get() { [native code] }
+        function set() { [native code] }
+        function has() { [native code] }
+        function delete() { [native code] }
+        function clear() { [native code] }
+        function entries() { [native code] }
+        function forEach() { [native code] }
+        function keys() { [native code] }
+        function get size() { [native code] }
+        function values() { [native code] }
+        function toJSON() { [native code] }
+          toJSON.prototype: {constructor: ƒ toJSON()}
+    WeakMap: function WeakMap() { [native code] }（共10个）
+      function of() { [native code] }
+        of.prototype: {constructor: ƒ of()}
+      function from() { [native code] }
+        from.prototype: {constructor: ƒ from()}
+      WeakMap.prototype: WeakMap
+        function delete() { [native code] }
+        function get() { [native code] }
+        function set() { [native code] }
+        function has() { [native code] }
+    Set: function Set() { [native code] }（共18个）
+      function(){return e.apply(o,arguments)} // toJSON
+        {constructor: ƒ ()}
+      function of() { [native code] }
+        of.prototype: {constructor: ƒ of()}
+      function from() { [native code] }
+        from.prototype: {constructor: ƒ from()}
+      Set.prototype: Set
+        function has() { [native code] }
+        function add() { [native code] }
+        function delete() { [native code] }
+        function clear() { [native code] }
+        function entries() { [native code] }
+        function forEach() { [native code] }
+        function get size() { [native code] }
+        function values() { [native code] }
+        function toJSON() { [native code] }
+          toJSON.prototype: {constructor: ƒ toJSON()}
+    WeakSet: function WeakSet() { [native code] }（共9个）
+      function of() { [native code] }
+        of.prototype: {constructor: ƒ of()}
+      function from() { [native code] }
+        from.prototype: {constructor: ƒ from()}
+      WeakSet.prototype: WeakSet
+        function delete() { [native code] }
+        function has() { [native code] }
+        function add() { [native code] }
+    Function: function Function() { [native code] }（共8个）
+      function () { [native code] } // 不明
+      Function.prototype: function () { [native code] }
+        function apply() { [native code] }
+        function bind() { [native code] }
+        function call() { [native code] }
+        function toString() { [native code] }
+          toString.prototype: {constructor: ƒ toString()}
+    Boolean: function Boolean() { [native code] }（共4个）
+      Boolean.prototype: Boolean
+        function toString() { [native code] }
+        function valueOf() { [native code] }
+    String: function String() { [native code] }（共54个）
+      function fromCharCode() { [native code] }
+      function fromCodePoint() { [native code] }
+      function raw() { [native code] }
+      String.prototype: String
+        function anchor() { [native code] }
+        function big() { [native code] }
+        function blink() { [native code] }
+        function bold() { [native code] }
+        function charAt() { [native code] }
+        function charCodeAt() { [native code] }
+        function codePointAt() { [native code] }
+        function concat() { [native code] }
+        function endsWith() { [native code] }
+        function fontcolor() { [native code] }
+        function fontsize() { [native code] }
+        function fixed() { [native code] }
+        function includes() { [native code] }
+        function indexOf() { [native code] }
+        function italics() { [native code] }
+        function lastIndexOf() { [native code] }
+        function link() { [native code] }
+        function localeCompare() { [native code] }
+        function match() { [native code] }
+        function matchAll() { [native code] }
+        function normalize() { [native code] }
+        function padEnd() { [native code] }
+        function padStart() { [native code] }
+        function repeat() { [native code] }
+        function replace() { [native code] }
+        function search() { [native code] }
+        function slice() { [native code] }
+        function small() { [native code] }
+        function split() { [native code] }
+        function strike() { [native code] }
+        function sub() { [native code] }
+        function substr() { [native code] }
+        function substring() { [native code] }
+        function sup() { [native code] }
+        function startsWith() { [native code] }
+        function toString() { [native code] }
+        function toLocaleLowerCase() { [native code] }
+        function toLocaleUpperCase() { [native code] }
+        function toLowerCase() { [native code] }
+        function toUpperCase() { [native code] }
+        function valueOf() { [native code] }
+        function trim() { [native code] }
+          trim.prototype: {constructor: ƒ trim()}
+        function at() { [native code] }
+          at.prototype: {constructor: ƒ at()}
+        function trimStart() { [native code] }
+          trimStart.prototype: {constructor: ƒ trimStart()}
+        function trimEnd() { [native code] }
+          trimEnd.prototype: {constructor: ƒ trimEnd()}
+    Number: function Number() { [native code] }（共16个）
+      function isFinite() { [native code] }
+      function isInteger() { [native code] }
+      function isNaN() { [native code] }
+      function isSafeInteger() { [native code] }
+      function parseFloat() { [native code] }
+        parseFloat.prototype: {constructor: ƒ parseFloat()}
+      function parseInt() { [native code] }
+        parseInt.prototype: {constructor: ƒ parseInt()}
+      Number.prototype: Number
+        function toExponential() { [native code] }
+        function toFixed() { [native code] }
+        function toPrecision() { [native code] }
+        function toString() { [native code] }
+        function valueOf() { [native code] }
+        function toLocaleString() { [native code] }
+    Symbol: function Symbol() { [native code] }（共11个）
+      "asyncIterator"
+      "hasInstance"
+      "isConcatSpreadable"
+      "iterator"
+      "match"
+      "matchAll"
+      "replace"
+      "search"
+      "species"
+      "split"
+      "toPrimitive"
+      "toStringTag"
+      "unscopables"
+      "observable"
+      function for() { [native code] }
+      function keyFor() { [native code] }
+      function useSetter() { [native code] }
+        useSetter.prototype: {constructor: ƒ useSetter()}
+      function useSimple() { [native code] }
+        useSimple.prototype: {constructor: ƒ useSimple()}
+      Symbol.prototype: Symbol
+        function toString() { [native code] }
+        function valueOf() { [native code] }
+        function get description() { [native code] }
+    Object: function Object() { [native code] }（共35个）
+      function assign() { [native code] }
+      function getOwnPropertyDescriptor() { [native code] }
+      function getOwnPropertyDescriptors() { [native code] }
+      function getOwnPropertyNames() { [native code] }
+      function getOwnPropertySymbols() { [native code] }
+      function is() { [native code] }
+      function preventExtensions() { [native code] }
+      function seal() { [native code] }
+      function create() { [native code] }
+      function defineProperties() { [native code] }
+      function defineProperty() { [native code] }
+      function freeze() { [native code] }
+      function getPrototypeOf() { [native code] }
+      function setPrototypeOf() { [native code] }
+      function isExtensible() { [native code] }
+      function isFrozen() { [native code] }
+      function isSealed() { [native code] }
+      function keys() { [native code] }
+      function entries() { [native code] }
+      function fromEntries() { [native code] }
+      function values() { [native code] }
+      Object.prototype: Object
+        function __defineGetter__() { [native code] }
+        function __defineSetter__() { [native code] }
+        function hasOwnProperty() { [native code] }
+        function __lookupGetter__() { [native code] }
+        function __lookupSetter__() { [native code] }
+        function isPrototypeOf() { [native code] }
+        function propertyIsEnumerable() { [native code] }
+        function toString() { [native code] }
+        function valueOf() { [native code] }
+        function get __proto__() { [native code] }
+        function set __proto__() { [native code] }
+        function toLocaleString() { [native code] }
+    Error: function Error() { [native code] }（共6个）
+      function captureStackTrace() { [native code] }
+      function isError() { [native code] }
+        isError.prototype: {constructor: ƒ isError()}
+      Error.prototype: Object
+        "message"
+        function toString() { [native code] }
+    EvalError: function EvalError() { [native code] }（共3个）
+      EvalError.prototype: Error
+        "message"
+        function toString() { [native code] }
+    RangeError: function RangeError() { [native code] }（共3个）
+      RangeError.prototype: Error
+        "message"
+        function toString() { [native code] }
+    ReferenceError: function ReferenceError() { [native code] }（共3个）
+      ReferenceError.prototype: Error
+        "message"
+        function toString() { [native code] }
+    SyntaxError: function SyntaxError() { [native code] }（共3个）
+      SyntaxError.prototype: Error
+        "message"
+        function toString() { [native code] }
+    TypeError: function TypeError() { [native code] }（共3个）
+      TypeError.prototype: Error
+        "message"
+        function toString() { [native code] }
+    URIError: function URIError() { [native code] }（共3个）
+      URIError.prototype: Error
+        "message"
+        function toString() { [native code] }
+    ArrayBuffer: function ArrayBuffer() { [native code] }（共7个）
+      function isView() { [native code] }
+      function(){return e.apply(o,arguments)} //
+        function.prototype: {constructor: ƒ useSimple()}
+      ArrayBuffer.prototype: ArrayBuffer
+        function get byteLength() { [native code] }
+        function slice() { [native code] }
+    SharedArrayBuffer: function SharedArrayBuffer() { [native code] }（共4个）
+      SharedArrayBuffer.prototype: SharedArrayBuffer
+        function get byteLength() { [native code] }
+        function slice() { [native code] }
+    DataView: function DataView() { [native code] }（共25个）
+      DataView.prototype: DataView
+        function get buffer() { [native code] }
+        function get byteLength() { [native code] }
+        function get byteOffset() { [native code] }
+        function getInt8() { [native code] }
+        function setInt8() { [native code] }
+        function getUint8() { [native code] }
+        function setUint8() { [native code] }
+        function getInt16() { [native code] }
+        function setInt16() { [native code] }
+        function getUint16() { [native code] }
+        function setUint16() { [native code] }
+        function getInt32() { [native code] }
+        function setInt32() { [native code] }
+        function getUint32() { [native code] }
+        function setUint32() { [native code] }
+        function getFloat32() { [native code] }
+        function setFloat32() { [native code] }
+        function getFloat64() { [native code] }
+        function setFloat64() { [native code] }
+        function getBigInt64() { [native code] }
+        function setBigInt64() { [native code] }
+        function getBigUint64() { [native code] }
+        function setBigUint64() { [native code] }
+    Typed Array
+    Float32Array: function Float32Array() { [native code] }（共50个）
+    Float64Array: function Float64Array() { [native code] }（共50个）
+    Int8Array: function Int8Array() { [native code] }（共50个）
+    Int16Array: function Int16Array() { [native code] }（共50个）
+    Int32Array: function Int32Array() { [native code] }（共50个）
+    Uint8Array: function Uint8Array() { [native code] }（共50个）
+    Uint16Array: function Uint16Array() { [native code] }（共50个）
+    Uint32Array: function Uint32Array() { [native code] }（共50个）
+    Uint8ClampedArray: function Uint8ClampedArray() { [native code] }（共50个）
+```
+
+4.四个用于当作命名空间的对象：（共108个）
+
+```js
+		Atomics: Atomics（共14个）
+      function load() { [native code] }
+      function store() { [native code] }
+      function add() { [native code] }
+      function sub() { [native code] }
+      function and() { [native code] }
+      function or() { [native code] }
+      function xor() { [native code] }
+      function exchange() { [native code] }
+      function compareExchange() { [native code] }
+      function isLockFree() { [native code] }
+      function wait() { [native code] }
+      function wake() { [native code] }
+      function notify() { [native code] }
+    JSON: JSON（共3个）
+      function parse() { [native code] }
+      function stringify() { [native code] }
+    Math: Math（共57个）
+      function abs() { [native code] }
+      function acos() { [native code] }
+      function acosh() { [native code] }
+      function asin() { [native code] }
+      function asinh() { [native code] }
+      function atan() { [native code] }
+      function atanh() { [native code] }
+      function atan2() { [native code] }
+      function ceil() { [native code] }
+      function cbrt() { [native code] }
+      function expm1() { [native code] }
+      function clz32() { [native code] }
+      function cos() { [native code] }
+      function cosh() { [native code] }
+      function exp() { [native code] }
+      function floor() { [native code] }
+      function fround() { [native code] }
+      function hypot() { [native code] }
+      function imul() { [native code] }
+      function log() { [native code] }
+      function log1p() { [native code] }
+      function log2() { [native code] }
+      function log10() { [native code] }
+      function max() { [native code] }
+      function min() { [native code] }
+      function pow() { [native code] }
+      function random() { [native code] }
+      function round() { [native code] }
+      function sign() { [native code] }
+      function sin() { [native code] }
+      function sqrt() { [native code] }
+      function tan() { [native code] }
+      function tanh() { [native code] }
+      function trunc() { [native code] }
+      function sinh() { [native code] }
+        sinh.prototype: {constructor: ƒ sinh()}
+      function clamp() { [native code] }
+        clamp.prototype: {constructor: ƒ clamp()}
+      function degrees() { [native code] }
+        degrees.prototype: {constructor: ƒ degrees()}
+      function fscale() { [native code] }
+        fscale.prototype: {constructor: ƒ fscale()}
+      function iaddh() { [native code] }
+        iaddh.prototype: {constructor: ƒ iaddh()}
+      function isubh() { [native code] }
+        isubh.prototype: {constructor: ƒ isubh()}
+      function imulh() { [native code] }
+        imulh.prototype: {constructor: ƒ imulh()}
+      function radians() { [native code] }
+        radians.prototype: {constructor: ƒ radians()}
+      function scale() { [native code] }
+        scale.prototype: {constructor: ƒ scale()}
+      function umulh() { [native code] }
+        umulh.prototype: {constructor: ƒ umulh()}
+      function signbit() { [native code] }
+        signbit.prototype: {constructor: ƒ signbit()}
+    Reflect: Object（共34个）
+      function defineProperty() { [native code] }
+      function deleteProperty() { [native code] }
+      function apply() { [native code] }
+      function construct() { [native code] }
+      function get() { [native code] }
+      function getOwnPropertyDescriptor() { [native code] }
+      function getPrototypeOf() { [native code] }
+      function has() { [native code] }
+      function isExtensible() { [native code] }
+      function ownKeys() { [native code] }
+      function preventExtensions() { [native code] }
+      function set() { [native code] }
+      function setPrototypeOf() { [native code] }
+      function enumerate() { [native code] }
+        enumerate.prototype: {constructor: ƒ enumerate()}
+      function defineMetadata() { [native code] }
+        defineMetadata.prototype: {constructor: ƒ defineMetadata()}
+      function deleteMetadata() { [native code] }
+        deleteMetadata.prototype: {constructor: ƒ deleteMetadata()}
+      function getMetadata() { [native code] }
+        getMetadata.prototype: {constructor: ƒ getMetadata()}
+      function getMetadataKeys() { [native code] }
+        getMetadataKeys.prototype: {constructor: ƒ getMetadataKeys()}
+      function getOwnMetadata() { [native code] }
+        getOwnMetadata.prototype: {constructor: ƒ getOwnMetadata()}
+      function getOwnMetadataKeys() { [native code] }
+        getOwnMetadataKeys.prototype: {constructor: ƒ getOwnMetadataKeys()}
+      function hasMetadata() { [native code] }
+        hasMetadata.prototype: {constructor: ƒ hasMetadata()}
+      function hasOwnMetadata() { [native code] }
+        hasOwnMetadata.prototype: {constructor: ƒ hasOwnMetadata()}
+      function metadata() { [native code] }
+        metadata.prototype: {constructor: ƒ metadata()}
+```
+
+##### Javascript 常用 API
+
+数组
+
+push pop shift unshift reverse sort splice forEach some every reduce 会改变原数组
+
+```js
+Array: function Array() { [native code] }（共65个）
+  function isArray() { [native code] }
+  function from() { [native code] }
+  function of() { [native code] }
+	Array.prototype: Array(0)，是个数组
+    function forEach() { [native code] }
+    function push() { [native code] }
+    function indexOf() { [native code] }
+    function map() { [native code] }
+    function filter() { [native code] }
+    function find() { [native code] }
+    function findIndex() { [native code] }
+    function splice() { [native code] }
+    function slice() { [native code] }
+    function join() { [native code] }
+    function sort() { [native code] }
+    function concat() { [native code] }
+    function includes() { [native code] }
+    function fill() { [native code] }
+    function every() { [native code] }
+    function some() { [native code] }
+    function reduce() { [native code] }
+    function lastIndexOf() { [native code] }
+    function pop() { [native code] }
+    function shift() { [native code] }
+    function unshift() { [native code] }
+    function reverse() { [native code] }
+    function reduceRight() { [native code] }
+    function flat() { [native code] }
+    function flatMap() { [native code] } // 相当于先map再flat
+    function toString() { [native code] }
+```
+
+object
+
+```js
+Object: function Object() { [native code] }
+	function keys() { [native code] } // 返回一个对象自身可枚举属性组成的数组
+	function values() { [native code] } // 返回一个对象自身可枚举属性值组成的数组
+  function entries() { [native code] } // 返回一个对象自身可枚举属性的键值对数组，object转数组
+	function fromEntries() { [native code] } // 把键值对列表转换为一个对象，数组转object
+  function assign() { [native code] } // 将所有可枚举属性的值从一个或多个源对象分配到目标对象。返回目标对象。
+	function create() { [native code] } // 创建一个对象，可以设置其__proto__和自身属性。
+	function is() { [native code] } // 判断两个值是否为同一个值
+	function getOwnPropertyNames() { [native code] } // 返回一个对象的所有自身属性的属性名组成的数组
+	function getOwnPropertyDescriptor() { [native code] } // 获取对象上某个自有属性的属性描述符
+	function defineProperty() { [native code] } // 在一个对象上定义新的属性或修改现有属性
+  Object.prototype:
+    function hasOwnProperty() { [native code] } // 判断指定属性是否为该对象自身的属性
+    function propertyIsEnumerable() { [native code] } // 判断指定属性是否为该对象可枚举的属性
+```
+
+利用 entries 和 fromEntries 来使用数组的 api 操作 object
+
+```js
+// 过滤出key的长度为3的的项
+const obj = {
+  abc: 1,
+  def: 2,
+  ghijk: 3
+}
+let res = Object.fromEntries(
+  Object.entries(obj).filter(([key, val]) => key.length === 3)
+)
+console.log(res)
+```
+
+字符串 & 正则 & 数字：
+
+```js
+String.prototype:
+  function charAt() { [native code] } // 根据下标得到对应字符
+  function charCodeAt() { [native code] } // 根据下标得到对应字符的编码
+  function codePointAt() { [native code] } // 根据下标得到对应字符的编码
+  function concat() { [native code] } // 拼接字符串并返回
+  function includes() { [native code] } // 判断一个字符串是否包含另外一个字符串
+  function indexOf() { [native code] } // 第一次出现的指定值的索引
+  function lastIndexOf() { [native code] } // 最后一次出现的指定值的索引
+  function match() { [native code] } // 识别出正则匹配到的东西组成一个数组 
+  function matchAll() { [native code] }
+  function replace() { [native code] }
+  function search() { [native code] }
+  function slice() { [native code] } // 字符串截取，负数就是从后面数
+  function split() { [native code] }
+  function substring() { [native code] }
+  function toLowerCase() { [native code] }
+  function toUpperCase() { [native code] }
+  function trim() { [native code] }
+  function trimStart() { [native code] }
+  function trimEnd() { [native code] }
+
+RegExp.prototype:
+  function exec() { [native code] }
+  function test() { [native code] }
+
+Number: function Number() { [native code] }
+	function isInteger() { [native code] } // 判断给定的参数是否为整数
+	Number.prototype:
+    function toFixed() { [native code] } // 取小数点后几位，会做四舍五入
+    function toString() { [native code] } // 将数字转换成字符串
+    function toLocaleString() { [native code] }
+```
+
+Set & Map：
+
+Set 和 Map 都是可遍历对象，都可以使用 for of 做遍历。
+
+Map 的 key 可以是任意值，Set 的每个元素可以是任意值。
+
+```js
+let set = new Set([1, 2, 3])
+let map = new Map([[1, 2], [3, 4], [5, 6]])
+```
+
+```js
+Set.prototype:
+	function add() { [native code] } // 末尾添加元素
+  function has() { [native code] } // 是否存在某元素
+  function delete() { [native code] } // 删除元素
+  function clear() { [native code] } // 删除所有元素
+	function get size() { [native code] } // 返回Set对象中元素的个数
+	function keys() { [native code] } // 返回所有的keys值组成的SetIterator
+	function values() { [native code] } // 返回所有的values值组成的SetIterator
+  function entries() { [native code] } // 返回所有[key,vluea]值组成的SetIterator
+	function forEach() { [native code] } // 遍历set
+
+WeakSet.prototype:
+	function add() { [native code] } // 末尾添加元素
+	function has() { [native code] } // 是否存在某元素
+  function delete() { [native code] } // 删除元素
+  
+Map.prototype:
+  function get() { [native code] } // 获取元素
+  function set() { [native code] } // 设置元素
+  function has() { [native code] } // 是否存在某元素
+  function delete() { [native code] } // 删除元素
+  function clear() { [native code] } // 删除所有元素
+	function get size() { [native code] } // 元素数量
+  function keys() { [native code] } // 返回所有的keys值组成的MapIterator
+  function values() { [native code] } // 返回所有的values值组成的MapIterator
+ 	function entries() { [native code] } // 返回所有[key,vluea]值组成的MapIterator
+  function forEach() { [native code] } // 遍历map
+    
+WeakMap.prototype:
+  function get() { [native code] } // 获取元素
+  function set() { [native code] } // 设置元素
+  function has() { [native code] } // 是否存在某元素
+	function delete() { [native code] } // 删除元素
+```
+
+全局函数：
+
+```js
+eval
+isNaN
+parseFloat
+parseInt
+decodeURI
+decodeURIComponent
+encodeURI
+encodeURIComponent
+```
+
+用于当作命名空间的对象：
+
+```js
+JSON:
+  function parse() { [native code] } // 用来解析JSON字符串
+  function stringify() { [native code] } // 将一个JavaScript对象或值转换为JSON字符串
+Math:
+  function abs() { [native code] }
+  function ceil() { [native code] }
+  function floor() { [native code] }
+  function fround() { [native code] }
+  function max() { [native code] }
+  function min() { [native code] }
+  function pow() { [native code] }
+  function random() { [native code] }
+  function round() { [native code] }
+```
+
+##### es6
+
+getter setter：
+
+getter 是所访问的属性的真正的返回。
+
+setter 在属性赋值的时候会拦截到，然后做一些你想做的逻辑。通常是做一些判断来控制 getter 中真正返回的那个值。
+
+```js
+class Animal {
+  constructor (type) { 
+    this.type = type
+  }
+  get age () {
+    return 4
+  }
+  set age (val) {
+    this.realAge = val // 这里不能再给age赋值了，不然就变成死循环了
+  }
+}
+let dog = new Animal()
+
+console.log(dog.age) // 4
+dog.age = 5
+console.log(dog.age) // 4
+console.log(dog.realAge) // 5
+```
+
+```js
+let _age = 4
+class Animal {
+  constructor (type) { 
+    this.type = type
+  }
+  get age () {
+    return _age
+  }
+  set age (val) {
+    if (val > 4 && val < 7) {
+      _age = val
+    }
+  }
+}
+let dog = new Animal('dog')
+console.log(doa.age)
+dog.age = 5
+console.log(dog.age)
+```
+
+generator：
+
+generator 函数执行后返回一个对象，这个对象中有一个 next 函数，是用来控制 generator 函数内部代码的执行的。
+
+函数内部可以使用 yield 来暂停函数的执行。
+
+在调用的过程中，通过 next 来恢复程序的执行。
+
+yield：
+
+```js
+function * gen () {
+  let val
+  // 遇到yield，执行完yield后面的表达式后就会停止。并不会执行赋值操作，下一次next才会赋值。
+  val = yield 1 
+  console.log(val)
+}
+const l = gen()
+l.next() //
+l.next() // undefined
+```
+
+next 找函数体中的 yield 或者是函数的结尾，这两者找到一个就会暂停或者结束。
+
+yield 后面可以加一个 *，yield 加 * 之后，它表示的是后面可以是一个可遍历的对象，专业术语叫可迭代的对象。或者是一个 generator 实例，也就是 yield * 后面可以嵌套一个 generator 函数。
+
+next：
+
+next 用来控制函数的恢复执行，next 函数的返回值是一个包含两个属性的对象，done：函数是否已经结束，value：yield 后面的值或者函数 return 的值。
+
+next 传递的参数会作为 yield 表达式的返回值来控制函数内部的数据，不传就是 undefined。也就是说可以通过改变 yield 返回值的方式来改变函数内部的数据或运行结果。
+
+只要有 yield 就会停下来，后面即使是没有代码也需要再 next 一次这个函数才算执行完。done 才为 true。
+
+```js
+function * gen () {
+  let val
+  val = yield [1, 2, 3]
+  console.log(val)
+}
+const l = gen()
+console.log(l.next())
+console.log(l.next())
+// {value: Array(3), done: false}
+// undefined
+// {value: undefined, done: true}
+
+function * gen () {
+  let val
+  val = yield [1, 2, 3]
+  console.log(val)
+}
+const l = gen()
+console.log(l.next(10))
+console.log(l.next(20))
+// {value: Array(3), done: false}
+// 20
+// {value: undefined, done: true}
+```
+
+return：
+
+退出函数执行，也可以传值，跟 next 一样。
+
+```js
+l.return()
+```
+
+throw：
+
+```js
+function * gen () {
+  while (true) {
+    try {
+      yield 1
+    } catch (e) {
+      console.log(e.message)
+    }
+  }
+}
+const g = gen()
+// 如果你不用generator，用es5去写，你的页面已经死掉了，因为无限循环。但是用generator是死不掉的。因为它虽然是个无限循环，但是它的节奏是由外部来控制的。它就不是一个无限循环了。
+console.log(g.next()) // {value: 1, done: false}
+console.log(g.next()) // {value: 1, done: false}
+console.log(g.next()) // {value: 1, done: false}
+console.log(g.next()) // {value: 1, done: false}
+// 类似于continue的方式，绕过去了。抛出异常的方式结束函数运行。
+g.throw(new Error('ss')) // ss
+console.log(g.next()) // {value: 1, done: false}
+```
+
+应用场景：
+
+1.处理无限循环的流程
+
+输出 3 的倍数，按照 es5 的写法一定是死循环了。
+
+```js
+function * count (x = 1) {
+  while (1) {
+    if (x % 3 === 0) {
+      yield x
+    }
+    x++
+  }
+}
+let num = count()
+console.log(num.next().value) // 3
+console.log(num.next().value) // 6
+console.log(num.next().value) // 9
+console.log(num.next().value) // 12
+console.log(num.next().value) // 15
+```
+
+2.控制循环
+
+es5 中，一旦这个函数被调用，这个 for 循环就会一次执行完，它是不受控的，不能停下来。
+
+```js
+function loop () {
+  for (let i = 0; i < 5; i++) {
+    console.log(i)
+  }
+}
+loop()
+```
+
+如何让遍历停下来，每一步都可以控制是不是要继续进行。generator 就可以帮你做到如何让遍历停下来。
+
+```js
+function * loop () {
+  for (let i = 0; i < 5; i++) {
+    yield console.log(i)
+  }
+}
+const l = loop()
+l.next() // 0
+l.next() // 1
+l.next() // 2
+l.next() // 3
+l.next() // 4
+l.next() // 什么都不会打印了
+```
+
+Iterator 自定义遍历器：
+
+es5
+
+```js
+let authors = {
+  allAuthors: {
+    fiction: ['Agla', 'Skks', 'LP'],
+    scienceFiction: ['Neal', 'Arthru', 'Ribert'],
+    factory: ['J.R.Tole', 'J.M.R', 'Terry P.K']
+  },
+  Address: []
+}
+let r = [];
+for (let [k, v] of Object.entries(authors.allAuthors)) {
+  r = r.concat(v);
+}
+console.log(r); // ['Agla', 'Skks', 'LP', 'Neal', 'Arthru', 'Ribert', 'J.R.Tole', 'J.M.R', 'Terry P.K']
+```
+
+es6
+
+可迭代协议：在对象上存在 Symbol.iterator 这样的 key，值是一个 function，你想判断一个对象是不是可迭代的，你就去找这个对象上有没有以 Symbol.iterator 为 key 的方法，如果没有那这个对象就是不可迭代的。
+
+迭代器协议：一个函数返回一个对象，这个对象里面有一个方法 next，next 的返回值是 done 和 value。generater 是遵循了迭代器协议的。
+
+```js
+authors[Symbol.iterator] = function () {
+  return { 
+    next () {
+      return {
+        done: false,
+        value: 1
+      }
+    }
+  }
+}
+```
+
+实现自定义遍历器：
+
+输入是 this。
+
+输出是返回值：done 用来表述遍历是否结束，value 用来告诉当前所遍历的值。
+
+```js
+authors[Symbol.iterator] = function () {
+  // 这里执行一次
+  let allAuthors = this.allAuthors;
+  let keys = Reflect.ownKeys(allAuthors);
+  let values = [];
+  return { 
+    next () {
+      // 最终生成的遍历器循环几次这里就执行几次
+      // 返回每次的done和value
+      if (!values.length) {
+        if (keys.length) {
+          values = allAuthors[keys[0]];
+          keys.shift();
+        }
+      }
+      return {
+        done: !values.length,
+        value: values.shift()
+      }
+    }
+  }
+}
+```
+
+使用 generator 来实现 iterator 的可迭代接口：
+
+```js
+authors[Symbol.iterator] = function * () {
+  let allAuthors = this.allAuthors;
+  let keys = Reflect.ownKeys(allAuthors);
+  let values = [];
+  // 写一个无限循环，只要keys有值就yield出值，没有值说明遍历结束，直接return退出循环
+  while (1) {
+    if (!values.length) {
+      if (keys.length) {
+        values = allAuthors[keys[0]];
+        keys.shift();
+        yield values.shift();
+      } else {
+        return false;
+      }
+    } else {
+      yield values.shift();
+    }
+  }
+}
+```
+
+使用：
+
+```js
+let r = [];
+for (let v of authors) {
+  r.push(v);
+}
+console.log(r);
+```
 
 ## Javascript API 实现
 
@@ -2192,1430 +3660,6 @@ console.log(isCycleObject(o))
 1. 如传入的数组元素为`[123, "meili", "123", "mogu", 123]`，则输出：`[123, "meili", "123", "mogu"]`
 2. 如传入的数组元素为`[123, [1, 2, 3], [1, "2", 3], [1, 2, 3], "meili"]`，则输出：`[123, [1, 2, 3], [1, "2", 3], "meili"]`
 3. 如传入的数组元素为`[123, {a: 1}, {a: {b: 1}}, {a: "1"}, {a: {b: 1}}, "meili"]`，则输出：`[123, {a: 1}, {a: {b: 1}}, {a: "1"}, "meili"]`
-
-## 浏览器
-
-##### 前端存储方式
-
-cookie：大小只有4k，设置后自动加入请求头浪费流量，每个 domain 限制 20 个。api 怪异，使用需要自行封装。
-
-localStorage：大小 5M，操作方便，永久性存储。
-
-sessionStorage：只存在于当前页面，不能在窗口之间共享，页面关闭后就会被清理。
-
-Web SQL：关系型数据库。2010 年被废弃。
-
-IndexedDB：NoSQL 非关系型数据库，用键值对进行存储，读取速度快，javascript 操作方便。
-
-##### 跨域
-
-同源策略：针对 ajax 请求，浏览器要求当前网页和请求的服务必须同源，即协议、域名、端口三者一致。
-
-image，css，js，form 表单提交也不受跨域限制：
-
-1.\<img/>
-
-图片可用于统计打点。统计可能是使用第三方统计服务，比如站长之家，百度统计等，这些都是外域的，统计打点无非就是发一个请求，如果用 ajax 发的话就会出现跨域。所以说我们用图片，初始化一个图片，把图片的地址写成第三方统计服务的地址，通过图片去发这个请求就可以了。
-
-2.\<link> \<script>
-
-\<link /> \<script> 可以使用 cdn，cdn 一般都是外域。
-
-跨域解决方案：
-
-所有的跨域解决方案都必须经过 server 端允许和配合。
-
-1.Jsonp
-
-\<script> 可以绕过跨域限制。
-
-只能用 GET 请求，并且要求返回 JavaScript。
-
-2.cors
-
-服务端支持的一种解决跨域的方式，是纯服务器端的操作。
-
-```js
-response.setHeader('Access-Control-Allow-Origin', 'http://localhost:8081') // 允许的域名是什么 
-response.setHeader('Access-Control-Allow-Headers', 'X-Requested-With')     // 允许的headers是什么 
-response.setHeader('Access-Control-Allow-Methods', 'PUT,POST,GET,DELETE,OPTIONS') // 允许的methods是什么 
-response.setHeader('Access-Control-Allow-Credentials', 'true') // 接收跨域的cookie，是否允许传cookie
-```
-
-3.设置反向代理
-
-##### Html 文档中各种资源的解析规则
-
-html 在接收到一部分之后就开始解析。
-
-css 下载和解析不会阻塞 dom 的解析。
-
-js 的下载和解析都会阻塞 dom 的解析。
-
-js 的解析需要等待 cssom 全部解析完。
-
-页面渲染需要 dom 和 cssom 全部解析完。
-
-##### script 标签中 defer 和 async 的区别
-
-`<script src="script.js"></script>`
-
-按照顺序来加载并执行脚本，在脚本加载及执行过程中，会阻塞后续 html 文档的解析。
-
-`<script defer src="script.js"></script>`
-
-加载过程不会影响 html 文档解析，并且在 html 文档解析成功后，DOMContentLoaded 事件触发之前执行脚本。
-
-`<script async src="script.js"></script>`
-
-加载过程不会影响 html 文档解析，加载成功后会立即执行脚本内容，这个过程会阻塞后续 html 文档的解析。
-
-##### link 标签中 preload, prefetch, preconnect, dns-prefetch 的区别
-
-`<link rel="preload" href="/main.js" as="script">`
-
-浏览器会在遇到如上 link 标签时，立刻开始下载 main.js(异步加载)，并放在内存中，但不会执行。只有当遇到 script 标签加载的也是 main.js 的时候，浏览器才会将预先加载的 JS 执行掉。如果这个时候 JS 仍然没有下载完，浏览器不会重新发请求，而是等待此文件的加载。字体和图片等资源也可以用这个属性，要用 as 属性标明资源类型，否则这个设置会失效。
-
-`<link rel="prefetch" href="main.js" as="script">`
-
-与 preload 类似。区别是浏览器会在空闲的时候下载，在还没下载完的时候就用到了该资源，会再次发起请求。所以在当前页面马上就要用的资源用 preload，不是马上用的资源用 prefetch。
-
-`<link rel="preconnect" href="https://cdn.bootcss.com">`
-
-提前建立 tcp 链接。
-
-`<link rel="dns-prefetch" href="https://cdn.bootcss.com">`
-
-提前查找 dns 解析域名。
-
-##### 输入地址按下回车的整个流程
-
-1. 查找缓存：有缓存，返回缓存副本，并直接结束请求。没有缓存，发起网络请求过程。
-2. 准备 IP 地址：先查找浏览器中的 DNS 数据缓存，没有缓存浏览器会请求 DNS 返回域名对应的 IP。
-3. 等待 TCP 队列：Chrome 同一个域名同时最多只能建立 6 个 TCP 连接。
-4. 建立 TCP 连接：排队等待结束之后，浏览器通过 TCP 与服务器建立连接。
-5. 发送 HTTP 请求：一旦建立了 TCP 连接，浏览器就可以和服务器进行通信了。而 HTTP 中的数据正是在这个通信过程中传输的。浏览器会向服务器发送请求行，请求头，请求体信息。
-6. 服务器处理请求。
-7. 服务器返回请求。
-8. 断开 TCP 连接：一旦服务器向客户端返回了请求数据，它就要关闭 TCP 连接。如果浏览器或者服务器在其头信息中加入了 Connection: Keep-Alive，TCP 会一直保持连接。
-9. 重定向：返回的状态码是 301，告诉浏览器要重定向到另外一个网址，重定向的网址包含在响应头 Location 字段中，浏览器使用该地址重新导航。
-10. 构建 DOM 树：由 HTML 解析器将 html 文件解析成树状结构的 DOM。
-11. 样式计算：计算出 DOM 节点中每个元素的具体样式。
-12. 布局：根据 DOM 和 ComputedStyle 生成一棵只包含可见元素的布局树，并计算出布局树节点的具体坐标位置。
-13. 分层：将页面分成很多图层。
-14. 绘制：为每个图层生成绘制命令列表。
-15. 栅格化：将图层分成图块，并将图块利用 GPU 转换成位图。
-16. 合成和显示：浏览器根据绘制命令将页面内容绘制到内存，将渲染好的页面显示到显示器上。停止标签图标上的加载动画。
-
-
-重排会走整个渲染流程，重绘会走绘制之后的渲染流程，合成会走栅格化之后的渲染流程（如使用 transform）
-
-## 网络
-
-##### 网络五层模型
-
-* 物理层
-
-* 数据链路层
-
-* 网络层
-
-  IP 协议
-
-* 传输层
-
-  TCP/UDP 协议
-
-* 应用层
-
-  TELNET/SSH/HTTP/SMTP/POP/SSL/TLS/FTP/MIME/HTML
-
-##### IP
-
-IP 是非常底层的协议，只负责把数据包送达目的主机。
-
-交给对方电脑中的具体哪个应用，就需要 UDP 或 TCP 协议了。
-
-##### UDP
-
-应用于在线视频、互动游戏等关注速度、不要求数据完整性的应用。
-
-* 数据传输不可靠：传输过程中出错的数据包会丢失。
-* 速度快。
-
-##### TCP
-
-应用于浏览器请求，邮件等要求数据传输可靠性的应用。
-
-* 重传机制：对于传输过程中丢失的数据包，提供重传机制。
-* 排序机制：用来保证把乱序的数据包组合成一个完整的文件。
-* 速度慢。
-
-##### HTTP 协议格式
-
-```bash
-curl -v http://www.baidu.com
-```
-
-请求部分：
-
-* 请求行 request line
-
-  * 请求方法：表示此次 HTTP 请求希望执行的操作类型。只是语义上的约定，并没有强约束。
-
-    GET, POST, HEAD, PUT, DELETE, CONNECT, OPTIONS, TRACE。
-
-    浏览器通过地址栏访问页面都是 GET 方法。表单提交产生 POST 方法。
-
-    HEAD 则是跟 GET 类似，只返回请求头，多数由 JavaScript 发起。
-
-    PUT 和 DELETE 分别表示添加资源和删除资源。
-
-    CONNECT 现在多用于 HTTPS 和 WebSocket。
-
-    OPTIONS 和 TRACE 一般用于调试，多数线上服务都不支持。预检请求的 method 也是 OPTIONS。
-
-  * 请求路径
-
-  * 协议和版本
-
-* 请求头 request header
-
-  HTTP 头也是一种数据，可以自由定义 HTTP 头和值。不过在 HTTP 规范中，规定了一些特殊的 HTTP 头。
-
-  * Accept：告诉服务端想要的数据类型。
-  * Accept-Charset：想要接收数据的字符集。
-  * Accept-Encoding：数据编码方式，用来限制服务端如何进行数据压缩。
-  * Accept-Language：语言。
-  * Connection：连接方式，如果是 keep-alive，且服务端支持，则会复用连接。
-  * Cookie：客户端存储的 cookie 字符串。
-  * User-Agent：浏览器的一些相关的信息。操作系统及版本/cpu/浏览器及版本/浏览器渲染引擎/浏览器语言/浏览器插件。
-  * If-Modified-Since：上次访问时服务端返回的 Last-Modified。
-  * If-None-Match：上次访问时服务端返回的 ETag。
-  
-* 请求体：请求体可能包含文件或者表单数据
-
-  HTTP 请求的 body 主要用于提交表单场景。一些常见的 body 格式是：
-
-  * application/json
-  * application/x-www-form-urlencoded
-  * multipart/form-data：既有文本数据，又有文件等二进制数据。所有的传输数据类型都会在编码里面去体现。
-  * text/xml
-
-
-响应部分：
-
-* 响应行 response line
-
-  * 协议和版本
-  * 状态码
-    * 1xx：临时回应，表示客户端请继续。对前端来说，1xx 系列的状态码是非常陌生的，原因是 1xx 的状态被浏览器 HTTP 库直接处理掉了，不会让上层应用知晓。
-    * 2xx：请求成功。
-      * 200：请求成功。
-    * 3xx: 表示请求的目标有变化，希望客户端进一步处理。
-      * 301&302：永久性与临时性跳转。表示当前资源已经被转移。
-      * 304：跟客户端缓存没有更新。
-    * 4xx：客户端请求错误。
-      * 400：请求参数有语法错误，不能被服务器理解。
-      * 401：没登录，鉴权失败。
-      * 403：无权限。禁止访问，服务器收到请求，但是拒绝提供服务。
-      * 404：表示请求的资源不存在。
-    * 5xx：服务端请求错误。
-      * 500：服务端错误。
-      * 502：网关错误。
-      * 503：由于超载，请求超时或停机维护，服务器目前无法使用，一段时间后可恢复正常，服务端暂时性错误，可以一会再试。
-  * 状态文本
-* 响应头 response header
-
-  * Content-Type：对应 Accept，Accept 里面可以接收好几种不同的数据格式，那么 Content-Type 可以从里面选择一种然后做为它真正返回的数据格式进行一个返回，客户端根据这个来进行一个怎么样的显示。
-  * Content-Encoding：对应的是 Accept-Encoding，服务端具体使用的数据压缩方式。
-  * Content-Language：语言。
-  * Content-Length：内容长度，有利于浏览器判断内容是否已经结束。
-  * Connection：连接方式，keep-alive 表示复用连接。
-  * Keep-Alive：保持连接不断时需要的一些信息，如 timeout=5, max=100。
-  * Location：告诉客户端重定向的地址。
-  * Set-Cookie：设置 cookie，可以存在多个。
-  * Cache-Control：缓存控制，用于通知各级缓存保存的时间，例如 max-age=0，表示不要缓存。
-  * Expires：过期时间，用于判断下次请求是否需要到服务端取回页面。
-  * Last-Modified：页面上次修改的时间。
-  * ETag：页面信息摘要，用于判断是否需要重新到服务端取回页面。
-  * Access-Control-Allow-Origin：允许的跨域的源，如：'http://localhost:3000'
-  * Access-Control-Allow-Headers：允许跨域的请求头，如：'X-Token,Content-Type'
-  * Access-Control-Allow-Method：允许跨域的方法，如：'PUT,OPTIONS'
-  * Access-Control-Allow-Credentials: true。跨域时默认是不记录 cookie 认证信息的。加上这个让它能够记录，从而能够使用 cookie。
-* 响应体：头之后，以一个空行为分隔，响应体则是 HTML 代码。
-
-预检请求：使用了非正常的请求报头或使用非 get/post 的请求会触发预检请求。
-
-##### HTTP 缓存
-
-命中强缓存后不会发送请求，没有命中强缓存后走协商缓存。
-
-强缓存：
-
-cache-control 优先级高于 expires
-
-* expires：它的值为一个绝对时间的 GMT 格式的时间字符串。发送请求的时间在 expires 之前，本地缓存始终有效，强缓存命中。
-* cache-control：max-age=number，它是一个相对值，根据资源第一次的请求时间和这个相对值，计算出一个资源过期时间，之后的请求时间在过期时间之前，就能命中缓存。该头可以存在多个。
-  * no-cache：不使用强缓存，需要使用缓存协商。
-  * no-store：禁止使用强缓存和协商缓存等任何缓存行为。
-  * public：可以被所有的用户缓存，包括终端和 CDN 等中间代理服务器。
-  * private：只能被终端的浏览器缓存，不允许 CDN 等中继缓存服务器对其缓存。
-
-协商缓存：
-
-协商缓存由两对 http 头组成。
-
-服务器会优先验证 ETag，一致的情况下，才会继续比对 Last-Modified。
-
-* Last-Modified/If-Modified-Since：
-
-  这两个值是 GMT 格式的时间字符串。
-
-  * 浏览器在第一次请求一个资源，在 respone 的 header 加上 Last-Modified 的 header，表示这个资源在服务器上的最后修改时间。
-  * 浏览器再次跟服务器请求这个资源时，在 request 的 header 上加上 If-Modified-Since 的 header，这个 header 的值就是上一次请求时返回的 Last-Modified 的值。服务器根据浏览器传过来 If-Modified-Since 和资源在服务器上的最后修改时间判断资源是否有变化，如果没有变化则返回 304 Not Modified，但是不会返回资源内容和 Last-Modified；如果有变化，就正常返回资源内容和新的 Last-Modified。
-  
-* Etag/If-None-Match
-
-  这个值是由服务器生成的资源的唯一标识字符串（摘要），只要资源有变化这个值就会改变。
-
-  过程与 Last-Modified/If-Modified-Since 类似。不同的是，当服务器返回 304 Not Modified 的响应时，由于 ETag 重新生成过，response header 中还会把这个 ETag 返回，即使这个 ETag 跟之前的没有变化。
-
-* 优缺点
-
-  * Last-Modified
-    * 一些文件会周期性的修改时间，但内容并没有改变，这个时候我们并不希望客户端认为这个文件被修改了，而重新 GET；
-    * 某些文件修改非常频繁，比如在秒以下的时间内进行修改，If-Modified-Since 能检查到的粒度是 s 级的，这种修改无法判断(或者说UNIX记录MTIME只能精确到秒)；
-    * 某些服务器不能精确的得到文件的最后修改时间。
-  * Etag
-    * Etag 能很好的解决上面 Last-Modified 遇到的问题，但由于要生成 hash，会消耗性能。
-
-用户行为对缓存的影响：
-
-![用户行为对缓存的影响](../架构/用户行为对缓存的影响.png)
-
-##### cdn
-
-内容分发网络。加快用户访问速度，减轻源服务器的访问压力。
-
-##### https
-
-HTTP + SSL(TLS) = HTTPS
-
-通常情况下，HTTP 会先直接和 TCP 进行通信。在使用 SSL 的 HTTPS 后，则会先演变为和 SSL 进行通信，然后再由 SSL 和 TCP 进行通信。
-
-做到以下三点才能保证信息的安全：
-
-* 信息的保密性
-  * 对称加密
-  * 非对称加密
-* 信息的完整性
-  * 摘要算法
-* 身份识别
-  * 数字证书
-
-##### http2.0
-
-- 二进制分帧传输
-- 多路复用
-- 头部压缩
-- 服务器推送
-
-## 性能优化
-
-##### 标准
-
-长任务：https://www.w3.org/TR/2017/WD-longtasks-1-20170907/
-
-性能：https://www.w3.org/TR/navigation-timing-2/
-
-1.使用PerformanceNavigationTiming界面获取与文档导航相关的准确计时数据·
-
-```html
-<script>
-function showNavigationDetails() {
-  // Get the first entry
-  const [entry] = performance.getEntriesByType("navigation");
-  // Show it in a nice table in the developer console
-  console.table(entry.toJSON());
-}
-</script>
-<body onload="showNavigationDetails()">
-```
-
-
-
-##### 谷歌官方学习网站
-
-https://web.dev/
-
-##### 慢的影响
-
-如果网站太慢会影响用户的体验，会造成客诉或资损。
-
-- 57%的用户更在乎网页在3秒内是否完成加载。
-- 52%的在线用户认为网页打开速度影响到他们对网站的忠实度。
-- 每慢1秒造成页面 PV 降低11%，用户满意度也随之降低降低16%。
-- 近半数移动用户因为在10秒内仍未打开页面从而放弃。
-
-##### 性能指标
-
-https://juejin.cn/post/6850037270729359367
-
-* FP（First Paint）：首次绘制。
-* FCP（First Contentful Paint）：首次内容绘制。2s 内优秀。
-* 白屏时间：输入网址回车后的时间到 FCP 的时间。
-* LCP（Largest Contentful Paint）：最大内容绘制（2.5s - 4.0s）
-* FMP（First Meaningful Paint）：首次有意义绘制。
-* DCL（DOMContentLoaded Event）：dom 渲染完成事件。
-* L（Loaded Event）：全部元素渲染完成事件。
-* 首屏时间：输入网址回车后的时间到全部页面展示出来的时间。
-* TTI（Time to Interactive）：首次可交互时间
-  * 从 FCP 指标后开始计算
-  * 持续 5 秒内无长任务（执行时间超过 50 ms）且无两个以上正在进行中的 GET 请求
-  * 往前回溯至 5 秒前的最后一个长任务结束的时间
-* FID（First Input Delay）：首次输入延迟，在 FCP 和 TTI 之间，用户首次与页面交互到 TTI 的时间。用户交互事件触发到页面响应中间耗时多少，如果其中有长任务发生的话那么势必会造成响应时间变长（100ms - 300ms）。
-* TBT（Total Blocking Time）：阻塞总时间，记录在 FCP 到 TTI 之间所有长任务的阻塞时间总和。每个长任务的阻塞时间就等于它所执行的总时间减去 50ms。执行时间大于 50ms就是长任务，否则是短任务。（200ms - 600ms）
-
-* CLS（Cumulative Layout Shift）：累计位移偏移。位移距离 / 位移影响的面积（0.1 - 0.25）
-* 除了这些指标以外，我们还需要获取网络、文件传输、DOM等信息丰富指标内容。
-
-##### 获取指标
-
-* web-vitals-extension
-
-* web-vitals 库
-
-* Lighthouse
-
-  ```js
-  import {getCLS, getFID, getLCP} from 'web-vitals';
-  
-  getCLS(console.log);
-  getFID(console.log);
-  getLCP(console.log);
-  ```
-
-* Chrome DevTools - Performance
-
-  https://zhuanlan.zhihu.com/p/163474573
-
-* Performance API
-
-  mdn：https://developer.mozilla.org/zh-CN/docs/Web/API/Performance
-
-##### 性能优化
-
-* 优化 FP、FCP、LCP、FMP 指标（白屏、首屏时间）
-  * 资源优化
-    * 图片优化
-      * 使用合适的图片格式
-      * 小图标使用字体图标
-      * 小图使用 base64
-      * 图片懒加载
-      * 图片渐进式加载
-    * 文件压缩：服务端配置 Gzip 压缩文件体积
-    * 代码压缩
-    * 异步组件，按需加载
-    * Code Splitting
-    * 动态 polyfill
-    * Tree shaking
-    * Scope Hoisting
-    * 单页应用改为多页应用
-  * 网络优化
-    * 缓存文件，对首屏数据做离线缓存
-    * 服务端渲染
-    * 使用 CDN 加载资源
-    * 首屏不需要使用的 CSS 文件不加载
-    * 内联关键的 CSS 代码
-    * 资源预加载
-    * 使用 dns-prefetch 预解析 IP 地址
-    * 使用 preconnect，提前建立 TCP 连接
-    * 使用 HTTP2.0 协议、TLS 1.3 协议或者直接拥抱 QUIC 协议
-* 优化 TTI、FID、TBT 指标（优化耗时任务）
-  * 使用 Web Worker 将耗时任务丢到子线程中，这样能让主线程在不卡顿的情况下处理 JS 任务
-  * 调度任务 + 时间切片，这块技术在 React 16 中有使用到。简单来说就是给不同的任务分配优先级，然后将一段长任务切片，这样能尽量保证任务只在浏览器的空闲时间中执行而不卡顿主线程
-* 优化 CLS 指标
-  * 使用骨架屏给用户一个预期的内容框架，突兀的显示内容体验不会很好
-  * 图片切勿不设置长宽，而是使用占位图给用户一个图片位置的预期
-  * 不要在现有的内容中间插入内容，起码给出一个预留位置
-
-* 代码优化
-  * css 放在 head 里面：尽早的使 css 加载完成并执行完成。
-  * js 放到 body 最下面：防止 js 阻塞 dom 解析。
-  * 对 dom 查询进行缓存
-  * 使用 DOMFragment 批量 DOM 操作。
-  * css 选择器避免使用过多层级，避免使用标签选择器。
-  * 频繁回流重绘的节点设置为单独的图层。使用 will-change。
-  * 尽早执行 js：window.DOMContentLoaded：dom 渲染完即可执行，此时图片，视频可能还没有加载完。
-  * 编写一些时间复杂度比较低的代码。
-
-  * 节流防抖
-  * 合理的加一些 loading
-
-##### 优化实战
-
-https://juejin.cn/post/6919295789630455815
-
-https://github.com/KieSun/per-moniteur
-
-## vue
-
-##### 对 mvvm 的理解
-
-* 模版引擎：提供描述视图的模版语法。
-* 数据响应式：数据变化视图更新。
-* 渲染：把模版转换成 render 函数，render 函数生成 vdom，最后将 vdom 转换成真实 dom。
-
-##### vue 组件间通信
-
-* props
-* 自定义事件
-* eventbus
-* Vuex
-* $parent/$root
-* $children
-* $refs
-* provide/inject
-
-##### vue 父子组件生命周期钩子执行顺序
-
-1. 加载渲染过程
-   `父beforeCreate->父created->父beforeMount->子beforeCreate->子created->子beforeMount->子mounted->父mounted`
-2. 子组件更新过程
-   `父beforeUpdate->子beforeUpdate->子updated->父updated`
-3. 父组件更新过程
-   `父beforeUpdate->父updated`
-4. 销毁过程
-   `父beforeDestroy->子beforeDestroy->子destroyed->父destroyed`
-
-##### vue 双向绑定实现原理
-
-数据响应式 + 事件发布订阅
-
-##### vue-router 实现原理
-
-监听地址变化，改变响应式数据 current，这个 current 就是路由表的 path，从路由表中获取到最新的 component，把它渲染到 router-view 里。
-
-vue-router.js 
-
-```js
-import Link from './router-link';
-import View from './router-view';
-
-// 保存构造函数引用，避免import
-let Vue;
-class VueRouter {
-  constructor(options) {
-    this.$options = options;
-    // 需要创建响应式的current属性
-    // 变成响应式的好处是，在任何组件的template或render函数中用到current就会把它收集起来，将来只要我变了，就会通知用到的组件做更新，重新render
-    Vue.util.defineReactive(this, 'current', '/');
-    // 还可以使用这种方式实现current的响应式
-    // this.app = new Vue({
-    //   data() {
-    //     return {
-    //       current: '/'
-    //     }
-    //   }
-    // })
-    
-    // 监控url变化
-    window.addEventListener('hashchange', this.onHashChange.bind(this));
-    window.addEventListener('load', this.onHashChange.bind(this));
-
-    // 创建路由映射表
-    this.routeMap = {};
-    options.routes.forEach(route => {
-      this.routeMap[route.path] = route;
-    });
-  }
-  onHashChange() {
-    this.current = window.location.hash.slice(1);
-  }
-}
-
-// 1.实现一个插件
-// 一个插件只是个普通对象，并实现 install 方法。
-VueRouter.install = function (_Vue) {
-  // 保存构造函数，在VueRouter里面使用
-  Vue = _Vue;
-  // 挂载$router
-  Vue.mixin({
-    beforeCreate() {
-      // 根实例的时候才执行
-      if (this.$options.router) {
-        Vue.prototype.$router = this.$options.router;
-      }
-    }
-  });
-  // 注册全局组件router-link和router-view
-  Vue.component('router-link', Link);
-  Vue.component('router-view', View);
-}
-
-export default VueRouter;
-```
-
-router-link.js 
-
-```js
-export default {
-  props: {
-    to: {
-      type: String,
-      required: true
-    },
-  },
-  render(h) {
-    // <a href="#/about">abc</a>
-    // <router-link to="/about">xxx</router-link>
-    // h(tag, data, children)
-    console.log(this.$slots);
-    return h('a', { attrs: { href: '#' + this.to } }, this.$slots.default);
-    // jsx
-    // return <a href={'#' + this.to}>{this.$slots.default}</a>;
-  }
-}
-```
-
-router-view.js
-
-```js
-export default {  
-  render(h) {    
-    // 获取path对应的component    
-    const { routeMap, current } = this.$router; 
-    const component = routeMap[current].component || null;  
-    return h(component);
-  }
-}
-```
-
-##### vuex 实现原理
-
-vuex.js
-
-```js
-// 保存构造函数引用，避免import
-let Vue;
-class Store {
-  constructor(options) {
-    // this.$options = options;
-    // 保存mutations、actions、getters选项
-    this._mutations = options.mutations;
-    this._actions = options.actions;
-    this._getters = options.getters;
-    // 定义computed选项
-    const computed = {};
-    // 给用户暴露一个getters
-    this.getters = {};
-    const store = this;
-    Object.keys(this._getters).forEach(key => {
-      // 获取用户定义的getters
-      const fn = store._getters[key];
-      // 转换为computed使用的无参数的形式，做一个高阶封装
-      computed[key] = function() {
-        return fn(store.state);
-      }
-      // 将getters设置为只读属性
-      Object.defineProperty(store.getters, key, {
-				get() {
-          return store._vm[key];
-        }
-      });
-    })
-    // 响应化处理state 
-    // this.state = new Vue({
-    //   data: options.state
-    // });
-    this._vm = new Vue({
-      data: {
-        // 加两个$，Vue不做代理
-        $$state: options.state
-      },
-      // 把getters当成一个计算属性去实现就可以了。注意computed的函数是无参数的。
-      computed,
-    });
-    // 绑定commit、dispatch的上下文为store实例
-    // 绑定commit上下文否则action中调用commit时可能出问题!!
-    // 同时也把action绑了，因为action可以互调
-    this.commit = this.commit.bind(this)
-    this.dispatch = this.dispatch.bind(this)
-  }
-  // 保护state，防止用户直接修改state，利用存取器
-  // 存取器， store.state
-  get state() {
-    console.log(this._vm);
-    return this._vm._data.$$state
-  }
-  set state(v) {
-    console.error('你造吗？你这样不好！');
-  }
-  // 根据用户传入type执行对应mutation
-  // store.commit('add', 1)
-  // type: mutation的类型
-  // payload：载荷，是参数
-  commit(type, payload) {
-    const entry = this._mutations[type]
-    if (entry) {
-      // 传递state给mutation
-      entry(this.state, payload)
-    }
-  }
-  // 根据用户传入type执行对应action，同时传递上下文 
-  dispatch(type, payload) {
-    const entry = this._actions[type]
-    if (entry) {
-      entry(this, payload)
-    }
-  }
-}
-function install(_Vue) {
-  Vue = _Vue;
-  Vue.mixin({
-    beforeCreate() {
-      if (this.$options.store) {
-        Vue.prototype.$store = this.$options.store
-      }
-    }
-  })
-}
-// Vuex
-export default {
-  Store,
-  install
-}
-```
-
-##### vue 数据响应式（2）
-
-```js
-// 数组响应式
-// 思路：找到数组原型，覆盖那七个修改数组的方法，让它除了做原来的事情之外，还能够额外做更新通知，这样就实现了数组的响应式操作。并将得到的新的原型设置到data中的数组实例原型上，这样这个数组执行调用这些方法的时候就会以我们添加的方法为准。
-// 1.替换数组原型中那7个方法
-const arrayProto = Object.create(Array.prototype);
-// splice,reverse,sort
-['push', 'pop', 'shift', 'unshift'].forEach(method => {
-  arrayProto[method] = function(...args) {
-    // 原始操作
-    arrayProto[method].call(this, ...args);
-    // 覆盖操作：通知更新（对象响应式里的setter操作dep.notify）
-    console.log('数组执行 ' + method + '操作');
-  }
-});
-
-// 数据响应式
-function defineReactive(obj, key, val) {
-  // 递归
-  observe(val);
-  // 对传入obj进行访问拦截
-  Object.defineProperty(obj, key, {
-    get() {
-      console.log('get ' + key);
-      return val;
-    },
-    set(newVal) {
-      if (newVal !== val) {
-        console.log('set ' + key + ':' + newVal);
-        // 如果传入的newVal依然是obj，需要做响应化处理
-        observe(newVal);
-        val = newVal;
-        // 更新函数
-        update();
-      }
-    }
-  })
-}
-
-// 遍历做批量响应化处理
-function observe(obj) {
-  if (typeof obj !== 'object' || obj == null) return;
-  if (Array.isArray(obj)) {
-    // 数组数据响应化
-    // 覆盖该数组的原型
-    obj.__proto__ = arrayProto;
-    // 对数组内部的元素做响应化处理
-    for (let i = 0; i < obj.length; i++) {
-      observe(obj[i]);
-    }
-  } else {
-    Object.keys(obj).forEach(key => {
-      defineReactive(obj, key, obj[key]);
-    });
-  }
-}
-
-function set(obj, key, val) {
-  defineReactive(obj, key, val);
-}
-
-// 更新函数
-function update() {
-  // 更新试图
-  app.innerText = obj.foo;
-}
-
-// 单个数据响应化处理
-// defineReactive(obj, 'foo', 'foo')
-// obj.foo
-// obj.foo = 'fooooooooooooooooo'
-const obj = { foo: 'foo', bar: 'bar', baz: { a: 1 }, arr: [1,2,3] };
-observe(obj);
-obj.foo;
-obj.foo = 'fooooooooooooooo';
-obj.bar;
-obj.bar = 'barrrrrrrrrrrrrr';
-
-// obj.baz.a = 10 // 深层的数据，拦截不到，需要递归处理里面的对象数据
-obj.baz = {a:100}; // 如果赋值依然是obj，拦截不到，需要在setter中赋值时做响应化处理
-obj.baz.a = 100000;
-
-// obj.dong = 'dong' // 添加新的属性，拦截不到，使用set做一次响应化处理
-set(obj, 'dong', 'dong');
-obj.dong;
-
-// Object.defineProperty()对数组无效
-// 分析：改变数组方法只有7个
-// 解决方案：覆盖数组实例的原型方法，让他们在修改数组同时还可以通知更新
-obj.arr.push(4);
-```
-
-##### vue3
-
-响应式内部写法变化
-
-* 响应化需要递归遍历，性能消耗较大。
-* 新增或删除属性无法监听
-* 数组响应化需要额外实现
-
-Composition API
-
-* 复用性
-* 代码组合：增加代码可读性，将变量和它的逻辑写到一块。之前分散在各个配置项比如 data， method 中的东西集中到 setup 的函数里，然后 return 一个对象作为 render 函数的上下文。也就是在 render 函数中想要访问的响应式的数据都会在 setup 函数中构造创建并且 return。响应式需要自己做。
-
-##### 简版 MVVM
-
-![Vue数据响应式](Vue数据响应式.png)
-
-* Vue：框架构造函数。
-* Observer：
-  * 执行数据响应化（分辨数据是对象还是数组，对这两种类型有不同的操作，所以我们多抽象出来了一层，用这个 Observer 来做）。
-    * getter：依赖收集。
-    * setter：执行更新函数。
-* Compile
-  * 编译模版：递归遍历 DOM 树，解析出 node 节点和该节点上动态绑定的值 vm.data.key，还有模版绑定语法类型。根据不同的模版语法创建相应的更新函数，接收解析出来的两个值，做 DOM 操作。
-    * 初始化视图，执行更新函数。
-    * 创建 Watcher 实例，传入更新函数。
-* Watcher：管理更新函数。
-* Dep：管理 Watcher。
-
-模版中出现一个值就会有一个 watcher，相同的值只对应一个 dep，所以一个 dep 对应 多个 watcher。
-
-在模版编译的时候，比如指令或差值表达式，调用 Watcher，传入 Vue 实例 vm，data 中的哪个 key，和它对应的 dom 的更新函数 updateFn。
-
-Watcher 中通过 Dep.target = this 将该 watcher 设置到一个 Dep.target 的全局变量中，并将模版中的 key 访问一遍触发 getter，再将 Dep.target 制空。
-
-defineReactive 时创建 dep 实例。
-
-getter 的时候将 Dep.target 也就是 watcher 收集到 dep 中。
-
-setter 的时候调用 dep.notify 通知更新。
-
-vue.js
-
-```js
-function defineReactive(obj, key, val) {
-  // 递归
-  observe(val);
-  // 创建一个Dep和当前key一一对应
-  const dep = new Dep();
-  // 对传入obj进行访问拦截
-  Object.defineProperty(obj, key, {
-    get() {
-      console.log('get ' + key);
-      // 依赖收集
-      Dep.target && dep.addDep(Dep.target);
-      return val;
-    },
-    set(newVal) {
-      if (newVal !== val) {
-        console.log('set ' + key + ':' + newVal);
-        // 如果传入的newVal依然是obj，需要做响应化处理
-        observe(newVal);
-        val = newVal;
-        // 通知更新
-        // watchers.forEach(w => w.update())
-        dep.notify();
-      }
-    }
-  })
-}
-
-function observe(obj) {
-  if (typeof obj !== 'object' || obj == null) return;
-  // 创建Observer实例
-  new Observer(obj);
-}
-
-// 代理的原数据已经是响应式的了，所以代理数据不需要再做响应式了，只是单纯的做get，set代理操作就行了
-// 代理函数，方便用户直接访问$data中的数据
-function proxy(vm, sourceKey) {
-  // vm是框架实例，sourceKey是vm中的$data
-  // 遍历vm[$data]中的所有key，将它代理到vm上的key
-  Object.keys(vm[sourceKey]).forEach(key => {
-    // 将$data中的key代理到vm上
-    Object.defineProperty(vm, key, {
-      get() {
-        return vm[sourceKey][key];
-      },
-      set(newVal) {
-        vm[sourceKey][key] = newVal;
-      }
-    })
-  })
-}
-
-// 创建Vue构造函数
-class Vue {
-  constructor(options) {
-    // 保存选项
-    this.$options = options;
-    this.$data = options.data;
-    // 响应化处理
-    observe(this.$data);
-    // 代理
-    proxy(this, '$data');
-    // 创建编译器
-    new Compiler(options.el, this);
-  }
-}
-
-// 根据对象类型决定如何做响应化
-class Observer {
-  constructor(value) {
-    this.value = value;
-    // 判断其类型
-    if (typeof value === 'object') {
-      this.walk(value);
-    }
-  }
-  // 对象数据遍历响应化
-  walk(obj) {
-    Object.keys(obj).forEach(key => {
-      defineReactive(obj, key, obj[key]);
-    });
-  }
-  // 数组数据响应化，待补充
-}
-
-// 观察者:保存更新函数，值发生变化调用更新函数
-// const watchers = []
-class Watcher {
-  constructor(vm, key, updateFn) {
-    this.vm = vm;
-    this.key = key;
-    this.updateFn = updateFn;
-    // watchers.push(this)
-    // Dep.target静态属性上设置为当前watcher实例
-    Dep.target = this;
-    this.vm[this.key]; // 读取触发getter
-    Dep.target = null; // 收集完就置空，防止编译时，读取下一个同样的key时push进去的是该key的上一个更新函数。
-  }
-  // 更新函数
-  update() {
-    this.updateFn.call(this.vm, this.vm[this.key]);
-  }
-}
-// Dep：依赖，管理某个key相关所有Watcher实例
-class Dep {
-  constructor() {
-    this.deps = [];
-  }
-  addDep(dep) {
-    this.deps.push(dep);
-  }
-  notify() {
-    this.deps.forEach(dep => dep.update());
-  }
-}
-```
-
-compile.js
-
-```js
-// 编译器
-// 递归遍历DOM树
-// 判断节点类型，如果是文本，则判断是否是插值绑定
-// 如果是元素，则遍历其属性判断是否是指令或事件，然后递归子元素
-class Compiler {
-  // el是宿主元素
-  // vm是Vue实例
-  constructor(el, vm) {
-    // 保存Vue实例，保存需要操作的DOM元素
-    this.$vm = vm
-    this.$el = document.querySelector(el)
-
-    if (this.$el) {
-      // 执行编译，初始化视图
-      this.compile(this.$el)
-    }
-  }
-
-  // 遍历DOM树，开始做编译工作
-  compile(el) {
-    // 遍历el树
-    const childNodes = el.childNodes;
-    Array.from(childNodes).forEach(node => {
-      // 判断是否是元素
-      if (this.isElement(node)) {
-        // console.log('编译元素' + node.nodeName);
-        this.compileElement(node)
-      } else if (this.isInter(node)) {
-        // console.log('编译插值绑定' + node.textContent);
-        this.compileText(node)
-      }
-
-      // 递归子节点
-      if (node.childNodes && node.childNodes.length > 0) {
-        this.compile(node)
-      }
-    })
-  }
-
-  // 是否是元素
-  isElement(node) {
-    return node.nodeType === 1
-  }
-
-  // 是否是差值绑定
-  isInter(node) {
-    // 首先是文本标签，其次内容是{{xxx}}
-    return node.nodeType === 3 && /\{\{(.*)\}\}/.test(node.textContent)
-  }
-
-  // 文本节点编译
-  compileText(node) {
-    this.update(node, RegExp.$1, 'text')
-  }
-
-  // 元素节点编译
-  compileElement(node) {
-    // 节点是元素
-    // 遍历其属性列表
-    const nodeAttrs = node.attributes
-    Array.from(nodeAttrs).forEach(attr => {
-      // 规定：指令以k-xx="oo"定义 k-text="counter"
-      const attrName = attr.name // k-xx k-text
-      const exp = attr.value // xx counter
-      // 指令处理
-      if (this.isDirective(attrName)) {
-        const dir = attrName.substring(2) // xx text
-        // 执行指令
-        this[dir] && this[dir](node, exp)
-      }
-      // 事件处理
-      if (this.isEvent(attrName)) {
-        // @click="onClick"
-        const dir = attrName.substring(1) // 得到click
-        // 事件监听
-        this.eventHandler(node, exp, dir)
-      }
-    })
-  }
-
-  // 是否是指令
-  isDirective(attr) {
-    return attr.indexOf('k-') === 0
-  }
-  
-  // 是否是事件
-  isEvent(attr) {
-    return attr.indexOf('@') === 0
-  }
-  
-  // k-text
-  text(node, exp) {
-    this.update(node, exp, 'text')
-  }
-
-  
-  // k-html
-  // 双向绑定，语法糖，它实际上做了两个事，value 值的设定和事件的监听。设置 v-model 就是要实现这两个事情，因此在代码的实现层面实现这两件事情就可以了。
-  html(node, exp) {
-    this.update(node, exp, 'html')
-  }
-  
-  // k-model
-  model(node, exp) {
-    // update方法只完成赋值操作，是单向的
-    // value赋值
-    this.update(node, exp, 'model')
-    // 事件监听
-    node.addEventListener('input', e => {
-      // 将新的值赋值给数据
-      this.$vm[exp] = e.target.value
-    })
-  }
-
-  // 编译函数
-  update(node, exp, dir) {
-    // 编译初始化
-    // 组合最终的DOM更新函数xxUpdater
-    const fn = this[dir + 'Updater']
-    fn && fn(node, this.$vm[exp])
-
-    // 创建Watcher实例
-    // 传入更新函数
-    new Watcher(this.$vm, exp, function (val) {
-      fn && fn(node, val)
-    })
-  }
-
-  textUpdater(node, value) {
-    node.textContent = value
-  }
-
-  htmlUpdater(node, value) {
-    node.innerHTML = value
-  }
-  
-  modelUpdater(node, value) {
-    // 表单元素赋值
-    node.value = value
-  }
-  
-  // 事件监听处理
-  eventHandler(node, exp, dir) {
-    const fn = this.$vm.$options.methods && this.$vm.$options.methods[exp]
-    node.addEventListener(dir, fn.bind(this.$vm))
-  }
-  
-}
-```
-
-##### vue 源码调试技巧
-
-搭建调试环境：
-
-1. clone 源码，地址：https://github.com/vuejs/vue.git  版本:2.6.10
-
-2. 安装依赖：npm install
-
-3. 安装 rollup，Vue 的打包工具是 rollup：npm install -g rollup
-
-4. 修改 package.json 中的 dev 打包脚本：增加 --sourcemap
-
-   "dev": "rollup -w -c scripts/config.js --sourcemap --environment TARGET:web-full-dev"
-
-5. 打包，执行开发脚本，输出最终我们要用的 vue.js：npm run dev
-
-   打包成功之后 dist 下会生成一个全新的 vue.js，和它的 map 文件 vue.js.map
-
-6. 编写测试文件
-
-   examples/test/01-test.html
-
-   把刚才打包的 vue.js 引进来，写一个 vue 程序，接下来就可以调试了。
-
-
-调试技巧：
-
-* 打开指定文件：ctrl+p
-* 断点
-* 单步执行：单步跳过函数/单步进入函数
-
-* 查看调用栈：调用栈中可以很好的看到整个的函数执行的流程。
-
-* 定位当前源文件所在位置：sources 代码上右键，Reveal in sidebar 选项。
-
-
-##### vue 源码分析
-
-1.根据打包命令找到打包的入口文件
-
-核心功能：扩展 $mount
-
-src/platforms/web/entry-runtime-with-compiler.js：
-
-* 针对 web 平台的特点对 $mount 做扩展，扩展的就是跟编译相关的事。(功能扩展的方式值得学习)
-
-  处理 render > template > el 选项：
-
-  选项中如果有 render 直接调用 mount 执行挂载；如果有 template 或 el，将它们进行一定处理最后变成 template，然后将这个 template 执行模版解析和编译，最终得到 render 函数并将其放到选项中去。最后执行挂载操作。
-
-2.寻找 Vue 构造函数
-
-核心功能：定义 $mount, \__patch__, 初始化全局 API(Vue.xxx), 定义 Vue, 初始化实例 API(Vue.prototype.xxx)
-
-src/platforms/web/runtime/index.js：
-
-* 安装 web 平台特有指令和组件；
-* 在 Vue 原型上定义了补丁方法 Vue.prototype.\__patch__：把虚拟 DOM 转换成真实 DOM。初始化的赋值和以后的更新都会用到这个 patch，也是 diff 算法发生的地方；
-* 定义 $mount：它只做了一件事，就是把 el 做 DOM 查询，然后调用 mountComponent 执行挂载，将首次渲染的结果替换 el。
-
-src/core/index.js：
-
-* 初始化全局 API：Vue.util, Vue.set, Vue.delete, Vue.nextTick, Vue.use, Vue.mixin, Vue.extend, Vue.component, Vue.directive, Vue.filter
-
-src/core/instance/index.js：
-
-* 定义 Vue 构造函数：内部只执行了一行初始化方法 this._init()。
-* 使用混入的方式定义 Vue 实例 API（这个混入的方式扩展构造函数原型值得学习）
-  * initMixin(Vue)：定义了初始化方法 _init
-  * stateMixin(Vue)：定义了 $data,$props,$set,$delete,$watch
-  * eventsMixin(Vue)：定义了 $on,$once,$off,$emit
-  * lifecycleMixin(Vue)：定义了 _update,$forceUpdate,$destroy
-  * renderMixin(Vue)：定义了 $nextTick,_render
-
-3.总体流程：
-
-* 模版编译：编译的结果是得到 render 函数并放入配置中。
-  * 解析：ast = parse(template.trim(), options)
-    * HTML解析器
-    * 文本解析器
-    * 过滤器解析器。
-  * 优化：optimize(ast, options)
-    * 在 AST 中标记静态子树：patch 时，可以跳过静态子树，提高性能。
-  * 生成：code = generate(ast, options)
-    * 把 AST 转换成代码字符串，传入 new Function(code) 中得到 render 函数。
-
-* 实例化：将配置传入构造函数中，实例化一个根组件（Vue）实例或自定义组件（VueComponent）实例。
-
-  * 初始化 _init：
-    * 合并选项
-    * initLifecycle(vm)：声明组件实例的 $parent, $root, $children, $refs
-    * initEvents(vm)：对父组件传入的自定义事件添加监听
-    * initRender(vm)：声明了 $slots, $createElement就是那个h，对$attrs, $listeners 做了响应化处理。
-    * callHook(vm, 'beforeCreate')
-    * initInjections(vm)：获取祖辈的注入数据
-    * initState(vm)：初始化响应式数据 initProps, initMethods, initData, initComputed, initWatch
-      * initData：数据响应式，有几个对象数据（包括data）就有几个 Observer 实例，dep 的数量是对象数据个数（包括 data） + data  内所有 key 的数量，几个组件就有几个 Watcher。
-        * 数据命名冲突校验
-        * 数据代理
-        * 执行 observe，传入 data
-          * 创建 Observer 实例
-            * 创建对象数据的 dep。$set, array 那七个变更数组方法时会使用到这个的 dep 中存放的依赖来做通知更新。
-            * 创建每个 key 对应的 dep。
-            * 分别做数组和对象的响应化处理。
-            * getter：分别对每个 key 的 dep 和对象数据的 dep 做依赖收集，收集的都是组件 Watcher
-            * setter：劫持数据变化
-              * dep.notify()：通知更新
-              * 批量异步更新：将 dep 中收集的所有 Watcher 的更新函数批量异步的执行一遍。
-                * watcher.update()
-                * queueWatcher()
-                * nextTick()
-                * timerFunc()
-                * flushSchedulerQueue()
-                * watcher.run() 
-                * watcher.get()
-                * updateComponent()
-    * initProvide(vm)：给后代提供数据
-    * callHook(vm, 'created')
-    * 最后判断选项里如果有 el，自动执行 $mount。
-
-* 挂载 $mount
-
-  * 执行 mountComponent
-
-    * callHook(vm, 'beforeMount')
-
-    * 声明更新函数 updateComponent
-
-      * 执行 _render
-
-        * render（配置中的 render）
-          * createElement：h 方法，传入 tag, data, children 等
-            * 原生标签：创建 vnode 并返回
-            * 自定义组件：createComponent
-              * 获取组件配置
-              * 根据组件配置，获取组件构造函数
-              * 安装组件管理钩子到该组件的 vnode 上。
-                * init：组件初始化，创建组件实例，挂载。patch 时执行 init。
-                * prepatch：组件更新之前执行，patch 之前的一些工作
-                * insert：组件创建完插入 dom 元素里，调用子组件的 mounted 生命周期
-                * destroy：组件销毁相关工作
-              * 创建 vnode 并返回
-
-      * 执行 _update，传入  vnode。
-
-        * patch
-
-          * new vnode 不存在就删除
-
-          * old vnode 不存在就新增
-
-            * createElm
-
-          * 都存在
-
-            * oldVnode 是原生标签
-
-              * createElm：创建新节点，把 vnode 创建成 DOM 元素，然后递归创建子元素和子组件。
-                * createComponent：如果要创建的是组件，走这个流程
-                  * 获取创建组件 vnode 时安装的 init 组件管理钩子并执行：创建组件实例并挂载。
-                  * insert：子组件 DOM 树插入父组件的 DOM 树上。
-                * 原生标签的创建：
-                  * 把 vnode 创建成真实的 DOM，createChildren 递归创建子元素
-                  * insert：子组件 DOM 树插入父组件的 DOM 树上。
-
-            * oldVnode 不是原生标签 && 是同一个 vnode 节点
-
-              * patchVnode：执行 diff 更新。
-
-                有孩子先比孩子调用 updateChildren，updateChildren 中还会调用 patchVnode，一直向下递归，将每个 vnode 节点都 patch 一遍。
-
-                每个节点比较的和更新的就是三件事：属性更新，文本更新，子节点更新：
-
-                * isPatchable(vnode)：节点本身的 patch 操作，属性更新。
-
-                * 都无子节点：只是文本的替换。
-
-                * 只有新有子节点：先清空老文本内容，然后为其新增子节点。 
-
-                * 只有老有子节点：移除该节点的所有子节点。
-
-                * 新老均有子节点：对子节点进行 Diff 操作，调用 updateChildren。
-
-                  * updateChildren
-
-                    * 设置双指针，首尾都没有找到相同的节点还是要做双循环。最后根据新老 vnode 的节点剩余情况做相应的新增或删除工作。
-
-                      * 找到相同的节点调用 patchVnode（递归：深度优先）
-
-                      * 移动节点位置（实际的 dom 操作），移动指针做下一个节点的对比（同级比较）
-
-          * invokeInsertHook：调用组件管理钩子 insert。里面调用了 mounted 生命周期钩子。
-
-    * 创建组件 Watcher，传入 updateComponent
-
-      * 执行 updateComponent
-
-    * callHook(vm, 'mounted')
-
-## 工程化
-
-##### webpack 优化
-
-分析工具
-
-* 速度分析：使用 speed-measure-webpack-plugin
-* 体积分析：使用 webpack-bundle-analyzer
-
-构建速度优化
-
-* 使用高版本的 webpack 和 Node.js
-* 缩小构建目标
-* 优化文件查找路径
-* 多进程构建
-* 多进程压缩代码
-* 利用缓存提升二次构建速度
-
-体积优化
-
-* 代码、图片压缩
-* Tree Shaking
-* Scope Hoisting
-* Code Splitting
-* 动态 import 加载异步组件
-* 使用 cdn 静态资源
-* 动态 polyfill
-
-##### webpack 热更新理
-
-##### webpack 原理
-
-Tapable 为 webpack 插件提供了发布订阅的钩子。每个钩子代表一个关键的事件节点。
-
-webpack 就是基于这种发布订阅的一系列的插件运行的事件流。
-
-在 webpack 内部的 compiler 和 compilation 上面做 hooks 的调用。
-
-插件有个 apply 方法，接收一个 compiler 参数。插件里面做 compiler 和 compilation 上的 hooks 的监听。
-
-* 处理配置参数。
-* 执行用户配置中的所有插件。
-* 根据配置开启 webpack 内部的插件。
-* 使用 loader-runner 运行 loaders 进行编译和分析依赖
-* 将所有编译好的 js 代码放到 compilation 对象上的 modules 里面。
-* 代码优化
-* 将 modules 里的代码放到 compilation 对象的 assets 里面去
-* 资源生成
-
-##### 手写一个 loader
-
-loader
-
-loader 是一个导出为声明式函数的 javascript 模块，接收资源返回资源：
-
-```js
-const loaderUtils = require("loader-utils");
-module.exports = function(source) { 
-  // 参数获取
-  const { name } = loaderUtils.getOptions(this);
-  
-  // 异常处理
-  // 1.throw new Error('Error');
-  // 2.this.callback(new Error('Error'), source);
-  
-  // 返回结果
-  // 1.return source;
-  // 2.this.callback(null, source, 1, 2); 可以返回多个值
-  
-  // 异步处理
-  const callback = this.async();
-  fs.readFile(path.join(__dirname, './demo.txt'), 'utf-8', (err, data) => {
-    if (err) {
-      callback(err, '');
-    }
-    callback(null, data);
-  });
-  
-  // 缓存
-  // webpack 中默认开启缓存，可以使用以下方法关闭缓存
-  // 缓存生效条件：loader 的结果有确定的输出。有依赖的 loader 无法使用缓存。
-  this.cacheable(false);
-  
-  // 文件输出
-  const url = loaderUtils.interpolateName(this, "[name].[ext]", source);
-  this.emitFile(url, source);
-};
-```
-
-##### 手写一个 plugin
-
-插件是一个类，有一个 apply 方法。
-
-```js
-// 将一段代码输出到文件里面就可以用 RawSource
-const { RawSource } = require("webpack-sources"); 
-class MyPlugin {
-  constructor(options) { 
-    this.options = options; 
-  }
-  apply(compiler) {
-    // 插件处理逻辑
-    
-    // 插件的错误处理
-    // 1.throw new Error('error');
-    // 2.通过 compilation 对象的 warnings 和 errors 接收
-    //   compilation.warnings.push("warning");
-    //   compilation.errors.push("error");
-
-    // 文件写入
-    // webpack 的构建流程的文件生成是在 emit 阶段，所以在插件里监听 compiler emit 这个 hooks。
-    // 监听这个 hook 之后我们可以获取到 compilation 对象
-    // 然后只需要将最终要输出的内容设置到 compilation.assets 对象上面去就可以了
-    // 最终webpack生成文件的时候会触发emit，然后读取compilation.assets上的资源内容并输出到磁盘目录
-    const { path } = this.options;
-    compiler.hooks.emit.tapAsync("MyPlugin", (compilation, callback) => { 
-      compilation.assets[path] = new RawSource("demo"); 
-      callback();
-    }); 
-  } 
-}
-module.exports = MyPlugin;
-```
 
 ## 算法
 
