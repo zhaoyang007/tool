@@ -989,6 +989,33 @@ npm install zy-vue-auto-router-cli
 npm link
 ```
 
+# Nestjs
+
+\>=node16
+
+**创建nestjs项目**
+
+```bash
+#安装NestCLI
+npm i -g @nestjs/cli
+#创建项目
+nest new project-name
+#创建支持ts项目
+nest new project-name --strict
+```
+
+**控制器**
+
+控制器负责处理传入**请求**并向客户端返回**响应。**
+
+控制器的目的是接收应用程序的特定请求。路由机制**控制**哪个控制器接收哪些请求。通常，每个控制器都有多个路由，并且不同的路由可以执行不同的操作。
+
+为了创建基本控制器，我们使用类和**装饰器**。装饰器将类与所需的元数据关联起来，并使 Nest 能够创建路由映射（将请求绑定到相应的控制器）。
+
+要使用 CLI 创建控制器，只需执行`$ nest g controller [name]`命令即可。
+
+必须声明一个方法来绑定路由，但 Nest 并不为所选的方法名称赋予任何意义。
+
 # koa
 
 ##### koa-middleware
