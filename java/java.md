@@ -373,6 +373,174 @@ Lambda表达式是JDK8新增的一种语法形式，用于简化函数式接口�
 
 * 构造器引用
 
+**Stream**
+
+Stream也叫Stream流，是Jdk8新增的一套API（Java.util.stream.*），可以用于操作集合或者数据的数据。
+
+优势：Stream流大量结合了Lambda语法风格来编程，提供了一种更加强大，更加简单的方式操作集合或者数组中的数据，代码更简洁，可读性更好。
+
+Stream流使用步骤：
+
+![Snipaste_2024-01-05_13-03-06](images/Snipaste_2024-01-05_13-03-06.png)
+
+**File**
+
+存储数据的方案：下面这些存储数据的方案都是存入到内存，内存中存储数据是很快的，因此这些内存中的数据容器通常会记录程序正在处理的数据，以便程序能快速的运算，用户体验感会好一些。但内存的问题是它记录的数据，在断电或程序终止时会丢失。
+
+![Snipaste_2024-01-05_13-20-37](images/Snipaste_2024-01-05_13-20-37.png)
+
+如果内存中处理后的数据需要长久的保存，我们可以把程序处理后的数据存到文件中去。数据库本质也是用文件存储数据的。
+
+File是java.io.包下的类，File类的对象，用于代表当前操作系统的文件（可以是文件或文件夹）。可以对文件做一些操作，比如：获取文件信息（大小，文件名，修改时间）、判断文件类型、创建文件/文件夹、删除文件/文件夹等。
+
+注意：File类只能对文件本身进行操作，不能读写文件里面存储的数据。
+
+创建File对象：
+
+```java
+File f = new File("文件的相对/绝对路径");
+```
+
+file对象操作文件的常用方法：
+
+* 判断文件类型、获取文件信息
+
+  ```java
+  // 根据文件路径获取文件对象
+  File f = new File("文件的相对/绝对路径");
+  // 判断当前文件对象对应的的文件路径是否存在
+  f.exists();
+  // 判断当前文件对象指代的是否是文件
+  f.isFile();
+  // 判断当前文件对象指代的是否是文件夹
+  f.isDirectory();
+  // 获取文件名（包含后缀）
+  f.getName();
+  // 获取文件大小，返回字节个数
+  f.length();
+  // 获取文件最后修改时间，返回时间戳
+  long time = f.lastModified();
+  // 获取场景文件对象时，使用的路径
+  f.getPath();
+  // 获取文件绝对路径
+  f.getAbsolutePath();
+  ```
+
+* 创建文件、删除文件
+
+  ```java
+  // 获取文件对象
+  File f1 = new File("要创建的文件的路径 /Users/a/a.txt");
+  // 创建一个新文件（文件内容为空），不存在才会创建，创建成功返回true
+  f.createNewFile();
+  
+  // 获取文件对象
+  File f2 = new File("要创建的文件夹的路径 /Users/a");
+  // 创建文件夹，只能创建一级文件夹，创建成功返回true
+  f2.mkdir();
+  
+  // 获取文件对象
+  File f3 = new File("要创建的文件夹的路径 /Users/a/b/c/d");
+  // 创建文件夹，可以创建多级文件夹，创建成功返回true
+  f3.mkdirs();
+    
+  // 删除文件或空文件夹，不能删除非空文件夹，成功返回true
+  f3.delete();
+  ```
+
+* 遍历文件夹
+
+  ```java
+  // 获取文件夹对象
+  File f = new File("/Users");
+  
+  // 获取当前目录下所有的”一级文件名称”到一个字符串数组中去返回
+  String[] names = f.list();
+  for (String name : names) {
+    System.out.println(name);
+  }
+  
+  // 获取当前目录下所有的”一级文件对象“到一个文件对象数组中去返回（重点）
+  File[] files = f.listFiles();
+  for (File file : files) {
+    System.out.println(file.getAbsolutePath());
+  }
+  ```
+
+案例：搜索指定文件位置
+
+```java
+import java.io.File;
+//import java.io.IOException;
+
+public class SearchFile {
+    public static void main(String[] args) throws Exception {
+        searchFile(new File("/Users"), "tools.xmind");
+    }
+    public static void searchFile(File dir, String fileName) throws Exception {
+        // 1.拦截非法情况
+        if (dir == null || !dir.exists() || dir.isFile()) {
+            return; // 代表无法搜索
+        }
+        // 2. dir不是null,存在，一定是目录对象
+        // 获取当前目录下的所有一级文件对象
+        File[] files = dir.listFiles();
+        // 3.判断当前目录下是否存在一级文件对象，以及是否可以拿到一级文件对象
+        if (files != null && files.length > 0) {
+            for (File f : files) {
+                if (f.isFile()) {
+                    if (f.getName().contains(fileName)) {
+                        System.out.println("找到了：" + f.getAbsolutePath());
+                        // 找到文件位置后，启动文件
+                        // Runtime runtime = Runtime.getRuntime();
+                        // runtime.exec(f.getAbsolutePath());
+                    }
+                } else {
+                    searchFile(f, fileName);
+                }
+            }
+        }
+    }
+}
+```
+
+**字符集、字符编码**
+
+ASCII（美国标准信息交换码）是一种字符编码方案，主要对大小写英文、数字、标点符号、特殊符号进行编码。使用一个字节存储字符，字节的首位是0，总共可以表示128个字符（2**7）。
+
+GBK（汉字内码扩展规范，国标）汉字编码字符集和字符编码方案，包含了两万多个汉字等字符，一个中文字符要编码成两个字节进行存储，字节的首位是1，总共可以表示32768个字符（2**15）。GBK兼容ASCII。
+
+Unicode字符集（统一码，也叫万国码），Unicode是国际组织制定的，可以容纳世界上所有文字、符号。utf8是Unicode字符集中的一种字符编码方案，采用可变长度字符编码（定长码），也是一种前缀码，共分四个长度区：1个字节，2个字节，3个字节，4个字节。英文字符、数字等只占1个字节（兼容ASCII字符编码），汉字字符占用3个字节。
+
+![Snipaste_2024-01-05_15-36-54](images/Snipaste_2024-01-05_15-36-54.png)
+
+编码：把字符安装指定字符集编码成字节。
+
+解码：把字节安装指定字符集解码成字符。
+
+Java代码完成对字符的编码和解码（都是字符串提供的方法）：
+
+```java
+// 编码
+String data = "a我b";
+// 按照平台默认字符集（UTF-8）将该String编码为一系列字节，将结果存储到新的字节数组中。
+byte[] bytes1 = data.getBytes(); // [97, -26, -120, -111, 98]
+// 按照指定字符集进行编码
+byte[] bytes2 = data.getBytes("GBK"); // [97, -50, -46, 98]
+
+// 解码
+// 通过平台默认字符集解码指定的字节数组来构造新的String
+String s1 = new String(bytes1);
+// 通过指定字符集解码指定的字节数组来构造新的String
+String s2 = new String(bytes2, "GBK")
+```
+
+**IO流**
+
+IO流是用于读写数据的（可以读写文件，或网络中的数据...）
+
+
+
 # 常用API
 
 API文档中的java.base是重点。
