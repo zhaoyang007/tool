@@ -510,13 +510,17 @@ ASCII（美国标准信息交换码）是一种字符编码方案，主要对大
 
 GBK（汉字内码扩展规范，国标）汉字编码字符集和字符编码方案，包含了两万多个汉字等字符，一个中文字符要编码成两个字节进行存储，字节的首位是1，总共可以表示32768个字符（2**15）。GBK兼容ASCII。
 
-Unicode字符集（统一码，也叫万国码），Unicode是国际组织制定的，可以容纳世界上所有文字、符号。utf8是Unicode字符集中的一种字符编码方案，采用可变长度字符编码（定长码），也是一种前缀码，共分四个长度区：1个字节，2个字节，3个字节，4个字节。英文字符、数字等只占1个字节（兼容ASCII字符编码），汉字字符占用3个字节。
+Unicode字符集（统一码，也叫万国码），Unicode是国际组织制定的，可以容纳世界上所有文字、符号。
+
+* UTF-32是Unicode字符集中的一种字符编码方案：使用4个字节表示一个字符，有容乃大，但是过于奢侈，占存储空间、通信效率低。
+
+* UTF-8是Unicode字符集中的一种字符编码方案，采用可变长度字符编码（定长码），也是一种前缀码，共分四个长度区：1个字节，2个字节，3个字节，4个字节。英文字符、数字等只占1个字节（兼容ASCII字符编码），汉字字符占用3个字节。
 
 ![Snipaste_2024-01-05_15-36-54](images/Snipaste_2024-01-05_15-36-54.png)
 
-编码：把字符安装指定字符集编码成字节。
+编码：把字符安照指定字符集编码成字节。
 
-解码：把字节安装指定字符集解码成字符。
+解码：把字节安照指定字符集解码成字符。
 
 Java代码完成对字符的编码和解码（都是字符串提供的方法）：
 
@@ -538,6 +542,107 @@ String s2 = new String(bytes2, "GBK")
 **IO流**
 
 IO流是用于读写数据的（可以读写文件，或网络中的数据...）
+
+![Snipaste_2024-01-05_17-23-17](images/Snipaste_2024-01-05_17-23-17.png)
+
+![Snipaste_2024-01-05_17-25-26](images/Snipaste_2024-01-05_17-25-26.png)
+
+![Snipaste_2024-01-05_17-27-16](images/Snipaste_2024-01-05_17-27-16.png)
+
+![Snipaste_2024-01-05_17-27-29](images/Snipaste_2024-01-05_17-27-29.png)
+
+![Snipaste_2024-01-05_17-30-24](images/Snipaste_2024-01-05_17-30-24.png)
+
+FileInputStream（文件字节输入流）：
+
+作用：以内存为基准，可以把磁盘文件中的数据以字节的形式读入到内存中去。
+
+既然要读文件，肯定要创建管道与要读的文件接通，肯定还提供一些方法给我们去读文件里面的字节数据。
+
+a.txt
+
+```txt
+abc12
+```
+
+```java
+// 1.创建文件字节输入流管道，与源文件接通
+FileInputStream is = new FileInputStream(new File("文件路径"));
+FileInputStream is = new FileInputStream("文件路径"); // 简化写法，推荐使用
+// 多态写法
+InputStream is = new FileInputStream(new File("文件路径"));
+InputStream is = new FileInputStream("文件路径"); // 简化写法，推荐使用
+
+// 2.开始读取文件的字节数据
+// 2.1每次读取一个字节返回，如果发现没有数据可读会返回-1
+int b1 = is.read(); // a对应的字节编码
+int b2 = is.read(); // b对应的字节编码
+int b2 = is.read(); // c对应的字节编码
+int b2 = is.read(); // 1对应的字节编码
+int b2 = is.read(); // 2对应的字节编码
+int b3 = is.read(); // -1
+// 使用循环改造
+int b;
+while ((b = is.read()) != -1) {
+  System.out.print((char) b);
+}
+
+// 注意：
+// 1.上面这种方式读取数据的性能很差
+// 2.读取汉字输出会乱码！！是无法避免的！！
+// 3.流使用完毕之后，必须要关闭，释放系统资源
+is.close();
+
+
+// 2.2每次读取多个字节，每次用一个字节数组去读取数据，返回字节数组读取了多少个字节，如果发现没有数据可读会返回-1
+// 定义一个字节数组，用来装读取的多个字节
+byte[] buffer = new byte[3];
+int len1 = is.read(buffer);
+String rs1 = new String(buffer); // 将读取的字节数组转成字符串
+rs1; // abc
+len1; // 3
+
+int len2 = is.read(buffer);
+// 注意：读取多少，倒出多少
+String rs2 = new String(buffer, 0, len2); // 将读取的字节数组转成字符串
+rs2; // 12
+len2; // 3
+
+int len3 = is.read(buffer);
+len3; // -1
+
+// 使用循环改造
+byte[] buffer = new byte[3];
+int len;
+while ((len = is.read(buffer)) != -1) {
+  String rs = new String(buffer, 0, len);
+  System.out.print(rs);
+}
+is.close(); // 关闭流
+
+// 注意：
+// 1.性能得到了明显的提升
+// 2.读取汉字输出会乱码！！是无法避免的！！
+// 3.这种方案对于读取字节，再将字节转移到其他地方去是很重要的，它适合做文件拷贝操作，后面会结合文件字节输出流来实现。
+
+// 2.3一次读取完全部字节，可以解决字节流读取中文输出乱码的问题（这种方法不能读取特别大的文件，因为考虑内存有限）
+// 方式一：自己定义一个字节数组与被读取的文件大小一样大，然后使用该字节数组，一次读取完文件的全部字节
+File f = new File("文件路径");
+long size = f.length();
+byte[] buffer = new byte[(int) size];
+int len = is.rend(buffer);
+String rs = new String(buffer);
+rs; // 文件全部内容，并不会乱码
+len; // 5
+size; // 5
+is.close();
+// 方式二：Java官方为InputStream提供了readAllBytes方法，可以直接把文件的全部字节读取到一个字节数组中返回。
+byte[] buffer = is.readAllBytes();
+String rs = new String(buffer);
+rs; // 文件全部内容，并不会乱码
+```
+
+综上：读写文本内容更适合用字符流，字节流适合做数据的转移，如：文件复制等。
 
 
 
