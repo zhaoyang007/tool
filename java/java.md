@@ -553,6 +553,10 @@ IO流是用于读写数据的（可以读写文件，或网络中的数据...）
 
 ![Snipaste_2024-01-05_17-30-24](images/Snipaste_2024-01-05_17-30-24.png)
 
+字节流：适合复制文本等，不适合读写文本文件。
+
+字符流：适合读写文本文件内容。
+
 FileInputStream（文件字节输入流）：
 
 作用：以内存为基准，可以把磁盘文件中的数据以字节的形式读入到内存中去。
@@ -643,6 +647,174 @@ rs; // 文件全部内容，并不会乱码
 ```
 
 综上：读写文本内容更适合用字符流，字节流适合做数据的转移，如：文件复制等。
+
+FileInputStream（文件字节输出流）：
+
+作用：以内存为基准，把内存中的数据以字节的形式写出到文件中去。
+
+既然要写数据，肯定要创建管道与要写入的文件接通，肯定还提供一些方法给我们把内存中的数据以字节的形式写出去。
+
+```java
+// 1.创建一个字节输出流管道与目标文件接通
+// 1.1创建的是覆盖原来数据的管道
+OutputStream os = new FileOutputStream('文件路径');
+// 1.1创建的是不覆盖原来数据的管道，也就是可追加数据
+OutputStream os = new FileOutputStream('文件路径', true);
+// 2.开始写字节数据出去
+// 2.1写一个字节出去
+os.write(97);
+os.write('b');
+os.write('张'); // 这里会出现乱码，因为汉字占用3个字节
+// 关闭流
+os.close();
+// 2.2写一个字节数组出去
+byte[] bytes = "我爱你中国abc".getBytes();
+os.write(bytes);
+// 2.3写一个字节数组的一部分出去
+os.write(bytes, 0, 15); // 只将“我爱你中国”写出去
+```
+
+文件复制案例：
+
+![Snipaste_2024-01-06_16-33-28](images/Snipaste_2024-01-06_16-33-28.png)
+
+```java
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
+
+public class CopyFileTest {
+    public static void main(String[] args) throws Exception {
+        // 1.创建一个字节输入流管道与源文件接通
+        InputStream is = new FileInputStream("/Users/zhaoyang/Pictures/cat.jpeg");
+        // 2.创建一个字节输出流管道与目标文件接通
+        OutputStream os = new FileOutputStream("/Users/zhaoyang/cat.jpeg");
+        // 3.创建一个字节数组，负责转移字节数据
+        byte[] buffer = new byte[1024];
+        // 4.从字节输入流中读取字节数据，写出去到字节输出流中。读多少写多少
+        int len;
+        while ((len = is.read(buffer)) != -1) {
+            os.write(buffer, 0, len);
+        }
+        // 5.关闭流，先开的后关
+        os.close();
+        is.close();
+        System.out.println("复制完成！！");
+    }
+}
+```
+
+![Snipaste_2024-01-06_16-52-23](images/Snipaste_2024-01-06_16-52-23.png)
+
+释放资源的方式：
+
+防止中间过程出现错误无法关闭流的情况。
+
+* try-catch-finally
+
+  * finally代码区的特点：无论try中的程序是正常，还是出现了异常，最后都会执行一次finally区，除非JVM终止。
+  * 作用：一般用于在程序执行完成后进行资源的释放操作（专业级做法）。
+
+* try-with-resource
+
+  * 这里只能定义资源对象（流对象），不能定义普通类型的变量。Java中的资源都会实现AutoCloseable接口。资源都会有一个close方法。
+
+  ![Snipaste_2024-01-06_18-10-34](images/Snipaste_2024-01-06_18-10-34.png)
+
+FileReader（文件字符输入流）：
+
+作用：以内存为基准，把文件中的数据以字符的形式读入到内存中去。
+
+```java
+try (
+	// 1.创建一个文件字符输入流管道与源文件接通
+  Reader fr = new FileReader("文件路径");
+) {
+	// 2.读取文本内容
+  // 2.1每次读取一个字符并返回字符的编码，没有数据了返回-1
+  int c; // 记住每次读取的字符编号
+  while((c = fr.read()) != -1) {
+    System.out.print((char) c);
+  }
+  // 每次读取一个字符的形式，性能比较差。
+  // 2.2每次用一个字符数组去读数据，返回字符数组读取了多少个字符，没有数据了返回-1
+  char[] buffer = new Char(3);
+  int len; // 记录每次读取了多少个字符
+  while((len = fr.read(buffer)) != -1) {
+    System.out.print(new String(buffer, 0, len));// 读多少倒多少
+  }
+} catch (Exception e) {
+  e.printStackTrace();
+}
+```
+
+FileWriter（文件字符输出流）：
+
+作用：以内存为基准，把内存中的数据以字符的形式写出到文件中去。
+
+```java
+try (
+	//1.创建一个文件字符输出流管道与目标文件接通
+  // 1.1创建的是覆盖原来数据的管道
+  Writer fw = new FileWriter("文件路径");
+  // 1.2创建的是不覆盖原来数据的管道，也就是可追加数据
+  Writer fw = new FileWriter("文件路径", true);
+) {
+  //2.开始写字符数据出去
+  //2.1写一个字符
+  fw.write('a');
+  fw.write(97);
+  fw.write('张');
+  fw.write("\r\n"); // 实现换行
+  //2.2写一个字符串
+  fw.write("我爱你中国abc");
+  //2.3写一个字符串的一部分
+  fw.write("我爱你中国abc", 0, 5);
+  //2.4写入一个字符数组
+  char[] buffer = {'我', '爱', '你', 'a', 'b', 'c'};
+  fw.write(buffer);
+  //2.5写入字符数组的一部分
+  fw.write(buffer, 0, 2);
+  
+} catch (Exception e) {
+  e.printStackTrace();
+}
+```
+
+注意事项：由于每次写数据都要进行系统调用将数据写入文件，为了节省性能，使用文件字符输出流时，会先将要写入的内容放入缓冲区，然后再进行系统调用将缓冲区的内容放入文件中，这样就节省了性能。但是缓冲区是内存的一块区域，所以我们在使用文件字符输出流写入文件完成后，需要刷新流或者关闭流，写出去的数据才能生效。
+
+```java
+//刷新流，刷新流后面可以继续写数据
+fw.flush();
+
+//关闭流，包含刷新操作，关闭流后，不能继续写数据了
+fw.close();
+```
+
+缓冲流：
+
+![Snipaste_2024-01-06_18-55-31](images/Snipaste_2024-01-06_18-55-31.png)
+
+字节缓冲流：
+
+![](images/Snipaste_2024-01-06_18-58-19.png)
+
+![Snipaste_2024-01-06_19-00-45](images/Snipaste_2024-01-06_19-00-45.png)
+
+字符缓冲流：
+
+![Snipaste_2024-01-06_19-07-19](images/Snipaste_2024-01-06_19-07-19.png)
+
+![Snipaste_2024-01-06_19-08-17](images/Snipaste_2024-01-06_19-08-17.png)
+
+![Snipaste_2024-01-06_19-10-00](images/Snipaste_2024-01-06_19-10-00.png)
+
+![Snipaste_2024-01-06_19-10-15](images/Snipaste_2024-01-06_19-10-15.png)
+
+
+
+
 
 
 
