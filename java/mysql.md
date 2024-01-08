@@ -372,9 +372,50 @@ revoke 权限列表 on 数据库名.表名 from '用户名'@'主机名';
 
 # 函数
 
+## 字符串函数
 
+```sql
+-- 案例
+-- 由于业务需求变更，需要将emp表中的企业员工工号，统一更改为5位数，不足5位的在前面补0，比如：1号员工工号应为00001
+update emp set workno = lpad(workno, 5, '0');
+```
 
+![Snipaste_2024-01-08_16-33-27](images/Snipaste_2024-01-08_16-33-27.png)
 
+## 数值函数
+
+```sql
+-- 案例
+-- 通过数据库的函数，生成一个六位数的随机验证码
+select lpad(round(rand() * 1000000, 0), 6, '0');
+```
+
+![Snipaste_2024-01-08_16-41-16](images/Snipaste_2024-01-08_16-41-16.png)
+
+## 日期函数
+
+```sql
+-- 案例
+-- 查询所有员工的入职天数，并根据入职天数倒序排序。
+select name, datediff(curdate(), entrydate) as entrydays from emp order by entrydays desc;
+```
+
+![Snipaste_2024-01-08_16-48-52](images/Snipaste_2024-01-08_16-48-52.png)
+
+## 流程函数
+
+流程函数可以再SQL语句中实现条件筛选，从而提高语句的效率。
+
+![Snipaste_2024-01-08_17-05-49](images/Snipaste_2024-01-08_17-05-49.png)
+
+```sql
+-- 案例
+-- 查询emp表的员工姓名和工作地址，北京/上海 ----> 一线城市，其他 ----> 二线城市。
+select
+	name,
+	( case wrokaddress when '北京' then '一线城市' when '上海' then '一线城市' else '二线城市' end) as '工作地址'
+from emp;
+```
 
 
 

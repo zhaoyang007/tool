@@ -383,6 +383,361 @@ Stream流使用步骤：
 
 ![Snipaste_2024-01-05_13-03-06](images/Snipaste_2024-01-05_13-03-06.png)
 
+# 常用API
+
+API文档中的java.base是重点。
+
+**包**
+
+1. 同一包下的程序可以直接访问
+2. 访问其他包的程序，必须先导包
+3. 调用java提供的程序，也需要先导包。Java.long包下的程序不需要导包，可以直接使用
+4. 调用多个不同包下的程序，这些程序名又刚好一样，默认只能导入一个程序，另一个程序必须带包名访问。
+
+**String**
+
+**Object类、Objects类、包装类**
+
+Object类：
+
+* toString：返回对象的字符串表现形式
+* equals：判断两个对象地址是否相等
+* clone：对象克隆
+
+Objects类：是一个工具类，提供了很对操作对象的静态方法给我们使用。
+
+* equals：先做非空判断，再比较两个对象地址是否相等
+* isNull：判断某个对象是否是null
+* nonNull：判断某个对象是否不是null
+
+包装类：把基本数据类型的数据包装成对象。
+
+**StringBuilder、StringBuffer、StringJoiner**
+
+StringBuilder：代表可变字符串对象，相当于一个容器，比String更适合字符串的修改操作，更高效，代码更简洁。
+
+StringBuffer：StringBuffer的用法与StringBuilder是一模一样的。但StringBuilder是线程不安全的，StringBuffer是线程安全的。（是否多个人同时操作一个对象）
+
+StringJoiner：JDK8开始才有的，跟StringBuilder一样，也是用来操作字符串的。好处是在某些场景下操作字符串，代码更简洁。
+
+**Math**
+
+**System**
+
+System代表程序所在的系统，是一个工具类。
+
+```java
+// 终止当前运行的Java虚拟机
+System.exit(0);
+// 获取系统的时间戳
+long time = System.currentTimeMillis();
+```
+
+**Runtime**
+
+Runtime代表程序所在的运行环境。Runtime是一个单例类（对外只提供一个对象）
+
+```java
+// 获取运行时对象
+Runtime r = Runtime.getRuntime();
+// 终止当前运行的虚拟机
+r.exit(0);
+// 返回Java虚拟机可用的处理器数
+r.availableProcessors();
+// 返回Java虚拟机中的内存总数
+r.totalMemory();
+// 返回Java虚拟机中的可用内存
+r.freeMemory();
+// 启动某个程序，并返回代表该程序的对象
+Process p = r.exec(String command); // command程序启动路径
+p.destory(); // 关闭程序
+```
+
+**BigDecimal**
+
+解决精度问题
+
+**Date日期类**
+
+Date代表系统此刻的日期。
+
+```java
+// 创建一个Date日期对象
+Date d = new Date() 
+// 返回1970年1月1日00:00:00到此刻的毫秒数
+long time = d.getTime() 
+// 把时间毫秒值转换成Date日期对象
+Date d2 = new Date(time)
+// 把时间毫秒值转换成Date日期对象
+Date d3 = d.setTime(time)
+```
+
+**SimpleDateFormat**
+
+简单日期格式化，可以把日期对象、时间毫秒值格式化成我们想要的形式。
+
+```java
+// 创建一个Date日期对象
+Date d = new Date();
+// 创建时间戳
+long time = d.getTime();
+  
+// 使用SimpleDateFormat格式化日期对象和时间戳
+SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss EEE a");
+String rs = sdf.format(d); // 2024-01-04 11:44:00 周四 上午
+String rs2 = sdf.format(time); // 2024-01-04 11:44:00 周四 上午
+  
+// 使用SimpleDateFormat将字符串的时间解析成日期对象
+String dateStr = "2024-01-04 11:44:00";
+SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+Date d2 = sdf2.parse(dateStr);
+```
+
+**Calendar**
+
+Calendar代表系统此刻的日历。
+
+通过它可以获取修改时间中的年月日时分秒等。
+
+```java
+// 获取当前日历对象
+Calendar now = Calendar.getInstance();
+// 获取日历中的某个信息(这些信息都可以在上一行的结果中找到)
+int year = now.get(Calendar.YEAR);
+// 获取日期对象
+Date d = now.getTime();
+// 获取时间戳
+long time = now.getTimeInMillis();
+// 修改日历中的某个信息
+now.set(Calendar.MONTH, 9);
+// 为某个信息增加/减少多少
+now.add(Calendar.DAY_OF_YEAR, 100)
+```
+
+**JDK8新增的时间API**
+
+优点：
+
+* 设计更合理，功能丰富，使用更方便
+* 都是补课班对象，修改后会返回新的时间对象，不会丢失最开始的事件
+* 线程安全
+* 能精确到毫秒、纳秒
+
+代替Calendar：
+
+LocalDate：代表本地日期（年月日星期）
+
+LocalTime：代表本地时间（时分秒纳秒）
+
+LocalDateTime：代表本地日期、时间（年月日星期时分秒纳秒）
+
+ZoneId：时区
+
+ZonedDateTime：带时区的事件
+
+代替：Date
+
+Instant：时间线/时间戳，有纳秒的记录。
+
+代替：SimpleDateFormat
+
+DateTimeFormatter：对时间格式化和解析
+
+```java
+// 创建日期格式化器对象
+DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
+// 格式化日期对象和时间戳
+LocalDateTime now = LocalDateTime.now(); // 创日期时间对象
+String rs = formatter.format(now);
+// 或
+String rs2 = now.format(formatter);
+
+// 将字符串的时间解析成日期时间对象
+String dateStr = "2024-01-04 11:44:00";
+LocalDateTime ldt = LocalDateTime.parse(dateStr, formatter)
+```
+
+其他补充：
+
+Period：计算时间间隔（年月日）
+
+Duration：计算时间间隔（时分秒纳秒）
+
+**Arrays类**
+
+数组的一些操作
+
+**集合**
+
+集合是一种容器，用来装数据，类似于数组。java中集合的种类有很多，如：ArrayList List Map Set...，ArrayList是最常用的。
+
+数组定义时长度就固定了，所有一些场景下使用数组存数据是不合适的。集合大小可变，开发中用的更多。
+
+集合体系结构：
+
+* 以Collection为代表的单列集合：每个元素只包含一个值。
+
+  ![Snipaste_2024-01-04_16-12-41](images/Snipaste_2024-01-04_16-12-41.png)
+
+  * List接口
+
+    * 实现类ArrayList底层是基于数组实现的。数组数据结构特点：查询快，增删慢。
+    * 实现类LinkedList底层是基于双链表实现的。双链表数据结构特点：查询慢，增删快，对首尾元素的增删改查极快。可以用来设计队列，因为队列只涉及首尾的操作。还可以用来设计栈，因为栈只涉及首部的操作。
+
+  * Set接口
+
+    * 实现类HashSet底层是基于哈希表实现的。哈希表数据结构的特点：增删改查都较快。JDK8之前，哈希表=数组+链表，JDK8之前，哈希表=数组+链表+红黑树。
+    * 实现类LinkedHashSet底层是基于哈希表实现的，但是它的每个元素都额外多了一个双链表的机制记录他前后元素的位置，所以保证了有序性。
+    * 实现类TreeSet底层是基于红黑树实现排序的。
+
+  * 使用场景
+
+    ![Snipaste_2024-01-04_17-50-12](images/Snipaste_2024-01-04_17-50-12.png)
+
+* 以Map为代表的双列集合：每个元素包含两个值（键值对）。
+
+  ![Snipaste_2024-01-04_18-05-04](images/Snipaste_2024-01-04_18-05-04.png)
+
+  * 实现类HashMap底层跟HashSet是一样的。实际上Set系列集合的底层就是基于Map实现的，只是Set集合中的元素只要键数据，不要值数据而已。
+  * 实现类LinkedHashMap底层跟LinkedHashSet是一样的。实际上Set系列集合的底层就是基于Map实现的，只是Set集合中的元素只要键数据，不要值数据而已。
+  * 实现类TreeMap底层底层跟TreeSet是一样的。实际上Set系列集合的底层就是基于Map实现的，只是Set集合中的元素只要键数据，不要值数据而已。
+
+# 异常
+
+**Java异常体系**
+
+<img src="images/Snipaste_2024-01-04_14-52-39.png" alt="Snipaste_2024-01-04_14-52-39" style="zoom: 67%;" />
+
+Error：代表系统级别错误（属于严重问题），系统一旦出现问题，sun公司会把这些问题封装成Error对象给出来，Error是Sun公司自己用的，不是给程序员用的，隐藏我们不用管它。
+
+Exception：叫异常，它代表的才是我们程序可能出现的问题，所以我们通常会用Exception以及它的孩子来封装程序出现的问题。
+
+* 运行时异常：RuntiemException及其子类，编译阶段不会出现错误提醒，运行时出现的异常（如：数组索引越界异常）
+* 编译时异常：编译阶段（写代码时）就会出现的错误提醒（如：日期解析异常）
+
+**异常处理代码写法**
+
+* 抛出异常（throws）：在方法上使用throws关键字，可以将方法内部出现的异常抛出去给上次调用者处理
+
+  ```java
+  方法名() throws 异常1, 异常2, 异常3...{
+    ...
+  }
+  ```
+
+* 捕获异常（try...catch）：直接捕获程序出现的异常。
+
+  ```java
+  try {
+    // 监视可能出现异常的代码
+  } catch(异常类型1 变量) {
+    // 处理异常
+  } catch(异常类型2 变量) {
+    // 处理异常
+  }...
+  ```
+
+**自定义异常**
+
+自定义异常种类：自定义运行时异常、自定义编译时异常。
+
+* 自定义运行时异常
+
+  1. 定义一个异常类继承RuntiemException
+  2. 重写构造器
+  3. 通过throw new 异常类(xxx)来创建异常对象并抛出
+
+  `自定义运行时异常类`
+
+  ```java
+  public class AgeIllegalRuntimeException extends RuntimeException {
+      public AgeIllegalRuntimeException() {
+      }
+  
+      public AgeIllegalRuntimeException(String message) {
+          super(message);
+      }
+  }
+  ```
+
+  `使用自定义运行时异常类`
+
+  ```java
+  public class ExceptionTest {
+      public static void main(String[] args) {
+          try {
+              saveAge(160);
+          } catch (Exception e) {
+              e.printStackTrace();
+              System.out.println("底层出现了bug");
+          }
+      }
+      public static void saveAge(int age) {
+          if (age > 0 && age < 150) {
+              System.out.println("年龄被成功保存： " + age);
+          } else {
+              // throw抛出这个异常对象
+              throw new AgeIllegalRuntimeException("/age is illegal, your age is " + age);
+          }
+      }
+  }
+  ```
+
+* 自定义编译时异常
+
+  1. 定义一个异常类继承Exception
+  2. 重写构造器
+  3. 通过throw new 异常类(xxx)来创建异常对象并抛出
+
+  `自定义编译时异常类`
+
+  ```java
+  public class AgeIllegalException extends Exception {
+      public AgeIllegalException() {
+      }
+  
+      public AgeIllegalException(String message) {
+          super(message);
+      }
+  }
+  ```
+
+  `使用自定义编译时异常类`
+
+  ```java
+  public class ExceptionTest {
+      public static void main(String[] args) {
+          try {
+              saveAge2(160);
+          } catch (AgeIllegalException e) {
+              e.printStackTrace();
+              System.out.println("底层出现了bug");
+          }
+      }
+      public static void saveAge2(int age) throws AgeIllegalException {
+          if (age > 0 && age < 150) {
+              System.out.println("年龄被成功保存： " + age);
+          } else {
+              // throw
+              throw new AgeIllegalException("/age is illegal, your age is " + age);
+          }
+      }
+  }
+  ```
+
+**开发中对一次的常见处理方式**
+
+![Snipaste_2024-01-04_15-57-04](images/Snipaste_2024-01-04_15-57-04.png)
+
+# 特殊文件
+
+![Snipaste_2024-01-07_12-49-18](images/Snipaste_2024-01-07_12-49-18.png)
+
+# 日志技术
+
+# IO流
+
 **File**
 
 存储数据的方案：下面这些存储数据的方案都是存入到内存，内存中存储数据是很快的，因此这些内存中的数据容器通常会记录程序正在处理的数据，以便程序能快速的运算，用户体验感会好一些。但内存的问题是它记录的数据，在断电或程序终止时会丢失。
@@ -812,356 +1167,267 @@ fw.close();
 
 ![Snipaste_2024-01-06_19-10-15](images/Snipaste_2024-01-06_19-10-15.png)
 
+转换流：
 
+代码编码和文本编码不一致时，会出现乱码，如果不想出现乱码，可以使用转换流。
 
+![Snipaste_2024-01-07_11-20-39](images/Snipaste_2024-01-07_11-20-39.png)
 
+InputStreamReader（字符输入转换流）
 
+作用：解决不同编码时，字符流读取文本内容乱码问题。
 
+解决思路：先获取文件的原始字节流，再将其按本身的字符集编码转换成字符输入流，这样字符输入流中的字符就不乱码了。
 
-# 常用API
+OutputStreamReader（字符输出转换流）
 
-API文档中的java.base是重点。
+作用：可以控制写出去的字符使用什么字符集编码。
 
-**包**
+解决思路：先获取字节输出流，再按照指定的字符集编码转换成字符输出流，这样写出去的字符就会用该字符集编码了。
 
-1. 同一包下的程序可以直接访问
-2. 访问其他包的程序，必须先导包
-3. 调用java提供的程序，也需要先导包。Java.long包下的程序不需要导包，可以直接使用
-4. 调用多个不同包下的程序，这些程序名又刚好一样，默认只能导入一个程序，另一个程序必须带包名访问。
+打印流：
 
-**String**
+![Snipaste_2024-01-07_11-34-33](images/Snipaste_2024-01-07_11-34-33.png)
 
-**Object类、Objects类、包装类**
+PrintStream/PrintWriter打印流：作用：打印流可以实现更方便、更高效的打印（写）数据出去，能实现打印啥出去就是啥出去。
 
-Object类：
+![Snipaste_2024-01-07_12-09-50](images/Snipaste_2024-01-07_12-09-50.png)
 
-* toString：返回对象的字符串表现形式
-* equals：判断两个对象地址是否相等
-* clone：对象克隆
+![Snipaste_2024-01-07_12-10-52](images/Snipaste_2024-01-07_12-10-52.png)
 
-Objects类：是一个工具类，提供了很对操作对象的静态方法给我们使用。
+数据流：
 
-* equals：先做非空判断，再比较两个对象地址是否相等
-* isNull：判断某个对象是否是null
-* nonNull：判断某个对象是否不是null
+![Snipaste_2024-01-07_12-16-28](images/Snipaste_2024-01-07_12-16-28.png)
 
-包装类：把基本数据类型的数据包装成对象。
+![Snipaste_2024-01-07_12-19-06](images/Snipaste_2024-01-07_12-19-06.png)
 
-**StringBuilder、StringBuffer、StringJoiner**
+![Snipaste_2024-01-07_12-21-48](images/Snipaste_2024-01-07_12-21-48.png)
 
-StringBuilder：代表可变字符串对象，相当于一个容器，比String更适合字符串的修改操作，更高效，代码更简洁。
+序列化流：
 
-StringBuffer：StringBuffer的用法与StringBuilder是一模一样的。但StringBuilder是线程不安全的，StringBuffer是线程安全的。（是否多个人同时操作一个对象）
+![Snipaste_2024-01-07_12-25-03](images/Snipaste_2024-01-07_12-25-03.png)
 
-StringJoiner：JDK8开始才有的，跟StringBuilder一样，也是用来操作字符串的。好处是在某些场景下操作字符串，代码更简洁。
+![Snipaste_2024-01-07_12-28-20](images/Snipaste_2024-01-07_12-28-20.png)
 
-**Math**
+io框架
 
-**System**
+![Snipaste_2024-01-07_12-36-23](images/Snipaste_2024-01-07_12-36-23.png)
 
-System代表程序所在的系统，是一个工具类。
+![Snipaste_2024-01-07_12-41-21](images/Snipaste_2024-01-07_12-41-21.png)
+
+![Snipaste_2024-01-07_12-45-34](images/Snipaste_2024-01-07_12-45-34.png)
+
+# 多线程
+
+线程（Thread）是一个程序内部的一条执行流程。
+
+程序中如果只有一条执行流程，那这个程序就是单线程的程序。
+
+多线程是指从软硬件上实现的多条执行流程的技术（多条线程由CPU负责调度执行）。
+
+**Java中创建多线程的方法**
+
+![Snipaste_2024-01-07_14-07-12](images/Snipaste_2024-01-07_14-07-12.png)
+
+![Snipaste_2024-01-07_14-13-09](images/Snipaste_2024-01-07_14-13-09.png)
+
+![Snipaste_2024-01-07_14-20-49](images/Snipaste_2024-01-07_14-20-49.png)
+
+![Snipaste_2024-01-07_14-20-07](images/Snipaste_2024-01-07_14-20-07.png)
+
+![Snipaste_2024-01-07_14-21-43](images/Snipaste_2024-01-07_14-21-43.png)
+
+**线程安全问题**
+
+多个线程，同时操作同一个共享资源时，可能会呈现业务安全问题。
+
+**线程同步**
+
+解决线程安全问题的方案。就是让多个线程实现先后依次访问共享资源，这样就解决了安全问题。
+
+线程同步常见方案：
+
+* 加锁：每次只允许一个线程加锁，加锁后才能进入访问，访问完毕后自动解锁，然后其他线程才能再枷锁进来。
+  * 同步代码块
+  * 同步方法
+  * Lock锁
+
+**线程通信**
+
+当多个线程共同操作共享资源时，线程间通过某种方式互相告知自己的状态，以相互协调，或避免无效的资源争夺。
+
+**线程池**
+
+线程池就是一个可以复用线程的技术。
+
+不使用线程池的问题：用户没发起一个请求，后台就需要创建一个新线程来处理，下次新任务来了肯定又要创建新线程处理，而创建新线程的开销是很大的，并且请求过多时，肯定会产生大量的线程出来，这样会严重影响系统的性能。
+
+线程池中的线程数量是固定的，如果任务数量超出线程池中的线程数量，任务会进行等待。防止任务过多，创建过多线程消耗系统资源的问题。（时间换空间）
+
+**并发和并行**
+
+进程：正在运行的程序（软件）就是一个独立的进程。
+
+线程是属于进程的，一个进程中可以同时运行多个线程。
+
+进程中的多个线程其实是并发和并行执行的。
+
+并发：进程中的线程是由CPU负责调度执行的，但CPU能同时处理线程的数量有限，为了保证全部线程都能往前直行，CPU会轮询为系统的每个线程服务，由于CPU切换的速度很快，给我们的感觉是这些线程在同时执行，这就是并发。
+
+并行：在同一个时刻上，同时有多个线程在被CPU（多个）调度执行。
+
+多线程执行任务，是并发和并行同时进行的。
+
+**线程的生命周期**
+
+线程从生到死的过程中，经历的各种状态及状态转换。
+
+理解线程的这些状态有利于提升并发（多线程）编程的理解能力。
+
+Java线程的状态
+
+* Java总共定义了6种状态
+* 6种状态都定义在Thread类的内部枚举类中。
+
+![Snipaste_2024-01-07_16-12-46](images/Snipaste_2024-01-07_16-12-46.png)
+
+# 网络通信
+
+java.net.*包下提供了网络编程的解决方案。
+
+**基本的通信架构**
+
+CS架构（Client客户端/Server服务端）、BS架构（Browser浏览器/Server服务端）。
+
+无论哪种架构，都必须依赖网络编程！
+
+**概述**
+
+InetAddress：代表IP地址。
+
+![Snipaste_2024-01-07_16-50-14](images/Snipaste_2024-01-07_16-50-14.png)
+
+协议：
+
+![Snipaste_2024-01-07_16-58-59](images/Snipaste_2024-01-07_16-58-59.png)
+
+![Snipaste_2024-01-07_17-03-58](images/Snipaste_2024-01-07_17-03-58.png)
+
+![Snipaste_2024-01-07_17-15-03](images/Snipaste_2024-01-07_17-15-03.png)
+
+三次握手的目的就是要确定客户端和服务端收发消息都没问题！
+
+![Snipaste_2024-01-07_17-09-58](images/Snipaste_2024-01-07_17-09-58.png)
+
+四次挥手的目的就是要确保双方数据的收发都已经完成！
+
+![Snipaste_2024-01-07_17-14-10](images/Snipaste_2024-01-07_17-14-10.png)
+
+**UDP通信**
+
+Java提供了一个java.net.DatagramSocket类来实现UDP通信。
+
+![Snipaste_2024-01-07_17-20-26](images/Snipaste_2024-01-07_17-20-26.png)
+
+![Snipaste_2024-01-07_17-35-47](images/Snipaste_2024-01-07_17-35-47.png)
+
+**TCP通信**
+
+Java提供了一个java.net.Socket类来实现TCP通信。
+
+![Snipaste_2024-01-07_18-46-50](images/Snipaste_2024-01-07_18-46-50.png)
+
+![Snipaste_2024-01-07_18-45-09](images/Snipaste_2024-01-07_18-45-09.png)
+
+![Snipaste_2024-01-07_18-48-31](images/Snipaste_2024-01-07_18-48-31.png)
+
+![Snipaste_2024-01-07_18-54-00](images/Snipaste_2024-01-07_18-54-00.png)
+
+TCP想要支持与多个客户端同时通信，需要创建多线程。主线程值负责接收客户端连接，每个子线程处理一个客户端连接。
+
+UDP则不需要创建多线程，因为UDP不会创建链接，只管接收数据包，而不关心是哪个客户端的数据包。
+
+![Snipaste_2024-01-08_15-39-18](images/Snipaste_2024-01-08_15-39-18.png)
+
+![Snipaste_2024-01-08_16-21-07](images/Snipaste_2024-01-08_16-21-07.png)
+
+![Snipaste_2024-01-08_16-21-29](images/Snipaste_2024-01-08_16-21-29.png)
+
+![Snipaste_2024-01-08_16-27-10](images/Snipaste_2024-01-08_16-27-10.png)
+
+# Java高级
+
+**junit单元测试框架**
+
+**反射**
+
+**注解**
+
+注解就是Java代码里的特殊标记，比如：@Override、@Test等，作用是：让其他程序根据注解信息来决定怎么执行该程序。
+
+其他程序封装注解，我们的程序使用注解。封装注解的程序根据注解信息就可以知道怎么执行我们的程序了。
+
+注解可以用在类上、构造器上、方法上、成员变量上、参数上等。
+
+自定义注解：
 
 ```java
-// 终止当前运行的Java虚拟机
-System.exit(0);
-// 获取系统的时间戳
-long time = System.currentTimeMillis();
+public @interface 注解名称 {
+  public 属性类型 属性名() [default默认值];
+}
 ```
-
-**Runtime**
-
-Runtime代表程序所在的运行环境。Runtime是一个单例类（对外只提供一个对象）
 
 ```java
-// 获取运行时对象
-Runtime r = Runtime.getRuntime();
-// 终止当前运行的虚拟机
-r.exit(0);
-// 返回Java虚拟机可用的处理器数
-r.availableProcessors();
-// 返回Java虚拟机中的内存总数
-r.totalMemory();
-// 返回Java虚拟机中的可用内存
-r.freeMemory();
-// 启动某个程序，并返回代表该程序的对象
-Process p = r.exec(String command); // command程序启动路径
-p.destory(); // 关闭程序
-```
+// 定义注解
+public @interface MyTest {
+  String aaa();
+  boolean bbb() default true;
+  String[] ccc();
+}
 
-**BigDecimal**
-
-解决精度问题
-
-**Date日期类**
-
-Date代表系统此刻的日期。
-
-```java
-// 创建一个Date日期对象
-Date d = new Date() 
-// 返回1970年1月1日00:00:00到此刻的毫秒数
-long time = d.getTime() 
-// 把时间毫秒值转换成Date日期对象
-Date d2 = new Date(time)
-// 把时间毫秒值转换成Date日期对象
-Date d3 = d.setTime(time)
-```
-
-**SimpleDateFormat**
-
-简单日期格式化，可以把日期对象、时间毫秒值格式化成我们想要的形式。
-
-```java
-// 创建一个Date日期对象
-Date d = new Date();
-// 创建时间戳
-long time = d.getTime();
-  
-// 使用SimpleDateFormat格式化日期对象和时间戳
-SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss EEE a");
-String rs = sdf.format(d); // 2024-01-04 11:44:00 周四 上午
-String rs2 = sdf.format(time); // 2024-01-04 11:44:00 周四 上午
-  
-// 使用SimpleDateFormat将字符串的时间解析成日期对象
-String dateStr = "2024-01-04 11:44:00";
-SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-Date d2 = sdf2.parse(dateStr);
-```
-
-**Calendar**
-
-Calendar代表系统此刻的日历。
-
-通过它可以获取修改时间中的年月日时分秒等。
-
-```java
-// 获取当前日历对象
-Calendar now = Calendar.getInstance();
-// 获取日历中的某个信息(这些信息都可以在上一行的结果中找到)
-int year = now.get(Calendar.YEAR);
-// 获取日期对象
-Date d = now.getTime();
-// 获取时间戳
-long time = now.getTimeInMillis();
-// 修改日历中的某个信息
-now.set(Calendar.MONTH, 9);
-// 为某个信息增加/减少多少
-now.add(Calendar.DAY_OF_YEAR, 100)
-```
-
-**JDK8新增的时间API**
-
-优点：
-
-* 设计更合理，功能丰富，使用更方便
-* 都是补课班对象，修改后会返回新的时间对象，不会丢失最开始的事件
-* 线程安全
-* 能精确到毫秒、纳秒
-
-代替Calendar：
-
-LocalDate：代表本地日期（年月日星期）
-
-LocalTime：代表本地时间（时分秒纳秒）
-
-LocalDateTime：代表本地日期、时间（年月日星期时分秒纳秒）
-
-ZoneId：时区
-
-ZonedDateTime：带时区的事件
-
-代替：Date
-
-Instant：时间线/时间戳，有纳秒的记录。
-
-代替：SimpleDateFormat
-
-DateTimeFormatter：对时间格式化和解析
-
-```java
-// 创建日期格式化器对象
-DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-
-// 格式化日期对象和时间戳
-LocalDateTime now = LocalDateTime.now(); // 创日期时间对象
-String rs = formatter.format(now);
-// 或
-String rs2 = now.format(formatter);
-
-// 将字符串的时间解析成日期时间对象
-String dateStr = "2024-01-04 11:44:00";
-LocalDateTime ldt = LocalDateTime.parse(dateStr, formatter)
-```
-
-其他补充：
-
-Period：计算时间间隔（年月日）
-
-Duration：计算时间间隔（时分秒纳秒）
-
-**Arrays类**
-
-数组的一些操作
-
-**集合**
-
-集合是一种容器，用来装数据，类似于数组。java中集合的种类有很多，如：ArrayList List Map Set...，ArrayList是最常用的。
-
-数组定义时长度就固定了，所有一些场景下使用数组存数据是不合适的。集合大小可变，开发中用的更多。
-
-集合体系结构：
-
-* 以Collection为代表的单列集合：每个元素只包含一个值。
-
-  ![Snipaste_2024-01-04_16-12-41](images/Snipaste_2024-01-04_16-12-41.png)
-
-  * List接口
-
-    * 实现类ArrayList底层是基于数组实现的。数组数据结构特点：查询快，增删慢。
-    * 实现类LinkedList底层是基于双链表实现的。双链表数据结构特点：查询慢，增删快，对首尾元素的增删改查极快。可以用来设计队列，因为队列只涉及首尾的操作。还可以用来设计栈，因为栈只涉及首部的操作。
-
-  * Set接口
-
-    * 实现类HashSet底层是基于哈希表实现的。哈希表数据结构的特点：增删改查都较快。JDK8之前，哈希表=数组+链表，JDK8之前，哈希表=数组+链表+红黑树。
-    * 实现类LinkedHashSet底层是基于哈希表实现的，但是它的每个元素都额外多了一个双链表的机制记录他前后元素的位置，所以保证了有序性。
-    * 实现类TreeSet底层是基于红黑树实现排序的。
-
-  * 使用场景
-
-    ![Snipaste_2024-01-04_17-50-12](images/Snipaste_2024-01-04_17-50-12.png)
-
-* 以Map为代表的双列集合：每个元素包含两个值（键值对）。
-
-  ![Snipaste_2024-01-04_18-05-04](images/Snipaste_2024-01-04_18-05-04.png)
-
-  * 实现类HashMap底层跟HashSet是一样的。实际上Set系列集合的底层就是基于Map实现的，只是Set集合中的元素只要键数据，不要值数据而已。
-  * 实现类LinkedHashMap底层跟LinkedHashSet是一样的。实际上Set系列集合的底层就是基于Map实现的，只是Set集合中的元素只要键数据，不要值数据而已。
-  * 实现类TreeMap底层底层跟TreeSet是一样的。实际上Set系列集合的底层就是基于Map实现的，只是Set集合中的元素只要键数据，不要值数据而已。
-
-# 异常
-
-**Java异常体系**
-
-<img src="images/Snipaste_2024-01-04_14-52-39.png" alt="Snipaste_2024-01-04_14-52-39" style="zoom: 67%;" />
-
-Error：代表系统级别错误（属于严重问题），系统一旦出现问题，sun公司会把这些问题封装成Error对象给出来，Error是Sun公司自己用的，不是给程序员用的，隐藏我们不用管它。
-
-Exception：叫异常，它代表的才是我们程序可能出现的问题，所以我们通常会用Exception以及它的孩子来封装程序出现的问题。
-
-* 运行时异常：RuntiemException及其子类，编译阶段不会出现错误提醒，运行时出现的异常（如：数组索引越界异常）
-* 编译时异常：编译阶段（写代码时）就会出现的错误提醒（如：日期解析异常）
-
-**异常处理代码写法**
-
-* 抛出异常（throws）：在方法上使用throws关键字，可以将方法内部出现的异常抛出去给上次调用者处理
-
-  ```java
-  方法名() throws 异常1, 异常2, 异常3...{
-    ...
+// 使用注解
+@MyTest(aaa="牛魔王", ccc={"Java", "HTML"})
+public class AnnotationTest {
+  @MyTest(aaa="铁扇公主", bbb=false, ccc={"Python", "MySql"})
+  public void test() {
+    
   }
-  ```
+}
+```
 
-* 捕获异常（try...catch）：直接捕获程序出现的异常。
+特殊属性名value，如果注解中只有一个value属性，使用注解时，value名称可以不写！！
 
-  ```java
-  try {
-    // 监视可能出现异常的代码
-  } catch(异常类型1 变量) {
-    // 处理异常
-  } catch(异常类型2 变量) {
-    // 处理异常
-  }...
-  ```
+注解原理：
 
-**自定义异常**
+![Snipaste_2024-01-07_10-42-21](images/Snipaste_2024-01-07_10-42-21.png)
 
-自定义异常种类：自定义运行时异常、自定义编译时异常。
+元注解：
 
-* 自定义运行时异常
+元注解：修饰注解的注解。
 
-  1. 定义一个异常类继承RuntiemException
-  2. 重写构造器
-  3. 通过throw new 异常类(xxx)来创建异常对象并抛出
+![Snipaste_2024-01-07_10-43-53](images/Snipaste_2024-01-07_10-43-53.png)
 
-  `自定义运行时异常类`
+![Snipaste_2024-01-07_10-47-06](images/Snipaste_2024-01-07_10-47-06.png)
 
-  ```java
-  public class AgeIllegalRuntimeException extends RuntimeException {
-      public AgeIllegalRuntimeException() {
-      }
-  
-      public AgeIllegalRuntimeException(String message) {
-          super(message);
-      }
-  }
-  ```
+注解的解析：
 
-  `使用自定义运行时异常类`
+注解的解析：判断类上、方法上、成员变量上是否存在注解，并把注解里的内容给解析出来。
 
-  ```java
-  public class ExceptionTest {
-      public static void main(String[] args) {
-          try {
-              saveAge(160);
-          } catch (Exception e) {
-              e.printStackTrace();
-              System.out.println("底层出现了bug");
-          }
-      }
-      public static void saveAge(int age) {
-          if (age > 0 && age < 150) {
-              System.out.println("年龄被成功保存： " + age);
-          } else {
-              // throw抛出这个异常对象
-              throw new AgeIllegalRuntimeException("/age is illegal, your age is " + age);
-          }
-      }
-  }
-  ```
+如何解析注解：
 
-* 自定义编译时异常
+* 指导思想：要解析谁上面的注解，就应该先拿到谁。
 
-  1. 定义一个异常类继承Exception
-  2. 重写构造器
-  3. 通过throw new 异常类(xxx)来创建异常对象并抛出
+* 比如要解析类上面的注解，则应该先获取该类的Class对象，再通过Class对象解析其上面的注解。
 
-  `自定义编译时异常类`
+* 比如要解析成员方法上的注解，则应该获取到该成员方法的Method对象，再通过Method对象解析其上面的注解。
 
-  ```java
-  public class AgeIllegalException extends Exception {
-      public AgeIllegalException() {
-      }
-  
-      public AgeIllegalException(String message) {
-          super(message);
-      }
-  }
-  ```
+* Class、Method、Field、Constructor、都实现了AnnotatedElement接口，它们都拥有解析注解的能力。
 
-  `使用自定义编译时异常类`
+  ![Snipaste_2024-01-07_10-54-13](images/Snipaste_2024-01-07_10-54-13.png)
 
-  ```java
-  public class ExceptionTest {
-      public static void main(String[] args) {
-          try {
-              saveAge2(160);
-          } catch (AgeIllegalException e) {
-              e.printStackTrace();
-              System.out.println("底层出现了bug");
-          }
-      }
-      public static void saveAge2(int age) throws AgeIllegalException {
-          if (age > 0 && age < 150) {
-              System.out.println("年龄被成功保存： " + age);
-          } else {
-              // throw
-              throw new AgeIllegalException("/age is illegal, your age is " + age);
-          }
-      }
-  }
-  ```
+注解的使用场景：
 
-**开发中对一次的常见处理方式**
+配合反射做框架用的。
 
-![Snipaste_2024-01-04_15-57-04](images/Snipaste_2024-01-04_15-57-04.png)
+**动态代理**
 
