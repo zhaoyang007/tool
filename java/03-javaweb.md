@@ -17,6 +17,10 @@ Spring Boot 是 Spring 的一个子项目， 可以简化传统 Spring 应用程
 
 ![Snipaste_2024-01-10_12-24-49](images/Snipaste_2024-01-10_12-24-49.png)
 
+![Snipaste_2023-09-05_18-43-38](images/Snipaste_2023-09-05_18-43-38.png)
+
+![Snipaste_2023-09-05_18-45-04](images/Snipaste_2023-09-05_18-45-04.png)
+
 # Maven
 
 ## 介绍
@@ -258,6 +262,8 @@ dao：数据访问层（Date Access Object）（持久层），负责数据访�
 
 软件设计原则：高内聚低耦合。高内聚：模块内部的联系越紧密越好；低耦合：尽可能降低层与层之间或者模块与模块之间的依赖关联，最好能做到解除耦合。解除之后，层与层之间就没有依赖了，此时及时service层的代码发生变化，它也不会影响controller及dao的代码。这样我们程序的灵活性及可扩展性就更好了。
 
+spring三大核心概念：控制反转、事务管理、面向切面编程
+
 **控制反转和依赖注入**
 
 上面的三层之间是有耦合关系的。controller依赖service，serveice依赖dao。
@@ -392,17 +398,33 @@ REST（REpresentational State Transfer），表述性状态转换，它是一种
   }
   ```
 
-  
-
-
-
-
-
 # 登录认证
+
+## 会话技术
 
 合法身份凭证：会话和令牌。
 
+会话：用户打开浏览器，访问web服务器的资源，会话建立，直到有一方断开连接，会话结束。也就是浏览器和服务器的一次连接就称为一次会话。在一次会话中可以包含多次请求和响应。
+
+会话跟踪：一种维护浏览器状态的方法，服务器需要识别多次请求是否来自于同一浏览器，以便在同一次会话的多次请求间共享数据。
+
+会话跟踪方案：
+
+* 客户端会话跟踪技术：Cookie  tomcat(sevlet容器)这样的web服务器中提供了获取和设置Cookie的API。
+* 服务端会话跟踪技术：Session   tomcat(sevlet容器)这样的web服务器中提供了获取设置Session的API。
+* 令牌技术：JWT
+
+![Snipaste_2024-01-14_13-58-45](images/Snipaste_2024-01-14_13-58-45.png)
+
+![Snipaste_2024-01-14_14-08-16](images/Snipaste_2024-01-14_14-08-16.png)
+
+![Snipaste_2024-01-14_14-18-11](images/Snipaste_2024-01-14_14-18-11.png)
+
 令牌技术：jwt
+
+jwt（JSON Web Token）：定义了一种简洁的、自包含的格式，用于在通信双方以json数据格式安全的传输信息，由于数据签名的存在，这些信息是可靠的。
+
+jwt的组成：
 
 * 第一部分：Header（头），记录令牌类型、签名算法等。例如：{ "alg": "hs256", "type": "jwt" }
 * 第二部分：Paload（有效载荷），携带一些自定义信息、默认信息等。例如：{"id": "1", "username": "tom"}
@@ -410,12 +432,26 @@ REST（REpresentational State Transfer），表述性状态转换，它是一种
 
 ![Snipaste_2023-09-04_13-32-39](images/Snipaste_2023-09-04_13-32-39.png)
 
+注：Base64是一种基于64个可打印字符（A-Z a-z 0-9 + /）来表示二进制的编码方式。
+
+Java要做的事就是生成令牌和校验令牌。
+
+## 过滤器Filter
+
+![Snipaste_2024-01-14_15-10-09](images/Snipaste_2024-01-14_15-10-09.png)
+
+## 拦截器Interceptor
+
+![Snipaste_2024-01-14_15-10-22](images/Snipaste_2024-01-14_15-10-22.png)
+
 # 异常处理
 
-后端出错，返回给前端的结果有问题，需要处理异常：
+后端出错，返回给前端的结果不符合开发规范要求的结构 ，需要处理异常：
 
 1. 在controller层使用 try catch 处理异常
 2. 使用全局异常处理器
+
+# 事务管理
 
 # AOP
 
@@ -432,9 +468,3 @@ REST（REpresentational State Transfer），表述性状态转换，它是一种
 * 分模块设计与开发
 * 继承与聚合
 * 私服
-
-# Web后端开发总结
-
-![Snipaste_2023-09-05_18-43-38](images/Snipaste_2023-09-05_18-43-38.png)
-
-![Snipaste_2023-09-05_18-45-04](images/Snipaste_2023-09-05_18-45-04.png)
