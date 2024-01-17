@@ -252,37 +252,37 @@ nginx配置文件组成：
 
    * user：用于配置运行nginx服务器的worker进程的用户和用户组，这样对于系统的权限访问控制会更加精细和安全。
 
-     ```
+     ```nginx
      user 用户名 [用户组名，可选，如果不写默认跟用户名一致]; #默认值nobody
      ```
 
    * master_process：用来指定是否开启工作进程
 
-     ```
-     master_process on|off; #默认值off
+     ```nginx
+     master_process on|off; #默认值on
      ```
 
-   * worder_process：允许生成的worder进程的数数量，这是nginx服务器实现并发处理服务的关键。理论上配置的数量越大，可以支持的并发处理量越多，但事实上这个值的设定是需要受到服务器自身的限制，建议将该值和服务器cpu内核数保持一致。
+   * worder_process：允许生成的worder进程的数量，这是nginx服务器实现并发处理服务的关键。理论上配置的数量越大，可以支持的并发处理量越多，但事实上这个值的设定是需要受到服务器自身的限制，建议将该值和服务器cpu内核数保持一致。
 
-     ```
+     ```nginx
      worder_process num/auto; #默认值1
      ```
 
    * deamon：设定nginx是否以守护进程的方式启动。守护进程是linux后台执行的一种服务进程，特点是独立于控制终端，不会随着终端关闭而停止。
 
-     ```
+     ```nginx
      deamon on|off; #默认值on
      ```
 
    * pid：用来配置nginx当前master进程的进程号id存储的文件路径。
 
-     ```
+     ```nginx
      pid 文件路径; #默认值/usr/local/nginx/logs/nginx.pid
      ```
 
    * error_log：用来配置nginx的错误日志存放路径和日志级别
 
-     ```
+     ```nginx
      error_log 文件路径 [日志级别]; #默认值logs/error.log error
      ```
 
@@ -292,26 +292,268 @@ nginx配置文件组成：
 
    * include：用来引入其他的ngnix配置文件，使nginx的配置更加灵活，可以在配置文件中的任何位置配置include。
 
-     ```
+     ```nginx
      include 文件路径;
      ```
 
-2. events块：events块涉及的指令主要影响nginx服务器与用户的网络连接，常用的设置包括是否开启对多work process下的网络连接进行序列化，是否允许同时接收多个网络连接，选取哪种事件驱动模型来处理连接请求，每个word process可以同时支持的最大连接数等。
+2. events块：主要用于设置nginx服务器与用户的网络连接，这部分配置对nginx服务器的性能影响比较大，在实际中应该灵活配置。nginx性能优化时也会用到这里的内容。
 
-   worker_connections  1024; 表示每个word process支持的最大连接数为1024
+   * accept_mutex：用来设置nginx网络连接序列化。
 
-   这部分的配置对nginx的性能影响较大，在实际中应该灵活配置。
+     这个配置主要用来解决“惊群”问题。大致意思是在某一个时刻，客户端发来一个请求连接，nginx后台是多进程的工作模式，也就是说会有多个worker进程被同事唤醒，但最终只有一个进程可以获取到连接，如果每次唤醒的进程数太多，会影响nginx的整体性能，如果设置为on（开启状态），将会对多个nginx进程接收连接进行序列化，一个个来唤醒接收，就防止了多个进程对连接的争抢。设置为off同时唤醒多个进程，效率更高。具体设置成什么取决于生产环境。
+
+     ```nginx
+     accept_mutex on|off; #默认值on
+     ```
+
+   * multi_accept：用来设置worker进程是否允许同时接收多个网络连接，如果设置为off，nginx一个worker进程同一时间内只能接收一个新的链接，否则一个worker进程可以同时接收所有新连接。建议设置为on，这样效率高一点。
+
+     ```nginx
+     multi_accept on|off; #默认值off
+     ```
+
+   * worker_connections：用来配置单个worker进程最大连接数。这里的连接数不仅仅包括和前端用户建立的连接，而是包括所有可能的连接数，num的值不能大于操作系统支持打开的最大文件句柄数量。
+
+     ```nginx
+     worker_connections num; #默认值512
+     ```
+
+   * use：用来设置nginx服务器选择哪种事件驱动来处理网络消息。此处所选择的事件处理模型是nginx优化部分的一个重要内容，method的可选值有select/poll/epoll/kqueue等，之前环境准备时，需要使用linux内核在2.6以上的centos操作系统时，就是为了能使用epoll函数来优化nginx。这个配置也可以在nginx源码安装时来指定。
+
+     ```nginx
+     use method; #默认值根据操作系统定
+     ```
 
 3. http块：包括http全局块和多个server块。
 
-   1. http全局块：http全局块包括文件引入、MIME-TYPE定义、日志自定义、连接超时时间、单链接请求数上限等。
+   1. http全局块：
 
-   2. server块：包括全局server块和多个location块。
+      * http全局块包括文件引入
 
-      server块和虚拟主机有密切关系，每个server块就相当于一个虚拟主机，虚拟主机从用户角度看，和一台独立的硬件主机是完全一样的，该技术的产生是为了节省互联网服务器硬件成本。
+      * 定义MIME-TYPE：MIME-TYPE是网络资源媒体类型，nginx作为web服务器，也需要能够识别前端请求的资源类型。
 
-      1. 全局server块：最常见的配置是本虚拟主机的监听配置和本虚拟主机的名称或IP配置
-      2. location块：这块的主要作用是基于nginx服务区器接收到的请求字符串（例如server_name/uri-string），对虚拟主机名称（也可以是IP名词）之外的字符串（例如前面的/uri-string）进行匹配，对待定的请求进行处理，地址定向、数据缓存和应答控制等功能，还有许多第三方模块的配置也在这里进行。
+        * types：定义支持的MIME类型（默认是通过include引入进来的）
+
+        * default_type：用来配置nginx相应前端请求的默认MIME类型，可以在http块、server块、location块中设置。
+
+          ```nginx
+          default_type mime-type; #默认值 text/plain
+          ```
+
+      * 自定义日志
+
+        nginx中的日志类型分access.log、error.log。
+
+        access.log用来记录用户所有的访问请求。
+
+        error.log记录的是nginx运行时的错误信息。
+
+        自定义日志主要是对access.log来进行设置，支持对日志的格式大小输出等进行设置，需要用到下面两个指令。
+
+        * access_log：设置用户访问日志的相关属性。可以在http块、server块、location块中设置。
+
+          ```nginx
+          access_log path [日志格式名 [buffer=日志大小]]; #默认值access_log logs/access.log combined;
+          ```
+
+        * log_format：设置指定日志的输出格式。只能在http块中设置。
+
+          ```nginx
+          log_format name [escape=default|json|none] "string...."; #默认值log_format combined "...";
+          ```
+
+      * sendfile：用来设置nginx服务器是否使用sendfile()函数传输文件，该属性可以大大提高nginx从磁盘读取静态资源的性能。可以在http块、server块、location块中设置。
+
+        ```nginx
+        sendfile on|of; #默认值off
+        ```
+
+      * keepalive_timeout：用来设置keep-alibe长连接的超时时间。可以在http块、server块、location块中设置。
+
+        ```nginx
+        keepalive_timeout time; #默认值75; 单位是s
+        ```
+
+      * keepalive_requests：用来设置keep-alive长连接的最大使用次数，超过这个次数长连接就会断开。可以在http块、server块、location块中设置。
+
+        ```nginx
+        keepalive_requests num; #默认值100
+        ```
+
+   2. server块：包括全局server块和多个location块。server块和虚拟主机有密切关系，每个server块就相当于一个虚拟主机，虚拟主机从用户角度看，和一台独立的硬件主机是完全一样的，该技术的产生是为了节省互联网服务器硬件成本。
+
+      1. 全局server块
+
+         * listen：用来配置监听的端口
+
+           ```nginx
+           listen address[:post] [default_server] ...;
+           # 或者
+           listen port [default_server] ...;
+           
+           listen *:80 | *:8080; #默认值
+           ```
+
+           ```nginx
+           listen 127.0.0.1:8080; #监听指定的IP和端口
+           listen 127.0.0.1; #监听指定IP的所有端口
+           listen 8080;   #监听指定端口
+           listen *:8080; #监听指定端口
+           ```
+
+           注：default_server用来将此虚拟主机设置成默认主机，所谓默认主机指的是如果没有匹配到对应的主机地址，则会默认执行的主机。如果不指定默认主机是第一个server。
+
+         * server_name：用来设置虚拟主机名称（域名或IP）
+
+           ```nginx
+           server_name name ...; #name可以提供多个，中间用空格分隔
+           server_name ""; #默认值
+           ```
+
+           方式一：精确匹配
+
+           ```nginx
+           server_name www.baidu.com www.jd.com;
+           ```
+
+           补充小知识：主机映射可以在/etc/hosts文件中配置IP和域名的映射关系。访问域名时电脑会先到这里找域名对应的IP，没找到才会走DNS域名解析。
+
+           方式二：通配符匹配
+
+           server_name支持通配符”*“，通配符不能出现在域名的中间，只能出现在整个首段或整个尾段，如：
+
+           ```nginx
+           #正确的写法
+           server_name *.baidu.com www.jd.*;
+           
+           #错误的写法
+           server_name www.*.com www.baidu.c*;
+           ```
+
+           方式三：正则表达式匹配
+
+           server_name支持使用正则表达式，并且需要使用`~`作为正则表达式字符串的开始标记。
+
+           ```nginx
+           server_name ~^www\.\w+\.com$;
+           ```
+
+         * error_page：设置网站的错误页面，根据状态码响应相应页面。一个server块中可以配置多个。
+
+           ```nginx
+           error_page code ... [=response] uri; #没有默认值
+           #response可以重新设置状态码
+           error_page 404 =200 /50x.html;
+           location =/50x.html {
+             root html;
+           }
+           ```
+
+           方式一：指定具体的页面跳转地址
+
+           ```nginx
+           error_page 404 http://www.xxx.com;
+           ```
+
+           方式二：指定重定向地址
+
+           ```nginx
+           error_page 404 /50x.html;
+           location =/50x.html {
+             root html;
+           }
+           ```
+
+           方式三：使用location的@符号完成错误信息展示
+
+           ```nginx
+           error_page 404 @jump_to_error;
+           location @jump_to_error {
+             root html;
+           }
+           ```
+
+           
+
+      2. location块：设置请求的URI，并对请求进行响应
+
+         ```nginx
+         location [= | ~ | ~* | ^~ | @] uri {...}
+         
+         #1.不带符号：以指定模式开始的都可以访问到
+         location /abc {...}
+         #以下都可以匹配
+         http://192.168.1.1/abc
+         http://192.168.1.1/abc?p=tom
+         http://192.168.1.1/abc/
+         http://192.168.1.1/abcdef
+         
+         #2.=：用于不包含正则表达式的uri的精确匹配
+         location =/abc {...}
+         #可以匹配
+         http://192.168.1.1/abc
+         http://192.168.1.1/abc?p=tom
+         #不可以匹配
+         http://192.168.1.1/abc/
+         http://192.168.1.1/abcdef
+         
+         #3.~：用于表示包含了正则表达式的uri，区分大小写
+         #4.~*：用于表示包含了正则表达式的uri，不区分大小写
+         location ~^/abc\w$ {}
+         location ~*^/abc\w$ {}
+         
+         #5.^~：和不带符号功能一致，区别是如果匹配到了，就停止匹配其他模式。
+         location ^~/abc {}
+         ```
+
+         * 指定访问资源的路径
+
+           * root：设置请求资源根目录
+
+             ```nginx
+             root path; #默认值html
+             ```
+
+           * alias：用来更改location的URI
+
+             ```nginx
+             alias path; #没有默认值
+             ```
+
+           * 区别
+
+             * root的处理结果是：root路径 + location路径
+             * alias的处理结果是：使用alias路径替换location路径
+             * root资源根目录的含义，alias是一个目录别名的含义
+             * 如果location路径以`/`结尾，那么alias也必须以`/`结尾，root没有要求
+
+         * index：指定访问资源首页内容（这个首页内容必须在root所在的目录下）
+
+           ```nginx
+           index file ...; #默认值index.html
+           ```
+
+         * 数据缓存
+
+         * 应答控制
+
+         * 配置第三方模块
+
+# 静态资源部署
+
+## 静态资源的配置指令
+
+主要是server块和location块中的配置指令
+
+## 静态资源的配置优化
+
+## 静态资源的压缩配置指令
+
+## 静态资源的缓存处理
+
+## 静态资源的访问控制
+
+包括跨域问题和防盗链问题
 
 # 反向代理
 
@@ -319,15 +561,7 @@ nginx配置文件组成：
 
 反向代理：为服务器服务，隐藏服务端。客户端对代理是无感知的，因为客户端不需要做任何代理配置就可以访问，客户端只需要将请求发送给反向代理服务器，由反向代理服务器去选择目标服务器，获取数据后再返回给客户端，反向代理服务器和目标服务器对外就是一个服务器，暴露的是代理服务器，隐藏了真实服务器的IP地址。
 
-# 负载均衡
-
-负载均衡是一种在多个服务器或资源之间分配网络流量的技术，以确保没有单个服务器变得过于繁忙，从而优化网络服务的性能，提高响应速度和系统的可靠性。当客户端发送多个请求到服务器，单个服务器解决不了时，我们可以增加服务器的数量（集群），然后将请求平均分发到各个服务器上，这个过程就是负载均衡。
-
-# 动静分离
-
-动静分离将静态内容（**静态内容**指的是不经常变化或不依赖于用户输入和服务器处理的内容，如HTML文件、CSS样式表、JavaScript文件、图像、视频等）部署到专门的静态资源服务器上，将动态内容（**动态内容**指的是根据用户输入、数据库查询或服务器处理而生成的内容，如通过PHP、Java、Ruby等服务器端语言动态生成的HTML页面。）部署到主服务器上，将不同资源部署在不同服务器，这样做能够加快解析速度，降低原来单个服务器的压力。然后nginx会根据请求的资源类型，分别到不同的服务器上获取资源。
-
-# nginx配置实例-反向代理
+配置实例：
 
 ```nginx
 # 转发到一个目标服务
@@ -355,7 +589,11 @@ server {
 }
 ```
 
-# nginx配置实例-负载均衡
+# 负载均衡
+
+负载均衡是一种在多个服务器或资源之间分配网络流量的技术，以确保没有单个服务器变得过于繁忙，从而优化网络服务的性能，提高响应速度和系统的可靠性。当客户端发送多个请求到服务器，单个服务器解决不了时，我们可以增加服务器的数量（集群），然后将请求平均分发到各个服务器上，这个过程就是负载均衡。
+
+配置实例：
 
 ```nginx
 # 将客户端请求平均分配到多个服务器上
@@ -373,9 +611,13 @@ http {
 }
 ```
 
-# nginx配置实例-动静分离
+# 动静分离
 
-后端静态资源服务器的目录结构：/data/www/a.html   /data/image/1.jpg
+动静分离将静态内容（**静态内容**指的是不经常变化或不依赖于用户输入和服务器处理的内容，如HTML文件、CSS样式表、JavaScript文件、图像、视频等）部署到专门的静态资源服务器上，将动态内容（**动态内容**指的是根据用户输入、数据库查询或服务器处理而生成的内容，如通过PHP、Java、Ruby等服务器端语言动态生成的HTML页面。）部署到主服务器上，将不同资源部署在不同服务器，这样做能够加快解析速度，降低原来单个服务器的压力。然后nginx会根据请求的资源类型，分别到不同的服务器上获取资源。
+
+配置实例：
+
+后端静态资源服务器的目录结构为：/data/www/a.html   /data/image/1.jpg
 
 ```nginx
 # 根据访问路径指定具体资源的位置
