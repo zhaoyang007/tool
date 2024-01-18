@@ -473,8 +473,6 @@ nginx配置文件组成：
            }
            ```
 
-           
-
       2. location块：设置请求的URI，并对请求进行响应
 
          ```nginx
@@ -541,19 +539,282 @@ nginx配置文件组成：
 
 # 静态资源部署
 
-## 静态资源的配置指令
+## 配置指令
 
 主要是server块和location块中的配置指令
 
-## 静态资源的配置优化
+## 配置优化
 
-## 静态资源的压缩配置指令
+主要从下面三个属性配置进行优化：
 
-## 静态资源的缓存处理
+```nginx
+sendfile on;
+tcp_nopush on;
+tcp_nodelay on;
+```
 
-## 静态资源的访问控制
+**sendfile**
 
-包括跨域问题和防盗链问题
+sendfile用来开启高效的文件传输模式。可以在http块（常见）、server块、location块中设置。
+
+```nginx
+sendfile on|off; #默认值off
+```
+
+**tcp_nopush**
+
+该指令必须在sendfile打开的状态下才会生效，主要是用来提升网络包的传输效率，但实时性会降低。可以在http块（常见）、server块、location块中设置。
+
+```nginx
+tcp_nodeplay on|off; #默认值off
+```
+
+**tcp_nodelay**
+
+该指令必须在keep-alive连接开启的情况下才会生效，来提高网络包传输的实时性。可以在http块（常见）、server块、location块中设置。
+
+```nginx
+tcp_nodelay on|off; #默认值on
+```
+
+## gzip压缩
+
+nginx配置文件中可以通过配置gzip来对静态资源进行压缩，相关的指令可以在http块（常见）、server块、location块中设置。
+
+配置压缩指令需要用到如下三个模块：
+
+* ngx_http_gzip_module模块
+* ngx_http_gzip_static_module模块
+* ngx_http_gunzip_module模块
+
+**ngx_http_gzip_module模块**
+
+该模块会在nginx安装时内置到nginx安装环境中，我们可以直接使用该模块提供的指令。
+
+1. gzip指令：该指令用于开启或关闭gzip功能
+
+   ```nginx
+   gzip on|off; #默认值off
+   ```
+
+2. gzip_types指令：该指令可以根据响应页的MIME类型选择性的开启gzip压缩功能。所选择的值可以从mime.types文件中进行查找，也可以使用`*`代表所有（不建议配置，因为图片视频等资源已经做了高度压缩，没必要再进行gzip压缩，从而浪费cpu资源）。不配置时默认只会对html类型的文件进行压缩。
+
+   ```nginx
+   gzip_types mime-type ...; #默认值text/html
+   ```
+
+3. gzip_comp_level指令：该指令用于设置gzip压缩级别，级别从1-9,1表示最低，效率最高，9表示压缩程度最高，但效率最低耗时长。压缩级别越高压缩效果越不明显，建议设置为6。
+
+   ```nginx
+   gzip_comp_level level; #默认值1
+   ```
+
+4. gzip_vary指令：该指令用于设置使用gzip进行压缩，是否发送`Vary: Accept-Encoding`响应头。主要是告诉接收方，所发送的数据经过了gzip压缩处理。
+
+   ```nginx
+   gzip_vary on|off; #默认值off
+   ```
+
+5. gzip_buffers指令：该指令用于处理压缩的缓冲区数量和大小。
+
+   其中num指定nginx服务器向系统申请缓存空间个数，size指定每个缓存空间的大小。这个值的设定和服务器的操作系统有关，所以不建议设置，使用默认值即可。
+
+   ```nginx
+   gzip_buffers num size; #默认值32 4k | 16 8k
+   ```
+
+6. gzip_disable指令：针对不同种类客户端发起的请求，可以选择性的开启和关闭gzip功能。根据客户端的浏览器标志（user-agent）来设置，支持使用正则表达式。指定某些浏览器不使用gzip，该指令一般是用来排除一些明显不支持gzip的低版本的浏览器，不支持gzip压缩的浏览器还进行gzip压缩的话会显示乱码。
+
+   ```nginx
+   gzip disable 正则字符串 ...; #没有默认值
+   ```
+
+   IE6以下的浏览器版本都不进行gzip压缩：
+
+   ```nginx
+   gzip disable "MSIE [1-6]\."
+   ```
+
+7. gzip_http_version指令：该指令指定使用gzip的最低http版本，一般采用默认值即可。
+
+   ```nginx
+   gzip_http_version 1.0|1.1; #默认值1.1
+   ```
+
+8. gzip_min_length指令：该指令针对传输数据的大小，可以选择性的开启和关闭gzip功能。
+
+   ```nginx
+   gzip_min_length length; #默认值20
+   #nginx计量大小的单位：bytes[字节] / k|K[千字节] / m|M[兆]
+   #例如：1024 / 10k / 10M
+   ```
+
+   gzip压缩功能对大数据的压缩效果明显，如果压缩的数据比较小，可能出现越压缩越大的情况。因此我们需要根据响应内容的大小来决定是否使用gzip功能，响应页面的大小可以通过头信息中的Content-Length来获取，但如果使用了Chunk编码动态压缩，该指令将被忽略。建议设置为1k或以上。
+
+9. gzip_proxied指令：该指令设置的是在使用nginx做反向代理时，是否对服务端返回的结果进行gzip压缩。
+
+   ```nginx
+   gzip_proxied off|expired|no-cache|no-store|private|no_last_modified|no_etag|auth|any; #默认值off
+   ```
+
+   off - 关闭Nginx服务器对后台服务器返回结果的Gzip压缩
+   expired - 启用压缩，如果header头中包含 "Expires" 头信息
+   no-cache - 启用压缩，如果header头中包含 "Cache-Control:no-cache" 头信息
+   no-store - 启用压缩，如果header头中包含 "Cache-Control:no-store" 头信息
+   private - 启用压缩，如果header头中包含 "Cache-Control:private" 头信息
+   no_last_modified - 启用压缩,如果header头中不包含 "Last-Modified" 头信息
+   no_etag - 启用压缩 ,如果header头中不包含 "ETag" 头信息
+   auth - 启用压缩 , 如果header头中包含 "Authorization" 头信息
+   any - 无条件启用压缩
+
+**gzip和sendfile共存问题**
+
+开启sendfile以后，在读取磁盘上的静态资源文件的时候，可以减少拷贝的次数，可以不经过用户进程将静态文件通过网络设备发送出去，但是Gzip要想对资源压缩，是需要经过用户进程进行操作的。可以使用ngx_http_gzip_static_module模块的gzip_static指令来解决。
+
+gzip_static: 检查与访问资源同名的.gz文件时，返回给客户端，并添加相应的gzip响应头信息。
+
+```nginx
+gzip_static on|off|always; #默认值off
+```
+
+## 缓存处理
+
+主要是通过nginx指令控制浏览器缓存。
+
+强缓存响应头可以通过nginx或上游服务器添加。
+
+协商缓存一般由上游服务器添加，而Nginx负责将这些头信息传递给客户端。
+
+1. expires指令：通过该指令可以控制响应头中的“Expires"和”Cache-Control"
+
+   ```nginx
+   expires [modified] time;
+   expires epoch|max|off; #默认值off
+   ```
+
+   time：指定过期时间，可以正数也可以是负数。
+
+   * 如果是负数，Cache-Control则为no-cache，表示不走强缓存而是走协商缓存
+   * 如果为整数或0，则Cache-Control的值为max-age=time，如果是0表示不走强缓存而是走协商缓存
+
+   epoch：指定Expires的值为'1 January,1970,00:00:01 GMT'(1970-01-01 00:00:00)，Cache-Control的值no-cache
+
+   max：指定Expires的值为'31 December2037 23:59:59GMT' (2037-12-31 23:59:59) ，Cache-Control的值为10年
+
+   off：默认不缓存。
+
+2. add_header指令：用来添加指定的响应头和值。
+
+   ```nginx
+   add_header name value,value... [always]; #没有默认值
+   ```
+
+   Cache-Control作为响应头，可以设置如下值，如果添加多个值中间用`,`分隔：
+
+   * must-revalidate 可缓存但必须再向源服务器进行确认
+   * no-cache 缓存前必须确认其有效性
+   * no-store 不缓存请求或响应的任何内容
+   * no-transform 代理不可更改媒体类型
+   * public 可向任意方提供响应的缓存
+   * private 仅向特定用户返回响应
+   * proxy-revalidate 要求中间缓存服务器对缓存的响应有效性再进行确认
+   * max-age=\<seconds> 响应最大Age值
+   * s-maxage=\<seconds> 公共缓存服务器响应的最大Age值
+
+## 解决跨域
+
+解决跨域的响应头一般由上游服务器添加，而Nginx负责将这些头信息传递给客户端。
+
+使用add_header指令，该指令可以用来添加一些头信息。
+
+```nginx
+add_header name value,value... [always]; #没有默认值
+```
+
+此处用来解决跨域问题，需要添加两个头信息，一个是`Access-Control-Allow-Origin`，`Access-Control-Allow-Methods`
+
+```nginx
+location /getUser {
+    add_header Access-Control-Allow-Origin 协议域名端口或*;
+    add_header Access-Control-Allow-Methods GET,POST,PUT,DELETE;
+    default_type application/json;
+    return 200 '{"id":1,"name":"TOM","age":18}';
+}
+```
+
+允许跨域的响应头：
+
+* Access-Control-Allow-Origin：允许跨域访问的源地址信息，可以配置多个(多个用逗号分隔)，也可以使用`*`代表所有源。
+
+* Access-Control-Allow-Methods：允许跨域访问的请求方式，值可以为 GET POST PUT DELETE...,可以全部设置，也可以根据需要设置，多个用逗号分隔。
+
+* Access-Control-Allow-Headers：指定哪些HTTP请求头可以被包含在请求中。这通常用于允许客户端发送自定义的请求头。例如：
+
+  Access-Control-Allow-Headers: Content-Type, Authorization：允许包含 `Content-Type` 和 `Authorization` 请求头。
+
+* Access-Control-Expose-Headers：指定哪些响应头可以被暴露给客户端。默认情况下，只有一些基本的响应头（如 `Cache-Control`、`Content-Language` 等）会被暴露给客户端。使用该头部可以自定义暴露的响应头。例如：`Access-Control-Expose-Headers: X-Custom-Header`：允许暴露自定义响应头 `X-Custom-Header` 给客户端。
+
+* Access-Control-Allow-Credentials：指定是否允许携带凭证（如Cookies或HTTP认证）进行跨域请求。如果值为 `true`，则表示允许，如果值为 `false`，则表示不允许。
+
+* Access-Control-Max-Age：指定预检请求（OPTIONS请求）的缓存时间，以秒为单位。预检请求是在实际请求之前发送的，用于检查是否允许跨域请求。例如：Access-Control-Max-Age: 3600表示预检请求的结果将在3600秒内缓存，减少不必要的预检请求。
+
+补充知识点：何时浏览器会发送预检请求
+
+1. 跨域请求中使用了自定义的请求头：如果跨域请求中包含了自定义的请求头（不是常见的标准请求头，例如 `Content-Type`），浏览器会发起预检请求。自定义请求头指的是不在跨域请求的白名单中的请求头。
+2. 跨域请求中使用了某些非简单请求方法：非简单请求方法指的是不是常见的标准HTTP方法（GET、POST、HEAD）的请求方法，例如 PUT、DELETE 等。如果跨域请求使用了这些非简单请求方法，浏览器会发起预检请求。
+3. 跨域请求中设置了 `withCredentials` 为 `true`：如果跨域请求需要携带凭证（例如Cookies或HTTP认证信息），并且设置了 `withCredentials` 为 `true`，浏览器会发起预检请求。
+4. 跨域请求使用了某些不常见的请求头值：有些情况下，即使请求头在标准请求头范围内，但其值可能触发预检请求，这取决于浏览器的具体实现。
+
+## 防盗链
+
+**资源盗链**：指的是此内容不在自己服务器上，而是通过技术手段，绕过别人的限制将别人的资源内容放到自己页面上最终展示给用户。以此来盗取大网站的空间和流量。简而言之就是用别人的东西成就自己的网站。
+
+**防盗链**：指的是保证我们服务器上的资源不会随意被别人使用。
+
+**Referer**：了解防盗链的原理之前，先了解一个HTTP的头信息Referer，当浏览器向web服务器发送请求的时候，一般都会带上Referer请求头，来告诉服务器该网页是从哪个页面链接过来的。服务器可以获取到这个Referer信息来判断是否为自己信任的网站地址，如果是则放行继续访问，如果不是则可以返回403(服务端拒绝访问)的状态信息。
+
+**nginx防盗链的具体实现**
+
+valid_referers指令：nginx会通过查看referer自动和valid_referers后面的内容进行匹配，如果匹配到了就将`$invalid_referer`变量置0，如果没有匹配到，则将`$invalid_referer`变量置为1，匹配的过程中不区分大小写。可以在server块、location块中设置。
+
+```nginx
+valid_referers none|blocked|server_names|string...;
+```
+
+* none：如果Header中的Referer为空，允许访问。
+
+* blocked：在Header中的Referer不为空，但是该值被防火墙或代理进行伪装过，如不带"http://" 、"https://"等协议头的资源允许访问。
+
+* server_names：指定具体的域名或者IP。
+
+* string：可以支持正则表达式和*的字符串。如果是正则表达式，需要以`~`开头表示
+
+示例：
+
+```nginx
+#针对文件类型配置防盗链
+location ~*\.(png|jpg|gif){
+	valid_referers none blocked www.baidu.com 192.168.200.222 *.example.com example.* ~\.google\.;
+  if ($invalid_referer){
+    return 403;
+  }
+  root /usr/local/nginx/html;
+}
+#针对目录配置防盗链
+location /images {
+	valid_referers none blocked www.baidu.com 192.168.200.222 *.example.com example.* ~\.google\.;
+  if ($invalid_referer){
+    return 403;
+  }
+  root /usr/local/nginx/html;
+}
+```
+
+遇到的问题：Referer的限制比较粗，比如随意加一个Referer，上面的方式是无法进行限制的，此时我们需要用到nginx的第三方模块`ngx_http_accesskey_module`实现防盗链。
+
+## rewrite
+
+
 
 # 反向代理
 
