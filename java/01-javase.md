@@ -375,7 +375,7 @@ Lambda表达式是JDK8新增的一种语法形式，用于简化函数式接口�
 
 **Stream**
 
-Stream也叫Stream流，是Jdk8新增的一套API（Java.util.stream.*），可以用于操作集合或者数据的数据。
+Stream也叫Stream流，是Jdk8新增的一套API（Java.util.stream.*），可以用于操作集合或者数组的数据。
 
 优势：Stream流大量结合了Lambda语法风格来编程，提供了一种更加强大，更加简单的方式操作集合或者数组中的数据，代码更简洁，可读性更好。
 

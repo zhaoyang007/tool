@@ -285,7 +285,7 @@ sudo systemctl enable nginx     #开机启动nginx
 * mac：`/usr/local/etc/nginx`
 * mac homebrew： `/opt/homebrew/etc/nginx/nginx.conf` 
 
-常见问题：
+# nginx启动常见问题
 
 * nginx无法启动原因
 
@@ -4841,3 +4841,344 @@ location /{
 nginx启动后会有master和worker两个进程，master用于管理和分配任务，worker用于完成实际任务。
 
 多个worker使用争抢的机制去master中争抢任务。
+
+# nginx总结
+
+**概念**
+
+nginx是一个高性能的HTTP和反向代理Web服务器，优点是占用内存小，高性能，高并发。
+
+**nginx常用功能**
+
+* 静态资源部署及优化
+* rewrite重写URL
+* gzip压缩
+* 反向代理
+* 负载均衡
+* 动静分离
+* 安全控制https
+* 服务器缓存
+* 制作下载站点
+* 搭建高可用环境
+
+**nginx进程**
+
+* master主进程：负责管理所有的worker进程
+* worker工作进程：用来接收和处理用户的请求
+
+**nginx路径**
+
+nginx其实最终关心的就是两个路径：一个是客户端在浏览器中输入的访问地址，一个是要访问的实际资源的地址。
+
+**nginx目录**
+
+```bash
+whereis nginx #查找跟nginx相关的所有目录
+find / -name nginx.conf #从根目录开始查找nginx配置文件位置
+
+/etc/nginx/   #nginx安装目录
+/etc/nginx/nginx.conf   #配置文件
+/usr/sbin/   #可执行文件目录 启动./nginx
+/usr/share/nginx/html/   #html文件目录 
+/var/log/nginx/   #日志目录 cat /var/log/nginx/error.log #查看nginx错误日志
+```
+
+**常用命令**
+
+```bash
+#nginx命令
+sudo nginx -v 										#检查nginx版本号
+sudo nginx -V											#检查nginx版本号及其详细安装信息
+sudo nginx                        #启动nginx
+sudo nginx -s stop                #停止nginx
+sudo nginx -s reopen              #重启nginx
+sudo nginx -t                     #检查nginx配置文件语法
+sudo nginx -T                     #检查nginx配置文件语法，并显示配置文件内容
+sudo nginx -s reload              #重载nginx配置文件
+sudo nginx -c /etc/nginx/nginx.conf  #指定配置文件路径
+
+#使用systemctl服务（更加安全）
+sudo systemctl start nginx      #启动nginx
+sudo systemctl stop nginx       #停止nginx
+sudo systemctl restart nginx    #重启nginx
+sudo systemctl reload nginx     #重载nginx配置文件
+sudo systemctl status nginx     #查看nginx是否启动成功
+sudo systemctl enable nginx     #开机启动nginx
+```
+
+**配置文件**
+
+```nginx
+全局块
+events块 {
+  
+}
+http块 {
+  server块 {
+    location块 {
+      
+    }
+  }
+}
+```
+
+**配置实例**
+
+```nginx
+#1.全局块：主要配置一些影响nginx服务器整体运行的指令
+#1.1配置nginx worker进程的用户和用户组
+user nginx;
+#1.2配置是否开启worker进程（默认）
+master_process on;
+#1.3配置允许生成的worder进程的数量，理论越多越好，建议将该值和服务器cpu内核数保持一致。
+worder_process auto;
+#1.4配置nginx是否以守护进程的方式启动（默认）
+deamon on;
+#1.5配置master进程的进程号id存储的文件路径。
+pid /var/run/nginx.pid;
+#1.6配置错误日志存放路径和日志级别
+error_log /var/log/nginx/error.log error;
+#1.7include 用来引入其他ngnix配置文件，可以在配置文件中的任何位置使用。
+
+#2.events块：主要配置nginx服务器与用户的网络连接，该配置对nginx服务器的性能影响比较大
+events {
+	#2.1配置nginx网络连接序列化。解决“惊群”问题。（默认）
+  accept_mutex on;
+  #2.2配置worker进程是否允许同时接收多个网络连接
+  multi_accept on;
+  #2.3配置单个worker进程最大连接数
+  worker_connections 1024;
+  #2.4配置nginx服务器选择哪种事件驱动来处理网络消息（默认）
+  use epoll;
+}
+
+#3.http块
+http {
+  #1.其他配置文件引入
+  
+  #2.定义MIME-TYPE
+  #2.1types：定义支持的MIME类型，默认是通过include引入进来的
+  include /etc/nginx/mime.types;
+  #2.2default_type：配置nginx相应前端请求的默认MIME类型（位置：http、server、location）
+  default_type application/octet-stream;
+  
+  #3.自定义访问日志access_log（位置：http、server、location）
+  #3.1log_format：配置指定日志的输出格式。
+  log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '
+                      '$status $body_bytes_sent "$http_referer" '
+                      '"$http_user_agent" "$http_x_forwarded_for"';
+  #3.2access_log：配置访问日志的相关属性
+  access_log  /var/log/nginx/access.log  main;
+  
+  #4.优化配置
+  #4.1开启高效的文件传输模式
+  sendfile on;
+  #4.2提升网络包的传输效率，但实时性降低
+  tcp_nopush on;
+  #4.3提升网络包传输的实时性，但传输效率降低（默认）
+  tcp_nodelay on; 
+  
+  #5.配置长连接的超时时间
+  keepalive_timeout 65;
+  
+  #6.配置长连接的最大使用次数，超过后长连接会断开（默认）
+  keepalive_requests 100;
+  
+  #7.gzip压缩（常见在http块中配置，也可以在server、location中配置）
+  #7.1开启gzip压缩功能
+  gzip on;
+  #7.2根据响应页面的MIME类型选择性的开启gzip压缩功能（默认）
+  gzip_types text/html;
+  #7.3配置gzip压缩级别
+  gzip_comp_level 6;
+  #7.4配置使用gzip进行压缩，是否发送Vary: Accept-Encoding响应头
+  gzip_vary on;
+  #7.5配置处理压缩的缓冲区数量和大小（默认）
+  gzip_buffers 32 4k | 16 8k;
+  #7.6针对不同客户端，选择性的开启和关闭gzip功能，排除不支持gzip的低版本的浏览器，不进行gzip压缩
+  gzip disable "MSIE [1-6]\.";
+  #7.7指定使用gzip的最低http版本（默认）
+  gzip_http_version 1.1;
+  #7.8针对传输数据的大小，选择性的开启和关闭gzip功能
+  gzip_min_length 1k;
+  #7.9使用nginx做反向代理时，是否对服务端返回的结果进行gzip压缩（默认）
+  gzip_proxied off;
+  #7.10解决gzip和sendfile共存问题
+  gzip_static on;
+  
+  #8.nginx服务器缓存
+  #8.1配置缓存文件的存放路径（位置：http）
+  proxy_cache_path /usr/local/proxy_cache keys_zone=itcast:200m  levels=1:2:1 inactive=1d max_size=20g;
+  #8.2其他缓存指令（位置：http、server、location）
+  proxy_cache itcast;
+  proxy_cache_key itheima;
+  proxy_cache_min_uses 5;
+  proxy_cache_valid 200 5d;
+  proxy_cache_valid 404 30s;
+  proxy_cache_valid any 1m;
+  add_header nginx-cache "$upstream_cache_status";
+
+  #9.server块：配置虚拟主机
+  server {
+    #1.配置监听的端口
+    listen 8080;
+    
+    #2.配置虚拟主机名称（域名或IP）
+    #2.1精确匹配（常用）
+    server_name www.baidu.com www.jd.com localhost;
+    #2.2通配符匹配（不能在中间使用通配符）
+    server_name *.baidu.com www.jd.*;
+    #2.3 正则表达式匹配
+    server_name ~^www\.\w+\.com$;
+    
+    #3.配置网站的错误页面（一个server块中可以配置多个）
+    error_page  404 /404.html;
+    error_page  500 502 503 504 /50x.html;
+    
+    #4.location块：配置请求匹配的URI，并进行响应
+    #4.1配置请求匹配的URI
+    #4.1.1不带符号：以指定模式开始的都可以匹配到
+    location /abc {...}
+    #4.1.2 =：不包含正则表达式的uri的精确匹配
+    location =/abc {...} 
+		#4.1.3 ~：包含了正则表达式的uri的匹配，区分大小写
+    location ~^/abc\w$ {}
+    #4.1.4 ~*：包含了正则表达式的uri的匹配，不区分大小写
+    location ~*^/abc\w$ {}
+    #4.1.5 ^~：和不带符号功能一致，区别是如果匹配到了，就停止匹配其他模式。
+		location ^~/abc {}
+    #4.2并进行响应
+    location /abc {
+      #1.配置请求资源根目录（root路径 + location路径）
+      root /usr/share/nginx/html;
+      
+      #2.更改location的URI
+      alias path;
+      
+      #3.配置访问资源的页面（该首页内容必须在root所在的目录下）
+      index index.html index.htm;
+    }
+    
+    #5.rewrite：用于重写URL（位置：server、location、if）
+    #5.1URL重定向
+    location /old-url {
+      rewrite ^/old-url(.*)$ /new-url$1 permanent;
+    }
+    #5.2隐藏文件扩展名
+    location /images {
+      rewrite ^/images/(.*).jpg$ /images/$1 permanent;
+    }
+    #5.3重写参数
+    location /search {
+      rewrite ^/search/(.*)$ /search.php?q=$1 last;
+    }
+		#5.4强制HTTPS
+    if ($scheme != "https") {
+      rewrite ^ https://$host$request_uri permanent;
+    }
+    #5.5URL隐藏
+    location /admin {
+      rewrite ^/admin/(.*)$ /$1 last;
+    }
+		#5.6域名跳转（重定向）
+    server {
+      listen 80;
+      server_name www.itheima.com;
+      rewrite ^(.*) http://www.hm.com$1 permanent;
+    }
+    
+    #6.反向代理
+		location /api {
+      #6.1设置被代理服务器地址（可以是主机名称、IP地址加端口号形式）（位置：location）
+      #实际访问的资源地址：
+      #1.proxy_pass中如果存在uri，就不会加上location的地址
+      #2.proxy_pass中如果不存在uri，就会加上location的地址。
+      proxy_pass http://192.168.200.146/;  #实际要访问的资源的地址：http://192.168.200.146/index.html
+      proxy_pass http://192.168.200.146; #实际要访问的资源的地址：http://192.168.200.146/api/index.html
+    
+      #6.2接收客户端的请求头信息并做一些维护工作，并将新的请求头发送给被代理的服务器。可以使用该功能让被代理的服务器获取到真实的客户端ip端口等信息。（位置：http、server、location）
+    	proxy_set_header username TOM;
+      
+      #6.3重置响应头信息中的"Location"和"Refresh"。可以在重定向时，防止客户端看到被代理的服务器的地址。
+      proxy_redirect http://192.168.200.146 http://192.168.200.133;
+      
+      #6.4反向代理调优（位置：http、server、location）
+      proxy_buffering            on;
+      proxy_buffer_size          4 32k;
+      proxy_busy_buffers_size    64k;
+      proxy_temp_file_write_size 64k;
+    }
+    
+    
+    #7.使用nginx制作下载站点（位置：http、server、location）
+    location /download{
+      root /usr/local;
+      autoindex on;
+      autoindex_exact_size on;
+      autoindex_format html;
+      autoindex_localtime on;
+    }
+  }
+  
+  #10.安全控制https（所有指令位置：http、server）
+  server {
+    listen       443 ssl;
+    server_name  localhost;
+
+    ssl_certificate      server.cert; #证书
+    ssl_certificate_key  server.key; #key
+
+    ssl_session_cache    shared:SSL:1m;
+    ssl_session_timeout  5m;
+
+    ssl_ciphers  HIGH:!aNULL:!MD5;
+    ssl_prefer_server_ciphers  on;
+
+    location / {
+      root   html;
+      index  index.html index.htm;
+    }
+  }
+  
+  #11.负载均衡：在反向代理基础上，把用户的请求根据指定的算法分发到一组upstream虚拟服务池
+  upstream backend{
+    server 192.168.200.146:9091;
+    server 192.168.200.146:9092;
+    server 192.168.200.146:9093;
+  }
+  server {
+    listen 8083;
+    server_name localhost;
+    location /{
+      proxy_pass http://backend;
+    }
+  }
+  
+  #12.动静分离
+  upstream webservice{
+  	server 192.168.200.146:8080;
+  }
+  server {
+    listen       80;
+    server_name  localhost;
+
+    #动态资源
+    location /demo {
+      proxy_pass http://webservice;
+    }
+    
+    #静态资源
+    location ~/.*\.(png|jpg|gif|js){
+      root html/web;
+      gzip on;
+    }
+
+    location / {
+      root   html/web;
+      index  index.html index.htm;
+    }
+  }
+}
+
+#13.搭建高可用环境：使用Keepalived实现nginx的高可用，再使用nginx实现上游服务器的高可用
+```
