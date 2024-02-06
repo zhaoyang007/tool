@@ -86,9 +86,9 @@ function App() {
 }
 ```
 
-# React组件
+# 函数组件
 
-**react组件**
+**函数组件**
 
 react组件就是一个首字母大写的函数。
 
@@ -437,6 +437,79 @@ function Son() {
 * 只能在组件中或其他自定义Hook中使用
 * 只能在组件的顶层使用，不能在if、for、其他函数中使用
 
+**useReducer**
+
+作用：和useState类似，用来管理相对复杂的状态数据
+
+**useMemo**
+
+作用：在组件每次重新渲染时缓存计算结果。类似于计算属性
+
+**useCallback**
+
+作用：在组件多次重新渲染时缓存函数，跟useMemo类似，只不过缓存的是函数。
+
+**React.memo**
+
+作用：允许组件在Props没有改变的情况下跳过渲染。
+
+react组件默认的渲染机制：只要父组件重新渲染子组件就会重新渲染。
+
+**forwardRef**
+
+作用：通过ref获取子组件内部的dom元素
+
+**useInperativeHandle**
+
+作用：通过ref暴露子组件中的方法
+
+# 类组件
+
+**类组件**
+
+```jsx
+import { Component } from 'react'
+
+class Counter extends Component {
+	// 通过属性state定义状态数据
+  state = {
+    count: 0
+  }
+  // 方法
+  handleClick = () => {
+    // 通过setState方法来修改数据
+    this.setState({
+      count: this.state.count + 1
+    })
+  }
+  
+  // 通过render函数来写UI模版（JSX）
+  render() {
+    return <button onClick={this.handleClick}>{this.state.count}</button>
+  }
+}
+```
+
+**类组件生命周期**
+
+1. **挂载阶段（Mounting）**：组件实例第一次被创建并插入到DOM中。
+   - `constructor()`：组件的构造函数，在创建组件实例时调用。
+   - `componentWillMount()`（已不再推荐使用）：在组件即将被挂载到DOM之前调用。
+   - `render()`：渲染组件的UI。
+   - `componentDidMount()`：在组件被挂载到DOM后调用。
+2. **更新阶段（Updating）**：组件的props或state发生变化时，会引发更新。
+   - `componentWillReceiveProps()`（已不再推荐使用）：在组件将要接收新的props时调用。
+   - `shouldComponentUpdate()`：确定组件是否应该重新渲染。
+   - `componentWillUpdate()`（已不再推荐使用）：在组件即将更新之前调用。
+   - `render()`：重新渲染组件的UI。
+   - `componentDidUpdate()`：在组件已经更新后调用。
+3. **卸载阶段（Unmounting）**：组件从DOM中移除。
+   - `componentWillUnmount()`：在组件即将被卸载和销毁之前调用。
+
+**类组件中的组件通信**
+
+跟函数组件类似。区别是类组件中要使用this.props
+
 # Redux
 
 Redux是React最常用的集中状态管理工具，类似于Vue中的Pinia（Vuex），可以独立于框架运行。
@@ -782,6 +855,46 @@ function App() {
 }
 ```
 
+# zustand
+
+极简的状态管理工具
+
+**基础使用**
+
+```jsx
+// zustand
+import {create} from 'zustand'
+// 1.创建store
+// 调用zustand的create方法，参数是一个回调函数
+// - 回调函数的参数为set，它是用来修改数据的方法，必须调用它来修改数据
+//   - 需要用到老数据：set的参数为函数，函数接收state，并返回一个对象
+//   - 不需要用到老数据：set的参数为对象
+// - 回调函数必须返回一个对象，对象内部编写状态数据和方法
+const useStore = create((set) => {
+  return {
+    count: 0,
+    inc: () => {
+      // set的参数为函数
+			set((state) => ({ count: state.count + 1 }))
+      // set的参数为对象
+      set({ count: 100 })
+    }
+  }
+})
+
+// 2.绑定store到组件
+function App() {
+  const { count, inc } = useStore()
+  return (
+  	<>
+   		<button onClick={inc}>{ count }</button>
+    </>
+  )
+}
+
+export default App
+```
+
 # ReactRouter
 
 **安装react-router-dom**
@@ -910,6 +1023,12 @@ export default Login
    const id = params.id
    ```
 
+**路由信息**
+
+通过useLocation useSearchParams等钩子函数获取
+
+
+
 **嵌套路由**
 
 1. 使用children配置路由规则嵌套关系
@@ -927,3 +1046,161 @@ export default Login
 * history模式：
   * createRouter使用createHashRouter函数创建
   * 原理：监听hashChange事件
+
+**路由懒加载**
+
+```js
+import { lazy, Suspense } from 'react'
+import Home from '@/pages/Home'
+import Article from '@/pages/Article'
+import Publish from '@/pages/Publish'
+
+// 1.使用lazy函数对组件进行动态导入
+const Home = lazy(() => import('@/pages/Home'))
+const Article = lazy(() => import('@/pages/Article'))
+const Publish = lazy(() => import('@/pages/Publish'))
+
+// 2.路由规则配置中使用Suspense组件包裹页面组件
+{
+  path: 'article',
+  element: <Suspense fallback={'加载中'}><Article/></Suspense>
+}
+```
+
+
+
+# 项目配置
+
+**别名路径配置**
+
+* 路由解析配置（webpack），把`@/`解析为`src/`
+
+  * 安装craco `npm i @craco/craco -D`
+
+  * 项目根目录下创建配置文件 craco.config.js
+
+  * 配置文件中添加路径解析配置
+
+    ```js
+    const path = require('path')
+    module.exports = {
+      webpack: {
+        alias: {
+    			'@': path.resolve(__dirname, 'src')
+        }
+      }
+    }
+    ```
+
+  * 包文件中配置启动和打包命令
+
+    ```json
+    "scripts": {
+    	"start": "craco start",
+      "build": "craco build"
+    }
+    ```
+
+* 路径联想配置（vscode），vscode输入`@/`时，自动联想出来对应的`src/`下的子目录
+
+  * 根目录下新建jsconfig.json配置文件
+
+    ```json
+    {
+      "compilerOptions": {
+        "baseUrl": "./",
+        "paths": {
+          "@/*": [
+            "src/*"
+          ]
+        }
+      }
+    }
+    ```
+
+**数据mock**
+
+json-server
+
+# React+TS
+
+**环境搭建**
+
+```bash
+npm create vite@latest my-react-app -- --template react-ts
+```
+
+**useState与ts**
+
+初始值为基础类型可以直接推断，不用显示定义类型。
+
+useState本身是一个泛型函数，可以传入具体的类型。
+
+1. 限制useState函数的初始值必须满足类型为：User | () => User
+2. 限制setUser函数的参数必须满足类型：User | () => User | undefined
+
+```tsx
+type User = {
+  name: string
+  age: number
+}
+const [user, setUser] = useState<User>()
+```
+
+初始值为null：
+
+当不知道状态初始值是什么，将初始值设置为null是常见的做法，此时可以通过具体类型联合null来做显示注解。
+
+1. 限制useState函数的初始值必须满足类型为：User | null
+2. 限制setUser函数的参数必须满足类型：User | null
+
+```tsx
+type User = {
+  name: string
+  age: number
+}
+const [user, setUser] = useState<User | null>(null)
+```
+
+**props与ts**
+
+为组件prop添加类型，本质就是给函数的参数添加类型注解，可以使用type或interface来做。 
+
+```tsx
+type Props = {
+	className: string
+}
+function Button(props: Props) {
+	const { className } = props
+  return <button className={className}>click me</button>
+}
+```
+
+**子元素**
+
+为props.children添加类型。
+
+第一种是使用 `React.ReactNode` 类型，这是可以在 JSX 中作为子元素传递的所有可能类型的并集
+
+```tsx
+interface ModalRendererProps {
+  title: string;
+  children: React.ReactNode;
+}
+```
+
+第二种方法是使用 `React.ReactElement` 类型，它只包括 JSX 元素，而不包括 JavaScript 原始类型，如 string 或 number
+
+```tsx
+interface ModalRendererProps {
+  title: string;
+  children: React.ReactElement;
+}
+```
+
+**hooks与ts**
+
+**DOM事件与ts**
+
+**样式属性与ts**
+
