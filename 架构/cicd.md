@@ -12,22 +12,172 @@
 
 1. 安装GitLab
 
-2. 配置GitLab
-3. 创建私有仓库
-4. 管理访问权限
+   ```bash
+   #安装
+   #安装依赖
+   sudo yum install -y curl policycoreutils-python openssh-server perl
+   #添加GitLab官方仓库
+   curl -sS https://packages.gitlab.com/install/repositories/gitlab/gitlab-ce/script.rpm.sh | sudo bash
+   #安装GitLab
+   sudo EXTERNAL_URL="http://your-server-ip" yum install -y gitlab-ce-12.0.3
+   #启动GitLab
+   systemctl enable gitlab-runsvdir
+   systemctl start gitlab-runsvdir
+   
+   #卸载
+   #停止gitlab，删除用户和组
+   sudo gitlab-ctl stop && sudo gitlab-ctl remove-accounts
+   #删除所有数据
+   sudo gitlab-ctl cleanse && sudo rm -r /opt/gitlab
+   sudo rm -rf /etc/gitlab /opt/gitlab /var/opt/gitlab /var/log/gitlab
+   #停止gitlab服务
+   sudo systemctl stop gitlab-runsvdir
+   sudo systemctl disable gitlab-runsvdir
+   #卸载
+   sudo gitlab-ctl uninstall
+   sudo yum remove gitlab-ce
+   ```
+
+2. 启动gitlab
+
+3. 创建私有仓库（新建项目，选择私有）
+
+4. 添加用户
+
+   web页面：左下角Admin Area > Users > New user > 填写name username(登录用户名) email
+
+5. 修改密码：（root和其他成员一致）
+
+   web页面：编辑用户给用户设置密码，然后发送给成员 > 用户登录成功后，系统会提示修改密码
+
+6. 在项目中，拉取成员
+
+   web页面：选择项目 > Manage > Members > Invite members > 选择成员及角色
+
+常用命令
+
+```bash
+#启动
+gitlab-ctl start
+#停止
+gitlab-ctl stop
+#重启
+gitlab-ctl restart
+#查看状态
+gitlab-ctl status
+#更新配置
+sudo gitlab-ctl reconfigure
+#查看日志
+gitlab-ctl tail
+
+#备份数据
+gitlab-rake gitlab:backup:create
+#恢复数据
+gitlab-rake gitlab:backup:restore
+```
 
 # GitLab CI/CD
 
 CI/CD 是一种持续的软件开发方法，您可以在其中持续构建、测试、部署和监视迭代代码更改。
 
-## 常用术语
+## CICD步骤
 
-* .gitlab-ci.yml
-* gitlab-runner
-* 管道：由作业和阶段组成
-  - **作业**定义了你想做什么。例如，测试代码更改或部署到暂存环境。
-    - 每个作业都包含一个脚本部分并属于一个阶段
-  - 工作分为**多个阶段**。每个阶段至少包含一项工作。典型的阶段可能是`build`、、`test`和`deploy`。
+1. 安装gitlab-runner
+
+   ```bash
+   #添加GitLab Runner仓库
+   curl -L https://packages.gitlab.com/install/repositories/runner/gitlab-runner/script.rpm.sh | sudo bash
+   
+   #安装最新版本
+   sudo yum install -y gitlab-runner
+   #安装指定版本
+   sudo yum install gitlab-runner-16.5.0-1
+   ```
+
+2. 获取注册令牌
+
+   设置 > CI/CD > Runner 展开 > 新建项目runner > 选择一个平台 > 可选。输入runner配置（标签必填） > 提交
+
+3. 注册gitlab-runner：`gitlab-runner register`
+
+   1. 实例URL：https://gitlab.com
+   2. 令牌
+   3. runner名称
+   4. 执行器
+
+   ```bash
+   gitlab-runner register  --url https://gitlab.com  --token glrt-CSUsFDhXTkGiFzQ4c6Hx
+   
+   gitlab-runner register  --url http://123.57.18.20  --token glrt-E1EafTmk_B49Ud5FTkx1
+   ```
+
+4. 运行gitlab-runner：`gitlab-runner run`
+
+5. 准备gitlab远程项目
+
+6. 定义流水线
+
+   ```yml
+   stages:
+     - build
+     - test
+     - deploy
+   
+   build_job:
+     stage: build
+     script:
+       - echo "Building the project..."
+       # 添加构建项目的命令
+   
+   test_job:
+     stage: test
+     script:
+       - echo "Running tests..."
+       # 添加运行测试的命令
+   
+   deploy_job:
+     stage: deploy
+     script:
+       - echo "Deploying to production..."
+       # 添加部署到生产环境的命令
+   ```
+
+7. 提交并观察
+
+   1. 提交代码变更：当您向仓库提交更改时，GitLab 会自动根据 `.gitlab-ci.yml` 文件中定义的规则来执行 CI/CD 流程。
+   2. 监控流水线状态：在 GitLab 的 UI 中，您可以监控流水线的状态，查看每个阶段和作业的执行情况。
+      1. 在左侧边栏上，选择**“搜索”或转到**并查找您的项目。
+      2. 选择**“构建”>“流水线”**。
+      3. 选择**运行管道**。
+
+**gitlab-runner常用命令**
+
+```bash
+#注册
+gitlab-runner register
+#注销
+gitlab-runner unregister
+#启动
+gitlab-runner start
+#停止
+gitlab-runner stop
+#重启
+gitlab-runner restart
+#查看状态
+gitlab-runner status
+#列出已注册的Runner
+gitlab-runner list
+#卸载Runner
+gitlab-runner uninstall
+#更新Runner
+gitlab-runner exec shell git pull
+#查看日志
+gitlab-runner logs
+#执行单个作业
+gitlab-runner exec shell <job_name>
+```
+
+
 
 ## .gitlab-ci.yml
 
@@ -52,13 +202,11 @@ gitlab-runner是运行你的工作的代理。这些代理可以在物理机或�
 
 GitLab Runner 是一个与 GitLab CI/CD 配合使用以在管道中运行作业的应用程序。
 
-### 安装runner
-
-出于兼容性原因，GitLab Runner主要.次要版本应与 GitLab 主要和次要版本保持同步。
-
 ### 注册runner
 
 注册Runner是将Runner与GitLab实例关联的过程。
+
+安装目录：`/etc/gitlab-runner/config.toml`
 
 **1.获取 GitLab 实例的 URL 和注册令牌**：
 
@@ -105,8 +253,6 @@ sudo gitlab-runner register \
   --description "docker-runner"
 ```
 
-
-
 ### 配置和使用 Runner
 
 1. **配置 `.gitlab-ci.yml`**：
@@ -129,8 +275,6 @@ token_obtained_at = 2023-07-05T08:56:33Z
 token_expires_at = 0001-01-01T00:00:00Z
 executor = "shell"
 ```
-
-重新加载配置：`gitlab-runner restart`
 
 ### 维护和更新 Runner
 
