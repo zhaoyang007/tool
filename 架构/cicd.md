@@ -8,53 +8,82 @@
    1. 执行脚本命令
    2. CICD
 
-# GitLab私有仓库
+# GitLab
+
+[gitlab官方中文文档](https://docs.gitlab.cn/jh/index.html)
+
+搭建gitlab及其cicd主要涉及：
+
+* 私有仓库（gitlab）
+* CICD
+  * gitlab-runner
+  * 流水线
+
+## 私有仓库（gitlab）
+
+**基础步骤**
 
 1. 安装GitLab
 
    ```bash
-   #安装
    #安装依赖
    sudo yum install -y curl policycoreutils-python openssh-server perl
    #添加GitLab官方仓库
    curl -sS https://packages.gitlab.com/install/repositories/gitlab/gitlab-ce/script.rpm.sh | sudo bash
    #安装GitLab
-   sudo EXTERNAL_URL="http://your-server-ip" yum install -y gitlab-ce-12.0.3
-   #启动GitLab
-   systemctl enable gitlab-runsvdir
-   systemctl start gitlab-runsvdir
-   
-   #卸载
-   #停止gitlab，删除用户和组
-   sudo gitlab-ctl stop && sudo gitlab-ctl remove-accounts
-   #删除所有数据
-   sudo gitlab-ctl cleanse && sudo rm -r /opt/gitlab
-   sudo rm -rf /etc/gitlab /opt/gitlab /var/opt/gitlab /var/log/gitlab
-   #停止gitlab服务
-   sudo systemctl stop gitlab-runsvdir
-   sudo systemctl disable gitlab-runsvdir
-   #卸载
-   sudo gitlab-ctl uninstall
-   sudo yum remove gitlab-ce
+   sudo yum install -y gitlab-ce
    ```
 
-2. 启动gitlab
+2. 检查版本
 
-3. 创建私有仓库（新建项目，选择私有）
+   ```bash
+   cat /opt/gitlab/embedded/service/gitlab-rails/VERSION
+   ```
 
-4. 添加用户
+3. 修改gitlab访问地址
+
+   ```bash
+   vim /etc/gitlab/gitlab.rb
+   修改该行external_url 'http://123.57.18.20:9001'
+   ```
+
+4. 更新配置
+
+   ```bash
+   gitlab-ctl reconfigure
+   ```
+
+5. 启动gitlab
+
+   ```bash
+   gitlab-ctl start
+   ```
+
+6. 访问gitlab web页面
+
+   用户名：`root`
+
+   密码：`cat /etc/gitlab/initial_root_password`
+
+7. 修改密码
+
+   web页面：编辑用户给用户设置密码
+
+8. 创建项目
+
+9. 添加用户
 
    web页面：左下角Admin Area > Users > New user > 填写name username(登录用户名) email
 
-5. 修改密码：（root和其他成员一致）
+10. 修改密码（root和其他成员一致）
 
-   web页面：编辑用户给用户设置密码，然后发送给成员 > 用户登录成功后，系统会提示修改密码
+    web页面：编辑用户给用户设置密码，然后发送给成员 > 用户登录成功后，系统会提示修改密码
 
-6. 在项目中，拉取成员
+11. 在项目中，拉取成员
 
-   web页面：选择项目 > Manage > Members > Invite members > 选择成员及角色
+    web页面：选择项目 > Manage > Members > Invite members > 选择成员及角色
 
-常用命令
+**常用命令**
 
 ```bash
 #启动
@@ -66,23 +95,54 @@ gitlab-ctl restart
 #查看状态
 gitlab-ctl status
 #更新配置
-sudo gitlab-ctl reconfigure
+gitlab-ctl reconfigure
 #查看日志
 gitlab-ctl tail
-
+#删除gitlab数据，重新白手起家
+gitlab-ctl cleanse 
+#查看所有服务配置文件信息
+gitlab-ctl show-config 
+#列举所有启动服务
+gitlab-ctl service-list 
 #备份数据
 gitlab-rake gitlab:backup:create
 #恢复数据
 gitlab-rake gitlab:backup:restore
+
+
+#系统服务
+#启动GitLab
+systemctl enable gitlab-runsvdir
+systemctl start gitlab-runsvdir
 ```
 
-# GitLab CI/CD
+**卸载**
+
+```bash
+#停止gitlab，删除用户和组
+sudo gitlab-ctl stop && sudo gitlab-ctl remove-accounts
+#删除所有数据
+sudo gitlab-ctl cleanse && sudo rm -r /opt/gitlab
+sudo rm -rf /etc/gitlab /opt/gitlab /var/opt/gitlab /var/log/gitlab
+#停止gitlab服务
+sudo systemctl stop gitlab-runsvdir
+sudo systemctl disable gitlab-runsvdir
+#卸载
+sudo gitlab-ctl uninstall
+sudo yum remove gitlab-ce
+```
+
+## CICD
 
 CI/CD 是一种持续的软件开发方法，您可以在其中持续构建、测试、部署和监视迭代代码更改。
 
-## CICD步骤
+### gitlab-runner
+
+**基础步骤**
 
 1. 安装gitlab-runner
+
+   GitLab Runner是一个与 GitLab CI/CD 配合使用以在管道中运行作业的应用程序。
 
    ```bash
    #添加GitLab Runner仓库
@@ -96,26 +156,71 @@ CI/CD 是一种持续的软件开发方法，您可以在其中持续构建、�
 
 2. 获取注册令牌
 
-   设置 > CI/CD > Runner 展开 > 新建项目runner > 选择一个平台 > 可选。输入runner配置（标签必填） > 提交
+   设置 > CI/CD > Runner 展开 > 新建项目runner > 选择一个平台 > 可选。输入runner配置（标签、描述等） > 提交
+
+   标签作用：可以在 `.gitlab-ci.yml` 中的作业定义中使用这些标签来选择特定的 Runner。
 
 3. 注册gitlab-runner：`gitlab-runner register`
 
+   注册Runner是将Runner与GitLab实例关联的过程。
+
    1. 实例URL：https://gitlab.com
+
+      * 如果您的项目托管在`gitlab.example.com/yourname/yourproject`上，则实例URL为`https://gitlab.example.com`。
+
+      * 如果您的项目托管在`GitLab.com`上，则 URL 为`https://gitlab.com`。
+
    2. 令牌
+
    3. runner名称
-   4. 执行器
+
+   4. 执行器（例如 `shell`、`docker` 等）
+
+   示例：
 
    ```bash
-   gitlab-runner register  --url https://gitlab.com  --token glrt-CSUsFDhXTkGiFzQ4c6Hx
-   
-   gitlab-runner register  --url http://123.57.18.20  --token glrt-E1EafTmk_B49Ud5FTkx1
+   gitlab-runner register
+   gitlab-runner register  --url http://123.57.18.20:9001  --token glrt-K9xxC9vk2JuVSNfWZ19y
    ```
 
-4. 运行gitlab-runner：`gitlab-runner run`
+   使用[非交互模式](https://docs.gitlab.cn/runner/commands/index.html#non-interactive-registration)附加参数来注册运行器：
 
-5. 准备gitlab远程项目
+   ```bash
+   sudo gitlab-runner register \
+     --non-interactive \
+     --url "https://gitlab.com/" \
+     --token "$RUNNER_TOKEN" \
+     --executor "docker" \
+     --docker-image alpine:latest \
+     --description "docker-runner"
+   ```
 
-6. 定义流水线
+4. 可以使用`config.toml`来定义更[高级的运行器配置](https://docs.gitlab.cn/runner/configuration/advanced-configuration.html)。
+
+   ```ini
+   [[runners]]
+   name = "my-project-runner1"
+   url = "http://127.0.0.1:3000"
+   id = 38
+   token = "glrt-TOKEN"
+   token_obtained_at = 2023-07-05T08:56:33Z
+   token_expires_at = 0001-01-01T00:00:00Z
+   executor = "shell"
+   ```
+
+5. Runner范围
+
+   - [共享 runners](https://docs.gitlab.cn/ee/ci/runners/runners_scope.html#shared-runners)，可用于极狐GitLab 实例中的所有群组和项目。
+   - [群组 runners](https://docs.gitlab.cn/ee/ci/runners/runners_scope.html#group-runners)，可用于群组中的所有项目和子组。
+   - [项目 runners](https://docs.gitlab.cn/ee/ci/runners/runners_scope.html#project-runners) 与特定项目相关联。通常，项目 runner 只用于一个项目。
+
+   runner的范围是在注册期间定义的。这就是runner如何知道它可用于哪些项目的方式。
+
+6. 运行gitlab-runner：`gitlab-runner run`
+
+7. 准备gitlab远程项目
+
+8. 定义流水线
 
    ```yml
    stages:
@@ -128,21 +233,27 @@ CI/CD 是一种持续的软件开发方法，您可以在其中持续构建、�
      script:
        - echo "Building the project..."
        # 添加构建项目的命令
+     tags: 
+       - shared
    
    test_job:
      stage: test
      script:
        - echo "Running tests..."
        # 添加运行测试的命令
+   	tags: 
+       - shared
    
    deploy_job:
      stage: deploy
      script:
        - echo "Deploying to production..."
        # 添加部署到生产环境的命令
+     tags: 
+       - shared
    ```
 
-7. 提交并观察
+9. 提交并观察
 
    1. 提交代码变更：当您向仓库提交更改时，GitLab 会自动根据 `.gitlab-ci.yml` 文件中定义的规则来执行 CI/CD 流程。
    2. 监控流水线状态：在 GitLab 的 UI 中，您可以监控流水线的状态，查看每个阶段和作业的执行情况。
@@ -156,7 +267,7 @@ CI/CD 是一种持续的软件开发方法，您可以在其中持续构建、�
 #注册
 gitlab-runner register
 #注销
-gitlab-runner unregister
+gitlab-runner unregister --name <Runner名称>
 #启动
 gitlab-runner start
 #停止
@@ -165,6 +276,8 @@ gitlab-runner stop
 gitlab-runner restart
 #查看状态
 gitlab-runner status
+#查看是否可用
+gitlab-runner verify
 #列出已注册的Runner
 gitlab-runner list
 #卸载Runner
@@ -177,9 +290,7 @@ gitlab-runner logs
 gitlab-runner exec shell <job_name>
 ```
 
-
-
-## .gitlab-ci.yml
+### 流水线
 
 文档：https://docs.gitlab.com/ee/ci/yaml/
 
@@ -196,146 +307,7 @@ gitlab-runner exec shell <job_name>
 - 将应用程序部署到的位置。
 - 您是要自动运行脚本还是手动触发其中的任何脚本。
 
-## gitlab-runner
-
-gitlab-runner是运行你的工作的代理。这些代理可以在物理机或虚拟实例上运行。在您的`.gitlab-ci.yml`文件中，您可以指定运行作业时要使用的容器映像。运行程序加载图像，克隆您的项目并在本地或容器中运行作业。
-
-GitLab Runner 是一个与 GitLab CI/CD 配合使用以在管道中运行作业的应用程序。
-
-### 注册runner
-
-注册Runner是将Runner与GitLab实例关联的过程。
-
-安装目录：`/etc/gitlab-runner/config.toml`
-
-**1.获取 GitLab 实例的 URL 和注册令牌**：
-
-- 在 GitLab 网站中，导航到您的项目的 **Settings > CI/CD**。
-- 展开 **Runners** 部分，您会找到注册令牌。
-
-**创建个人访问令牌**
-
-1. 在左侧边栏上，选择您的头像。
-2. 选择**编辑个人资料**。
-3. 在左侧边栏上，选择**访问令牌**。
-4. 选择**添加新令牌**。
-5. 输入令牌的名称和到期日期。
-   - 该令牌将于该日期午夜 UTC 到期。
-   - 如果您不输入到期日期，到期日期将自动设置为当前日期之后 365 天。
-   - 默认情况下，该日期最多可以晚于当前日期 365 天。
-6. 在**选择范围**部分中，选中**create_runner**复选框。
-7. 选择**创建个人访问令牌**。
-
-**2.在服务器上注册 Runner**
-
-在具有 GitLab Runner 的服务器上，运行命令`gitlab-runner register`开始注册过程：
-
-- 当提示时输入您的 GitLab 实例 URL。
-  - 如果您的项目托管在 上`gitlab.example.com/yourname/yourproject`，则您的 GitLab 实例 URL 为`https://gitlab.example.com`。
-  - 如果您的项目托管在 GitLab.com 上，则 URL 为`https://gitlab.com`。
-- 输入之前获取的注册令牌。
-- 输入此 Runner 的描述（例如 `my-runner`）。
-- 输入标签（逗号分隔），标签用于选择特定的 Runner 来运行作业。
-- 选择执行器（例如 `shell`、`docker` 等）。
-  - 对于`executor`，因为您的运行程序将直接在主机上运行，所以输入`shell`。执行器是运行器执行作业的环境。当您注册跑步者时，必须选择一个执行器。执行器通常在安装了 GitLab Runner 的同一台机器上处理作业。执行器决定每个作业运行的环境。
-
-要在同一主机上注册多个运行程序（每个运行程序具有不同的配置），请重复该`register`命令。要在多台主机上注册相同的配置，请为每个运行器注册使用相同的运行器身份验证令牌。有关更多信息，请参阅[重用运行器配置](https://docs.gitlab.com/runner/fleet_scaling/index.html#reusing-a-runner-configuration)。
-
-您还可以使用[非交互模式](https://docs.gitlab.com/runner/commands/index.html#non-interactive-registration)使用附加参数来注册运行器：
-
-```bash
-sudo gitlab-runner register \
-  --non-interactive \
-  --url "https://gitlab.com/" \
-  --token "$RUNNER_TOKEN" \
-  --executor "docker" \
-  --docker-image alpine:latest \
-  --description "docker-runner"
-```
-
-### 配置和使用 Runner
-
-1. **配置 `.gitlab-ci.yml`**：
-   - 在您的项目根目录中创建或修改 `.gitlab-ci.yml` 文件，定义您的 CI/CD 流水线。
-2. **使用标签运行特定 Runner**：
-   - 如果您在注册 Runner 时指定了标签，您可以在 `.gitlab-ci.yml` 中的作业定义中使用这些标签来选择特定的 Runner。
-3. **监控和管理 Runner**：
-   - 在 GitLab 网站的 **Settings > CI/CD** 下的 **Runners** 部分，您可以看到所有注册的 Runner。
-   - 您可以在这里启用/禁用 Runner 或查看其状态。
-
-可以使用`config.toml`来定义更[高级的运行器配置](https://docs.gitlab.com/runner/configuration/advanced-configuration.html)。
-
-```ini
-[[runners]]
-name = "my-project-runner1"
-url = "http://127.0.0.1:3000"
-id = 38
-token = "glrt-TOKEN"
-token_obtained_at = 2023-07-05T08:56:33Z
-token_expires_at = 0001-01-01T00:00:00Z
-executor = "shell"
-```
-
-### 维护和更新 Runner
-
-- 定期检查更新并根据 GitLab Runner 文档更新您的 Runner。
-- 监控 Runner 的性能和日志，确保它正常运行。
-
-### 谁有权在GitLab UI中访问运行器(runner)
-
-根据您想要访问的对象，runner分为三种类型：
-
-- [共享运行器](https://docs.gitlab.com/ee/ci/runners/runners_scope.html#shared-runners)可供所有项目使用
-- [团体赛](https://docs.gitlab.com/ee/ci/runners/runners_scope.html#group-runners)适用于团体中的所有项目和子团体
-- [项目运行者](https://docs.gitlab.com/ee/ci/runners/runners_scope.html#project-runners)适用于单个项目
-
-runner的范围是在注册期间定义的。这就是跑步者如何知道它可用于哪些项目的方式。
-
-### 标签
-
-当您注册跑步者时，您可以为其 添加[**标签。**](https://docs.gitlab.com/ee/ci/yaml/index.html#tags)
-
-**使用标签运行特定 Runner**：
-
-- 如果您在注册 Runner 时指定了标签，您可以在 `.gitlab-ci.yml` 中的作业定义中使用这些标签来选择特定的 Runner。
-
-当 CI/CD 作业运行时，它通过查看分配的标签知道要使用哪个运行器。标签是过滤作业可用运行者列表的唯一方法。
-
-例如，如果跑步者具有标签`ruby`，您可以将此代码添加到项目的`.gitlab-ci.yml`文件中：
-
-```
-job:
-  tags:
-    - ruby
-```
-
-当作业运行时，它使用带有`ruby`标签的运行器。
-
-### 配置runner
-
-您可以通过编辑文件来[**配置**](https://docs.gitlab.com/runner/configuration/advanced-configuration.html) 运行器`config.toml`。这是在运行程序安装过程中安装的文件。
-
-在此文件中，您可以编辑特定跑步者或所有跑步者的设置。
-
-您可以指定日志记录和缓存等设置。您可以设置并发、内存、CPU 限制等。
-
-### 监控runner
-
-您可以使用 Prometheus 来[**监控**](https://docs.gitlab.com/runner/monitoring/index.html)您的跑步者。您可以查看当前正在运行的作业数量以及运行程序使用的 CPU 数量等信息。
-
-在 GitLab 网站的 **Settings > CI/CD** 下的 **Runners** 部分，您可以看到所有注册的 Runner。
-
-您可以在这里启用/禁用 Runner 或查看其状态。
-
-### 使用runner来运行作业
-
-配置运行程序并将其可用于您的项目后，您的 [CI/CD](https://docs.gitlab.com/ee/ci/index.html)作业就可以使用该运行程序。
-
-## CICD步骤
-
-### 创建.gitlab-ci.yml
-
-#### 基础结构
+**基础结构**
 
 1. **stages(阶段)**:
 
@@ -355,7 +327,7 @@ job:
          - echo "Building the project"
      ```
 
-#### 作业配置
+**作业配置**
 
 1. **script**:
    - 定义在作业运行时要执行的命令序列。
@@ -376,7 +348,7 @@ job:
    - 指定作业完成后要保存的文件或目录。
    - 示例：`artifacts: { paths: [build/] }`
 
-#### 高级配置
+**高级配置**
 
 1. **before_script/after_script**:
 
@@ -427,14 +399,11 @@ job:
 
 这些是 `.gitlab-ci.yml` 文件中常用的一些关键语法。GitLab CI/CD 提供了大量的配置选项，可用于创建复杂和高度定制化的流水线。更完整和详细的语法和选项可以在 GitLab 的官方文档中找到。
 
-### 定义流水线
+**基础配置示例**
 
-1. **定义构建阶段**:
-   - 指定如何构建项目。例如，您可以添加一个阶段来编译代码或创建 Docker 镜像。
-2. **定义测试阶段**:
-   - 设置自动化测试来验证代码的质量。这可能包括单元测试、集成测试等。
-3. **定义部署阶段**:
-   - 定义如何将代码部署到生产或预发布环境。
+1. **定义构建阶段**：指定如何构建项目。例如，您可以添加一个阶段来编译代码或创建 Docker 镜像。
+2. **定义测试阶段**：设置自动化测试来验证代码的质量。这可能包括单元测试、集成测试等。
+3. **定义部署阶段**：定义如何将代码部署到生产或预发布环境。
 
 ```yml
 stages:
@@ -461,26 +430,6 @@ deploy_job:
     # 添加部署到生产环境的命令
 ```
 
-### 使用GitLab Runner
-
-### 提交并观察
-
-1. 提交代码变更
-   - 当您向仓库提交更改时，GitLab 会自动根据 `.gitlab-ci.yml` 文件中定义的规则来执行 CI/CD 流程。
-2. 监控流水线状态
-   - 在 GitLab 的 UI 中，您可以监控流水线的状态，查看每个阶段和作业的执行情况。
-
-以便您可以查看运行程序执行作业。
-
-1. 在左侧边栏上，选择**“搜索”或转到**并查找您的项目。
-2. 选择**“构建”>“管道”**。
-3. 选择**运行管道**。
-4. 选择一个作业以查看作业日志。输出应类似于此示例
-
-### 调整和优化
-
-您可以通过修改 `.gitlab-ci.yml` 文件来调整流程，添加更多阶段，或优化现有作业。
-
 # jenkins
 
 安装java
@@ -488,4 +437,3 @@ deploy_job:
 安装jenkins
 
 jenkins使用和配置
-
