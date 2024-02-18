@@ -1,5 +1,29 @@
 # 数据 mock
 
+## 前端开发环境
+
+**数据mock**
+
+json-server
+
+**请求环境分类**
+
+* 本地mock
+* 本地联调
+* 测试
+* 生产
+
+**请求环境实现**
+
+如果只涉及本地：
+
+* 使用devserver，设置不同的proxy（手动）
+*  或者使用环境变量 + axios基地址+devserver proxy（自动）
+
+如果涉及服务器：
+
+* 需要使用环境变量和axios基地址。
+
 ## json-server
 
 ## koa + mockjs 起本地 mock 服务器
