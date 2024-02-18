@@ -1605,6 +1605,14 @@ npm view <package-name> repository.url
 
 #查看包的源码仓库
 npm repo vue
+
+
+#npm源
+#原始源https://registry.npmjs.org
+#淘宝源https://registry.npm.taobao.org
+npm config get registry #查看源
+npm install --registry=https://registry.npm.taobao.org #临时更换
+npm config set registry https://registry.npm.taobao.org #永久更换
 ```
 
 **全局 node_modules 位置**
