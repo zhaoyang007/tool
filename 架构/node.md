@@ -1938,9 +1938,9 @@ npm link
 
 # nestjs
 
-\>=node16
+## 安装
 
-**创建nestjs项目**
+\>=node16
 
 ```bash
 #安装NestCLI
@@ -1951,17 +1951,176 @@ nest new project-name
 nest new project-name --strict
 ```
 
-**控制器**
+## 控制器
 
-控制器负责处理传入**请求**并向客户端返回**响应。**
+控制器负责处理传入请求并向客户端返回响应。
 
-控制器的目的是接收应用程序的特定请求。路由机制**控制**哪个控制器接收哪些请求。通常，每个控制器都有多个路由，并且不同的路由可以执行不同的操作。
+控制器的目的是接收应用的特定请求。路由机制控制哪个控制器接收哪些请求。通常，每个控制器都有不止一条路由，不同的路由可以执行不同的操作。
 
-为了创建基本控制器，我们使用类和**装饰器**。装饰器将类与所需的元数据关联起来，并使 Nest 能够创建路由映射（将请求绑定到相应的控制器）。
+为了创建基本控制器，我们使用类和装饰器。装饰器将类与所需的元数据相关联，并使 Nest 能够创建路由映射（将请求绑定到相应的控制器）。
 
 要使用 CLI 创建控制器，只需执行`$ nest g controller [name]`命令即可。
 
-必须声明一个方法来绑定路由，但 Nest 并不为所选的方法名称赋予任何意义。
+必须声明一个方法来绑定路由。
+
+控制器必须使用`@Controller()`装饰器，且可以传入路由前缀。
+
+示例：
+
+`cats.controller.ts`
+
+```ts
+import { Controller, Get, Query, Post, Body, Put, Param, Delete } from '@nestjs/common';
+import { CreateCatDto, UpdateCatDto, ListAllEntities } from './dto';
+
+@Controller('cats')
+export class CatsController {
+  @Post()
+  create(@Body() createCatDto: CreateCatDto) {
+    return 'This action adds a new cat';
+  }
+
+  @Get()
+  findAll(@Query() query: ListAllEntities) {
+    return `This action returns all cats (limit: ${query.limit} items)`;
+  }
+
+  @Get(':id')
+  findOne(@Param('id') id: string) {
+    return `This action returns a #${id} cat`;
+  }
+
+  @Put(':id')
+  update(@Param('id') id: string, @Body() updateCatDto: UpdateCatDto) {
+    return `This action updates a #${id} cat`;
+  }
+
+  @Delete(':id')
+  remove(@Param('id') id: string) {
+    return `This action removes a #${id} cat`;
+  }
+}
+```
+
+`app.module.ts`
+
+```typescript
+import { Module } from '@nestjs/common';
+import { CatsController } from './cats/cats.controller';
+
+@Module({
+  controllers: [CatsController],
+})
+export class AppModule {}
+```
+
+## 提供者
+
+## 模块
+
+## 三层架构示例
+
+以下是一个简单的 Nest.js 应用的完整例子，其中包括控制器层、服务层和数据访问层。在这个例子中，我们创建了一个简单的 Cats 应用，用于管理猫的信息。
+
+1. **数据模型（数据访问层）：**
+
+   ```ts
+   // cat.entity.ts
+   import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+   
+   @Entity()
+   export class Cat {
+     @PrimaryGeneratedColumn()
+     id: number;
+   
+     @Column()
+     name: string;
+   }
+   ```
+
+2. **数据访问服务（数据访问层）：**
+
+   ```ts
+   // cats.service.ts
+   import { Injectable } from '@nestjs/common';
+   import { InjectRepository } from '@nestjs/typeorm';
+   import { Repository } from 'typeorm';
+   import { Cat } from './cat.entity';
+   
+   @Injectable()
+   export class CatsService {
+     constructor(
+       @InjectRepository(Cat)
+       private catRepository: Repository<Cat>,
+     ) {}
+   
+     async findAll(): Promise<Cat[]> {
+       return this.catRepository.find();
+     }
+   
+     async create(cat: Cat): Promise<Cat> {
+       return this.catRepository.save(cat);
+     }
+   }
+   ```
+
+3. **控制器（控制器层）：**
+
+   ```ts
+   // cats.controller.ts
+   import { Controller, Get, Post, Body } from '@nestjs/common';
+   import { CatsService } from './cats.service';
+   import { Cat } from './cat.entity';
+   
+   @Controller('cats')
+   export class CatsController {
+     constructor(private catsService: CatsService) {}
+   
+     @Get()
+     async findAll(): Promise<Cat[]> {
+       return this.catsService.findAll();
+     }
+   
+     @Post()
+     async create(@Body() cat: Cat): Promise<Cat> {
+       return this.catsService.create(cat);
+     }
+   }
+   ```
+
+4. **应用模块（主模块）：**
+
+   ```ts
+   // app.module.ts
+   import { Module } from '@nestjs/common';
+   import { TypeOrmModule } from '@nestjs/typeorm';
+   import { CatsController } from './cats/cats.controller';
+   import { CatsService } from './cats/cats.service';
+   import { Cat } from './cats/cat.entity';
+   
+   @Module({
+     imports: [TypeOrmModule.forRoot(), TypeOrmModule.forFeature([Cat])],
+     controllers: [CatsController],
+     providers: [CatsService],
+   })
+   export class AppModule {}
+   ```
+
+5. **应用入口文件（main.ts）：**
+
+   ```ts
+   // main.ts
+   import { NestFactory } from '@nestjs/core';
+   import { AppModule } from './app.module';
+   
+   async function bootstrap() {
+     const app = await NestFactory.create(AppModule);
+     await app.listen(3000);
+   }
+   bootstrap();
+   ```
+
+在这个例子中，我们使用了 Nest.js 中的 `TypeOrmModule` 来进行数据库交互。整个应用分为控制器层（`CatsController`）、服务层（`CatsService`）和数据访问层（`Cat` 数据模型和 `TypeOrmModule` 的配置）。通过这种结构，我们能够更好地组织代码、实现业务逻辑，并且具备了良好的可测试性和可维护性。
 
 # koa
 
