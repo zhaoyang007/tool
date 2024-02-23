@@ -126,7 +126,24 @@ for (var i = 0; i< 10; i++){
 
 整体的 js 代码这个宏任务先执行，同步代码执行完后有微任务执行微任务，没有微任务执行下一个宏任务，如此往复循环至结束。
 
-宏任务之间会触发页面渲染。
+**微任务宏任务api**
+
+微任务：
+
+1. Promise 回调：`.then()`, `.catch()`, 和 `.finally()` 方法的回调。
+2. MutationObserver：通过 MutationObserver API 注册的回调，用于监视 DOM 变化的接口。
+3. process.nextTick（Node.js 环境下）：在 Node.js 中，process 对象有一个 nextTick 方法，可以注册一个在事件循环结束后立即执行的回调。
+
+宏任务：
+
+1. setTimeout 和 setInterval：通过 `setTimeout` 和 `setInterval` 注册的回调。
+2. I/O 操作：文件读写、网络请求等 I/O 操作的回调。
+3. UI 渲染：DOM 渲染的回调。
+4. postMessage：通过 `postMessage` 注册的回调。
+5. MessageChannel：通过 `MessageChannel` API 注册的回调。
+6. setImmediate（Node.js 环境下）：在 Node.js 中，`setImmediate` 注册的回调。
+
+**宏任务之间会触发页面渲染**
 
 ```js
 // 修改DOM
@@ -482,14 +499,18 @@ a.toFixed(2) // '10.16'
 
 如果想按照其他标准进行排序，需要提供比较函数，该函数接收要比较的两个值 a 和 b，返回一个用于说明这两个值的相对顺序的数字：
 
-* a 小于 b，返回负数，升序
+1 2 3     
+
+3 2 1 
+
+* a 小于 b，返回负数，升序（ascending）
 * a 大于 b，返回正数，升序
-* a 小于 b，返回正数，降序
+* a 小于 b，返回正数，降序（descending）
 * a 大于 b，返回负数，降序
 * a 等于 b，返回 0
 
 ```js
-// 对象型数组，按某个对象的key做升降序排列
+// 对象数组中按某个对象的key做升降序排列
 function compare(prop, order) {
   return function (obj1, obj2) {
     var val1 = obj1[prop];
@@ -505,7 +526,7 @@ function compare(prop, order) {
         return 1
       }
     } else if (val1 > val2) {
-      if (order === 'ascending') {
+      if (order === 'descending') {
         return 1
       } else {
         return -1
@@ -521,290 +542,6 @@ const arr = [
   {a: 2, b: 2, c: 3},
 ]
 arr.sort(compare('a', 'ascending'))
-```
-
-##### 点击按钮出现内容
-
-* 点击按钮出现内容，再次点击页面任何地方，内容消失。
-* 再次点击按钮，内容不消失
-* 再次点击内容，内容可能消失，可能不消失。
-
-在 document 上加点击事件，事件回调中用 contains 判断，点击的不是让内容消失的元素时，才让内容隐藏。
-
-```vue
-<template>
-	<div>
-    <button class="button">按钮</button>
-    <div class="content" v-if="show">内容</div>
-  </div>
-</template>
-
-<script>
-export default {
-  data() {
-    return {
-      show: false
-    }
-  },
-	mounted() {
-    const btn = document.getElementsByClassName('button')[0]
-    const content = document.getElementsByClassName('content')[0]
-    document.addEventListener('click', e => {
-      if (!btn.contains(e.target) && !content.contains(e.target)) {
-         this.show = false
-      }
-    })
-  }
-}
-</script>
-```
-
-##### 动态设置某元素高度
-
-```vue
-<template>
-  <div :class="classNames" :ref="classNames">
-    <div :class="classNames+ '_header'">
-      <img src="./img/user.svg" alt="">
-      <div :class="classNames+ '_header_con'">
-        <h5>{{user.name}}</h5>
-        <p>{{user.desc}}</p>
-      </div>
-    </div>
-    <div :class="classNames+ '_content'">
-      <tabs :data="tabsList" v-model="tabsActTit" type="bg" :class="classNames+ '_bg'" @changeTabs="changeTabs"></tabs>
-      <tabs :data="tabsLists" v-model="tabsActTits" type="line" @changeTabs="changeChildTabs" v-if="tabsActTit!=='浏览历史'"></tabs>
-      <div ref="list" :class="classNames + '_list_con'">
-        <do-list v-if="!isBrowse" doc-type="list" @currChange="onCurrChange" :loading="loading" :list="list" :page="page" :content-height="listHeight" :class="classNames+'_list'" send-type="iframe" @sort="onSort" ref="history_list"></do-list>
-        <browse-history :content-height="listHeight" v-else/>
-      </div>
-    </div>
-  </div>
-</template>
-
-<script>
-export default {
-  data() {
-    return {
-      classNames: 'history'
-      listHeight: 0
-    }
-  },
-  mounted() {
-    this.$nextTick(() => {
-      setTimeout(() => {
-        this.listHeight = this.$refs[this.classNames].clientHeight - this.$refs.list.getBoundingClientRect().top - 52
-      }, 200)
-    })
-  }
-}
-</script>
-```
-
-##### 列表标题吸顶效果
-
-```html
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-    }
-    body {
-      padding-top: 50px;
-    }
-    .wrapper {
-      height: 600px;
-      outline: 1px solid #333;
-      position: relative;
-    }
-    .head-list {
-      position: absolute;
-      top: 0px;
-      left: 0;
-      padding-left: 20px;
-    }
-    #scroll-wrapper {
-      height: 100%;
-      overflow: scroll;
-    }
-    .head-item {
-      height: 30px;
-      line-height: 30px;
-      background-color: #fff;
-      border: 1px solid #ddd;
-    }
-    .content-item h3,
-    .content-item ul li {
-      height: 30px;
-      line-height: 30px;
-      background-color: #ccc;
-      padding-left: 20px;
-      border-bottom: 1px solid #ddd;
-      box-sizing: border-box;
-    }
-  </style>
-</head>
-<body>
-  <div class="wrapper" id="wrap">
-    <div class="head-list">
-      <!-- <div class="head-item">2020-03-04</div>
-      <div class="head-item">2020-03-04</div>
-      <div class="head-item">2020-03-04</div> -->
-    </div>
-    <div id="scroll-wrapper">
-      <div class="content-list">
-        <div class="content-item">
-          <h3>标题1</h3>
-          <ul>
-            <li>2020-03-04</li>
-            <li>2020-03-04</li>
-            <li>2020-03-04</li>
-            <li>2020-03-04</li>
-          </ul>
-        </div>
-        <div class="content-item">
-          <h3>标题2</h3>
-          <ul>
-            <li>2020-03-04</li>
-            <li>2020-03-04</li>
-            <li>2020-03-04</li>
-            <li>2020-03-04</li>
-          </ul>
-        </div>
-        <div class="content-item">
-          <h3>标题3</h3>
-          <ul>
-            <li>2020-03-04</li>
-            <li>2020-03-04</li>
-            <li>2020-03-04</li>
-            <li>2020-03-04</li>
-          </ul>
-        </div>
-        <div class="content-item">
-          <h3>标题4</h3>
-          <ul>
-            <li>2020-03-04</li>
-            <li>2020-03-04</li>
-            <li>2020-03-04</li>
-            <li>2020-03-04</li>
-          </ul>
-        </div>
-        <div class="content-item">
-          <h3>标题5</h3>
-          <ul>
-            <li>2020-03-04</li>
-            <li>2020-03-04</li>
-            <li>2020-03-04</li>
-            <li>2020-03-04</li>
-          </ul>
-        </div>
-        <div class="content-item">
-          <h3>标题6</h3>
-          <ul>
-            <li>2020-03-04</li>
-            <li>2020-03-04</li>
-            <li>2020-03-04</li>
-            <li>2020-03-04</li>
-          </ul>
-        </div>
-        <div class="content-item">
-          <h3>标题7</h3>
-          <ul>
-            <li>2020-03-04</li>
-            <li>2020-03-04</li>
-            <li>2020-03-04</li>
-            <li>2020-03-04</li>
-          </ul>
-        </div>
-        <div class="content-item">
-          <h3>标题8</h3>
-          <ul>
-            <li>2020-03-04</li>
-            <li>2020-03-04</li>
-            <li>2020-03-04</li>
-            <li>2020-03-04</li>
-          </ul>
-        </div>
-        <div class="content-item">
-          <h3>标题9</h3>
-          <ul>
-            <li>2020-03-04</li>
-            <li>2020-03-04</li>
-            <li>2020-03-04</li>
-            <li>2020-03-04</li>
-          </ul>
-        </div>
-        <div class="content-item">
-          <h3>标题10</h3>
-          <ul>
-            <li>2020-03-04</li>
-            <li>2020-03-04</li>
-            <li>2020-03-04</li>
-            <li>2020-03-04</li>
-          </ul>
-        </div>
-        <div class="content-item">
-          <h3>标题11</h3>
-          <ul>
-            <li>2020-03-04</li>
-            <li>2020-03-04</li>
-            <li>2020-03-04</li>
-            <li>2020-03-04</li>
-          </ul>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <script>
-    const contentItem = document.getElementsByClassName('content-item')
-    let arr = []
-    let scrollTop = 0
-    document.getElementById('scroll-wrapper').addEventListener('scroll', function(e) {
-      // 内容向上滚动
-      if (e.target.scrollTop > scrollTop) {
-        let currentElem = Array.from(contentItem).slice().reverse().find(item => e.target.scrollTop + document.getElementsByClassName('head-list')[0].clientHeight > item.offsetTop)
-        // 拿到当前元素的h3的内容
-        let date = currentElem.getElementsByTagName('h3')[0].innerHTML
-        if (!arr.includes(date)) {
-          // 把内容放入要生成head-item元素的数组
-          arr.push(date)
-        }
-      // 内容向下滚动
-      } else {
-        let currentElem = Array.from(contentItem).slice().find(item => e.target.scrollTop + document.getElementsByClassName('head-list')[0].clientHeight < item.offsetTop + document.getElementsByTagName('h3')[0].clientHeight)
-        // 拿到当前元素的h3的内容
-        let date = currentElem.getElementsByTagName('h3')[0].innerHTML
-        if (arr.includes(date)) {
-          // 把内容从数组中移除
-          arr.splice(arr.findIndex(item => item === date), 1)
-        }
-        if (e.target.scrollTop <= 30) {
-          arr = []
-        }
-      }
-      // 将得到的arr生成元素插入到head-list
-      document.getElementsByClassName('head-list')[0].innerHTML = ''
-      if (arr.length > 0) {
-        arr.forEach(item => {
-          let headItem = document.createElement('div')
-          headItem.setAttribute("class", "head-item")
-          headItem.innerHTML = item
-          document.getElementsByClassName('head-list')[0].appendChild(headItem)
-        })
-      }
-      // 记录每次滚动结束的位置
-      scrollTop = e.target.scrollTop
-    })
-  </script>
-</body>
-</html>
 ```
 
 ##### Javascript 固有对象 API
@@ -2030,16 +1767,12 @@ function _const(key, value) {
   Object.defineProperty(window, key, {
     enumerable: false,
     configurable: false,
+    writable: false,
     get() {
       return value;
     },
     set(newVal) {
       throw new TypeError('不能重复定义');
-			// if(newVal !== value){
-      //     throw new TypeError('不能重复定义');
-      // } else {
-      //     return value;
-      // }
     }
   });
 }
@@ -2386,27 +2119,79 @@ Promise.prototype.finally = function(cb) {
 ##### 实现取消 promise
 
 ```js
-function cancel(promise) {
-  const obj = {};
-  const p = new Promise((resolve, reject) => {
-    obj.resolve = resolve;
-    obj.reject = reject;
-  });
-  obj.promise = Promise.race([p, promise]);
-  return obj;
+class CancellationError extends Error {
+    constructor(message = 'Promise canceled') {
+        super(message);
+        this.name = 'CancellationError';
+    }
 }
-// 使用
-const testPromise = new Promise((resolve, reject) => {
-  setTimeout(() => {
-    resolve(123);
-  }, 1000);
+
+class CancellationController {
+    constructor() {
+        this.isCancelled = false;
+    }
+
+    cancel() {
+        this.isCancelled = true;
+    }
+}
+
+function createCancelablePromise(executor) {
+    const cancellationController = new CancellationController();
+
+    const promise = new Promise((resolve, reject) => {
+        if (cancellationController.isCancelled) {
+            reject(new CancellationError());
+            return;
+        }
+
+        executor(
+            value => {
+                if (cancellationController.isCancelled) {
+                    reject(new CancellationError());
+                } else {
+                    resolve(value);
+                }
+            },
+            reason => {
+                if (cancellationController.isCancelled) {
+                    reject(new CancellationError());
+                } else {
+                    reject(reason);
+                }
+            }
+        );
+    });
+
+    promise.cancel = () => {
+        cancellationController.cancel();
+    };
+
+    return promise;
+}
+
+// Usage example:
+const cancelablePromise = createCancelablePromise((resolve, reject) => {
+    setTimeout(() => {
+        resolve('Promise resolved');
+    }, 1000);
 });
-const cancelPromise = cancel(testPromise);
-cancelPromise.promise.then(res => {
-  console.log(res);
-}); 
-// 取消
-cancelPromise.resolve("取消");
+
+cancelablePromise.then(
+    value => console.log('Resolved:', value),
+    reason => {
+        if (reason instanceof CancellationError) {
+            console.log('Promise canceled');
+        } else {
+            console.error('Rejected:', reason);
+        }
+    }
+);
+
+// Cancel the promise after 500ms
+setTimeout(() => {
+    cancelablePromise.cancel();
+}, 500);
 ```
 
 ## Javascript 手写题
@@ -4092,88 +3877,5 @@ const tel = 18877776666;
 tel = "" + tel; 
 var reg=/(\d{3})\d{4}(\d{4})/; 
 var tel1 = tel.replace(reg, "$1****$2") 
-console.log(tel1);
+console.log(tel1)
 ```
-
-## 项目
-
-##### 项目
-
-1. 怎么设计一个组件库。
-2. 3000 行代码重构。
-3. 使用节流优化用户体验。
-4. 优化构建速度，提升开发效率。
-5. 基础架构设计
-   1. 本地 mock 服务器的搭建
-   2. 权限管理
-      1. 导航权限
-      2. 页面权限
-      3. 按钮权限
-   3. 请求封装
-   4. 公用函数封装
-   5. 换肤
-   6. 国际化
-6.  数据流的管理，从这里还可以延伸到函数式编程，纯函数这些
-7. 对于一些复杂组件的设计。
-   1. 多级递归表头表格组件
-   1. 规则条件筛选组件的设计
-   2. form 表单的设计
-   4. 虚拟列表
-
-##### 技术不足
-
-1. 具体的项目工程化实践
-2. 复杂业务组件的编写
-3. 数据结构和算法
-4. 架构，设计模式
-5. 汇报能力，业务描述能力，沟通能力
-
-## 非技术面
-
-##### 非技术面试
-
-1. 你的优点
-   1. 编写代码会考虑可读性，可维护性，性能更好的代码。能够高效高质量的完成工作内容。
-   2. 做事有责任感，积极主动，乐观向上，为人随和，和同事之间相处融洽。
-   3. 能承受一定的工作压力。
-   4. 热爱编程和持续保持学习。
-2. 你的缺点
-   1. 不是一个能够带头活跃气氛的人。
-   2. 有点慢热（相对这个缺点的优点就是稳）。
-3. 职业规划
-   1. 架构
-   2. 管理
-4. 最近在看什么书，研究什么技术。
-   1. 算法
-   2. 架构（webpack源码）
-5. 期望薪资
-   1. 更注重的是找对工作机会。
-   2. 薪资只要我觉得在我能力匹配的范围内都可以接受。
-6. 工作考虑的因素
-   1. 稳定
-   2. 再给公司团队带来一些效益的同时能够在工作中提高自己，并且给自己带来成就感
-7. 还有什么问题要问的吗？
-   1. 具体做的是什么业务。
-   2. 公司的晋升机制。
-
-## 规划
-
-##### 语言包装
-
-复盘，赋能，抓手，对标，沉淀，对齐，拉通，倒逼，颗粒度，落地，中台，方法论，漏斗，组合拳，闭环，生命周期，打法，履约，引爆点，串联，价值转化，纽带，矩阵，协同，反哺，点线面，认知，强化认知，强化心智，交互，兼容，包装，响应，刺激，规模，重组，量化，宽松，资源倾斜，完善逻辑，抽离透传、抽象，复用打法，发力，精细化，布局，商业模式，联动，场景，聚焦，快速响应，影响力，价值，细分，垂直领域，维度，定性定量，聚焦，去中心化，关键路径，接地气，梳理，输出，格局，生态。
-
-##### 入职
-
-1. 毕业证学位证原件复印件
-2. 身份证原件复印件3张
-3. 体检报告
-4. 一寸免冠电子版照片
-5. 离职证明原件
-6. 户口本首页及本人页复印件2张
-7. 招商银行卡原件和复印件1张
-
-##### 规划
-
-1. 讲课能力
-2. 技术提升
-3. 沟通表达
