@@ -2566,6 +2566,64 @@ console.log(addCurrying(1)(2,3,4,5)());
 
 柯里化用途
 
+1. **部分应用（Partial Application）：** 柯里化允许你固定一部分参数并生成一个新的函数。这样，你可以在后续的调用中只提供剩余的参数，实现部分应用，使得函数的调用更灵活。
+
+   ```js
+   // 不使用柯里化
+   function add(x, y, z) {
+     return x + y + z;
+   }
+   
+   const result = add(1, 2, 3);
+   
+   // 使用柯里化
+   function curryAdd(x) {
+     return function(y) {
+       return function(z) {
+         return x + y + z;
+       };
+     };
+   }
+   
+   const curriedAdd = curryAdd(1)(2);
+   const result = curriedAdd(3);
+   ```
+
+2. **参数复用：** 柯里化可以使得参数复用更容易。通过提供一部分固定的参数，你可以创建一个新的函数，然后多次调用这个函数并传入不同的剩余参数。
+
+   ```js
+   // 参数复用
+   const greet = curryConcatenate('Hello, ');
+   const greetWorld = greet('world');
+   const greetUser = greet('user');
+   
+   console.log(greetWorld('!'));  // 输出 "Hello, world!"
+   console.log(greetUser('!'));   // 输出 "Hello, user!"
+   ```
+
+3. **延迟执行：** 柯里化可以用于延迟函数的执行。通过逐步传递参数，你可以等到所有参数都准备好之后再执行函数。
+
+   ```js
+   // 延迟执行
+   const delayedAdd = curryAdd(1)(2);
+   // 在后续的代码中...
+   const result = delayedAdd(3);
+   ```
+
+4. **函数组合：** 柯里化可以用于实现函数组合。你可以将多个柯里化的函数组合在一起，形成一个新的函数管道。
+
+   ```js
+   // 函数组合
+   const compose = (f, g) => x => f(g(x));
+   const toUpperCase = str => str.toUpperCase();
+   const exclaim = str => `${str}!`;
+   
+   const shout = compose(exclaim, toUpperCase);
+   const result = shout('hello');  // 输出 "HELLO!"
+   ```
+
+总体而言，柯里化是一种强大的技术，可以帮助提高代码的可维护性和可读性，使得函数更加灵活和复用
+
 ```js
 // 1 校验规则
 // 原函数
@@ -2599,6 +2657,15 @@ const names = list.map(prop('name'));
 
 ##### compose
 
+compose是一个用于函数组合的高阶函数。它接受多个函数作为参数，返回一个新的函数，这个新函数按照参数的顺序将输入传递给每个函数，并返回最终的结果。
+
+`compose` 函数的作用在于将多个函数组合成一个新的函数，这个新函数按照给定的顺序依次执行传入的函数，形成一个函数管道。其主要用途包括：
+
+1. **函数组合：** `compose` 可以将多个函数组合在一起，形成一个更加复杂和强大的函数。这样的组合可以帮助提高代码的可读性，将复杂的逻辑分解为简单的函数单元。
+2. **代码可读性：** 使用 `compose` 可以更清晰地表达函数的执行顺序。通过从右到左的阅读顺序，你可以直观地理解函数的作用。
+3. **提高函数复用性：** 通过将一些通用的操作封装成单一的函数，可以更容易地在不同的上下文中复用这些操作。这样的函数可以在不同的组合中使用，而不需要修改原始函数。
+4. **函数式编程：** `compose` 是函数式编程中的一个重要概念。函数式编程鼓励将问题分解为小的、可组合的函数，`compose` 正是用于组合这些小函数的工具之一。
+
 ```js
 function compose(...fns) {
     if (!fns.length) return v => v;
@@ -2630,6 +2697,8 @@ function fn4(x) {
 const a = compose(fn1, fn2, fn3, fn4); // a = (...args) => fn1(fn2(fn3(fn4(...args))))
 console.log(a(1)); // 1+4+3+2+1=11
 ```
+
+
 
 ##### LazyMan
 

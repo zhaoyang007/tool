@@ -722,3 +722,21 @@ set session|global transaction isolation level read uncommitted | read committed
 # 运维-分库分表
 
 # 运维-读写分离
+
+# 常见错误
+
+**1. mysql8.0版本 报错：Error: ER_NOT_SUPPORTED_AUTH_MODE: Client does not support authentication protocol...**
+
+报错信息：
+
+Error: ER_NOT_SUPPORTED_AUTH_MODE: Client does not support authentication protocol requested by server; consider upgrading MySQL client
+
+解决：修改加密规则为普通模式，默认是严格加密模式
+
+```mysql
+#更新用户密码
+ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'Zy19920512#';
+#刷新权限
+FLUSH PRIVILEGES;
+```
+

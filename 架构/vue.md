@@ -36,6 +36,22 @@
 
 监听地址变化，改变响应式数据 current，这个 current 就是路由表的 path，从路由表中获取到最新的 component，把它渲染到 router-view 里。
 
+1. 声明VueRouter类
+   1. 获取用户配置（options：routes）
+   2. 使用defineReactive生命一个VueRouter实例的响应式数据current
+   3. 监听地址栏变化hashchange或popstate事件，获取最新路由地址赋值给current
+   4. 循环routes，创建路由映射表（path：route）
+2. 插件实现
+   1. 使用Vue.mixin和beforeCreate挂载$router
+   2. 注册全局组件router-link和router-view
+3. 实现router-link组件
+   1. 接收props.to
+   2. 使用render函数渲染一个a标签：`h('a', { attrs: { href: '#' + this.to } }, this.$slots.default);`
+4. 实现router-view组件
+   1. 从this.$router中获取路由映射表和当前路由：`const { routeMap, current } = this.$router; `
+   2. 使用当前路由从路由映射表中取出当前需要渲染的组件：`const component = routeMap[current].component || null; `
+   3. 使用render函数渲染组件：`h(component)`
+
 vue-router.js 
 
 ```js
@@ -132,6 +148,19 @@ export default {
 ```
 
 ##### vuex 实现原理
+
+1. 声明Store类，接收配置参数options：state gettes mutations actions
+
+   1. 声明state只读访问器属性 get，set给出错误提示
+   2. 使用new Vue，将state和getters做响应式处理
+   3. 声明commit方法，接收type和payload，获取要提交的mutation并调用，同时传入state和payload `this.options.mutations[type](this.state, payload)`
+   4. 声明dispatch方法，接收type和payload，获取要提交的action并调用，同时传入this和payload
+
+   `this.options.actions[type](this, payload)`
+
+2. 插件实现
+
+   1. 使用Vue.mixin和beforeCreate挂载$store
 
 vuex.js
 

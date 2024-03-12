@@ -1942,7 +1942,1170 @@ npm install zy-vue-auto-router-cli
 npm link
 ```
 
+# expressjs
+
+express可以快速搭建静态资源服务器和API接口服务器。
+
+## 安装
+
+```js
+npm i express@4.17.1 -S
+```
+
+## 创建web服务器
+
+```js
+// 导入express
+const express = require('express')
+// 创建web服务器
+const app = express()
+// 启动web服务器
+app.listen(3000, () => {
+  console.log(`Example app listening on port ${3000}`)
+})
+```
+
+## 路由
+
+**路由方法**
+
+```js
+app.get('/', (req, res) => {
+  res.send({name: 'zs', age: 18})
+})
+app.post('/', (req, res) => {
+  res.send('Got a POST request')
+})
+app.put('/user', (req, res) => {
+  res.send('Got a PUT request at /user')
+})
+app.delete('/user', (req, res) => {
+  res.send('Got a DELETE request at /user')
+})
+```
+
+**路由路径**
+
+路由路径与请求方法相结合，定义了可以发出请求的端点。路由路径可以是字符串、字符串模式或正则表达式。
+
+```js
+//1.以下是一些基于字符串的路由路径示例
+//此路由路径将匹配对根路由 / 的请求
+app.get('/', (req, res) => {
+  res.send('root')
+})
+//此路由路径将匹配对 /about 的请求
+app.get('/about', (req, res) => {
+  res.send('about')
+})
+//此路由路径将匹配对 /random.text 的请求
+app.get('/random.text', (req, res) => {
+  res.send('random.text')
+})
+
+//2.以下是一些基于字符串模式的路由路径示例
+//此路由路径将匹配 acd 和 abcd
+app.get('/ab?cd', (req, res) => {
+  res.send('ab?cd')
+})
+//此路由路径将匹配 abcd、abbcd、abbbcd 等
+app.get('/ab+cd', (req, res) => {
+  res.send('ab+cd')
+})
+//此路由路径将匹配 abcd、abxcd、abRANDOMcd、ab123cd 等
+app.get('/ab*cd', (req, res) => {
+  res.send('ab*cd')
+})
+//此路由路径将匹配 /abe 和 /abcde
+app.get('/ab(cd)?e', (req, res) => {
+  res.send('ab(cd)?e')
+})
+
+//3.基于正则表达式的路由路径示例
+//此路由路径将匹配其中带有 “a” 的任何内容
+app.get(/a/, (req, res) => {
+  res.send('/a/')
+})
+//此路由路径将匹配 butterfly 和 dragonfly，但不匹配 butterflyman、dragonflyman 等
+app.get(/.*fly$/, (req, res) => {
+  res.send('/.*fly$/')
+})
+```
+
+**路由参数**
+
+```js
+req.query  //查询参数
+req.params //路径参数
+req.body   //请求体
+```
+
+**路由处理程序**
+
+你可以提供多个回调函数，其行为类似于 [中间件](https://express.nodejs.cn/en/guide/using-middleware.html) 来处理请求。
+
+路由处理程序的形式可以是函数、函数数组或两者的组合，如以下示例所示。
+
+```js
+//1.单个回调函数可以处理路由
+app.get('/example/a', (req, res) => {
+  res.send('Hello from A!')
+})
+//2.一个以上的回调函数可以处理一个路由（确保你指定了 next 对象）
+app.get('/example/b', (req, res, next) => {
+  console.log('the response will be sent by the next function ...')
+  next()
+}, (req, res) => {
+  res.send('Hello from B!')
+})
+//3.一组回调函数可以处理路由
+const cb0 = function (req, res, next) {
+  console.log('CB0')
+  next()
+}
+const cb1 = function (req, res, next) {
+  console.log('CB1')
+  next()
+}
+const cb2 = function (req, res) {
+  res.send('Hello from C!')
+}
+app.get('/example/c', [cb0, cb1, cb2])
+//4.独立函数和函数数组的组合可以处理路由
+const cb0 = function (req, res, next) {
+  console.log('CB0')
+  next()
+}
+const cb1 = function (req, res, next) {
+  console.log('CB1')
+  next()
+}
+app.get('/example/d', [cb0, cb1], (req, res, next) => {
+  console.log('the response will be sent by the next function ...')
+  next()
+}, (req, res) => {
+  res.send('Hello from D!')
+})
+```
+
+**响应方法**
+
+下表中响应对象（`res`）上的方法可以向客户端发送响应，并终止请求-响应循环。如果没有从路由处理程序调用这些方法，则客户端请求将被挂起。
+
+| 方法                                                         | 描述                                                 |
+| ------------------------------------------------------------ | ---------------------------------------------------- |
+| [res.download()](https://express.nodejs.cn/en/4x/api.html#res.download) | 提示要下载的文件。                                   |
+| [res.end()](https://express.nodejs.cn/en/4x/api.html#res.end) | 结束响应过程。                                       |
+| [res.json()](https://express.nodejs.cn/en/4x/api.html#res.json) | 发送 JSON 响应。                                     |
+| [res.jsonp()](https://express.nodejs.cn/en/4x/api.html#res.jsonp) | 发送带有 JSONP 支持的 JSON 响应。                    |
+| [res.redirect()](https://express.nodejs.cn/en/4x/api.html#res.redirect) | 重定向请求。                                         |
+| [res.render()](https://express.nodejs.cn/en/4x/api.html#res.render) | 渲染视图模板。                                       |
+| [res.send()](https://express.nodejs.cn/en/4x/api.html#res.send) | 发送各种类型的响应。                                 |
+| [res.sendFile()](https://express.nodejs.cn/en/4x/api.html#res.sendFile) | 将文件作为八位字节流发送。                           |
+| [res.sendStatus()](https://express.nodejs.cn/en/4x/api.html#res.sendStatus) | 设置响应状态码并将其字符串表示形式作为响应正文发送。 |
+
+**app.route()**
+
+可以使用 `app.route()` 为路由路径创建可链式的路由处理程序。
+
+```js
+app.route('/book')
+  .get((req, res) => {
+    res.send('Get a random book')
+  })
+  .post((req, res) => {
+    res.send('Add a book')
+  })
+  .put((req, res) => {
+    res.send('Update the book')
+  })
+```
+
+**路由模块化**
+
+## 静态资源
+
+使用Express中的内置中间件函数`express.static`提供静态文件，例如图片、CSS 文件和 JavaScript 文件。
+
+```js
+// 1.root：资源目录根路径。options：对资源的额外配置
+app.use(express.static(root, [options]))
+
+// 2.加载public目录中的文件
+app.use(express.static('public')) // http://localhost:3000/css/style.css  http://localhost:3000/js/app.js
+
+// 3.要使用多个静态资源目录，请多次调用express.static中间件函数
+app.use(express.static('public'))
+app.use(express.static('files'))
+
+// 4.虚拟路径前缀
+app.use('/static', express.static('public')) 
+// http://localhost:3000/static/css/style.css  http://localhost:3000/static/js/app.js
+
+// 5.绝对路径更加安全
+const path = require('path')
+app.use('/static', express.static(path.join(__dirname, 'public')))
+```
+
+## 中间件
+
+**概念**
+
+中间件就是业务处理过程中的中间处理环节。当一个请求到达Express服务器后，可以连续调用多个中间件，对这次请求进行处理。
+
+Express 是一个路由和中间件 Web 框架，其自身功能最少：Express 应用本质上是一系列中间件函数调用。
+
+中间件函数可以访问`req`、`res`以及是否调用下一个中间件函数的函数next。
+
+中间件函数可以执行以下任务：
+
+- 执行任何代码。
+- 更改请求和响应对象。
+- 结束请求-响应周期。
+- 调用堆栈中的下一个中间件函数。
+
+如果当前中间件函数没有结束请求-响应循环，它必须调用 `next()` 将控制权传递给下一个中间件函数。否则，请求将被挂起。
+
+**原理**
+
+express中维护一个中间件栈，use方法将接收到的中间件推入栈中，接收到请求后，调用初始next函数，next中获取中间件栈的第一个中间件并执行，调用next，index加一，获取下一个中间件并执行。
+
+```js
+// express.js
+
+class Express {
+  constructor() {
+    this.middlewareStack = [];
+  }
+  use(middleware) {
+    this.middlewareStack.push(middleware);
+    return this;
+  }
+	//请求到达时express内部自动触发
+  handleRequest(req, res) {
+    let index = 0;
+
+    const next = () => {
+      const middleware = this.middlewareStack[index++];
+
+      if (!middleware) {
+        // No more middleware, end the request-response cycle
+        return;
+      }
+
+      try {
+        middleware(req, res, next);
+      } catch (err) {
+        // Handle errors
+        console.error(err);
+        res.status(500).send('Internal Server Error');
+      }
+    };
+
+    // Start the middleware chain
+    next();
+  }
+}
+module.exports = Express;
+```
+
+**洋葱圈模型**
+
+```
+外层中间件 → 中层中间件 → 内层中间件 → ... → 请求处理程序 → ... → 内层中间件 → 中层中间件 → 外层中间件
+```
+
+路由前的中间件：相当于对请求做一些处理，包括身份验证、日志记录、请求处理前的数据验证等。这些中间件可以在请求到达路由处理程序之前进行预处理和拦截。
+
+路由前的中间件：相当于对响应做一些处理，包括日志记录、响应头的设置、缓存控制，捕获错误等。这些中间件可以在响应发送到客户端之前进行处理和修改。
+
+**内置中间件**
+
+express.static
+
+express.json（解析json请求参数）
+
+express.urlencoded（解析表单请求参数）
+
+**第三方中间件**
+
+body-parser（解析json/表单等请求参数）
+
+cors
+
+express-jwt
+
+## 大事件项目
+
+**1.初始化npm项目**
+
+**2.安装express**
+
+**3.新建入口文件app.js**
+
+1. 创建express服务器
+2. 处理跨域和表单格式请求数据
+
+`app.js`
+
+```js
+const express = require('express')
+const cors = require('cors')
+
+const app = express()
+
+// 处理跨域
+app.use(cors())
+
+// 处理表单格式请求数据
+app.use(express.urlencoded({ extended: false }))
+
+app.listen(3001, () => {
+  console.log('server is listening on port 3001');
+})
+```
+
+**4.新建用户路由模块（controller），并注册**
+
+`controller/user.js`
+
+```js
+const express = require('express')
+const userService = require('../service/user')
+const router = express.Router()
+// 注册
+router.post('/register', userService.register)
+// 登录
+router.post('/login', userService.login)
+module.exports = router
+```
+
+`app.js`
+
+```js
+const userRouter = require('./controller/user')
+// 注册用户路由模块
+app.use('/api', userRouter)
+```
+
+**5.新建用户业务逻辑模块（service）**
+
+`service/user.js`
+
+```js
+// 注册业务逻辑
+exports.register = (req, res) => {
+  res.send('register ok')
+}
+// 登录业务逻辑
+exports.login = (req, res) => {
+  res.send('login ok')
+}
+```
+
+**6.创建数据库连接池对象**
+
+`db/index.js`
+
+```js
+const mysql = require('mysql')
+
+//创建数据库连接池对象
+const db = mysql.createPool({
+  host: 'localhost',
+  user: 'root',
+  password: 'Zy19920512#',
+  database: 'ev'
+})
+
+// 导出数据库连接池对象，使用它来执行数据库操作
+module.exports = db
+```
+
+**7.注册业务功能**
+
+1. 判断用户名和密码是否为空
+
+`service/user.js`
+
+```js
+exports.register = (req, res) => {
+  // 获取用户信息
+  const userInfo = req.body
+  // 判断用户名和密码是否为空
+  if (!userInfo.username || !userInfo.password) {
+    return res.send({ status: 1, message: '用户名或密码不合法！'})
+  }
+  res.send('register ok')
+}
+exports.login = (req, res) => {
+  res.send('login ok')
+}
+```
+
+2. 查询数据库检查用户名是否被占用
+
+`service/user.js`
+
+```js
+// 1.导入数据库连接池对象
+const db = require('../db/index')
+
+exports.register = (req, res) => {
+  // 获取用户信息
+  // ...
+  // 判断用户名和密码是否为空
+  // ...
+
+  // 2.定义sql语句
+  const sql = 'select * from ev_users where username=?' // ?是参数占位符，用于接受外部传递的参数值。防止SQL注入。
+  // 3.使用数据库连接池对象，执行sql操作数据库
+  db.query(sql, [userInfo.username], (err, results) => { // [userInfo.username]是查询参数。防止SQL注入。
+    if (err) return res.send({ status: 1, message: err.message })
+    // 用户名被占用
+    if (results.length > 0) return res.send({ status: 1, message: '用户名被占用，请跟换其他用户名！' })
+  })
+  
+  res.send('register ok')
+}
+```
+
+3. 对密码加密后存入数据库
+
+* 加密之后，无法逆向破解。
+* 不同用户的同一密码加密后的结果不同。
+
+`service/user.js`
+
+```js
+// 导入加密模块
+const bcrypt = require('bcryptjs') // 需要安装
+
+exports.register = (req, res) => {
+  // 获取用户信息
+  // ...
+  // 判断用户名和密码是否为空
+  // ...
+  // 检查用户名是否被占用
+  // ...
+  
+  // 对密码加密
+	userInfo.password = bcrypt.hashSync(userInfo.password, 10)
+}
+```
+
+4. 插入新用户
+
+`service/user.js`
+
+```js
+exports.register = (req, res) => {
+  // 获取用户信息
+  // ...
+  // 判断用户名和密码是否为空
+  // ...
+  // 检查用户名是否被占用
+  // ...
+  // 对密码加密
+	// ...
+  
+  // 插入新用户
+  // 1.定义sql语句
+  const sql = 'insert into ev_users set ?'
+  // 2.使用数据库连接池对象，执行sql操作数据库
+  db.query(sql, { username: userInfo.username, password: userInfo.password }, (err, results) => {
+    if (err) return res.send({ status: 1, message: err.message })
+    // sql执行成功，但影响行数不为1
+    if (results.affectedRows !== 1) return res.send({ status: 1, message: '注册用户失败，请稍后重试！' }) 
+    // 注册成功
+    res.send({ status: 0, message: '注册成功！' })
+  })
+}
+```
+
+**8.代码优化**
+
+1. 优化res.send()：封装响应数据中间件
+
+`middleware/index.js`
+
+```js
+// 响应数据中间件：中间件中为res对象挂载一个res.cc()方法
+exports.sendoptimize = (req, res, next) => {
+  res.cc = (err, status = 1) => {
+    res.send({
+      status,
+      message: err instanceof Error ? err.message : err
+    })
+  }
+  next()
+}
+```
+
+`app.js`
+
+```js
+const { sendoptimize } = require('./middleware/index')
+
+// 在路由之前设置响应数据中间件
+app.use(sendoptimize)
+```
+
+`service/user.js`
+
+```diff
+exports.register = (req, res) => {
+  // 获取用户信息
+  const userInfo = req.body
+  // 判断用户名和密码是否为空
+  if (!userInfo.username || !userInfo.password) {
++   return res.cc('用户名或密码不合法！')
+  }
+
+  // 检查用户名是否被占用
+  // 定义sql语句
+  const selectSql = 'select * from ev_users where username=?' // ?是参数占位符，用于接受外部传递的参数值。防止SQL注入。
+  // 使用数据库连接池对象，执行sql操作数据库
+  db.query(selectSql, [userInfo.username], (err, results) => { // [userInfo.username]是查询参数。防止SQL注入。
+    // results是查询结果，是一个数组
++   if (err) return res.cc(err)
+    // 用户名被占用
++   if (results.length > 0) return res.cc('用户名被占用，请跟换其他用户名！')
+  })
+
+  // 对密码加密
+	userInfo.password = bcrypt.hashSync(userInfo.password, 10)
+
+  // 插入新用户
+  // 定义sql语句
+  const insertSql = 'insert into ev_users set ?'
+  // 使用数据库连接池对象，执行sql操作数据库
+  db.query(insertSql, { username: userInfo.username, password: userInfo.password }, (err, results) => {
++   if (err) return res.cc(err)
+    // sql执行成功，但影响行数不为1
++   if (results.affectedRows !== 1) return res.cc('注册用户失败，请稍后重试！' ) 
+    // 注册成功
++   res.cc('注册成功！', 0)
+  })
+}
+```
+
+2. 验证表单数据
+
+`middleware/validate.js` 封装局部中间件，使用joi完成校验
+
+```js
+const Joi = require('joi')
+
+const expressJoi = function (schemas, options = { strict: false }) {
+  // 自定义校验选项
+  // strict 自定义属性，默认不开启严格模式，会过滤掉那些未定义的参数项
+  //        如果用户指定了 strict 的值为 true，则开启严格模式，此时不会过滤掉那些未定义的参数项
+  if (!options.strict) {
+    // allowUnknown 允许提交未定义的参数项
+    // stripUnknown 过滤掉那些未定义的参数项
+    options = { allowUnknown: true, stripUnknown: true, ...options }
+  }
+
+  // 从 options 配置对象中，删除自定义的 strict 属性
+  delete options.strict
+
+  // TODO: 用户指定了什么 schema，就应该校验什么样的数据
+  return function (req, res, next) {
+    ;['body', 'query', 'params'].forEach(key => {
+      // 如果当前循环的这一项 schema 没有提供，则不执行对应的校验
+      if (!schemas[key]) return
+
+      // 执行校验
+      const schema = Joi.object(schemas[key])
+      const { error, value } = schema.validate(req[key], options)
+
+      if (error) {
+        // 校验失败
+        throw error
+      } else {
+        // 校验成功，把校验的结果重新赋值到 req 对应的 key 上
+        req[key] = value
+      }
+    })
+
+    // 校验通过
+    next()
+  }
+}
+
+module.exports = expressJoi
+```
+
+`controller/user.js` 定义校验规则并在路由中完成自动校验
+
+```js
+const Joi = require('joi')
+const expressJoi = require('../middleware/validate')
+
+// 定义校验规则
+const userSchema = {
+  // 2.1 校验 req.body 中的数据
+  body: {
+    username: Joi.string().alphanum().min(3).max(12).required(),
+    password: Joi.string().pattern(/^[\S]{6,15}$/).required()
+  }
+}
+
+// 注册
+router.post('/register', expressJoi(userSchema), userService.register)
+```
+
+`middleware/index.js` 封装全局错误捕获中间件，拦截校验失败的错误
+
+```js
+const Joi = require('joi')
+
+// 全局错误捕获中间件
+exports.errorIntercept = (err, req, res, next) => {
+  // 参数校验失败错误
+  if (err instanceof Joi.ValidationError) return res.cc(err)
+  // 未知错误
+  res.cc(err)
+}
+```
+
+`app.js` 捕获全局错误
+
+```js
+const { sendoptimize, errorIntercept } = require('./middleware/index')
+// 捕获全局错误
+app.use(errorIntercept)
+```
+
+**9.登录业务功能**
+
+1. 验证表单数据
+
+`controller/user.js`
+
+```js
+// 登录
+router.post('/login', expressJoi(userSchema), userService.login)
+```
+
+2. 根据用户名查询用户数据，判断密码是否正确
+
+`service/user.js`
+
+```js
+// 登录业务逻辑
+exports.login = (req, res) => {
+  // 根据用户名查询用户数据
+	// 接收请求数据
+  const userInfo = req.body
+  // 定义sql
+  const selectSql = 'select * from ev_users where username=?'
+  // 执行sql
+  db.query(selectSql, userInfo.username, (err, results) => {
+    if (err) return res.cc(err)
+    // 执行sql，但是查询数据条数不等于1
+    if(results.length !== 1) return res.cc('用户名错误！')
+    // 判断密码是否正确
+    const compareResult = bcrypt.compareSync(userInfo.password, results[0].password)
+    if (!compareResult) return res.cc('密码错误')
+  })
+}
+```
+
+3. 使用JWT生成token
+
+`service/user.js`
+
+```js
+const jwt = require('jsonwebtoken') // 需要安装
+const config = require('../config')
+
+// 登录业务逻辑
+exports.login = (req, res) => {
+  // 根据用户名查询用户数据
+	// ...
+  db.query(selectSql, userInfo.username, (err, results) => {
+    // 判断密码是否正确
+    // ...
+    // 使用JWT生成token
+    const user = { ...results[0], password: '', user_pic: '' }
+    const tokenStr = jwt.sign(user, config.jwtSecretKey, { 
+      expiresIn: config.expiresIn 
+    })
+    res.send({
+      status: 0,
+      message: '登录成功！',
+      token: 'Bearer ' + tokenStr
+    })
+  })
+}
+```
+
+`config.js`
+
+```js
+module.exports = {
+  jwtSecretKey: 'itheima No1 # %',
+  expiresIn: '10h'
+}
+```
+
+4. 配置验证token中间件
+
+`app.js`
+
+```js
+const config = require('./config')
+const expressJWT = require('express-jwt') // 需要安装
+
+app.use(expressJWT({ secret: config.jwtSecretKey }).unless({ path: [/^\/api\//] }))
+```
+
+`middleware/index.js`
+
+```diff
+// 全局错误捕获中间件
+exports.errorIntercept = (err, req, res, next) => {
+  // 参数校验失败错误
+  if (err instanceof Joi.ValidationError) return res.cc(err)
++ // 捕获身份认证失败错误
++ if (err.name === 'UnauthorizedError') return res.cc('身份认证失败！')
+  // 未知错误
+  res.cc(err)
+}
+```
+
+**10.用户信息业务功能**
+
+1. 获取用户信息接口
+
+`controller/userInfo.js`
+
+```js
+const express = require('express')
+const userInfoService = require('../service/userInfo')
+
+const router = express.Router()
+
+router.get('/userInfo', userInfoService.getUserInfo)
+
+module.exports = router
+```
+
+`app.js`
+
+```js
+// 注册用户信息路由模块
+const userInfoRouter = require('./controller/userInfo')
+app.use('/my', userInfoRouter)
+```
+
+`service/userInfo.js`
+
+```js
+const db = require('../db/index')
+
+// 获取用户信息
+exports.getUserInfo = (req, res) => {
+  const selectSql = 'select id, username, nickname, email, user_pic from ev_users where id=?'
+  // req.user.id：如果使用了express-jwt中间件，它会自动将从token中获取的用户信息挂载到req.user中
+  db.query(selectSql, req.user.id, (err, results) => {
+    if (err) return res.cc(err)
+    if (results.length !== 1) return res.cc('获取用户信息失败！')
+    res.send({
+      status: 0,
+      message: '获取用户信息成功！',
+      data: results[0]
+    })
+  })
+}
+```
+
+2. 更新用户信息接口
+
+`controller/userInfo.js`
+
+```js
+const Joi = require('joi')
+const expressJoi = require('../middleware/validate')
+
+// 定义校验规则
+const userInfoSchema = {
+  body: {
+    id: Joi.number().integer().min(1).required(),
+    nickname: Joi.string().required(),
+    email: Joi.string().email().required(),
+  }
+}
+// 更新用户信息
+router.post('/userInfo', expressJoi(userInfoSchema), userInfoService.updateUserInfo)
+```
+
+`service/userInfo.js`
+
+```js
+// 更新用户信息
+exports.updateUserInfo = (req, res) => {
+  const updateSql = 'update ev_users set ? where id=?'
+  db.query(updateSql, [req.body, req.user.id], (err, results) => {
+    if (err) return res.cc(err)
+    if (results.affectedRows !== 1) return res.cc('更新用户信息失败！')
+    res.cc('更新用户信息成功！', 0)
+  })
+}
+```
+
+3. 重置密码接口
+
+`controller/userInfo.js`
+
+```js
+// 定义校验规则
+const pwdSchema = {
+  body: {
+    oldPwd: Joi.string().pattern(/^[\S]{6,15}$/).required(),
+    // 新旧密码不能相同
+    newPwd: Joi.not(Joi.ref('oldPwd')).concat(Joi.string().pattern(/^[\S]{6,15}$/).required()),
+  }
+}
+// 重置密码
+router.post('/updatePwd', expressJoi(pwdSchema), userInfoService.updatePwd)  
+```
+
+`service/userInfo.js`
+
+```js
+const bcrypt = require('bcryptjs')
+
+// 重置密码
+exports.updatePwd = (req, res) => {
+  // 检查原密码输入是否正确
+  const selectSql = 'select password from ev_users where id=?' 
+  db.query(selectSql, req.user.id, (err, results) => {
+    if (err) return res.cc(err)
+    if (results.length !== 1) return res.cc('用户不存在！')
+    const compareResult = bcrypt.compareSync(req.body.oldPwd, results[0].password)
+    if (!compareResult) return res.cc('原密码输入错误！')
+    // 更新密码
+    const updateSql = 'update ev_users set password=? where id=?'
+    const newPwd = bcrypt.hashSync(req.body.newPwd, 10)
+    db.query(updateSql, [newPwd, req.user.id], (err, results) => {
+      if (err) return res.cc(err)
+      if (results.affectedRows !== 1) return res.cc('更新密码失败！') 
+      res.cc('更新密码成功！', 0)
+    })
+  })
+}
+```
+
+4. 更新头像
+
+`controller/userInfo.js`
+
+```js
+// 定义校验规则
+const avatarSchema = {
+  body: {
+    // 头像要求是base64
+    avatar: Joi.string().dataUri().required(),
+  }
+}
+// 更新用户头像
+router.post('/update/avatar', expressJoi(avatarSchema), userInfoService.updateAvatar)
+```
+
+`service/userInfo.js`
+
+```js
+// 更新用户头像
+exports.updateAvatar = (req, res) => {
+  const avatarSql = 'update ev_users set user_pic=? where id=?'
+  db.query(avatarSql, [req.body.avatar, req.user.id], (err, results) => {
+    if (err) return res.cc(err)
+    if (results.affectedRows !== 1) return res.cc('更新头像失败！')
+    res.cc('更新头像成功！', 0)
+  })
+}
+```
+
+**11.文章分类业务功能**
+
+1. 获取文章分类
+
+`controller/artCate.js`
+
+```js
+const express = require('express')
+const articleCateService = require('../service/artCate')
+
+const router = express.Router()
+
+// 获取文章分类
+router.get('/cates', articleCateService.getArtCates)
+
+module.exports = router
+```
+
+`service/artCate.js`
+
+```js
+const db = require('../db/index')
+
+exports.getArtCates = (req, res) => {
+  // 定义查询所有文章分类的sql语句
+  const sql = 'select * from ev_article_cate where is_delete=0 order by id asc'
+  // 执行sql语句
+  db.query(sql, (err, results) => {
+    // 执行sql语句失败
+    if (err) return res.cc(err)
+    // 执行sql语句成功，但是查询结果为空
+    if (results.length === 0) return res.cc('没有相关文章分类')
+    // 执行sql语句成功，将结果返回给客户端
+    res.send({
+      status: 0,
+      message: '获取文章分类成功！',
+      data: results
+    })
+  })
+}
+```
+
+`app.js`
+
+```js
+// 注册文章分类路由
+const artCateRouter = require('./controller/artCate')
+app.use('/my/article', artCateRouter)
+```
+
+2. 新增文章分类
+
+`controller/artCate.js`
+
+```js
+const Joi = require('joi')
+const expressJoi = require('../middleware/validate')
+
+// 定义校验规则
+const artCateSchema = {
+  body: {
+    name: Joi.string().required(),
+    alias: Joi.string().alphanum().required()
+  }
+}
+// 新增文章分类
+router.post('/addCates', expressJoi(artCateSchema), articleCateService.addArtCate)
+```
+
+`service/artCate.js`
+
+```js
+// 新增文章分类
+exports.addArtCate = (req, res) => {
+  // 定义查询分类的sql语句
+  const sql = 'select * from ev_article_cate where name=? or alias=?'
+  // 执行sql语句
+  db.query(sql, [req.body.name, req.body.alias], (err, results) => {
+    // 执行sql语句失败
+    if (err) return res.cc(err)
+    // 执行sql语句成功，但名字和别名都被占用
+    if (results.length === 2) return res.cc('分类名称和别名被占用，请更换后重试！')
+    // 执行sql语句成功，名字和别名都被占用
+    if (results.length === 1 && results[0].name === req.body.name && results[0].alias === req.body.alias) {
+      return res.cc('分类名称和别名被占用，请更换后重试！')
+    }
+    // 执行sql语句成功，但只有别名被占用
+    if (results.length === 1 && results[0].alias === req.body.alias) {
+      return res.cc('别名被占用，请更换后重试！')
+    }
+    // 执行sql语句成功，但只有名字被占用
+    if (results.length === 1 && results[0].name === req.body.name) {
+      return res.cc('分类名称被占用，请更换后重试！')
+    }
+    // 执行sql语句成功，分类名称和别名都没有被占用
+    const sql = 'insert into ev_article_cate set ?'
+    db.query(sql, req.body, (err, results) => {
+      // 执行sql语句失败
+      if (err) return res.cc(err)
+      // 执行sql语句成功，但影响行数不等于1
+      if (results.affectedRows !== 1) return res.cc('新增文章分类失败！')
+      // 新增文章分类成功
+      res.cc('新增文章分类成功！', 0)
+    })
+  })
+}
+```
+
+3. 删除文章分类
+
+`controller/artCate.js`
+
+```js
+// 删除文章分类
+const deleteCateSchema = {
+  params: {
+    id: Joi.number().integer().min(1).required()
+  }
+}
+router.get('/deleteCate/:id', expressJoi(deleteCateSchema), articleCateService.deleteCate)
+```
+
+`service/artCate.js`
+
+```js
+// 删除文章分类
+exports.deleteCate = (req, res) => {
+  // 定义删除文章分类的sql语句
+  const sql = 'update ev_article_cate set is_delete=1 where id=?'
+  // 调用db.query()执行sql语句
+  db.query(sql, req.params.id, (err, results) => {
+    if (err) return res.cc(err)
+    if (results.affectedRows !== 1) return res.cc('删除文章分类失败！')
+    res.cc('删除文章分类成功！', 0)
+  })
+}
+```
+
+4. 根据id获取文章分类
+
+`controller/artCate.js`
+
+```js
+// 根据id获取文章分类
+const getCateByIdSchema = {
+  params: {
+    id: Joi.number().integer().min(1).required()
+  }
+}
+router.get('/cates/:id', expressJoi(getCateByIdSchema), articleCateService.getArtCateById)
+```
+
+`service/artCate.js`
+
+```js
+// 根据id获取文章分类
+exports.getArtCateById = (req, res) => {
+  const sql = 'select * from ev_article_cate where id=?'
+  db.query(sql, req.params.id, (err, results) => {
+    if (err) return res.cc(err)
+    if (results.length !== 1) return res.cc('获取文章分类数据失败！')
+    res.send({
+      status: 0,
+      message: '获取文章分类数据成功！',
+      data: results[0]
+    })
+  })
+}
+```
+
+5. 根据id更新文章分类
+
+`controller/artCate.js`
+
+```js
+// 根据id更新文章分类
+const updateCateSchema = {
+  body: {
+    id: Joi.number().integer().min(1).required(),
+    name: Joi.string().required(),
+    alias: Joi.string().alphanum().required()
+  }
+}
+router.post('/updateCate', expressJoi(updateCateSchema), articleCateService.updateCateById)
+```
+
+`service/artCate.js`
+
+```js
+// 根据id更新文章分类
+exports.updateCateById = (req, res) => {
+  // 检查分类名称和别名是否被占用
+  const sql = 'select * from ev_article_cate where id<>? and (name=? or alias=?)'
+  db.query(sql, [req.body.id, req.body.name, req.body.alias], (err, results) => {
+    // 执行sql语句失败
+    if (err) return res.cc(err)
+    // 分类名称和别名都被占用
+    if (results.length === 2) return res.cc('分类名称和别名被占用，请更换后重试！')
+    if (results.length === 1 && results[0].name === req.body.name && results[0].alias === req.body.alias) {
+      return res.cc('分类名称和别名被占用，请更换后重试！')
+    }
+    // 分类名称或别名被占用
+    if (results.length === 1 && results[0].name === req.body.name) {
+      return res.cc('分类名称被占用，请更换后重试！')
+    }
+    if (results.length === 1 && results[0].alias === req.body.alias) {
+      return res.cc('分类别名被占用，请更换后重试！')
+    }
+    // 分类名称和别名都没有被占用
+    const sqlStr = 'update ev_article_cate set ? where id=?'
+    db.query(sqlStr, [req.body, req.body.id], (err, results) => {
+      // 执行sql语句失败
+      if (err) return res.cc(err)
+      // 执行sql语句成功，但影响行数不为1
+      if (results.affectedRows !== 1) return res.cc('更新文章分类失败！')
+      // 更新文章分类成功
+      res.cc('更新文章分类成功！', 0)
+    })
+  })
+}
+```
+
+**12.文章业务功能**
+
+`controller/article.js`
+
+```js
+const multer = require('multer') // 需要安装
+// 使用multer解析formdate格式的请求数据
+// const storage = multer.diskStorage({
+//   destination: function (req, file, cb) {
+//     cb(null, './uploads')
+//   },
+//   filename: function (req, file, cb) {
+//     cb(null, file.originalname)
+//   }
+// })
+const storage = multer.memoryStorage()
+const upload = multer({ storage })
+
+// 新增文章
+router.post('/add', upload.any(), articleService.addArticle)
+```
+
+`service/article.js`
+
+```js
+const db = require('../db/index')
+
+// 新增文章
+exports.addArticle = (req, res) => {
+  // req.files 包含上传的文件信息
+  // req.body 包含 formdata 中的其他字段信息
+  const articleInfo = {...req.body, cover_img: req.files[0]}
+  console.log(articleInfo);
+  const sql = 'insert into ev_articles set ?'
+  // 将接收到的文章信息插入数据库中
+  db.query(sql, articleInfo, (err, results) => {
+    if (err) return res.cc(err) 
+    // 判断插入成功
+    if (results.affectedRows !== 1) return res.cc('插入文章失败！')
+    res.cc('新增文章成功！', 0)
+  })
+}
+```
+
 # nestjs
+
+Nest (NestJS) 是一个用于构建高效、可扩展的 [Node.js](https://nodejs.cn/) 服务器端应用的框架。它使用渐进式 JavaScript，构建并完全支持 [TypeScript](http://ts.nodejs.cn/)（但仍然允许开发者使用纯 JavaScript 进行编码）并结合了 OOP（面向对象编程）、FP（函数式编程）和 FRP（函数式反应式编程）的元素。
+
+在幕后，Nest 使用强大的 HTTP 服务器框架，如 [Express](https://express.nodejs.cn/)（默认），也可以选择配置为使用 [Fastify](https://fastify.nodejs.cn/)！
+
+Nest 在这些常见的 Node.js 框架（Express/Fastify）之上提供了一个抽象级别，但也直接向开发者公开了它们的 API。这使开发者可以自由使用可用于底层平台的无数第三方模块。
+
+近年来，得益于 Node.js，JavaScript 已成为前端和后端应用的 Web“通用语言”。这催生了 [Angular](https://angular.dev/)、[React](https://react.nodejs.cn/) 和 [Vue](https://github.com/vuejs/vue) 等出色的项目，它们提高了开发者的工作效率，并支持创建快速、可测试和可扩展的前端应用。然而，尽管 Node（和服务器端 JavaScript）存在大量出色的库、辅助程序和工具，但它们都没有有效解决以下主要问题： - 架构。
+
+Nest 提供开箱即用的应用架构，允许开发者和团队创建高度可测试、可扩展、松耦合且易于维护的应用。该架构深受 Angular 的启发。
 
 ## 安装
 
@@ -1957,60 +3120,13 @@ nest new project-name
 nest new project-name --strict
 ```
 
-## 控制器
+## 控制器（cotroller）
 
 控制器负责处理传入请求并向客户端返回响应。
 
-控制器的目的是接收应用的特定请求。路由机制控制哪个控制器接收哪些请求。通常，每个控制器都有不止一条路由，不同的路由可以执行不同的操作。
-
-为了创建基本控制器，我们使用类和装饰器。装饰器将类与所需的元数据相关联，并使 Nest 能够创建路由映射（将请求绑定到相应的控制器）。
-
-要使用 CLI 创建控制器，只需执行`$ nest g controller [name]`命令即可。
-
-必须声明一个方法来绑定路由。
-
-控制器必须使用`@Controller()`装饰器，且可以传入路由前缀。
-
-示例：
-
-`cats.controller.ts`
+控制器始终属于一个模块。
 
 ```ts
-import { Controller, Get, Query, Post, Body, Put, Param, Delete } from '@nestjs/common';
-import { CreateCatDto, UpdateCatDto, ListAllEntities } from './dto';
-
-@Controller('cats')
-export class CatsController {
-  @Post()
-  create(@Body() createCatDto: CreateCatDto) {
-    return 'This action adds a new cat';
-  }
-
-  @Get()
-  findAll(@Query() query: ListAllEntities) {
-    return `This action returns all cats (limit: ${query.limit} items)`;
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return `This action returns a #${id} cat`;
-  }
-
-  @Put(':id')
-  update(@Param('id') id: string, @Body() updateCatDto: UpdateCatDto) {
-    return `This action updates a #${id} cat`;
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return `This action removes a #${id} cat`;
-  }
-}
-```
-
-`app.module.ts`
-
-```typescript
 import { Module } from '@nestjs/common';
 import { CatsController } from './cats/cats.controller';
 
@@ -2020,15 +3136,192 @@ import { CatsController } from './cats/cats.controller';
 export class AppModule {}
 ```
 
-## 提供者
+控制器类：使用 `@Controller()` 装饰，且可以传入路由前缀。
+
+```ts
+import { Controller } from '@nestjs/common';
+
+@Controller('cats')
+export class CatsController {}
+```
+
+路由方法（处理程序）：
+
+* 请求方法和路由路径：使用 `@Get` `@Post` `@Put` `@Post` `@Delete` 等装饰器，设置请求方法和路由路径。
+
+* 响应结果：路由方法中返回对象或数组，nest会自动序列化为JSON，基本类型直接返回不做处理。（也可以使用express：`findAll(@Res() response){}`）
+
+* 状态码：默认情况下响应的状态码始终为200。可以使用`@HttpCode(...)`装饰器来修改状态码（静态）。想要设置动态状态码可以使用特定于库的响应（使用 `@Res()` 注入`response.status(200).send()`）或者抛出异常。
+
+  ```ts
+  import { Controller, Get, HttpCode } from '@nestjs/common';
+  
+  @Controller('cats')
+  export class CatsController {
+    @Get()
+    @HttpCode(200)
+    findAll(): string {
+      return 'This action returns all cats';
+    }
+  }
+  ```
+
+* 请求对象：使用`@Param(key?: string)` `@Body(key?: string)` `@Query(key?: string)` `@Headers(name?: string)`等装饰器，获取客户端请求信息。（也可以使用express：`findAll(@Req() request){}`）
+
+  ```ts
+  // 获取路径参数
+  @Get(':id')
+  getExample(@Param('id') id: string): string {
+    return `Received ID: ${id}`;
+  }
+  // 获取请求体参数
+  @Post()
+  createExample(@Body() data: any): string {
+    return `Received data: ${JSON.stringify(data)}`;
+  }
+  // 获取查询参数
+  @Get()
+  searchExample(@Query('query') query: string): string {
+    return `Received query: ${query}`;
+  }
+  // 获取请求头
+  @Get()
+  getHeaderExample(@Headers('authorization') authHeader: string): string {
+    return `Received Authorization header: ${authHeader}`;
+  }
+  ```
+
+* 响应头：使用 `@Header()` 装饰器，指定自定义响应标头。（也可以使用express： `res.header()`）。
+
+  ```ts
+  @Post()
+  @Header('Cache-Control', 'none')
+  create() {
+    return 'This action adds a new cat';
+  }
+  ```
+
+*  重定向：使用 `@Redirect()` 装饰器，将响应重定向到特定 URL。（也可以使用express：`res.redirect()`）
+
+  ```ts
+  @Get()
+  @Redirect('https://nest.nodejs.cn', 301)
+  ```
+
+## 提供者（service）
+
+控制器应该处理 HTTP 请求并将更复杂的任务委托给提供者。提供程序是在 [module](https://nest.nodejs.cn/modules) 中声明为 `providers` 的纯 JavaScript 类。
+
+提供者可以作为依赖注入，将其注入到模块、控制器、服务等地方。
+
+使用 `@Injectable()` 装饰器声明一个类是可由 Nest [IoC](https://en.wikipedia.org/wiki/Inversion_of_control) 容器管理的类，即表明它是一个可注入的提供者。（IoC控制反转）
+
+使用 `@Inject()` 和类构造函数参数来注入类。（DI依赖注入）
+
+使用ts关键字 `private` 将构造函数参数声明为类的私有成员。
+
+`cats.service.ts`
+
+```ts
+import { Injectable } from '@nestjs/common';
+import { Cat } from './interfaces/cat.interface';
+
+@Injectable()
+export class CatsService {
+  private readonly cats: Cat[] = [];
+
+  create(cat: Cat) {
+    this.cats.push(cat);
+  }
+
+  findAll(): Cat[] {
+    return this.cats;
+  }
+}
+```
+
+interfaces/cat.interface.ts
+
+```ts
+export interface Cat {
+  name: string;
+  age: number;
+  breed: string;
+}
+```
+
+`cats.controller.ts`
+
+```ts
+import { Controller, Get, Post, Body } from '@nestjs/common';
+import { CreateCatDto } from './dto/create-cat.dto';
+import { CatsService } from './cats.service';
+import { Cat } from './interfaces/cat.interface';
+
+@Controller('cats')
+export class CatsController {
+  // @Inject(CatsService)可省略
+	// constructor(@Inject(CatsService) private catsService: CatsService) {}
+  // Nest将通过创建并返回CatsService的实例来解析 catsService
+  constructor(private catsService: CatsService) {}
+
+  @Post()
+  async create(@Body() createCatDto: CreateCatDto) {
+    this.catsService.create(createCatDto);
+  }
+
+  @Get()
+  async findAll(): Promise<Cat[]> {
+    return this.catsService.findAll();
+  }
+}
+```
+
+注册提供者
+
+`app.module.ts`
+
+```ts
+import { Module } from '@nestjs/common';
+import { CatsController } from './cats/cats.controller';
+import { CatsService } from './cats/cats.service';
+
+@Module({
+  controllers: [CatsController],
+  providers: [CatsService],
+})
+export class AppModule {}
+```
 
 ## 模块
+
+模块是用 `@Module()` 装饰器注释的类，用于组织应用结构。
+
+controllers：当前模块中包含的控制器。
+
+providers：当前模块中包含的提供者。
+
+imports
+
+- `imports` 是一个数组，用于导入其他模块。通过 `imports`，你可以将其他模块中的提供者（providers）、控制器（controllers）和服务（services）引入到当前模块中，以便在当前模块中使用它们。
+- 在模块中使用 `imports` 可以创建模块之间的依赖关系。导入的模块的功能会被合并到当前模块中，使得当前模块可以使用导入模块的提供者、控制器和服务。
+
+exports
+
+- `exports` 是一个数组，用于导出当前模块中的提供者（providers）、控制器（controllers）和服务（services）。导出的内容可以被其他模块导入并使用。
+- 使用 `exports` 可以定义当前模块中哪些功能对外部可见。这对于创建可复用的模块和提供公共接口非常有用。
+
+默认情况下模块中的提供者、控制器和服务是私有的，只有在同一模块中才能访问。如果想要在其他模块中使用当前模块中的提供者、控制器和服务，可以通过 `@Module` 装饰器中的 `exports` 字段将它们公开出去。其他模块可以通过 `imports` 导入含有 `exports` 的模块，并使用这些模块中的提供者、控制器和服务。
 
 ## 三层架构示例
 
 以下是一个简单的 Nest.js 应用的完整例子，其中包括控制器层、服务层和数据访问层。在这个例子中，我们创建了一个简单的 Cats 应用，用于管理猫的信息。
 
-1. **数据模型（数据访问层）：**
+1. **数据模型（数据访问层Dao）：**
+
+   entity：通常是指代表数据库表结构的实体类。
+
+   实际操作数据库的 SQL 通常是在 Entity 层定义的 Repository 中进行的，而 Repository 通常由 Service 层调用。这是因为 NestJS 集成了一些流行的 ORM（Object-Relational Mapping）库，如 TypeORM 或 Sequelize，用于简化数据库操作。
 
    ```ts
    // cat.entity.ts
@@ -2044,7 +3337,7 @@ export class AppModule {}
    }
    ```
 
-2. **数据访问服务（数据访问层）：**
+2. **数据访问服务（逻辑处理层Service）：**
 
    ```ts
    // cats.service.ts
@@ -2070,7 +3363,7 @@ export class AppModule {}
    }
    ```
 
-3. **控制器（控制器层）：**
+3. **控制器（控制器层Controller）：**
 
    ```ts
    // cats.controller.ts
@@ -2128,7 +3421,7 @@ export class AppModule {}
 
 在这个例子中，我们使用了 Nest.js 中的 `TypeOrmModule` 来进行数据库交互。整个应用分为控制器层（`CatsController`）、服务层（`CatsService`）和数据访问层（`Cat` 数据模型和 `TypeOrmModule` 的配置）。通过这种结构，我们能够更好地组织代码、实现业务逻辑，并且具备了良好的可测试性和可维护性。
 
-# koa
+# koajs
 
 ## koa-middleware
 
