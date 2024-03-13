@@ -2310,7 +2310,7 @@ exports.login = (req, res) => {
 ```js
 const mysql = require('mysql')
 
-//创建数据库连接池对象
+// 创建数据库连接池对象
 const db = mysql.createPool({
   host: 'localhost',
   user: 'root',
@@ -3313,6 +3313,14 @@ exports
 
 默认情况下模块中的提供者、控制器和服务是私有的，只有在同一模块中才能访问。如果想要在其他模块中使用当前模块中的提供者、控制器和服务，可以通过 `@Module` 装饰器中的 `exports` 字段将它们公开出去。其他模块可以通过 `imports` 导入含有 `exports` 的模块，并使用这些模块中的提供者、控制器和服务。
 
+## 中间件
+
+中间件是在路由处理程序之前调用的函数。中间件函数可以访问 [request](https://express.nodejs.cn/en/4x/api.html#req) 和 [response](https://express.nodejs.cn/en/4x/api.html#res) 对象，以及应用请求-响应周期中的 `next()` 中间件函数。下一个中间件函数通常由名为 `next` 的变量表示。
+
+默认情况下，Nest 中间件等同于 [express](https://express.nodejs.cn/en/guide/using-middleware.html) 中间件。
+
+你可以在函数中或在具有 `@Injectable()` 装饰器的类中实现自定义 Nest 中间件。类应实现 `NestMiddleware` 接口，功能无特殊要求。
+
 ## 三层架构示例
 
 以下是一个简单的 Nest.js 应用的完整例子，其中包括控制器层、服务层和数据访问层。在这个例子中，我们创建了一个简单的 Cats 应用，用于管理猫的信息。
@@ -3420,6 +3428,240 @@ exports
    ```
 
 在这个例子中，我们使用了 Nest.js 中的 `TypeOrmModule` 来进行数据库交互。整个应用分为控制器层（`CatsController`）、服务层（`CatsService`）和数据访问层（`Cat` 数据模型和 `TypeOrmModule` 的配置）。通过这种结构，我们能够更好地组织代码、实现业务逻辑，并且具备了良好的可测试性和可维护性。
+
+## 大事件项目
+
+**1.创建nest项目**
+
+```bash
+#安装nest-cli
+npm i -g @nestjs/cli
+#创建项目
+nest new project-name
+```
+
+**2.注册业务功能实现**
+
+1. 基础架构
+
+`src/user/user.controller.ts` 创建控制器controller：用于处理请求和响应
+
+```ts
+import { Body, Controller, Post, ValidationPipe } from "@nestjs/common";
+import { UserService } from "./user.service";
+import { CreateUserDto } from "./dto/create-user.dto";
+
+@Controller('api')
+export class UserController {
+  constructor(private readonly userService: UserService) {
+    
+  }
+  // 用户注册
+  @Post('register')
+  async register(@Body(ValidationPipe) userData: CreateUserDto) { // ValidationPipe管道：自动将请求体中的参数转换为CreateUserDto对象，并对其进行验证
+    return await this.userService.register(userData);
+  }
+}
+```
+
+`src/user/dto/create-user.dto.ts` 数据传输对象：用于定义请求参数结构，和处理校验工作
+
+```ts
+import { IsNotEmpty } from "class-validator"; // 需安装class-validator及其依赖class-transformer
+
+export class CreateUserDto {
+  @IsNotEmpty({message: '用户名不能为空'})
+  readonly username: string;
+
+  @IsNotEmpty({message: '密码不能为空'})
+  @Matches(/^[a-zA-Z0-9_]{6,20}$/, { message: '密码必须为6-20位的字母、数字和下划线' })
+  readonly password: string;
+}
+```
+
+`src/user/user.service.ts` 创建提供者service：用户处理业务逻辑和操作数据库
+
+```ts
+import { Injectable } from "@nestjs/common";
+import { CreateUserDto } from "./dto/create-user.dto";
+
+@Injectable() // 控制反转：交给IoC容器管理
+export class UserService {
+  register(dto: CreateUserDto) {
+    const { username, password } = dto; // 获取controller传递的请求参数
+    return 'register ok'
+  }
+}
+```
+
+`src/user/user.module.ts` 创建用户模块
+
+```ts
+import { Module } from "@nestjs/common";
+import { UserController } from "./user.controller";
+import { UserService } from "./user.service";
+
+@Module({
+  providers: [UserService],
+  controllers: [UserController],
+})
+
+export class UserModule {}
+```
+
+`src/app.module.ts`在应用模块中注册用户模块
+
+```diff
+import { Module } from '@nestjs/common';
+import { AppController } from './app.controller';
+import { AppService } from './app.service';
++ import { UserModule } from './user/user.module';
+
+@Module({
+  imports: [
++   UserModule
+  ],
+  controllers: [AppController],
+  providers: [AppService],
+})
+export class AppModule {}
+```
+
+2. 操作数据库
+
+`app.module.ts` 集成typeorm模块
+
+```diff
+import { Module } from '@nestjs/common';
+import { AppController } from './app.controller';
+import { AppService } from './app.service';
+import { UserModule } from './user/user.module';
+
+// 导入nestjs中与typeorm集成的模块
++ import { TypeOrmModule } from '@nestjs/typeorm'; //需安装
+// 导入实体类
++ import { UserEntity } from './user/user.entity';
+
+@Module({
+  imports: [
+    UserModule,
+    // 设置数据库连接（也可通过ormconfig.json进行配置了）
++   TypeOrmModule.forRoot({
+      "type": "mysql",
+      "host": "localhost",
+      "port": 3306,
+      "username": "root",
+      "password": "Zy19920512#",
+      "database": "ev",
+      "entities": [UserEntity],
+      "synchronize": true
+    }),
+  ],
+  controllers: [AppController],
+  providers: [AppService],
+})
+
+export class AppModule {}
+```
+
+`src/user/user.entity.ts` 新建实体类（与表中的字段对应，注意：列的特性也要对应）
+
+```ts
+import { Entity, PrimaryGeneratedColumn, Column, BeforeInsert } from "typeorm";
+import { IsEmail } from "class-validator";
+import * as argon2 from "argon2";
+
+@Entity('ev_users')
+export class UserEntity {
+
+  @PrimaryGeneratedColumn()
+  id: number;
+
+  @Column()
+  username: string;
+
+  @Column()
+  password: string;
+
+  @BeforeInsert()
+  async hashPassword() {
+    this.password = await argon2.hash(this.password); // 密码加密后存储
+  }
+
+  @Column({ nullable: true })
+  nickname: string;
+
+  @Column({ nullable: true })
+  @IsEmail()
+  email: string;
+
+  @Column({ nullable: true })
+  user_pic: string;
+
+}
+```
+
+`src/user/user.module.ts` 将实体类交给当前模块的IoC容器管理，以便在当前模块中的其他组件（如服务、控制器等）中使用
+
+```diff
+import { Module } from "@nestjs/common";
+import { UserController } from "./user.controller";
+import { UserService } from "./user.service";
++ import { UserEntity } from "./user.entity";
++ import { TypeOrmModule } from "@nestjs/typeorm";
+
+@Module({
++ imports: [ TypeOrmModule.forFeature([UserEntity]) ], //TypeOrmModule.forFeature方法会为实体类创建一个提供者，并将其注册到当前模块的依赖注入容器中
+  providers: [UserService],
+  controllers: [UserController],
+})
+
+export class UserModule {}
+```
+
+`src/user/user.service.ts`将实体类仓库注入到当前服务，并使用该实体类仓库完成数据库操作
+
+```diff
+import { Injectable } from "@nestjs/common";
+import { CreateUserDto } from "./dto/create-user.dto";
++ import { InjectRepository } from "@nestjs/typeorm";
++ import { Repository } from "typeorm";
++ import { UserEntity } from "./user.entity";
++ import { HttpException } from "@nestjs/common/exceptions/http.exception";
++ import { HttpStatus } from "@nestjs/common";
+
+@Injectable()
+export class UserService {
++  constructor(
++    @InjectRepository(UserEntity) //将实体类注入到当前服务，在服务中可以方便的使用该实体类对应的typeorm仓库进行数据库操作
++    private readonly userRepository: Repository<UserEntity> //userRepository：注入后的实体类仓库
++  ) {}
+
+  // 注册
+  async register(dto: CreateUserDto) {
+    const { username, password } = dto;
++    // 检查用户名是否唯一
++    const qb = await this.userRepository
++      .createQueryBuilder('user')
++      .where('user.username = :username', { username });
++    const user = await qb.getOne();
++    if (user) {
++      const errors = { username: '用户名重复！'};
++      throw new HttpException({ message: '注册失败', errors }, HttpStatus.BAD_REQUEST)
++    }
+
++    // 创建用户
++    const newUser = new UserEntity();
++    newUser.username = username;
++    newUser.password = password;
++    // 保存用户到数据库
++    await this.userRepository.save(newUser);
++    return { message: '注册成功', code: 0 }
+  }
+}
+```
+
+
 
 # koajs
 
