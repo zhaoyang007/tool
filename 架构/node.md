@@ -3122,6 +3122,8 @@ nest new project-name --strict
 
 ## 控制器（cotroller）
 
+![Snipaste_2024-03-14_14-40-43](images/Snipaste_2024-03-14_14-40-43.png)
+
 控制器负责处理传入请求并向客户端返回响应。
 
 控制器始终属于一个模块。
@@ -3210,6 +3212,8 @@ export class CatsController {}
 
 ## 提供者（service）
 
+![Snipaste_2024-03-14_14-41-16](images/Snipaste_2024-03-14_14-41-16.png)
+
 控制器应该处理 HTTP 请求并将更复杂的任务委托给提供者。提供程序是在 [module](https://nest.nodejs.cn/modules) 中声明为 `providers` 的纯 JavaScript 类。
 
 提供者可以作为依赖注入，将其注入到模块、控制器、服务等地方。
@@ -3295,6 +3299,8 @@ export class AppModule {}
 
 ## 模块
 
+![Snipaste_2024-03-14_14-42-45](images/Snipaste_2024-03-14_14-42-45.png)
+
 模块是用 `@Module()` 装饰器注释的类，用于组织应用结构。
 
 controllers：当前模块中包含的控制器。
@@ -3315,11 +3321,67 @@ exports
 
 ## 中间件
 
+![Snipaste_2024-03-14_14-38-23](images/Snipaste_2024-03-14_14-38-23.png)
+
 中间件是在路由处理程序之前调用的函数。中间件函数可以访问 [request](https://express.nodejs.cn/en/4x/api.html#req) 和 [response](https://express.nodejs.cn/en/4x/api.html#res) 对象，以及应用请求-响应周期中的 `next()` 中间件函数。下一个中间件函数通常由名为 `next` 的变量表示。
 
 默认情况下，Nest 中间件等同于 [express](https://express.nodejs.cn/en/guide/using-middleware.html) 中间件。
 
 你可以在函数中或在具有 `@Injectable()` 装饰器的类中实现自定义 Nest 中间件。类应实现 `NestMiddleware` 接口，功能无特殊要求。
+
+## 异常过滤器
+
+```ts
+import { HttpException } from "@nestjs/common/exceptions/http.exception";
+import { HttpStatus } from "@nestjs/common";
+
+throw new HttpException({
+  code: 0,
+  message: '用户名已存在',
+  data: null
+}, HttpStatus.BAD_REQUEST)
+```
+
+![Snipaste_2024-03-14_14-36-45](images/Snipaste_2024-03-14_14-36-45.png)
+
+## 管道
+
+管道是用 `@Injectable()` 装饰器注释的类，它实现了 `PipeTransform` 接口。
+
+管道有两个典型的用例：
+
+- 转型：将输入数据转换为所需的形式（例如，从字符串到整数）
+- 验证：评估输入数据，如果有效，只需将其原样传递；否则抛出异常
+
+在这两种情况下，管道都在由 [控制器路由处理器](https://nest.nodejs.cn/controllers#route-parameters) 处理的 `arguments` 上运行。
+
+内置管道：
+
+- `ValidationPipe`
+- `ParseIntPipe`
+- `ParseFloatPipe`
+- `ParseBoolPipe`
+- `ParseArrayPipe`
+- `ParseUUIDPipe`
+- `ParseEnumPipe`
+- `DefaultValuePipe`
+- `ParseFilePipe`
+
+## 守卫
+
+守卫是一个用 `@Injectable()` 装饰器注释的类，它实现了 `CanActivate` 接口。
+
+用于授权。
+
+## 拦截器
+
+拦截器具有一组有用的功能，这些功能的灵感来自 [面向方面编程](https://en.wikipedia.org/wiki/Aspect-oriented_programming) (AOP) 技术。它们可以：
+
+- 在方法执行之前/之后绑定额外的逻辑
+- 转换函数返回的结果
+- 转换函数抛出的异常
+- 扩展基本功能行为
+- 根据特定条件完全覆盖函数（例如，出于缓存目的）
 
 ## 三层架构示例
 
@@ -3625,7 +3687,7 @@ export class UserModule {}
 import { Injectable } from "@nestjs/common";
 import { CreateUserDto } from "./dto/create-user.dto";
 + import { InjectRepository } from "@nestjs/typeorm";
-+ import { Repository } from "typeorm";
++ import { Repository } from "typeorm"; //需安装
 + import { UserEntity } from "./user.entity";
 + import { HttpException } from "@nestjs/common/exceptions/http.exception";
 + import { HttpStatus } from "@nestjs/common";
@@ -3646,8 +3708,11 @@ export class UserService {
 +      .where('user.username = :username', { username });
 +    const user = await qb.getOne();
 +    if (user) {
-+      const errors = { username: '用户名重复！'};
-+      throw new HttpException({ message: '注册失败', errors }, HttpStatus.BAD_REQUEST)
++      throw new HttpException({
++        code: 0,
++        message: '用户名已存在'
++        data: null
++      }, HttpStatus.BAD_REQUEST)
 +    }
 
 +    // 创建用户
@@ -3660,6 +3725,994 @@ export class UserService {
   }
 }
 ```
+
+**3.优化**
+
+使用拦截器添加统一错误格式
+
+1. 定义拦截器
+
+`src/utils/response-and-error-format.interceptor.ts`
+
+```ts
+import { 
+  Injectable,
+  NestInterceptor,
+  ExecutionContext,
+  CallHandler, 
+} from '@nestjs/common';
+import { Observable, throwError } from 'rxjs';
+import { map, catchError } from 'rxjs/operators';
+import { HttpException } from "@nestjs/common/exceptions/http.exception";
+import { HttpStatus } from "@nestjs/common";
+
+@Injectable()
+export class ResponseAndErrorFormatInterceptor implements NestInterceptor {
+  intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
+    return next.handle().pipe(
+      // 统一响应数据格式
+      // map(data => {
+      //   return {
+      //     code: 0, // 默认为成功状态
+      //     message: '请求成功', // 默认成功消息
+      //     data, // 返回的具体数据
+      //   };
+      // }),
+      // 统一错误格式
+      catchError(err => throwError(() => new HttpException({
+        code: 1,
+        message: Array.isArray(err.response.message) ? err.response.message[0] : err.response.message,
+        data: null
+      }, HttpStatus.BAD_REQUEST)))
+    );
+  }
+}
+```
+
+2. 全局应用
+
+`app.module.ts`
+
+```ts
+import { ResponseAndErrorFormatInterceptor } from './utils/response-and-error-format.interceptor';
+
+@Module({
+  providers: [
+    // 全局添加拦截器
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: ResponseAndErrorFormatInterceptor,
+    }
+  ]
+})
+```
+
+**4.登录功能**
+
+1. 基础架构
+
+`src/user/user.controller.ts`
+
+```ts
+export class UserController {
+  constructor(private readonly userService: UserService) {}
+  // 用户注册
+  //...
+  
+  // 用户登录
+  @Post('login')
+  async login(@Body() userData: CreateUserDto) {
+    return await this.userService.login(userData);
+  }
+}
+```
+
+`src/user/user.service.ts`
+
+```ts
+import * as argon2 from "argon2";
+
+@Injectable()
+export class UserService {
+  constructor(
+    @InjectRepository(UserEntity)
+    private readonly userRepository: Repository<UserEntity>
+  ) {}
+
+  // 注册
+  // ...
+
+  // 登录
+  async login(dto: CreateUserDto) {
+    const { username, password } = dto;
+    // 检查用户名是否存在
+    const qb = await this.userRepository
+      .createQueryBuilder('user')
+      .where('user.username = :username', { username });
+    const user = await qb.getOne();
+    if (!user) {
+      throw new HttpException({
+        code: 1,
+        message: '用户名不存在',
+        data: null
+      }, HttpStatus.BAD_REQUEST)
+    }
+    
+    // 检查密码是否正确
+    try {
+      const isMatch = await argon2.verify(user.password, password);
+      return isMatch ? { 
+        code: 0, 
+        message: '登录成功' 
+      } : {
+        code: 1,
+        message: '密码错误',
+        data: null
+      }
+    } catch (error) {
+      throw new HttpException({
+        code: 1,
+        message: '密码错误',
+        data: null
+      }, HttpStatus.BAD_REQUEST)
+    }
+  }
+}
+```
+
+2. `src/user/user.service.ts`登录生成token
+
+```ts
+import * as jwt from "jsonwebtoken"; //需安装
+import { jwtConfig } from "../config";
+
+
+@Injectable()
+export class UserService {
+  constructor(
+    @InjectRepository(UserEntity)
+    private readonly userRepository: Repository<UserEntity>
+  ) {}
+
+  // 注册
+  // ...
+
+  // 登录
+  async login(dto: CreateUserDto) {
+    const { username, password } = dto;
+    // 检查用户名是否存在
+    // ...
+    
+    // 检查密码是否正确
+    try {
+      const isMatch = await argon2.verify(user.password, password);
+      
+      return isMatch ? { 
+        code: 0, 
+        message: '登录成功',
+        data: this.generateJWT(user)
+      } : {
+        code: 1,
+        message: '密码错误',
+        data: null
+      }
+    } catch (error) {
+      throw new HttpException({
+        code: 1,
+        message: '密码错误',
+        data: null
+      }, HttpStatus.BAD_REQUEST)
+    }
+  }
+  // 封装生成token的函数
+  generateJWT(user: UserEntity) {
+    const payload = {
+      ...user,
+      password: '',
+      user_pic: ''
+    }
+    return jwt.sign(payload, jwtConfig.jwtSecretKey, { 
+      expiresIn: jwtConfig.expiresIn
+    })
+  }
+}
+```
+
+`src/config.ts`
+
+```ts
+export const jwtConfig = {
+  jwtSecretKey: 'itheima No1 # %',
+  expiresIn: '10h'
+}
+```
+
+3. 验证token
+
+`src/user/auth.middleware.ts` 封装验证token中间件
+
+```ts
+import { HttpException, Injectable, NestMiddleware } from '@nestjs/common';
+import * as jwt from 'jsonwebtoken';
+import { jwtConfig } from '../config';
+import { Request, Response, NextFunction } from 'express';
+
+@Injectable()
+export class AuthMiddleware implements NestMiddleware {
+  use(req: Request, res: Response, next: NextFunction) {
+    const authorizationHeader = req.headers.authorization;
+    // authorization请求头不存在
+    if (!authorizationHeader) {
+      throw new HttpException('Unauthorized', 401)
+    }
+    // token或bearer不存在
+    const [bearer, token] = authorizationHeader.split(' ');
+    if (!token || bearer !== 'Bearer') {
+      throw new HttpException('Unauthorized', 401)
+    }
+
+    // 验证token
+    jwt.verify(token, jwtConfig.jwtSecretKey, (err, decoded) => {
+      if (err) {
+        throw new HttpException('Invalid token', 401)
+      }
+      req['user'] = decoded;
+      next();
+    })
+  }
+}
+```
+
+`src/app.module.ts` 全局应用中间件
+
+```ts
+import { AuthMiddleware } from './user/auth.middleware'
+
+export class AppModule implements NestModule { 
+  // 全局配置鉴权中间件
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(AuthMiddleware)
+      .exclude('api/(.*)')
+      .forRoutes('*');
+  }
+}
+```
+
+**5.用户信息业务功能**
+
+1. 获取用户信息接口
+
+`src/profile/profile.controller.ts`
+
+```ts
+import { Controller, Get } from "@nestjs/common";
+import { ProfileService } from "./profile.service";
+import { User } from '../user/user.decorator'
+
+@Controller('my')
+export class ProfileController {
+  constructor(private readonly profileService: ProfileService) {}
+
+  // 获取用户信息
+  @Get('userInfo')
+  async getUserInfo(@User('id') userId: number){
+    return await this.profileService.getUserInfo(userId);
+  }
+}
+```
+
+`src/user/user.decotator.ts` 封装获取req.user信息的自定义参数装饰器
+
+```ts
+import { createParamDecorator, ExecutionContext } from '@nestjs/common';
+
+export const User = createParamDecorator((data: any, ctx: ExecutionContext) => {
+  const req = ctx.switchToHttp().getRequest();
+  if (!!req.user) {
+    return !!data ? req.user[data] : req.user;
+  }
+})
+```
+
+`src/profile/profile.service.ts`
+
+```ts
+import { HttpException, Injectable, HttpStatus } from "@nestjs/common";
+import { UserEntity } from "src/user/user.entity";
+import { Repository } from "typeorm";
+import { InjectRepository } from "@nestjs/typeorm";
+
+@Injectable()
+export class ProfileService {
+  constructor(
+    @InjectRepository(UserEntity)
+    private readonly userRepository: Repository<UserEntity>,
+  ) {}
+
+  // 获取用户信息
+  async getUserInfo(userId: number) {
+    // 查询数据库
+    const qb = await this.userRepository
+      .createQueryBuilder("user")
+      .select(["user.id", "user.username", "user.nickname", "user.email","user.user_pic"])
+      .where("user.id = :id", { id: userId })
+    const user = await qb.getOne();
+    // 用户不存在
+    if (!user) new HttpException({
+      code: 0,
+      message: "用户不存在",
+      data: null
+    }, HttpStatus.BAD_REQUEST);
+    // 返回用户信息
+    return {
+      code: 0,
+      message: "获取用户信息成功",
+      data: user,
+    };
+  }
+}
+```
+
+`src/profile/profile.moddle.ts`
+
+```ts
+import { Module } from "@nestjs/common";
+import { ProfileController } from "./profile.controller";
+import { ProfileService } from "./profile.service";
+import { TypeOrmModule } from "@nestjs/typeorm";
+import { UserEntity } from "../user/user.entity";
+
+@Module({
+  imports: [TypeOrmModule.forFeature([UserEntity])],
+  providers: [ ProfileService ],
+  controllers: [ProfileController],
+})
+
+export class ProfileModule {}
+```
+
+2. 更新用户信息接口
+
+`src/profile/profile.controller.ts`
+
+```ts
+import { UpdateUserDto } from './dto/update-user.dto'
+@Controller('my')
+export class ProfileController {
+  constructor(private readonly profileService: ProfileService) {}
+
+  // 获取用户信息
+  // ...
+
+  // 更新用户信息
+  @Put('updateUserInfo')
+  async updateUserInfo(@User('id') userId: number, @Body() dto: UpdateUserDto) {
+    return await this.profileService.updateUserInfo(userId, dto);
+  }
+}
+```
+
+`src/profile/dto/update-user.dto.ts`
+
+```ts
+import { IsEmail, IsOptional } from "class-validator";
+
+export class UpdateUserDto {
+
+  @IsOptional()
+  readonly nickname: string = '';
+
+  @IsOptional()
+  @IsEmail({}, { message: '必须为有效的邮箱地址' })
+  readonly email: string;
+
+}
+```
+
+`src/profile/profile.service.ts`
+
+```ts
+import { UpdateUserDto } from "./dto/update-user.dto";
+
+@Injectable()
+export class ProfileService {
+  constructor(
+    @InjectRepository(UserEntity)
+    private readonly userRepository: Repository<UserEntity>,
+  ) {}
+
+  // 获取用户信息
+  // ...
+
+  // 更新用户信息
+  async updateUserInfo(userId: number, dto: UpdateUserDto) {
+    // 处理请求参数都没传的情况
+    const { nickname, email } = dto
+    if (!nickname && !email) {
+      return {
+        code: 0,
+        message: "更新用户信息成功",
+        data: null
+      }
+    } 
+    // 数据库操作
+    // 获取用户
+    const user = await this.userRepository.findOneBy({ id: userId });
+    // 用户不存在
+    if (!user) new HttpException({
+      code: 0,
+      message: "用户不存在",
+      data: null
+    }, HttpStatus.BAD_REQUEST);
+    // 更新用户信息
+    await this.userRepository.update(userId, dto);
+    // 返回用户信息
+    return {
+      code: 0,
+      message: "更新用户信息成功",
+      data: null
+    }
+  }
+}
+```
+
+3. 重置密码
+
+`src/profile/dto/update-pwd.dto.ts`
+
+```ts
+import { IsNotEmpty, Matches } from "class-validator";
+
+export class UpdatePwdDto {
+
+  @IsNotEmpty()
+  @Matches(/^[a-zA-Z0-9_]{6,20}$/, { message: '密码必须为6-20位的字母、数字和下划线' })
+  oldPwd: string;
+
+  @IsNotEmpty()
+  @Matches(/^[a-zA-Z0-9_]{6,20}$/, { message: '密码必须为6-20位的字母、数字和下划线' })
+  newPwd: string;
+}
+```
+
+`src/profile/profile.controller.ts`
+
+```ts
+import { UpdatePwdDto } from './dto/update-pwd.dto'
+
+@Controller('my')
+export class ProfileController {
+  constructor(private readonly profileService: ProfileService) {}
+
+  // 获取用户信息
+  // ...
+
+  // 更新用户信息
+  // ...
+
+  // 重置密码
+  @Patch('updatePwd')
+  async updatePwd(@User('id') userId: number, @Body() dto: UpdatePwdDto) {
+    return this.profileService.updatePwd(userId, dto);
+  }
+}
+```
+
+`src/profile/profile.service.ts`
+
+```ts
+import { UpdatePwdDto } from "./dto/update-pwd.dto";
+import * as argon2 from "argon2";
+
+@Injectable()
+export class ProfileService {
+  constructor(
+    @InjectRepository(UserEntity)
+    private readonly userRepository: Repository<UserEntity>,
+  ) {}
+
+  // 获取用户信息
+  // ...
+
+  // 更新用户信息
+  // ...
+  
+  // 重置密码
+  async updatePwd(userId: number, dto: UpdatePwdDto) {
+    // 检查用户是否存在
+    const user = await this.userRepository.findOneBy({ id: userId });
+    if (!user) throw new HttpException({
+      code: 0,
+      message: "用户不存在",
+      data: null
+    }, HttpStatus.BAD_REQUEST);
+    // 检查旧密码是否正确
+    const comparePwd = await argon2.verify(user.password, dto.oldPwd);
+    if (!comparePwd) throw new HttpException({
+      code: 1,
+      message: "旧密码错误",
+      data: null
+    }, HttpStatus.BAD_REQUEST);
+    // 更新密码
+    const newPwd = await argon2.hash(dto.newPwd);
+    await this.userRepository.update(userId, { password: newPwd });
+    // 返回结果
+    return {
+      code: 0,
+      message: "密码修改成功",
+      data: null
+    }
+  } 
+}
+```
+
+4. 更新头像
+
+`src/profile/dto/update-avatar.dto.ts`
+
+```ts
+import { IsDataURI, IsNotEmpty, IsString } from "class-validator";
+
+export class UpdateAvatarDto {
+
+  @IsNotEmpty()
+  @IsString()
+  @IsDataURI()
+  avatar: string;
+
+}
+```
+
+`src/profile/profile.controller.ts`
+
+```ts
+import { UpdateAvatarDto } from "./dto/update-avatar.dto";
+
+@Controller('my')
+export class ProfileController {
+  constructor(private readonly profileService: ProfileService) {}
+
+  // 获取用户信息
+  // ...
+
+  // 更新用户信息
+  // ...
+
+  // 重置密码
+  // ...
+
+  // 更新用户头像
+  @Patch('updateAvatar')
+  async updateAvatar(@User('id') userId: number, @Body() dto: UpdateAvatarDto) {
+    return await this.profileService.updateAvatar(userId, dto);
+  }
+}
+```
+
+`src/profile/profile.service.ts`
+
+```ts
+import { UpdateAvatarDto } from "./dto/update-avatar.dto";
+
+@Injectable()
+export class ProfileService {
+  constructor(
+    @InjectRepository(UserEntity)
+    private readonly userRepository: Repository<UserEntity>,
+  ) {}
+
+  // 获取用户信息
+  // ...
+
+  // 更新用户信息
+  // ...
+
+  // 重置密码
+  // ...
+
+  // 更新用户头像
+  async updateAvatar(userId: number, dto: UpdateAvatarDto) {
+    // 检查用户是否存在
+    const user = await this.userRepository.findOneBy({ id: userId });
+    if (!user) throw new HttpException({
+      code: 0,
+      message: "用户不存在",
+      data: null
+    }, HttpStatus.BAD_REQUEST);
+    // 更新用户头像
+    await this.userRepository.update(userId, { user_pic: dto.avatar });
+    // 返回结果
+    return {
+      code: 0,
+      message: "头像更新成功",
+      data: null
+    }
+  }
+}
+```
+
+**6.文章分类业务功能**
+
+1. 获取文章分类
+
+`src/cate/cate.controller.ts`
+
+```ts
+import { Controller, Get } from "@nestjs/common";
+import { CateService } from "./cate.service";
+
+@Controller('my')
+export class CateController {
+  constructor(private readonly cateService: CateService) {}
+
+  // 获取分类列表
+  @Get('cates') 
+  async getCate() {
+    return this.cateService.getCate();
+  }
+
+}
+```
+
+`src/cate/cate.service.ts`
+
+```ts
+import { Injectable } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { Repository } from "typeorm";
+import { CateEntity } from "./cate.entity";
+import { Is_delete } from "../enums/cate.enums"
+
+@Injectable()
+export class CateService {
+  constructor(
+    @InjectRepository(CateEntity)
+    private readonly cateRepository: Repository<CateEntity>,
+  ) {}
+
+  // 获取分类列表
+  async getCate() {
+    const res = await this.cateRepository.find({ 
+      where: { is_delete: Is_delete.NORMAL },
+      order: { id: 'ASC' }
+    });
+    return {
+      code: 0,
+      message: '查询文章分类成功',
+      data: res
+    }
+  }
+}
+```
+
+`src/cate/cate.entity.ts`
+
+```ts
+import { Entity } from "typeorm";
+import { PrimaryGeneratedColumn , Column } from "typeorm";
+import { Is_delete } from '../enums/cate.enums'
+
+@Entity('ev_article_cate')
+export class CateEntity {
+
+  @PrimaryGeneratedColumn()
+  id: number;
+
+  @Column() 
+  name: string;
+
+  @Column()
+  alias: string;
+
+  @Column({ default: 0 })
+  is_delete: Is_delete;
+
+}
+```
+
+`src/cate/cate.module.ts`
+
+```ts
+import { Module } from "@nestjs/common";
+import { CateService } from "./cate.service";
+import { CateController } from "./cate.controller";
+import { TypeOrmModule } from "@nestjs/typeorm";
+import { CateEntity } from "./cate.entity";
+
+@Module({
+  imports: [TypeOrmModule.forFeature([CateEntity])],
+  providers: [CateService],
+  controllers: [CateController],
+})
+
+export class CateModule {}
+```
+
+2. 新增文章分类
+
+`src/cate/dto/create-cate.dto.ts`
+
+```ts
+import { IsAlphanumeric, IsNotEmpty } from "class-validator";
+
+export class CreateCateDto {
+
+  @IsNotEmpty({message: '分类名称不能为空'})
+  name: string;
+
+  @IsNotEmpty({message: '分类别名不能为空'}) 
+  @IsAlphanumeric()
+  alias: string;
+
+}
+```
+
+`src/cate/cate.controller.ts`
+
+```ts
+import { CreateCateDto } from "./dto/create-cate.dto";
+
+@Controller('my')
+export class CateController {
+  constructor(private readonly cateService: CateService) {}
+
+  // 获取分类列表
+  // ...
+  
+  // 新增文章分类
+  @Post('cates')
+  async addCate(@Body() dto: CreateCateDto) {
+    return this.cateService.addCate(dto);
+  }
+}
+```
+
+`src/cate/cate.service.ts`
+
+```ts
+import { CreateCateDto } from "./dto/create-cate.dto";
+
+@Injectable()
+export class CateService {
+  constructor(
+    @InjectRepository(CateEntity)
+    private readonly cateRepository: Repository<CateEntity>,
+  ) {}
+
+  // 获取分类列表
+  // ...
+
+  // 新增文章分类
+  async addCate(dto: CreateCateDto) {
+    const { name, alias } = dto;
+    // 检查文章名字或文章别名是否被占用
+    const isExist = await this.cateRepository.findOne({
+      where: [{ name }, { alias }],
+    })
+    if (isExist) {
+      throw new HttpException({
+        code: 1,
+        message: '文章名称或别名已存在',
+        data: null
+      }, HttpStatus.BAD_REQUEST)
+    }
+    // 新增文章
+    const res = await this.cateRepository.save(dto);
+    return {
+      code: 0,
+      message: '新增文章分类成功',
+      data: res
+    }
+  }
+}
+```
+
+3. 删除文章分类
+
+`src/cate/cate.controller.ts`
+
+```ts
+@Controller('my')
+export class CateController {
+  constructor(private readonly cateService: CateService) {}
+
+  // 获取分类列表
+ 	
+
+  // 新增文章分类
+  // ...
+
+  // 删除文章
+  @Delete('cates/:id')
+  async deleteCate(@Param('id') cateId: number) {
+    return this.cateService.deleteCate(cateId);
+  } 
+}
+```
+
+`src/cate/cate.service.ts`
+
+```ts
+@Injectable()
+export class CateService {
+  constructor(
+    @InjectRepository(CateEntity)
+    private readonly cateRepository: Repository<CateEntity>,
+  ) {}
+
+  // 获取分类列表
+  // ...
+
+  // 新增文章分类
+  // ...
+
+  // 删除文章分类
+  async deleteCate(cateId: number) {
+    const res = await this.cateRepository.update(cateId, { is_delete: Is_delete.DELETE });
+    return {
+      code: 0,
+      message: '删除文章分类成功',
+      data: null
+    }
+  }
+}
+```
+
+4. 根据id获取文章分类
+
+`src/cate/cate.controller.ts`
+
+```ts
+@Controller('my')
+export class CateController {
+  constructor(private readonly cateService: CateService) {}
+
+  // 获取分类列表
+ 	
+
+  // 新增文章分类
+  // ...
+
+  // 删除文章
+  // ...
+  
+  // 根据id获取文章分类
+  @Get('/cates/:id')
+  async getCateById(@Param('id') cateId: number) {
+    return this.cateService.getCateById(cateId);
+  }
+}
+```
+
+`src/cate/cate.service.ts`
+
+```ts
+@Injectable()
+export class CateService {
+  constructor(
+    @InjectRepository(CateEntity)
+    private readonly cateRepository: Repository<CateEntity>,
+  ) {}
+
+  // 获取分类列表
+  // ...
+
+  // 新增文章分类
+  // ...
+
+  // 删除文章分类
+  // ...
+  
+  // 根据id获取文章分类
+  async getCateById(cateId: number) {
+    const res = await this.cateRepository.findOne({
+      where: { id: cateId }
+    })
+    return {
+      code: 0,
+      message: '查询文章分类成功',
+      data: res
+    }
+  } 
+}
+```
+
+5. 根据id更新文章分类
+
+`src/cate/dto/update-cate.dto.ts`
+
+```ts
+import { IsNotEmpty, IsOptional } from "class-validator";
+
+export class UpdateCateDto {
+
+  @IsNotEmpty({message: '分类id不能为空'})
+  id: number;
+
+  @IsOptional()
+  name: string = '';
+
+  @IsOptional()
+  alias: string = '';
+
+}
+```
+
+`src/cate/cate.controller.ts`
+
+```ts
+@Controller('my')
+export class CateController {
+  constructor(private readonly cateService: CateService) {}
+
+  // 获取分类列表
+ 	
+
+  // 新增文章分类
+  // ...
+
+  // 删除文章
+  // ...
+  
+  // 根据id获取文章分类
+  // ...
+  
+  // 根据id跟新文章分类
+  @Put('/cates')
+  async updateCateById(@Body() dto: UpdateCateDto) {
+    return this.cateService.updateCateById(dto);
+  }
+}
+```
+
+`src/cate/cate.service.ts`
+
+```ts
+@Injectable()
+export class CateService {
+  constructor(
+    @InjectRepository(CateEntity)
+    private readonly cateRepository: Repository<CateEntity>,
+  ) {}
+
+  // 获取分类列表
+  // ...
+
+  // 新增文章分类
+  // ...
+
+  // 删除文章分类
+  // ...
+  
+  // 根据id获取文章分类
+  // ...
+  
+  // 根据id更新文章分类
+  async updateCateById(dto: UpdateCateDto) {
+    const { id, name, alias } = dto;
+    // 检查文章名字或文章别名是否被占用
+    const isExist = await this.cateRepository.findOne({
+      where: [{ name }, { alias }],
+    })
+    if (isExist) {
+      throw new HttpException({
+        code: 1,
+        message: '文章名称或别名已存在',
+        data: null
+      }, HttpStatus.BAD_REQUEST)
+    }
+    const res = await this.cateRepository.update(id, dto);
+    return {
+      code: 0,
+      message: '更新文章分类成功',
+      data: null
+    }
+  }
+}
+```
+
+**7.文章业务功能**
 
 
 
